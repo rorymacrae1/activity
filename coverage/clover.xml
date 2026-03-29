@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1774812246754" clover="3.2.0">
+  <project timestamp="1774812246754" name="All files">
+    <metrics statements="96" coveredstatements="96" conditionals="43" coveredconditionals="41" methods="48" coveredmethods="48" elements="187" coveredelements="185" complexity="0" loc="96" ncloc="96" packages="3" files="7" classes="7"/>
+    <package name="services">
+      <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="4" methods="6" coveredmethods="6"/>
+      <file name="resort.ts" path="/Users/rorymacrae/Documents/Personal/experiments/activity/src/services/resort.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="4" methods="6" coveredmethods="6"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="15" count="31" type="stmt"/>
+        <line num="22" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="16" type="stmt"/>
+        <line num="32" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="480" type="stmt"/>
+      </file>
+    </package>
+    <package name="services.recommendation">
+      <metrics statements="68" coveredstatements="68" conditionals="31" coveredconditionals="29" methods="22" coveredmethods="22"/>
+      <file name="explainer.ts" path="/Users/rorymacrae/Documents/Personal/experiments/activity/src/services/recommendation/explainer.ts">
+        <metrics statements="19" coveredstatements="19" conditionals="16" coveredconditionals="16" methods="7" coveredmethods="7"/>
+        <line num="18" count="101" type="stmt"/>
+        <line num="24" count="101" type="stmt"/>
+        <line num="25" count="98" type="stmt"/>
+        <line num="29" count="78" type="stmt"/>
+        <line num="33" count="86" type="stmt"/>
+        <line num="40" count="63" type="stmt"/>
+        <line num="50" count="84" type="stmt"/>
+        <line num="57" count="101" type="stmt"/>
+        <line num="59" count="784" type="stmt"/>
+        <line num="61" count="101" type="stmt"/>
+        <line num="62" count="457" type="cond" truecount="2" falsecount="0"/>
+        <line num="64" count="409" type="stmt"/>
+        <line num="66" count="409" type="cond" truecount="2" falsecount="0"/>
+        <line num="67" count="224" type="stmt"/>
+        <line num="68" count="185" type="cond" truecount="4" falsecount="0"/>
+        <line num="69" count="18" type="stmt"/>
+        <line num="74" count="101" type="cond" truecount="2" falsecount="0"/>
+        <line num="75" count="2" type="stmt"/>
+        <line num="78" count="101" type="stmt"/>
+      </file>
+      <file name="index.ts" path="/Users/rorymacrae/Documents/Personal/experiments/activity/src/services/recommendation/index.ts">
+        <metrics statements="19" coveredstatements="19" conditionals="5" coveredconditionals="3" methods="8" coveredmethods="8"/>
+        <line num="14" count="7" type="stmt"/>
+        <line num="20" count="7" type="stmt"/>
+        <line num="27" count="7" type="stmt"/>
+        <line num="45" count="95" type="stmt"/>
+        <line num="54" count="95" type="stmt"/>
+        <line num="55" count="95" type="stmt"/>
+        <line num="58" count="475" type="stmt"/>
+        <line num="59" count="95" type="stmt"/>
+        <line num="60" count="475" type="stmt"/>
+        <line num="64" count="95" type="stmt"/>
+        <line num="82" count="7" type="stmt"/>
+        <line num="85" count="7" type="stmt"/>
+        <line num="88" count="7" type="stmt"/>
+        <line num="91" count="7" type="stmt"/>
+        <line num="92" count="95" type="stmt"/>
+        <line num="93" count="95" type="stmt"/>
+        <line num="94" count="95" type="stmt"/>
+        <line num="100" count="95" type="stmt"/>
+        <line num="109" count="299" type="stmt"/>
+      </file>
+      <file name="scorer.ts" path="/Users/rorymacrae/Documents/Personal/experiments/activity/src/services/recommendation/scorer.ts">
+        <metrics statements="30" coveredstatements="30" conditionals="10" coveredconditionals="10" methods="7" coveredmethods="7"/>
+        <line num="13" count="112" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="9" type="stmt"/>
+        <line num="16" count="103" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="79" type="stmt"/>
+        <line num="21" count="24" type="stmt"/>
+        <line num="30" count="112" type="stmt"/>
+        <line num="31" count="112" type="stmt"/>
+        <line num="35" count="112" type="stmt"/>
+        <line num="39" count="112" type="stmt"/>
+        <line num="47" count="112" type="stmt"/>
+        <line num="50" count="112" type="stmt"/>
+        <line num="58" count="112" type="stmt"/>
+        <line num="59" count="112" type="stmt"/>
+        <line num="61" count="112" type="cond" truecount="4" falsecount="0"/>
+        <line num="63" count="58" type="stmt"/>
+        <line num="64" count="58" type="stmt"/>
+        <line num="65" count="58" type="stmt"/>
+        <line num="66" count="54" type="cond" truecount="2" falsecount="0"/>
+        <line num="68" count="19" type="stmt"/>
+        <line num="71" count="35" type="stmt"/>
+        <line num="72" count="35" type="stmt"/>
+        <line num="82" count="112" type="stmt"/>
+        <line num="83" count="112" type="stmt"/>
+        <line num="84" count="112" type="stmt"/>
+        <line num="96" count="112" type="stmt"/>
+        <line num="97" count="112" type="stmt"/>
+        <line num="100" count="112" type="stmt"/>
+        <line num="103" count="112" type="stmt"/>
+        <line num="111" count="112" type="stmt"/>
+        <line num="121" count="112" type="stmt"/>
+      </file>
+    </package>
+    <package name="stores">
+      <metrics statements="22" coveredstatements="22" conditionals="8" coveredconditionals="8" methods="20" coveredmethods="20"/>
+      <file name="favorites.ts" path="/Users/rorymacrae/Documents/Personal/experiments/activity/src/stores/favorites.ts">
+        <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="9" coveredmethods="9"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="26" count="7" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="37" count="2" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+      </file>
+      <file name="index.ts" path="/Users/rorymacrae/Documents/Personal/experiments/activity/src/stores/index.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="preferences.ts" path="/Users/rorymacrae/Documents/Personal/experiments/activity/src/stores/preferences.ts">
+        <metrics statements="14" coveredstatements="14" conditionals="6" coveredconditionals="6" methods="11" coveredmethods="11"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="50" count="2" type="stmt"/>
+        <line num="52" count="3" type="stmt"/>
+        <line num="54" count="3" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="67" count="2" type="stmt"/>
+        <line num="68" count="2" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
