@@ -1,53 +1,73 @@
 import { View, StyleSheet } from "react-native";
-import { colors } from "@theme/colors";
-import { spacing } from "@theme/spacing";
+import { Text } from "@components/ui/Text";
+import { colors, spacing } from "@theme";
 
 interface ProgressIndicatorProps {
   current: number;
   total: number;
+  /** Show a "Step N of M" text label alongside the dots */
+  showLabel?: boolean;
 }
 
 /**
- * Progress indicator for onboarding flow.
- * Shows current step out of total steps.
+ * Progress indicator for the onboarding quiz.
+ * Pill-style dots — current step is wider and primary-coloured.
  */
-export function ProgressIndicator({ current, total }: ProgressIndicatorProps) {
+export function ProgressIndicator({ current, total, showLabel = false }: ProgressIndicatorProps) {
   return (
-    <View style={styles.container}>
-      {Array.from({ length: total }).map((_, index) => (
-        <View
-          key={index}
-          style={[
-            styles.dot,
-            index < current ? styles.dotActive : styles.dotInactive,
-            index === current - 1 && styles.dotCurrent,
-          ]}
-        />
-      ))}
+    <View style={styles.wrapper}>
+      <View style={styles.dots}>
+        {Array.from({ length: total }).map((_, i) => {
+          const done = i < current;
+          const active = i === current - 1;
+          return (
+            <View
+              key={i}
+              style={[
+                styles.dot,
+                done ? styles.dotDone : styles.dotFuture,
+                active && styles.dotActive,
+              ]}
+            />
+          );
+        })}
+      </View>
+      {showLabel ? (
+        <Text variant="captionMedium" color={colors.text.tertiary}>
+          Step {current} of {total}
+        </Text>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     flexDirection: "row",
+    alignItems: "center",
     justifyContent: "center",
-    gap: spacing.sm,
+    gap: spacing.md,
     paddingVertical: spacing.md,
   },
-  dot: {
-    height: 4,
-    borderRadius: 2,
+  dots: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
   },
-  dotActive: {
+  dot: {
+    height: 5,
+    borderRadius: 3,
+  },
+  dotDone: {
     width: 24,
     backgroundColor: colors.primary,
   },
-  dotInactive: {
-    width: 24,
+  dotFuture: {
+    width: 20,
     backgroundColor: colors.border,
   },
-  dotCurrent: {
+  dotActive: {
     width: 32,
+    backgroundColor: colors.primary,
   },
 });

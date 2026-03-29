@@ -1,6 +1,6 @@
-import type { Resort } from "@types/resort";
-import type { NormalizedPreferences } from "@types/preferences";
-import type { AttributeScores } from "@types/recommendation";
+import type { Resort } from "@/types/resort";
+import type { NormalizedPreferences } from "@/types/preferences";
+import type { AttributeScores } from "@/types/recommendation";
 
 /**
  * Get ideal terrain distribution for a given skill level.

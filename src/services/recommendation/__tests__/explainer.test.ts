@@ -1,7 +1,7 @@
 import { generateExplanations } from "../explainer";
-import type { Resort } from "@types/resort";
-import type { NormalizedPreferences } from "@types/preferences";
-import type { AttributeScores } from "@types/recommendation";
+import type { Resort } from "@/types/resort";
+import type { NormalizedPreferences } from "@/types/preferences";
+import type { AttributeScores } from "@/types/recommendation";
 
 const makeResort = (attrs: Partial<Resort["attributes"]> = {}): Resort => ({
   id: "test-resort",

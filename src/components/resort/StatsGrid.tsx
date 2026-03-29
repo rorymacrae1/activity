@@ -2,7 +2,7 @@ import { View, StyleSheet } from "react-native";
 import { Text } from "@components/ui/Text";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, typography } from "@theme";
-import type { Resort } from "@types/resort";
+import type { Resort } from "@/types/resort";
 
 interface StatsGridProps {
   resort: Resort;

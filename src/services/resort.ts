@@ -1,5 +1,5 @@
 import { resorts } from "@data/resorts";
-import type { Resort } from "@types/resort";
+import type { Resort } from "@/types/resort";
 
 /**
  * Get all resorts.

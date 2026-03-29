@@ -1,11 +1,11 @@
 import { View, StyleSheet, Pressable, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
+import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
 
 const REGIONS = [
@@ -25,71 +25,66 @@ export default function RegionScreen() {
     setRegions(regions.includes(id) ? regions.filter((r) => r !== id) : [...regions, id]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={[styles.content, { paddingHorizontal: hPadding }, isTablet && styles.tabletCenter]}>
-        <ProgressIndicator current={3} total={5} />
+    <QuizLayout scrollable>
+      <View style={[styles.inner, { paddingHorizontal: isTablet ? spacing.xl : hPadding }]}>
+        <ProgressIndicator current={3} total={5} showLabel />
 
         <View style={styles.header}>
           <Text variant="h2">Where do you want to ski?</Text>
           <Text variant="body" color={colors.text.secondary}>Select one or more regions</Text>
         </View>
 
-        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-          {/* Select all */}
-          <Pressable
-            style={[styles.selectAll, allSelected && styles.selectAllActive]}
-            onPress={() => setRegions(allSelected ? [] : REGIONS.map((r) => r.id))}
-            accessibilityRole="checkbox"
-            accessibilityState={{ checked: allSelected }}
-          >
-            <Text variant="bodySmall" color={allSelected ? colors.primary : colors.text.secondary}
-              style={allSelected ? styles.selectAllActiveText : undefined}>
-              {allSelected ? "✓ All regions selected" : "Select all regions"}
-            </Text>
-          </Pressable>
+        {/* Select all toggle */}
+        <Pressable
+          style={[styles.selectAll, allSelected && styles.selectAllActive]}
+          onPress={() => setRegions(allSelected ? [] : REGIONS.map((r) => r.id))}
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: allSelected }}
+        >
+          <Text variant="bodySmall" color={allSelected ? colors.primary : colors.text.secondary}
+            style={allSelected ? styles.selectAllActiveText : undefined}>
+            {allSelected ? "✓ All regions selected" : "Select all regions"}
+          </Text>
+        </Pressable>
 
-          {/* Region grid — 2 cols on tablet */}
-          <View style={[styles.optionGrid, isTablet && styles.optionGridTablet]}>
-            {REGIONS.map((region) => {
-              const selected = regions.includes(region.id);
-              return (
-                <Pressable
-                  key={region.id}
-                  style={[styles.option, selected && styles.optionSelected, isTablet && styles.optionTablet]}
-                  onPress={() => toggle(region.id)}
-                  accessibilityRole="checkbox"
-                  accessibilityState={{ checked: selected }}
-                  accessibilityLabel={`${region.name}, ${region.resorts} resorts`}
-                >
-                  <Text style={styles.optionFlag}>{region.flag}</Text>
-                  <View style={styles.optionText}>
-                    <Text variant="h4" color={selected ? colors.primary : colors.text.primary}>{region.name}</Text>
-                    <Text variant="caption" color={colors.text.tertiary}>{region.resorts} resorts</Text>
-                  </View>
-                  <View style={[styles.checkbox, selected && styles.checkboxSelected]}>
-                    {selected ? <Text style={styles.checkmark}>✓</Text> : null}
-                  </View>
-                </Pressable>
-              );
-            })}
-          </View>
-        </ScrollView>
+        {/* Region list — 2 cols on tablet */}
+        <View style={[styles.grid, isTablet && styles.gridTablet]}>
+          {REGIONS.map((region) => {
+            const selected = regions.includes(region.id);
+            return (
+              <Pressable
+                key={region.id}
+                style={[styles.option, selected && styles.optionActive, isTablet && styles.optionTablet]}
+                onPress={() => toggle(region.id)}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: selected }}
+                accessibilityLabel={`${region.name}, ${region.resorts} resorts`}
+              >
+                <Text style={styles.flag}>{region.flag}</Text>
+                <View style={styles.optionText}>
+                  <Text variant="h4" color={selected ? colors.primary : colors.text.primary}>{region.name}</Text>
+                  <Text variant="caption" color={colors.text.tertiary}>{region.resorts} resorts</Text>
+                </View>
+                <View style={[styles.checkbox, selected && styles.checkboxActive]}>
+                  {selected ? <Text style={styles.check}>✓</Text> : null}
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
 
         <View style={styles.footer}>
-          <Button label="Back" variant="secondary" onPress={() => router.back()} style={styles.backBtn} />
-          <Button label="Next" onPress={() => regions.length > 0 && router.push("/(onboarding)/vibes")} disabled={regions.length === 0} style={styles.nextBtn} size="lg" />
+          <Button label="← Back" variant="ghost" onPress={() => router.back()} style={styles.backBtn} />
+          <Button label="Next →" onPress={() => regions.length > 0 && router.push("/(onboarding)/vibes")} disabled={regions.length === 0} style={styles.nextBtn} size="lg" />
         </View>
       </View>
-    </SafeAreaView>
+    </QuizLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background.primary },
-  tabletCenter: { maxWidth: 680, alignSelf: "center" as const, width: "100%" },
-  content: { flex: 1, paddingVertical: spacing.md },
-  header: { marginTop: spacing.xl, marginBottom: spacing.lg, gap: spacing.xs },
-  scroll: { flex: 1 },
+  inner: { paddingVertical: spacing.md },
+  header: { marginTop: spacing.md, marginBottom: spacing.md, gap: spacing.xs },
   selectAll: {
     padding: spacing.md,
     borderRadius: radius.md,
@@ -101,8 +96,8 @@ const styles = StyleSheet.create({
   },
   selectAllActive: { borderColor: colors.primary, backgroundColor: colors.primarySubtle, borderStyle: "solid" },
   selectAllActiveText: { fontWeight: "600" },
-  optionGrid: { gap: spacing.sm },
-  optionGridTablet: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
+  grid: { gap: spacing.sm },
+  gridTablet: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
   option: {
     flexDirection: "row",
     alignItems: "center",
@@ -114,8 +109,8 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   optionTablet: { width: "47%" },
-  optionSelected: { borderColor: colors.primary, backgroundColor: colors.primarySubtle },
-  optionFlag: { fontSize: 28 },
+  optionActive: { borderColor: colors.primary, backgroundColor: colors.primarySubtle },
+  flag: { fontSize: 28 },
   optionText: { flex: 1 },
   checkbox: {
     width: 24, height: 24,
@@ -125,9 +120,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  checkboxSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
-  checkmark: { color: colors.text.inverse, fontSize: 14, fontWeight: "bold" },
-  footer: { flexDirection: "row", gap: spacing.md, paddingTop: spacing.md },
+  checkboxActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  check: { color: colors.text.inverse, fontSize: 13, fontWeight: "bold" },
+  footer: { flexDirection: "row", gap: spacing.sm, paddingTop: spacing.lg, paddingBottom: spacing.sm },
   backBtn: { flex: 1 },
   nextBtn: { flex: 2 },
 });

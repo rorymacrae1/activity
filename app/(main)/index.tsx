@@ -11,7 +11,7 @@ import { LoadingState } from "@components/ui/LoadingState";
 import { EmptyState } from "@components/ui/EmptyState";
 import { ScreenContainer } from "@components/ui/ScreenContainer";
 import { ResortCard } from "@components/resort/ResortCard";
-import type { RecommendationResult } from "@types/recommendation";
+import type { RecommendationResult } from "@/types/recommendation";
 
 export default function DiscoverScreen() {
   const [results, setResults] = useState<RecommendationResult[]>([]);

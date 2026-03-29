@@ -1,8 +1,9 @@
 import {
   View,
   StyleSheet,
-  useWindowDimensions,
+  LayoutChangeEvent,
 } from "react-native";
+import { useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -22,10 +23,11 @@ interface SliderProps {
 }
 
 const THUMB_SIZE = 28;
-const HORIZONTAL_PADDING = 32; // left+right screen padding from parent
 
 /**
  * Custom slider component for value selection.
+ * Uses onLayout to measure actual container width so it respects any
+ * maxWidth constraint (e.g. the tablet QuizLayout card).
  */
 export function Slider({
   value,
@@ -36,8 +38,8 @@ export function Slider({
   accessibilityLabel = "Slider",
   accessibilityHint,
 }: SliderProps) {
-  const { width: screenWidth } = useWindowDimensions();
-  const trackWidth = screenWidth - HORIZONTAL_PADDING * 2 - THUMB_SIZE;
+  const [containerWidth, setContainerWidth] = useState(0);
+  const trackWidth = Math.max(0, containerWidth - THUMB_SIZE);
 
   const range = maximumValue - minimumValue;
   const normalizedValue = (value - minimumValue) / range;
@@ -46,6 +48,12 @@ export function Slider({
   const snapToStep = (rawValue: number): number => {
     const stepped = Math.round(rawValue / step) * step;
     return Math.max(minimumValue, Math.min(maximumValue, stepped));
+  };
+
+  const handleLayout = (e: LayoutChangeEvent) => {
+    const w = e.nativeEvent.layout.width;
+    setContainerWidth(w);
+    thumbX.value = ((value - minimumValue) / range) * Math.max(0, w - THUMB_SIZE);
   };
 
   const panGesture = Gesture.Pan()
@@ -75,7 +83,8 @@ export function Slider({
   return (
     <GestureDetector gesture={panGesture}>
       <View
-        style={[styles.container, { width: trackWidth + THUMB_SIZE }]}
+        style={styles.container}
+        onLayout={handleLayout}
         accessible
         accessibilityRole="adjustable"
         accessibilityLabel={accessibilityLabel}
@@ -98,8 +107,8 @@ export function Slider({
 const styles = StyleSheet.create({
   container: {
     height: 40,
+    width: "100%",
     justifyContent: "center",
-    alignSelf: "center",
   },
   track: {
     height: 6,

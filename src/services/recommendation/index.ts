@@ -1,11 +1,11 @@
 import { getResortsByRegion } from "../resort";
 import { calculateScores } from "./scorer";
 import { generateExplanations } from "./explainer";
-import type { Preferences, NormalizedPreferences } from "@types/preferences";
+import type { Preferences, NormalizedPreferences } from "@/types/preferences";
 import type {
   RecommendationResult,
   AttributeScores,
-} from "@types/recommendation";
+} from "@/types/recommendation";
 
 /**
  * Normalize user preferences to 0-1 scale for scoring.

@@ -4,7 +4,7 @@ import { Text } from "@components/ui/Text";
 import { Badge } from "@components/ui/Badge";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, typography } from "@theme";
-import type { RecommendationResult } from "@types/recommendation";
+import type { RecommendationResult } from "@/types/recommendation";
 
 interface ResortCardProps {
   result: RecommendationResult;

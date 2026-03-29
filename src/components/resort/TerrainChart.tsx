@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { colors } from "@theme/colors";
 import { typography } from "@theme/typography";
 import { spacing } from "@theme/spacing";
-import type { TerrainDistribution } from "@types/resort";
+import type { TerrainDistribution } from "@/types/resort";
 
 interface TerrainChartProps {
   terrain: TerrainDistribution;
