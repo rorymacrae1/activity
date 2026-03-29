@@ -21,15 +21,23 @@ export default function ResultsScreen() {
   useEffect(() => {
     // Get preferences snapshot once on mount (not as a reactive selector)
     const preferences = usePreferencesStore.getState().getPreferencesInput();
-    const setHasCompletedOnboarding = usePreferencesStore.getState().setHasCompletedOnboarding;
+    const setHasCompletedOnboarding =
+      usePreferencesStore.getState().setHasCompletedOnboarding;
     getRecommendations(preferences)
-      .then((r) => { setResults(r); setHasCompletedOnboarding(true); })
+      .then((r) => {
+        setResults(r);
+        setHasCompletedOnboarding(true);
+      })
       .catch(() => setResults([]))
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
-    return <ScreenContainer><LoadingState icon="��" message="Finding your perfect resorts..." /></ScreenContainer>;
+    return (
+      <ScreenContainer>
+        <LoadingState icon="��" message="Finding your perfect resorts..." />
+      </ScreenContainer>
+    );
   }
 
   return (
@@ -43,34 +51,65 @@ export default function ResultsScreen() {
         ListHeaderComponent={
           <View style={[styles.header, { paddingHorizontal: hPadding }]}>
             <Text variant="h1">Your Top Matches</Text>
-            <Text variant="body" color={colors.text.secondary}>Based on your preferences</Text>
+            <Text variant="body" color={colors.text.secondary}>
+              Based on your preferences
+            </Text>
           </View>
         }
         renderItem={({ item, index }) => (
           <View style={numColumns > 1 ? styles.colItem : styles.singleItem}>
-            <ResortCard result={item} rank={index + 1} onPress={() => router.push(`/(main)/resort/${item.resort.id}`)} />
+            <ResortCard
+              result={item}
+              rank={index + 1}
+              onPress={() => router.push(`/(main)/resort/${item.resort.id}`)}
+            />
           </View>
         )}
         contentContainerStyle={[styles.list, { paddingHorizontal: hPadding }]}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
-          <EmptyState icon="🤔" title="No matches found" message="Try adjusting your preferences."
-            action={{ label: "Retake Quiz", onPress: () => router.replace("/(onboarding)") }} />
+          <EmptyState
+            icon="🤔"
+            title="No matches found"
+            message="Try adjusting your preferences."
+            action={{
+              label: "Retake Quiz",
+              onPress: () => router.replace("/(onboarding)"),
+            }}
+          />
         }
       />
       <View style={[styles.footer, { paddingHorizontal: hPadding }]}>
-        <Button label="Continue to App" onPress={() => router.replace("/(main)")} fullWidth />
-        <Button label="Retake Quiz" variant="ghost" onPress={() => router.replace("/(onboarding)")} fullWidth />
+        <Button
+          label="Continue to App"
+          onPress={() => router.replace("/(main)")}
+          fullWidth
+        />
+        <Button
+          label="Retake Quiz"
+          variant="ghost"
+          onPress={() => router.replace("/(onboarding)")}
+          fullWidth
+        />
       </View>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  header: { paddingTop: spacing.lg, paddingBottom: spacing.md, gap: spacing.xxs },
+  header: {
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
+    gap: spacing.xxs,
+  },
   list: { paddingBottom: spacing.md, gap: spacing.md },
   cols: { gap: spacing.md },
   colItem: { flex: 1 },
   singleItem: { flex: 1 },
-  footer: { paddingVertical: spacing.md, borderTopWidth: 1, borderTopColor: colors.border, gap: spacing.sm },
+  footer: {
+    paddingVertical: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    gap: spacing.sm,
+  },
 });

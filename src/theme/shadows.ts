@@ -6,18 +6,24 @@ import { Platform, type ViewStyle } from "react-native";
 
 type ShadowStyle = Pick<
   ViewStyle,
-  "shadowColor" | "shadowOffset" | "shadowOpacity" | "shadowRadius" | "elevation"
+  | "shadowColor"
+  | "shadowOffset"
+  | "shadowOpacity"
+  | "shadowRadius"
+  | "elevation"
 > & { boxShadow?: string };
 
 const makeShadow = (
   elevation: number,
   opacity: number,
   radius: number,
-  offsetY: number
+  offsetY: number,
 ): ShadowStyle => {
   // Web uses boxShadow; native uses shadow* props
   if (Platform.OS === "web") {
-    const alpha = Math.round(opacity * 255).toString(16).padStart(2, "0");
+    const alpha = Math.round(opacity * 255)
+      .toString(16)
+      .padStart(2, "0");
     return {
       boxShadow: `0px ${offsetY}px ${radius}px rgba(0, 0, 0, ${opacity})`,
     };
@@ -34,7 +40,7 @@ const makeShadow = (
 export const shadows = {
   none: {} as ShadowStyle,
   sm: makeShadow(2, 0.06, 4, 1),
-  md: makeShadow(4, 0.10, 8, 2),
+  md: makeShadow(4, 0.1, 8, 2),
   lg: makeShadow(8, 0.14, 16, 4),
   xl: makeShadow(12, 0.18, 24, 6),
 } as const;
