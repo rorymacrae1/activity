@@ -14,10 +14,10 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { getResortById } from "@/services/resort";
-import { colors } from "@/theme/colors";
-import { typography } from "@/theme/typography";
-import { spacing } from "@/theme/spacing";
+import { getResortById } from "@services/resort";
+import { colors } from "@theme/colors";
+import { typography } from "@theme/typography";
+import { spacing } from "@theme/spacing";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 

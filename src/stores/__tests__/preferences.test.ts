@@ -1,5 +1,5 @@
 import { act } from "react";
-import { usePreferencesStore } from "@/stores/preferences";
+import { usePreferencesStore } from "@stores/preferences";
 
 const initialState = {
   hasCompletedOnboarding: false,

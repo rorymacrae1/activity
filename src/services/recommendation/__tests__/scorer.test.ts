@@ -1,6 +1,6 @@
 import { calculateScores } from "../scorer";
-import type { Resort } from "@/types/resort";
-import type { NormalizedPreferences } from "@/types/preferences";
+import type { Resort } from "@types/resort";
+import type { NormalizedPreferences } from "@types/preferences";
 
 const makeResort = (overrides: Partial<Resort["attributes"] & Resort["terrain"]> = {}): Resort => ({
   id: "test-resort",

@@ -9,7 +9,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { colors } from "@/theme/colors";
+import { colors } from "@theme/colors";
 
 interface SliderProps {
   value: number;

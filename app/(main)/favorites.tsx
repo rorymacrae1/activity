@@ -1,14 +1,14 @@
 import { View, StyleSheet, FlatList } from "react-native";
 import { router } from "expo-router";
-import { useFavoritesStore } from "@/stores/favorites";
-import { getResortById } from "@/services/resort";
-import { useLayout } from "@/hooks/useLayout";
-import { spacing } from "@/theme";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { SectionHeader } from "@/components/ui/SectionHeader";
-import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { ResortCard } from "@/components/resort/ResortCard";
-import type { AttributeScores } from "@/types/recommendation";
+import { useFavoritesStore } from "@stores/favorites";
+import { getResortById } from "@services/resort";
+import { useLayout } from "@hooks/useLayout";
+import { spacing } from "@theme";
+import { EmptyState } from "@components/ui/EmptyState";
+import { SectionHeader } from "@components/ui/SectionHeader";
+import { ScreenContainer } from "@components/ui/ScreenContainer";
+import { ResortCard } from "@components/resort/ResortCard";
+import type { AttributeScores } from "@types/recommendation";
 
 const EMPTY_ATTRIBUTE_SCORES: AttributeScores = {
   skill: 0, budget: 0, vibe: 0, activity: 0, snow: 0,

@@ -1,6 +1,6 @@
 import { Text as RNText, type TextProps as RNTextProps } from "react-native";
-import { typography, colors } from "@/theme";
-import type { TypographyVariant } from "@/theme";
+import { typography, colors } from "@theme";
+import type { TypographyVariant } from "@theme";
 
 interface TextProps extends RNTextProps {
   variant?: TypographyVariant;

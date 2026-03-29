@@ -1,13 +1,13 @@
 import { View, StyleSheet, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { usePreferencesStore } from "@/stores/preferences";
-import { useLayout } from "@/hooks/useLayout";
-import { colors, spacing, radius } from "@/theme";
-import { Text } from "@/components/ui/Text";
-import { Button } from "@/components/ui/Button";
-import { ProgressIndicator } from "@/components/onboarding/ProgressIndicator";
-import type { BudgetLevel } from "@/types/preferences";
+import { usePreferencesStore } from "@stores/preferences";
+import { useLayout } from "@hooks/useLayout";
+import { colors, spacing, radius } from "@theme";
+import { Text } from "@components/ui/Text";
+import { Button } from "@components/ui/Button";
+import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
+import type { BudgetLevel } from "@types/preferences";
 
 const BUDGET_OPTIONS: Array<{ level: BudgetLevel; title: string; range: string; description: string }> = [
   { level: "budget",  title: "Budget",    range: "€80-120/day",  description: "Affordable resorts, good value" },

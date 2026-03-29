@@ -1,4 +1,4 @@
-import type { Resort } from "@/types/resort";
+import type { Resort } from "@types/resort";
 
 /**
  * Sample resort data for MVP.

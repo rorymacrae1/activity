@@ -1,6 +1,6 @@
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { Text } from "./Text";
-import { colors, spacing } from "@/theme";
+import { colors, spacing } from "@theme";
 
 interface LoadingStateProps {
   message?: string;

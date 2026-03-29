@@ -1,17 +1,17 @@
 import { useLocalSearchParams, router } from "expo-router";
 import { View, StyleSheet, ScrollView, Pressable, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getResortById } from "@/services/resort";
-import { useFavoritesStore } from "@/stores/favorites";
-import { useLayout } from "@/hooks/useLayout";
-import { colors, spacing, radius } from "@/theme";
-import { Text } from "@/components/ui/Text";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import { Card } from "@/components/ui/Card";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { TerrainChart } from "@/components/resort/TerrainChart";
-import { ResortInfoGrid } from "@/components/resort/ResortInfoGrid";
+import { getResortById } from "@services/resort";
+import { useFavoritesStore } from "@stores/favorites";
+import { useLayout } from "@hooks/useLayout";
+import { colors, spacing, radius } from "@theme";
+import { Text } from "@components/ui/Text";
+import { Button } from "@components/ui/Button";
+import { Badge } from "@components/ui/Badge";
+import { Card } from "@components/ui/Card";
+import { EmptyState } from "@components/ui/EmptyState";
+import { TerrainChart } from "@components/resort/TerrainChart";
+import { ResortInfoGrid } from "@components/resort/ResortInfoGrid";
 
 export default function ResortDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();

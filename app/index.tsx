@@ -1,5 +1,5 @@
 import { Redirect } from "expo-router";
-import { usePreferencesStore } from "@/stores/preferences";
+import { usePreferencesStore } from "@stores/preferences";
 
 /**
  * Entry point - redirects to onboarding or main based on completion status.

@@ -1,9 +1,9 @@
 import { View, StyleSheet } from "react-native";
-import { Text } from "@/components/ui/Text";
-import { Badge } from "@/components/ui/Badge";
-import { useLayout } from "@/hooks/useLayout";
-import { colors, spacing, radius } from "@/theme";
-import type { Resort } from "@/types/resort";
+import { Text } from "@components/ui/Text";
+import { Badge } from "@components/ui/Badge";
+import { useLayout } from "@hooks/useLayout";
+import { colors, spacing, radius } from "@theme";
+import type { Resort } from "@types/resort";
 
 interface ResortInfoGridProps {
   resort: Resort;

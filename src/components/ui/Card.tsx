@@ -6,7 +6,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { colors, radius, shadows } from "@/theme";
+import { colors, radius, shadows } from "@theme";
 
 type CardElevation = "none" | "sm" | "md" | "lg";
 

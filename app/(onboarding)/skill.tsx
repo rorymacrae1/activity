@@ -1,13 +1,13 @@
 import { View, StyleSheet, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { usePreferencesStore } from "@/stores/preferences";
-import { useLayout } from "@/hooks/useLayout";
-import { colors, spacing, radius } from "@/theme";
-import { Text } from "@/components/ui/Text";
-import { Button } from "@/components/ui/Button";
-import { ProgressIndicator } from "@/components/onboarding/ProgressIndicator";
-import type { SkillLevel } from "@/types/preferences";
+import { usePreferencesStore } from "@stores/preferences";
+import { useLayout } from "@hooks/useLayout";
+import { colors, spacing, radius } from "@theme";
+import { Text } from "@components/ui/Text";
+import { Button } from "@components/ui/Button";
+import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
+import type { SkillLevel } from "@types/preferences";
 
 const SKILL_OPTIONS: Array<{ level: SkillLevel; title: string; description: string; icon: string }> = [
   { level: "beginner",     title: "Beginner",     description: "Learning the basics, comfortable on green runs", icon: "🟢" },

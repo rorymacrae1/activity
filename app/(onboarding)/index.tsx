@@ -1,11 +1,11 @@
 import { View, StyleSheet } from "react-native";
 import { router } from "expo-router";
-import { useLayout } from "@/hooks/useLayout";
-import { colors, spacing } from "@/theme";
-import { Text } from "@/components/ui/Text";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { useLayout } from "@hooks/useLayout";
+import { colors, spacing } from "@theme";
+import { Text } from "@components/ui/Text";
+import { Button } from "@components/ui/Button";
+import { Card } from "@components/ui/Card";
+import { ScreenContainer } from "@components/ui/ScreenContainer";
 
 const VALUE_PROPS = [
   { icon: "🎯", text: "Personalised recommendations based on your skill and style" },

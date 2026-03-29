@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { router } from "expo-router";
-import { usePreferencesStore } from "@/stores/preferences";
-import { getRecommendations } from "@/services/recommendation";
-import { useLayout } from "@/hooks/useLayout";
-import { colors, spacing } from "@/theme";
-import { Text } from "@/components/ui/Text";
-import { Button } from "@/components/ui/Button";
-import { LoadingState } from "@/components/ui/LoadingState";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { ScreenContainer } from "@/components/ui/ScreenContainer";
-import { ResortCard } from "@/components/resort/ResortCard";
-import type { RecommendationResult } from "@/types/recommendation";
+import { usePreferencesStore } from "@stores/preferences";
+import { getRecommendations } from "@services/recommendation";
+import { useLayout } from "@hooks/useLayout";
+import { colors, spacing } from "@theme";
+import { Text } from "@components/ui/Text";
+import { Button } from "@components/ui/Button";
+import { LoadingState } from "@components/ui/LoadingState";
+import { EmptyState } from "@components/ui/EmptyState";
+import { ScreenContainer } from "@components/ui/ScreenContainer";
+import { ResortCard } from "@components/resort/ResortCard";
+import type { RecommendationResult } from "@types/recommendation";
 
 export default function ResultsScreen() {
   const [results, setResults] = useState<RecommendationResult[]>([]);

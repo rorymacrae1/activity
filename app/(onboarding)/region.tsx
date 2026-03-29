@@ -1,12 +1,12 @@
 import { View, StyleSheet, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { usePreferencesStore } from "@/stores/preferences";
-import { useLayout } from "@/hooks/useLayout";
-import { colors, spacing, radius } from "@/theme";
-import { Text } from "@/components/ui/Text";
-import { Button } from "@/components/ui/Button";
-import { ProgressIndicator } from "@/components/onboarding/ProgressIndicator";
+import { usePreferencesStore } from "@stores/preferences";
+import { useLayout } from "@hooks/useLayout";
+import { colors, spacing, radius } from "@theme";
+import { Text } from "@components/ui/Text";
+import { Button } from "@components/ui/Button";
+import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
 
 const REGIONS = [
   { id: "france-alps",   name: "French Alps",     flag: "🇫🇷", resorts: 8 },

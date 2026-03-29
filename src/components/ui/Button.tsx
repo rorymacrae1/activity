@@ -7,7 +7,7 @@ import {
   type PressableProps,
   type ViewStyle,
 } from "react-native";
-import { colors, typography, spacing, radius } from "@/theme";
+import { colors, typography, spacing, radius } from "@theme";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";

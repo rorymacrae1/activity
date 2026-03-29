@@ -1,7 +1,7 @@
 import { View, StyleSheet, type ViewStyle } from "react-native";
 import { SafeAreaView, type Edge } from "react-native-safe-area-context";
-import { useLayout } from "@/hooks/useLayout";
-import { colors } from "@/theme";
+import { useLayout } from "@hooks/useLayout";
+import { colors } from "@theme";
 
 interface ScreenContainerProps {
   children: React.ReactNode;

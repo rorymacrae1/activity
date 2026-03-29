@@ -1,5 +1,5 @@
 import { act } from "react";
-import { useFavoritesStore } from "@/stores/favorites";
+import { useFavoritesStore } from "@stores/favorites";
 
 beforeEach(() => {
   act(() => useFavoritesStore.setState({ favoriteIds: [] }));

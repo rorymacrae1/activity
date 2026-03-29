@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { zustandStorage } from "@/lib/storage";
+import { zustandStorage } from "@lib/storage";
 
 interface FavoritesState {
   // List of favorited resort IDs

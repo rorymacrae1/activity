@@ -1,6 +1,6 @@
 import { View, StyleSheet } from "react-native";
-import { colors } from "@/theme/colors";
-import { spacing } from "@/theme/spacing";
+import { colors } from "@theme/colors";
+import { spacing } from "@theme/spacing";
 
 interface ProgressIndicatorProps {
   current: number;

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { SkillLevel, BudgetLevel, Preferences } from "@/types/preferences";
-import { zustandStorage } from "@/lib/storage";
+import type { SkillLevel, BudgetLevel, Preferences } from "@types/preferences";
+import { zustandStorage } from "@lib/storage";
 
 interface PreferencesState {
   // Quiz completion status

@@ -1,13 +1,13 @@
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { usePreferencesStore } from "@/stores/preferences";
-import { useLayout } from "@/hooks/useLayout";
-import { colors, spacing } from "@/theme";
-import { Text } from "@/components/ui/Text";
-import { Button } from "@/components/ui/Button";
-import { ProgressIndicator } from "@/components/onboarding/ProgressIndicator";
-import { Slider } from "@/components/ui/Slider";
+import { usePreferencesStore } from "@stores/preferences";
+import { useLayout } from "@hooks/useLayout";
+import { colors, spacing } from "@theme";
+import { Text } from "@components/ui/Text";
+import { Button } from "@components/ui/Button";
+import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
+import { Slider } from "@components/ui/Slider";
 
 export default function VibesScreen() {
   const {

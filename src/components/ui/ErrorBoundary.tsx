@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import type { ErrorInfo, ReactNode } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { colors } from "@/theme/colors";
-import { typography } from "@/theme/typography";
-import { spacing } from "@/theme/spacing";
+import { colors } from "@theme/colors";
+import { typography } from "@theme/typography";
+import { spacing } from "@theme/spacing";
 
 interface ErrorBoundaryProps {
   children: ReactNode;

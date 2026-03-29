@@ -1,5 +1,5 @@
 import { useWindowDimensions } from "react-native";
-import { breakpoints, maxContentWidth, screenPadding } from "@/theme/layout";
+import { breakpoints, maxContentWidth, screenPadding } from "@theme/layout";
 
 export interface LayoutInfo {
   /** Current screen width in logical pixels */

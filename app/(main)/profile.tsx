@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { View, StyleSheet, ScrollView, Alert } from "react-native";
 import { router } from "expo-router";
-import { usePreferencesStore } from "@/stores/preferences";
-import { useFavoritesStore } from "@/stores/favorites";
-import { useLayout } from "@/hooks/useLayout";
-import { colors, spacing, radius } from "@/theme";
-import { Text } from "@/components/ui/Text";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { SectionHeader } from "@/components/ui/SectionHeader";
-import { LoadingState } from "@/components/ui/LoadingState";
-import { ScreenContainer } from "@/components/ui/ScreenContainer";
+import { usePreferencesStore } from "@stores/preferences";
+import { useFavoritesStore } from "@stores/favorites";
+import { useLayout } from "@hooks/useLayout";
+import { colors, spacing, radius } from "@theme";
+import { Text } from "@components/ui/Text";
+import { Button } from "@components/ui/Button";
+import { Card } from "@components/ui/Card";
+import { SectionHeader } from "@components/ui/SectionHeader";
+import { LoadingState } from "@components/ui/LoadingState";
+import { ScreenContainer } from "@components/ui/ScreenContainer";
 
 export default function ProfileScreen() {
   const [isResetting, setIsResetting] = useState(false);
