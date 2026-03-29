@@ -16,16 +16,16 @@ import type { RecommendationResult } from "@/types/recommendation";
 export default function ResultsScreen() {
   const [results, setResults] = useState<RecommendationResult[]>([]);
   const [loading, setLoading] = useState(true);
-  const preferences = usePreferencesStore((s) => s.getPreferencesInput());
-  const setHasCompletedOnboarding = usePreferencesStore((s) => s.setHasCompletedOnboarding);
   const { numColumns, hPadding } = useLayout();
 
   useEffect(() => {
+    // Get preferences snapshot once on mount (not as a reactive selector)
+    const preferences = usePreferencesStore.getState().getPreferencesInput();
+    const setHasCompletedOnboarding = usePreferencesStore.getState().setHasCompletedOnboarding;
     getRecommendations(preferences)
       .then((r) => { setResults(r); setHasCompletedOnboarding(true); })
       .catch(() => setResults([]))
       .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
