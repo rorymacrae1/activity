@@ -16,10 +16,10 @@ export default function TripTypeScreen() {
   const content = useContent();
 
   const OPTIONS: Array<{ value: TripType; icon: string }> = [
-    { value: "solo", icon: "" },
-    { value: "couple", icon: "" },
-    { value: "family", icon: "" },
-    { value: "friends", icon: "" },
+    { value: "solo", icon: "🧑" },
+    { value: "couple", icon: "💑" },
+    { value: "family", icon: "👨‍👩‍👧" },
+    { value: "friends", icon: "👥" },
   ];
 
   return (

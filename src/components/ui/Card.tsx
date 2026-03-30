@@ -2,11 +2,19 @@ import {
   Pressable,
   View,
   StyleSheet,
+  Platform,
   type PressableProps,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { colors, radius, shadows } from "@theme";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+import { colors, radius, shadows, webStyles, animation } from "@theme";
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 type CardElevation = "none" | "sm" | "md" | "lg";
 
@@ -21,7 +29,7 @@ interface CardProps {
 
 /**
  * Base card surface — white background, rounded corners, shadow.
- * Use as a wrapper for resort cards, stat blocks, etc.
+ * Includes animated press feedback and web hover states.
  *
  * @example
  * <Card elevation="md" onPress={() => router.push(...)}>
@@ -37,23 +45,39 @@ export function Card({
   noPadding = false,
 }: CardProps) {
   const shadowStyle = elevation === "none" ? {} : shadows[elevation];
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.98, animation.spring.snappy);
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, animation.spring.snappy);
+  };
 
   if (onPress) {
     return (
-      <Pressable
+      <AnimatedPressable
         onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
         accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
-        style={({ pressed }) => [
+        style={[
           styles.base,
           shadowStyle,
           !noPadding && styles.padding,
-          pressed && styles.pressed,
+          Platform.OS === "web" && styles.webInteractive,
+          animatedStyle,
           style,
         ]}
       >
         {children}
-      </Pressable>
+      </AnimatedPressable>
     );
   }
 
@@ -73,7 +97,8 @@ const styles = StyleSheet.create({
   padding: {
     padding: 16,
   },
-  pressed: {
-    opacity: 0.92,
+  webInteractive: {
+    ...webStyles.clickable,
+    ...webStyles.interactive,
   },
 });

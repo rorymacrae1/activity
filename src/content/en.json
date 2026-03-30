@@ -32,28 +32,30 @@
       "back": "Back"
     },
     "budget": {
-      "title": "What's your budget?",
-      "subtitle": "Including lift pass, food, and rental",
+      "title": "How do you like to ski?",
+      "subtitle": "Daily spend per person — lifts, food, gear",
+      "hint": "You can change this anytime",
       "options": {
         "budget": {
-          "title": "Budget",
+          "title": "Value Explorer",
           "range": "€80–120/day",
-          "description": "Affordable, great value"
+          "description": "Great skiing without the premium price tag"
         },
         "mid": {
-          "title": "Mid-Range",
+          "title": "Sweet Spot",
           "range": "€120–180/day",
-          "description": "Balance of quality & price"
+          "description": "Quality gear, good food, top terrain",
+          "badge": "Most popular"
         },
         "premium": {
-          "title": "Premium",
+          "title": "Full Experience",
           "range": "€180–280/day",
-          "description": "High-quality experience"
+          "description": "Priority everything, zero compromise"
         },
         "luxury": {
-          "title": "Luxury",
+          "title": "No Limits",
           "range": "€280+/day",
-          "description": "Top-tier everything"
+          "description": "Exclusive access, five-star dining"
         }
       },
       "back": "Back",

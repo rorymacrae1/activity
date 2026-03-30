@@ -32,28 +32,30 @@
       "back": "Retour"
     },
     "budget": {
-      "title": "Quel est votre budget ?",
-      "subtitle": "Forfait remontées, repas et location inclus",
+      "title": "Comment aimez-vous skier ?",
+      "subtitle": "Dépense quotidienne par personne — forfait, repas, équipement",
+      "hint": "Vous pouvez modifier cela à tout moment",
       "options": {
         "budget": {
-          "title": "Économique",
+          "title": "Explorateur Malin",
           "range": "€80–120/jour",
-          "description": "Abordable, excellent rapport qualité-prix"
+          "description": "Du bon ski sans le prix premium"
         },
         "mid": {
-          "title": "Milieu de gamme",
+          "title": "Le Bon Choix",
           "range": "€120–180/jour",
-          "description": "Équilibre qualité & prix"
+          "description": "Bon équipement, bonne table, bons domaines",
+          "badge": "Le plus populaire"
         },
         "premium": {
-          "title": "Premium",
+          "title": "Expérience Totale",
           "range": "€180–280/jour",
-          "description": "Expérience haut de gamme"
+          "description": "Priorité partout, zéro compromis"
         },
         "luxury": {
-          "title": "Luxe",
+          "title": "Sans Limites",
           "range": "€280+/jour",
-          "description": "Le meilleur de tout"
+          "description": "Accès exclusifs, gastronomie cinq étoiles"
         }
       },
       "back": "Retour",

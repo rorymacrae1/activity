@@ -16,5 +16,8 @@ export type { Shadows, ShadowVariant } from "./shadows";
 export { animation } from "./animation";
 export type { Animation } from "./animation";
 
+export { interaction, webStyles } from "./interaction";
+export type { Interaction } from "./interaction";
+
 export { breakpoints, maxContentWidth, screenPadding } from "./layout";
 export type { Breakpoints } from "./layout";
