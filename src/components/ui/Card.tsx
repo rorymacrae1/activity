@@ -12,39 +12,112 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { colors, radius, shadows, webStyles, animation } from "@theme";
+import {
+  colors,
+  radius,
+  shadows,
+  spacing,
+  webStyles,
+  animation,
+  interaction,
+} from "@theme";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-type CardElevation = "none" | "sm" | "md" | "lg";
+/**
+ * Card elevation presets — semantic naming
+ *
+ * - flat: No shadow, subtle border (data tables, nested cards)
+ * - subtle: Minimal lift (secondary content)
+ * - standard: Default card elevation
+ * - elevated: Prominent cards (featured content)
+ * - floating: High prominence (modals, popovers)
+ */
+type CardElevation = "flat" | "subtle" | "standard" | "elevated" | "floating";
+
+/**
+ * Card padding presets
+ *
+ * - none: No padding (image cards, custom layouts)
+ * - compact: Tight padding (dense lists)
+ * - standard: Default padding
+ * - spacious: Generous padding (featured cards)
+ */
+type CardPadding = "none" | "compact" | "standard" | "spacious";
 
 interface CardProps {
   children: React.ReactNode;
+  /** Shadow/elevation level */
   elevation?: CardElevation;
+  /** Internal padding */
+  padding?: CardPadding;
+  /** Additional styles */
   style?: StyleProp<ViewStyle>;
+  /** Press handler (makes card interactive) */
   onPress?: PressableProps["onPress"];
+  /** Accessibility label for interactive cards */
   accessibilityLabel?: string;
+  /** Show subtle border */
+  bordered?: boolean;
+
+  /** @deprecated Use padding="none" instead */
   noPadding?: boolean;
 }
 
+// === Elevation Mapping ===
+const ELEVATION_MAP: Record<CardElevation, keyof typeof shadows> = {
+  flat: "none",
+  subtle: "soft",
+  standard: "card",
+  elevated: "raised",
+  floating: "floating",
+};
+
+// === Padding Mapping ===
+const PADDING_MAP: Record<CardPadding, number> = {
+  none: 0,
+  compact: spacing.md,
+  standard: spacing.cardPadding,
+  spacious: spacing.cardPaddingLarge,
+};
+
 /**
- * Base card surface — white background, rounded corners, shadow.
- * Includes animated press feedback and web hover states.
+ * Premium card surface with sophisticated shadows and interactions.
+ *
+ * Features:
+ * - Warm-tinted multi-layer shadows
+ * - Smooth press animation
+ * - Web hover effects
+ * - Semantic elevation presets
  *
  * @example
- * <Card elevation="md" onPress={() => router.push(...)}>
- *   <Text variant="h3">{name}</Text>
+ * // Standard card
+ * <Card>
+ *   <Text variant="h3">Resort Name</Text>
+ * </Card>
+ *
+ * // Interactive elevated card
+ * <Card elevation="elevated" onPress={handlePress}>
+ *   <Text variant="h3">Featured Resort</Text>
+ * </Card>
+ *
+ * // Image card with no padding
+ * <Card padding="none" bordered>
+ *   <Image source={...} />
  * </Card>
  */
 export function Card({
   children,
-  elevation = "md",
+  elevation = "standard",
+  padding = "standard",
   style,
   onPress,
   accessibilityLabel,
-  noPadding = false,
+  bordered = false,
+  noPadding = false, // Legacy prop
 }: CardProps) {
-  const shadowStyle = elevation === "none" ? {} : shadows[elevation];
+  const shadowStyle = shadows[ELEVATION_MAP[elevation]];
+  const paddingValue = noPadding ? 0 : PADDING_MAP[padding];
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -52,11 +125,24 @@ export function Card({
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.98, animation.spring.snappy);
+    scale.value = withSpring(
+      interaction.scale.pressed,
+      animation.spring.snappy,
+    );
   };
 
   const handlePressOut = () => {
     scale.value = withSpring(1, animation.spring.snappy);
+  };
+
+  const baseStyle: ViewStyle = {
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.card,
+    padding: paddingValue,
+    ...(bordered && {
+      borderWidth: 1,
+      borderColor: colors.border.subtle,
+    }),
   };
 
   if (onPress) {
@@ -69,8 +155,8 @@ export function Card({
         accessibilityRole="button"
         style={[
           styles.base,
+          baseStyle,
           shadowStyle,
-          !noPadding && styles.padding,
           Platform.OS === "web" && styles.webInteractive,
           animatedStyle,
           style,
@@ -82,25 +168,16 @@ export function Card({
   }
 
   return (
-    <View
-      style={[styles.base, shadowStyle, !noPadding && styles.padding, style]}
-    >
-      {children}
-    </View>
+    <View style={[styles.base, baseStyle, shadowStyle, style]}>{children}</View>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
-    backgroundColor: colors.surface.default,
-    borderRadius: radius.lg,
     overflow: "hidden",
-  },
-  padding: {
-    padding: 16,
   },
   webInteractive: {
     ...webStyles.clickable,
-    ...webStyles.interactive,
+    ...webStyles.hoverLift,
   },
 });

@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   track: {
     height: 6,
-    backgroundColor: colors.border,
+    backgroundColor: colors.border.default,
     borderRadius: 3,
     marginLeft: THUMB_SIZE / 2,
     overflow: "hidden",

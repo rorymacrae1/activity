@@ -68,7 +68,7 @@ export default function ProfileScreen() {
               </Text>
             </View>
           ) : null}
-          <Card elevation="sm" style={styles.prefsCard}>
+          <Card elevation="subtle" style={styles.prefsCard}>
             <PrefRow label={content.profile.skillLevel} value={groupAbilities.length > 0 ? groupAbilities.map(capitalize).join(", ") : content.profile.notSet} />
             <View style={styles.divider} />
             <PrefRow label={content.profile.budget} value={budgetLevel ? capitalize(budgetLevel) : content.profile.notSet} />
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     alignItems: "center",
   },
   langBtnActive: { backgroundColor: colors.primary, borderColor: colors.primary },

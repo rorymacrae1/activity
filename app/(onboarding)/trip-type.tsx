@@ -79,7 +79,7 @@ export default function TripTypeScreen() {
             onPress={() => tripType && router.push("/(onboarding)/skill")}
             disabled={!tripType}
             fullWidth
-            size="lg"
+            size="prominent"
           />
         </View>
       </View>

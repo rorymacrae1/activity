@@ -38,7 +38,7 @@ export default function WelcomeScreen() {
         {/* Value props */}
         <View style={[styles.props, isTablet && styles.propsTablet]}>
           {VALUE_PROPS.map(({ icon, text }) => (
-            <Card key={icon} elevation="sm" style={[styles.prop, isTablet && styles.propTablet]}>
+            <Card key={icon} elevation="subtle" style={[styles.prop, isTablet && styles.propTablet]}>
               <Text style={styles.propIcon}>{icon}</Text>
               <Text variant="bodySmall" style={styles.propText}>{text}</Text>
             </Card>
@@ -47,7 +47,7 @@ export default function WelcomeScreen() {
 
         {/* CTA */}
         <View style={styles.cta}>
-          <Button label={content.onboarding.welcome.cta} onPress={() => router.push("/(onboarding)/trip-type")} fullWidth size="lg" />
+          <Button label={content.onboarding.welcome.cta} onPress={() => router.push("/(onboarding)/trip-type")} fullWidth size="prominent" />
           <Text variant="caption" color={colors.text.tertiary} align="center">{content.onboarding.welcome.ctaSubtext}</Text>
         </View>
       </View>

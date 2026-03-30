@@ -14,9 +14,11 @@ interface ResortCardProps {
   showMatchScore?: boolean;
 }
 
-const getMatchVariant = (score: number): "success" | "primary" | "warning" | "error" => {
+const getMatchVariant = (
+  score: number,
+): "success" | "brand" | "warning" | "error" => {
   if (score >= 80) return "success";
-  if (score >= 60) return "primary";
+  if (score >= 60) return "brand";
   if (score >= 40) return "warning";
   return "error";
 };
@@ -37,7 +39,7 @@ export function ResortCard({
 
   return (
     <Card
-      elevation="md"
+      elevation="standard"
       onPress={onPress}
       noPadding
       accessibilityLabel={`${resort.name}, ${matchScore}% match`}
@@ -51,7 +53,9 @@ export function ResortCard({
         />
         {rank ? (
           <View style={styles.rankBadge}>
-            <Text style={[typography.captionMedium, { color: colors.text.inverse }]}>
+            <Text
+              style={[typography.captionMedium, { color: colors.text.inverse }]}
+            >
               {content.resortCard.rank.replace("{rank}", String(rank))}
             </Text>
           </View>
@@ -63,28 +67,60 @@ export function ResortCard({
         {/* Header row */}
         <View style={styles.header}>
           <View style={styles.titleBlock}>
-            <Text variant="h3" numberOfLines={1}>{resort.name}</Text>
-            <Text variant="caption" color={colors.text.tertiary} style={styles.location}>
+            <Text variant="h3" numberOfLines={1}>
+              {resort.name}
+            </Text>
+            <Text
+              variant="caption"
+              color={colors.text.tertiary}
+              style={styles.location}
+            >
               {resort.country} • {resort.region}
             </Text>
           </View>
           {showMatchScore && matchScore > 0 ? (
-            <Badge label={`${matchScore}%`} variant={getMatchVariant(matchScore)} />
+            <Badge
+              label={`${matchScore}%`}
+              variant={getMatchVariant(matchScore)}
+            />
           ) : null}
         </View>
 
         {/* Stats row */}
         <View style={styles.stats}>
-          <StatPill icon="⛷️" label={content.resortCard.km.replace("{km}", String(resort.stats.totalKm))} />
-          <StatPill icon="❄️" label={content.resortCard.snow.replace("{snow}", String(resort.attributes.snowReliability))} />
-          <StatPill icon="💰" label={content.resortCard.cost.replace("{cost}", String(resort.attributes.averageDailyCost))} />
+          <StatPill
+            icon="⛷️"
+            label={content.resortCard.km.replace(
+              "{km}",
+              String(resort.stats.totalKm),
+            )}
+          />
+          <StatPill
+            icon="❄️"
+            label={content.resortCard.snow.replace(
+              "{snow}",
+              String(resort.attributes.snowReliability),
+            )}
+          />
+          <StatPill
+            icon="💰"
+            label={content.resortCard.cost.replace(
+              "{cost}",
+              String(resort.attributes.averageDailyCost),
+            )}
+          />
         </View>
 
         {/* Match reasons */}
         {showMatchScore && matchReasons.length > 0 ? (
           <View style={styles.reasons}>
             {matchReasons.slice(0, 2).map((reason, i) => (
-              <Text key={i} variant="caption" color={colors.success} numberOfLines={1}>
+              <Text
+                key={i}
+                variant="caption"
+                color={colors.success}
+                numberOfLines={1}
+              >
                 ✓ {reason}
               </Text>
             ))}
@@ -99,7 +135,9 @@ function StatPill({ icon, label }: { icon: string; label: string }) {
   return (
     <View style={styles.stat}>
       <Text style={styles.statIcon}>{icon}</Text>
-      <Text variant="caption" color={colors.text.secondary}>{label}</Text>
+      <Text variant="caption" color={colors.text.secondary}>
+        {label}
+      </Text>
     </View>
   );
 }

@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   footer: {
     paddingVertical: spacing.md,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: colors.border.default,
     gap: spacing.sm,
   },
 });

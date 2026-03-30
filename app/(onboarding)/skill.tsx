@@ -86,7 +86,7 @@ export default function SkillScreen() {
             onPress={() => router.push("/(onboarding)/budget")}
             disabled={groupAbilities.length === 0}
             style={styles.nextBtn}
-            size="lg"
+            size="prominent"
           />
         </View>
       </View>

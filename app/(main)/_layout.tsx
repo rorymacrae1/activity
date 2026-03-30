@@ -49,7 +49,7 @@ export default function MainLayout() {
         tabBarInactiveTintColor: colors.text.tertiary,
         tabBarStyle: {
           backgroundColor: colors.background.primary,
-          borderTopColor: colors.border,
+          borderTopColor: colors.border.default,
         },
       }}
     >

@@ -42,7 +42,7 @@ export default function VibesScreen() {
 
         <View style={styles.footer}>
           <Button label={`← ${content.onboarding.vibes.back}`} variant="ghost" onPress={() => router.back()} style={styles.backBtn} />
-          <Button label={`${content.onboarding.vibes.next} →`} onPress={() => router.push("/(onboarding)/results")} style={styles.nextBtn} size="lg" />
+          <Button label={`${content.onboarding.vibes.next} →`} onPress={() => router.push("/(onboarding)/results")} style={styles.nextBtn} size="prominent" />
         </View>
       </View>
     </QuizLayout>

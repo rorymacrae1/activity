@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     width: 40,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   legend: {
     padding: spacing.md,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: colors.border.default,
   },
   legendTitle: {
     ...typography.h3,

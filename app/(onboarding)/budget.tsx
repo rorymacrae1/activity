@@ -224,7 +224,7 @@ export default function BudgetScreen() {
             onPress={() => budgetLevel && router.push("/(onboarding)/region")}
             disabled={!budgetLevel}
             style={styles.nextBtn}
-            size="lg"
+            size="prominent"
           />
         </View>
       </View>

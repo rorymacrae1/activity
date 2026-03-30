@@ -123,7 +123,7 @@ export default function ResortDetailScreen() {
 
             {/* Costs */}
             <SectionBlock title={content.resort.costsTitle}>
-              <Card elevation="sm">
+              <Card elevation="subtle">
                 <CostRow label={content.resort.dayPass}     value={`€${resort.attributes.liftPassDayCost}`} />
                 <View style={styles.divider} />
                 <CostRow label={content.resort.sixDayPass}  value={`€${resort.attributes.liftPassSixDayCost}`} />

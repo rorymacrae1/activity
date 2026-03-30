@@ -77,7 +77,7 @@ export default function RegionScreen() {
 
         <View style={styles.footer}>
           <Button label={`← ${content.onboarding.region.back}`} variant="ghost" onPress={() => router.back()} style={styles.backBtn} />
-          <Button label={`${content.onboarding.region.next} →`} onPress={() => regions.length > 0 && router.push("/(onboarding)/vibes")} disabled={regions.length === 0} style={styles.nextBtn} size="lg" />
+          <Button label={`${content.onboarding.region.next} →`} onPress={() => regions.length > 0 && router.push("/(onboarding)/vibes")} disabled={regions.length === 0} style={styles.nextBtn} size="prominent" />
         </View>
       </View>
     </QuizLayout>
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     borderStyle: "dashed",
     alignItems: "center",
     marginBottom: spacing.md,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     width: 24, height: 24,
     borderRadius: radius.xs,
     borderWidth: 2,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     alignItems: "center",
     justifyContent: "center",
   },

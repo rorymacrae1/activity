@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   },
   dotFuture: {
     width: 20,
-    backgroundColor: colors.border,
+    backgroundColor: colors.border.default,
   },
   dotActive: {
     width: 32,
