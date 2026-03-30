@@ -16,8 +16,8 @@
  */
 
 export const breakpoints = {
-  tablet: 768,       // iPad portrait, standard tablet breakpoint
-  desktop: 1024,     // iPad landscape, laptops
+  tablet: 768, // iPad portrait, standard tablet breakpoint
+  desktop: 1024, // iPad landscape, laptops
   largeDesktop: 1280, // Desktop monitors
 } as const;
 
@@ -38,9 +38,9 @@ export const maxContentWidth = {
  * Horizontal screen padding that widens on tablet.
  */
 export const screenPadding = {
-  phone: 16,    // Tighter on phone (industry standard)
-  tablet: 24,   // Comfortable on tablet
-  desktop: 32,  // Generous on desktop
+  phone: 16, // Tighter on phone (industry standard)
+  tablet: 24, // Comfortable on tablet
+  desktop: 32, // Generous on desktop
 } as const;
 
 export type Breakpoints = typeof breakpoints;

@@ -13,10 +13,22 @@
       "title": "Who's this trip for?",
       "subtitle": "This helps us tailor the perfect resort",
       "options": {
-        "solo": { "title": "Just me", "description": "Flying solo, my own pace" },
-        "couple": { "title": "Couple", "description": "Two of us, similar abilities" },
-        "family": { "title": "Family", "description": "Kids or mixed ages involved" },
-        "friends": { "title": "Friend group", "description": "Squad of various abilities" }
+        "solo": {
+          "title": "Just me",
+          "description": "Flying solo, my own pace"
+        },
+        "couple": {
+          "title": "Couple",
+          "description": "Two of us, similar abilities"
+        },
+        "family": {
+          "title": "Family",
+          "description": "Kids or mixed ages involved"
+        },
+        "friends": {
+          "title": "Friend group",
+          "description": "Squad of various abilities"
+        }
       },
       "next": "Next"
     },
@@ -24,9 +36,18 @@
       "title": "Who's skiing in your group?",
       "subtitle": "Select all that apply",
       "options": {
-        "beginner": { "title": "Beginners", "description": "Learning the basics, green & blue runs" },
-        "intermediate": { "title": "Intermediates", "description": "Confident on blues, tackling reds" },
-        "advanced": { "title": "Advanced", "description": "All terrain, blacks and off-piste" }
+        "beginner": {
+          "title": "Beginners",
+          "description": "Learning the basics, green & blue runs"
+        },
+        "intermediate": {
+          "title": "Intermediates",
+          "description": "Confident on blues, tackling reds"
+        },
+        "advanced": {
+          "title": "Advanced",
+          "description": "All terrain, blacks and off-piste"
+        }
       },
       "next": "Next",
       "back": "Back"

@@ -82,7 +82,9 @@ export function Card({
   }
 
   return (
-    <View style={[styles.base, shadowStyle, !noPadding && styles.padding, style]}>
+    <View
+      style={[styles.base, shadowStyle, !noPadding && styles.padding, style]}
+    >
       {children}
     </View>
   );

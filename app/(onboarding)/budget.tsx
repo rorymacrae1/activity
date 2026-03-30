@@ -1,4 +1,10 @@
-import { View, StyleSheet, Pressable, Platform, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Platform,
+  ScrollView,
+} from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import Animated, {
@@ -79,7 +85,11 @@ function OptionCard({
       {/* Badge (e.g., "Most popular") */}
       {opt.badge && (
         <View style={styles.badge}>
-          <Text variant="caption" color={colors.text.inverse} style={styles.badgeText}>
+          <Text
+            variant="caption"
+            color={colors.text.inverse}
+            style={styles.badgeText}
+          >
             {opt.badge}
           </Text>
         </View>
@@ -97,7 +107,9 @@ function OptionCard({
           </Text>
           {active && (
             <View style={styles.checkmark}>
-              <Text variant="caption" color={colors.primary}>✓</Text>
+              <Text variant="caption" color={colors.primary}>
+                ✓
+              </Text>
             </View>
           )}
         </View>
@@ -110,7 +122,11 @@ function OptionCard({
       </View>
 
       {/* Description */}
-      <Text variant="bodySmall" color={colors.text.secondary} style={styles.optionDesc}>
+      <Text
+        variant="bodySmall"
+        color={colors.text.secondary}
+        style={styles.optionDesc}
+      >
         {opt.description}
       </Text>
     </AnimatedPressable>
@@ -152,7 +168,12 @@ export default function BudgetScreen() {
 
   return (
     <QuizLayout>
-      <View style={[styles.inner, { paddingHorizontal: isTablet ? spacing.xl : hPadding }]}>
+      <View
+        style={[
+          styles.inner,
+          { paddingHorizontal: isTablet ? spacing.xl : hPadding },
+        ]}
+      >
         <ProgressIndicator current={3} total={5} showLabel />
 
         {/* Header */}
@@ -179,9 +200,13 @@ export default function BudgetScreen() {
               isTablet={isTablet}
             />
           ))}
-          
+
           {/* Reassurance hint - inside scroll on mobile */}
-          <Text variant="caption" color={colors.text.tertiary} style={styles.hint}>
+          <Text
+            variant="caption"
+            color={colors.text.tertiary}
+            style={styles.hint}
+          >
             {content.onboarding.budget.hint}
           </Text>
         </ScrollView>

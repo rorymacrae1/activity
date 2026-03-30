@@ -13,10 +13,22 @@
       "title": "Pour qui est ce voyage ?",
       "subtitle": "Cela nous aide à trouver la station parfaite",
       "options": {
-        "solo": { "title": "Juste moi", "description": "En solitaire, à mon rythme" },
-        "couple": { "title": "En couple", "description": "Nous deux, niveaux similaires" },
-        "family": { "title": "En famille", "description": "Avec des enfants ou niveaux mixtes" },
-        "friends": { "title": "Groupe d'amis", "description": "Un groupe de niveaux variés" }
+        "solo": {
+          "title": "Juste moi",
+          "description": "En solitaire, à mon rythme"
+        },
+        "couple": {
+          "title": "En couple",
+          "description": "Nous deux, niveaux similaires"
+        },
+        "family": {
+          "title": "En famille",
+          "description": "Avec des enfants ou niveaux mixtes"
+        },
+        "friends": {
+          "title": "Groupe d'amis",
+          "description": "Un groupe de niveaux variés"
+        }
       },
       "next": "Suivant"
     },
@@ -24,9 +36,18 @@
       "title": "Qui skie dans votre groupe ?",
       "subtitle": "Sélectionnez tout ce qui s'applique",
       "options": {
-        "beginner": { "title": "Débutants", "description": "Apprentissage des bases, pistes vertes et bleues" },
-        "intermediate": { "title": "Intermédiaires", "description": "À l'aise sur les bleues, abordant les rouges" },
-        "advanced": { "title": "Avancés", "description": "Tous terrains, noires et hors-piste" }
+        "beginner": {
+          "title": "Débutants",
+          "description": "Apprentissage des bases, pistes vertes et bleues"
+        },
+        "intermediate": {
+          "title": "Intermédiaires",
+          "description": "À l'aise sur les bleues, abordant les rouges"
+        },
+        "advanced": {
+          "title": "Avancés",
+          "description": "Tous terrains, noires et hors-piste"
+        }
       },
       "next": "Suivant",
       "back": "Retour"

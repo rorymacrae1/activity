@@ -41,22 +41,26 @@ export interface LayoutInfo {
 export function useLayout(): LayoutInfo {
   const { width, height } = useWindowDimensions();
 
-  const isTablet = width >= breakpoints.tablet;          // ≥768px
-  const isLargeTablet = width >= breakpoints.desktop;    // ≥1024px (for backward compat)
-  const isDesktop = width >= breakpoints.largeDesktop;   // ≥1280px
+  const isTablet = width >= breakpoints.tablet; // ≥768px
+  const isLargeTablet = width >= breakpoints.desktop; // ≥1024px (for backward compat)
+  const isDesktop = width >= breakpoints.largeDesktop; // ≥1280px
   const isWeb = Platform.OS === "web";
 
   // Determine layout mode
-  const layoutMode: LayoutMode = isDesktop ? "desktop" : isTablet ? "tablet" : "phone";
+  const layoutMode: LayoutMode = isDesktop
+    ? "desktop"
+    : isTablet
+      ? "tablet"
+      : "phone";
 
   // Grid columns: 3 on large desktop, 2 on tablet/small desktop, 1 on phone
   const numColumns = isDesktop ? 3 : isTablet ? 2 : 1;
 
   // Responsive padding
-  const hPadding = isDesktop 
-    ? screenPadding.desktop 
-    : isTablet 
-      ? screenPadding.tablet 
+  const hPadding = isDesktop
+    ? screenPadding.desktop
+    : isTablet
+      ? screenPadding.tablet
       : screenPadding.phone;
 
   return {
@@ -67,12 +71,18 @@ export function useLayout(): LayoutInfo {
     isDesktop,
     layoutMode,
     numColumns,
-    contentMaxWidth: isDesktop ? maxContentWidth.content : maxContentWidth.prose,
+    contentMaxWidth: isDesktop
+      ? maxContentWidth.content
+      : maxContentWidth.prose,
     hPadding,
     // Hero image: ~35% of screen height, capped on large screens
     heroHeight: Math.min(Math.round(height * 0.35), isTablet ? 400 : 280),
     // Card image: scales with grid layout
-    cardImageHeight: isDesktop ? Math.round(width * 0.12) : isTablet ? Math.round(width * 0.2) : 160,
+    cardImageHeight: isDesktop
+      ? Math.round(width * 0.12)
+      : isTablet
+        ? Math.round(width * 0.2)
+        : 160,
     isWeb,
     showSideNav: isDesktop && isWeb,
   };
