@@ -3,7 +3,8 @@ import { getRecommendations } from "../index";
 describe("getRecommendations", () => {
   it("returns up to 5 results by default", async () => {
     const results = await getRecommendations({
-      skillLevel: "intermediate",
+      tripType: null,
+      groupAbilities: ["intermediate"],
       budgetLevel: "mid",
       regions: ["france-alps", "austria", "switzerland"],
       crowdPreference: 3,
@@ -17,7 +18,8 @@ describe("getRecommendations", () => {
   it("respects the limit parameter", async () => {
     const results = await getRecommendations(
       {
-        skillLevel: "intermediate",
+        tripType: null,
+        groupAbilities: ["intermediate"],
         budgetLevel: "mid",
         regions: ["france-alps", "austria", "switzerland", "italy", "andorra-spain"],
         crowdPreference: 3,
@@ -31,7 +33,8 @@ describe("getRecommendations", () => {
 
   it("returns results sorted by match score descending", async () => {
     const results = await getRecommendations({
-      skillLevel: "advanced",
+      tripType: null,
+      groupAbilities: ["advanced"],
       budgetLevel: "luxury",
       regions: ["france-alps", "austria", "switzerland"],
       crowdPreference: 5,
@@ -45,7 +48,8 @@ describe("getRecommendations", () => {
 
   it("each result has a matchScore between 0 and 100", async () => {
     const results = await getRecommendations({
-      skillLevel: "beginner",
+      tripType: null,
+      groupAbilities: ["beginner"],
       budgetLevel: "budget",
       regions: ["france-alps"],
       crowdPreference: 1,
@@ -60,7 +64,8 @@ describe("getRecommendations", () => {
 
   it("each result has at least one match reason", async () => {
     const results = await getRecommendations({
-      skillLevel: "intermediate",
+      tripType: null,
+      groupAbilities: ["intermediate"],
       budgetLevel: "mid",
       regions: ["france-alps"],
       crowdPreference: 3,
@@ -75,7 +80,8 @@ describe("getRecommendations", () => {
   it("filters results by region", async () => {
     const results = await getRecommendations(
       {
-        skillLevel: "intermediate",
+        tripType: null,
+        groupAbilities: ["intermediate"],
         budgetLevel: "mid",
         regions: ["italy"],
         crowdPreference: 3,
@@ -91,7 +97,8 @@ describe("getRecommendations", () => {
 
   it("returns empty when no resorts match region", async () => {
     const results = await getRecommendations({
-      skillLevel: "intermediate",
+      tripType: null,
+      groupAbilities: ["intermediate"],
       budgetLevel: "mid",
       regions: ["north-pole"],
       crowdPreference: 3,

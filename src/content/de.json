@@ -1,0 +1,231 @@
+{
+  "onboarding": {
+    "welcome": {
+      "appTitle": "PeakWise",
+      "tagline": "Finde dein perfektes Skigebiet in Sekunden",
+      "valueProp1": "Personalisiert nach deinem Können und Stil",
+      "valueProp2": "Über 30 Top-Skigebiete in Europa",
+      "valueProp3": "Funktioniert offline — mit auf die Piste",
+      "cta": "Mein Skigebiet finden",
+      "ctaSubtext": "Dauert etwa 1 Minute"
+    },
+    "tripType": {
+      "title": "Für wen ist diese Reise?",
+      "subtitle": "Das hilft uns, das perfekte Skigebiet zu finden",
+      "options": {
+        "solo": { "title": "Nur ich", "description": "Alleine unterwegs, mein eigenes Tempo" },
+        "couple": { "title": "Zu zweit", "description": "Wir beide, ähnliches Niveau" },
+        "family": { "title": "Familie", "description": "Mit Kindern oder gemischten Altersgruppen" },
+        "friends": { "title": "Freundesgruppe", "description": "Gruppe mit verschiedenen Niveaus" }
+      },
+      "next": "Weiter"
+    },
+    "skill": {
+      "title": "Wer fährt Ski in deiner Gruppe?",
+      "subtitle": "Alles Zutreffende auswählen",
+      "options": {
+        "beginner": { "title": "Anfänger", "description": "Grundlagen lernen, grüne & blaue Pisten" },
+        "intermediate": { "title": "Fortgeschrittene", "description": "Sicher auf Blauen, rote Pisten in Angriff nehmen" },
+        "advanced": { "title": "Experten", "description": "Alle Pisten, Schwarze und Tiefschnee" }
+      },
+      "next": "Weiter",
+      "back": "Zurück"
+    },
+    "budget": {
+      "title": "Was ist dein Budget?",
+      "subtitle": "Inkl. Skipass, Verpflegung und Verleih",
+      "options": {
+        "budget": {
+          "title": "Günstig",
+          "range": "€80–120/Tag",
+          "description": "Erschwinglich, tolles Preis-Leistungs-Verhältnis"
+        },
+        "mid": {
+          "title": "Mittelklasse",
+          "range": "€120–180/Tag",
+          "description": "Balance aus Qualität & Preis"
+        },
+        "premium": {
+          "title": "Premium",
+          "range": "€180–280/Tag",
+          "description": "Hochwertige Erfahrung"
+        },
+        "luxury": {
+          "title": "Luxus",
+          "range": "€280+/Tag",
+          "description": "Erstklassig in jeder Hinsicht"
+        }
+      },
+      "back": "Zurück",
+      "next": "Weiter"
+    },
+    "region": {
+      "title": "Wo möchtest du Ski fahren?",
+      "subtitle": "Wähle eine oder mehrere Regionen",
+      "selectAll": "Alle Regionen auswählen",
+      "allSelected": "Alle Regionen ausgewählt",
+      "back": "Zurück",
+      "next": "Weiter"
+    },
+    "vibes": {
+      "title": "Was ist dein Vibe?",
+      "subtitle": "Erzähl uns von deiner idealen Skigebietsatmosphäre",
+      "crowd": {
+        "label": "Besucherdichte",
+        "left": "Ruhig",
+        "right": "Belebt",
+        "quiet": "Ruhig",
+        "moderate": "Moderat",
+        "lively": "Lebhaft"
+      },
+      "focus": {
+        "label": "Skigebietsschwerpunkt",
+        "left": "Familienfreundlich",
+        "right": "Après-Ski",
+        "family": "Familie",
+        "balanced": "Ausgewogen",
+        "nightlife": "Nachtleben"
+      },
+      "snow": {
+        "label": "Schneesicherheit",
+        "left": "Keine Priorität",
+        "right": "Schnee ist ein Muss",
+        "flexible": "Flexibel",
+        "important": "Wichtig",
+        "critical": "Unverzichtbar"
+      },
+      "back": "Zurück",
+      "next": "Ergebnisse anzeigen"
+    },
+    "results": {
+      "loading": "Suche nach deinen perfekten Skigebieten...",
+      "title": "Deine Top-Treffer",
+      "subtitle": "Basierend auf deinen Präferenzen",
+      "emptyTitle": "Keine Treffer gefunden",
+      "emptyMessage": "Versuche, deine Präferenzen anzupassen.",
+      "retake": "Quiz wiederholen",
+      "continue": "Zur App"
+    }
+  },
+  "discover": {
+    "loading": "Empfehlungen werden geladen...",
+    "sectionTitle": "Deine Treffer",
+    "retakeQuiz": "Quiz wiederholen",
+    "emptyTitle": "Keine Treffer gefunden",
+    "emptyMessage": "Passe deine Präferenzen in deinem Profil an.",
+    "updatePreferences": "Präferenzen aktualisieren"
+  },
+  "favorites": {
+    "sectionTitle": "Gespeicherte Skigebiete",
+    "emptyTitle": "Noch keine gespeicherten Skigebiete",
+    "emptyMessage": "Tippe auf das Herz-Symbol bei einem Skigebiet, um es hier zu speichern.",
+    "discover": "Skigebiete entdecken"
+  },
+  "profile": {
+    "title": "Profil",
+    "preferencesSection": "Deine Präferenzen",
+    "incompleteWarning": "Einige Präferenzen sind nicht gesetzt. Fülle das Quiz aus für bessere Empfehlungen.",
+    "skillLevel": "Skikönnen",
+    "budget": "Budget",
+    "regions": "Regionen",
+    "notSet": "Nicht gesetzt",
+    "regionsCount": "{count} ausgewählt",
+    "actionsSection": "Aktionen",
+    "retakeQuiz": "Quiz wiederholen",
+    "clearSaved": "Gespeicherte Skigebiete löschen ({count})",
+    "aboutSection": "Über",
+    "aboutText": "PeakWise v1.0.0 — Finde dein perfektes Skigebiet",
+    "language": "Sprache",
+    "languageSection": "Sprache",
+    "resetLoading": "Präferenzen werden zurückgesetzt...",
+    "alerts": {
+      "retakeTitle": "Quiz wiederholen",
+      "retakeMessage": "Dadurch werden deine Präferenzen zurückgesetzt. Bist du sicher?",
+      "cancel": "Abbrechen",
+      "retakeConfirm": "Wiederholen",
+      "noSavedTitle": "Keine gespeicherten Skigebiete",
+      "noSavedMessage": "Du hast keine gespeicherten Skigebiete zum Löschen.",
+      "clearTitle": "Gespeicherte Skigebiete löschen",
+      "clearMessage": "{count} gespeicherte(s) Skigebiet(e){plural} entfernen?",
+      "clearConfirm": "Alle löschen"
+    }
+  },
+  "resort": {
+    "notFoundTitle": "Skigebiet nicht gefunden",
+    "notFoundMessage": "Dieses Skigebiet existiert nicht oder wurde entfernt.",
+    "goBack": "Zurück",
+    "save": "Skigebiet speichern",
+    "unsave": "Aus Gespeicherten entfernen",
+    "infoTitle": "Skigebiet-Info",
+    "terrainTitle": "Geländeübersicht",
+    "overviewTitle": "Überblick",
+    "costsTitle": "Skipasspreise",
+    "dayPass": "Tagespass",
+    "sixDayPass": "6-Tages-Pass",
+    "avgDaily": "Ø Tageskosten",
+    "viewMap": "Pistenplan ansehen"
+  },
+  "map": {
+    "title": "Karte",
+    "notFound": "Skigebiet nicht gefunden",
+    "noMap": "Karte demnächst verfügbar",
+    "legend": "Legende",
+    "beginner": "Anfänger",
+    "intermediate": "Fortgeschritten",
+    "advanced": "Experte",
+    "instructions": "Zum Zoomen zusammenkneifen • Doppeltippen zum Zurücksetzen"
+  },
+  "infoGrid": {
+    "snowSureness": "SCHNEESICHERHEIT",
+    "slopeDistance": "PISTENKILOMETER",
+    "slopeDifficulty": "PISTENSCHWIERIGKEIT",
+    "transferTime": "TRANSFERZEIT",
+    "townStyle": "ORT / CHARAKTER",
+    "familyFriendly": "FAMILIENFREUNDLICH",
+    "otherActivities": "WEITERE AKTIVITÄTEN",
+    "snow": {
+      "excellent": "Ausgezeichnet",
+      "veryGood": "Sehr gut",
+      "good": "Gut",
+      "fair": "Ausreichend",
+      "variable": "Wechselhaft"
+    },
+    "runs": "{runs} Pisten",
+    "lifts": "{lifts} Lifte",
+    "beginner": "Anfängerfreundlich",
+    "expert": "Expertenorientiert",
+    "intermediate": "Fortgeschrittenen-Fokus",
+    "transferHoursMinutes": "{h}h {m}min",
+    "transferHours": "{h}h",
+    "from": "ab {airport}",
+    "crowdQuiet": "Ruhig & wenig besucht",
+    "crowdModerate": "Moderater Andrang",
+    "crowdBusy": "Belebt & lebhaft",
+    "family": {
+      "excellent": "Ausgezeichnet",
+      "great": "Sehr gut",
+      "good": "Gut",
+      "limited": "Eingeschränkt",
+      "notRecommended": "Nicht empfohlen"
+    },
+    "nightlifeHigh": "Ausgezeichnetes Nachtleben",
+    "nightlifeMedium": "Gutes Nachtleben",
+    "nightlifeLow": "Entspannte Abende",
+    "barsLabel": "APRÈS-SKI-BARS",
+    "barsCount": "~{count} Bars"
+  },
+  "resortCard": {
+    "rank": "#{rank}",
+    "km": "{km} km",
+    "snow": "{snow}/5 Schnee",
+    "cost": "€{cost}/Tag"
+  },
+  "progress": {
+    "step": "Schritt {current} von {total}"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}

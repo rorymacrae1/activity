@@ -2,6 +2,7 @@ import { View, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 import { colors, spacing } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -15,32 +16,33 @@ export default function VibesScreen() {
     setCrowdPreference, setFamilyVsNightlife, setSnowImportance,
   } = usePreferencesStore();
   const { isTablet, hPadding } = useLayout();
+  const content = useContent();
 
-  const crowdLabel  = crowdPreference  <= 2 ? "🧘 Quiet"    : crowdPreference  >= 4 ? "🎉 Lively"    : "👥 Moderate";
-  const familyLabel = familyVsNightlife <= 2 ? "👨‍👩‍👧 Family" : familyVsNightlife >= 4 ? "🍻 Nightlife" : "⚖️ Balanced";
-  const snowLabel   = snowImportance   <= 2 ? "🤷 Flexible" : snowImportance   >= 4 ? "❄️ Critical"  : "👍 Important";
+  const crowdLabel  = crowdPreference  <= 2 ? `🧘 ${content.onboarding.vibes.crowd.quiet}`    : crowdPreference  >= 4 ? `🎉 ${content.onboarding.vibes.crowd.lively}`    : `👥 ${content.onboarding.vibes.crowd.moderate}`;
+  const familyLabel = familyVsNightlife <= 2 ? `👨‍👩‍👧 ${content.onboarding.vibes.focus.family}` : familyVsNightlife >= 4 ? `🍻 ${content.onboarding.vibes.focus.nightlife}` : `⚖️ ${content.onboarding.vibes.focus.balanced}`;
+  const snowLabel   = snowImportance   <= 2 ? `🤷 ${content.onboarding.vibes.snow.flexible}` : snowImportance   >= 4 ? `❄️ ${content.onboarding.vibes.snow.critical}`  : `👍 ${content.onboarding.vibes.snow.important}`;
 
   return (
     <QuizLayout>
       <View style={[styles.inner, { paddingHorizontal: isTablet ? spacing.xl : hPadding }]}>
-        <ProgressIndicator current={4} total={5} showLabel />
+        <ProgressIndicator current={5} total={5} showLabel />
 
         <View style={styles.header}>
-          <Text variant="h2">What's your vibe?</Text>
+          <Text variant="h2">{content.onboarding.vibes.title}</Text>
           <Text variant="body" color={colors.text.secondary}>
-            Tell us about your ideal resort atmosphere
+            {content.onboarding.vibes.subtitle}
           </Text>
         </View>
 
         <View style={styles.sliders}>
-          <SliderRow label="Crowd Level"       value={crowdPreference}  valueLabel={crowdLabel}  onChange={setCrowdPreference}  left="Peaceful"         right="Bustling"        accessLabel="Crowd level"        accessHint="Slide right for lively" />
-          <SliderRow label="Resort Focus"      value={familyVsNightlife} valueLabel={familyLabel} onChange={setFamilyVsNightlife} left="Family-friendly" right="Après-ski"       accessLabel="Resort focus"       accessHint="Slide right for nightlife" />
-          <SliderRow label="Snow Reliability"  value={snowImportance}   valueLabel={snowLabel}   onChange={setSnowImportance}   left="Not a priority"   right="Must have snow"  accessLabel="Snow importance"    accessHint="Slide right if snow is critical" />
+          <SliderRow label={content.onboarding.vibes.crowd.label}  value={crowdPreference}   valueLabel={crowdLabel}   onChange={setCrowdPreference}   left={content.onboarding.vibes.crowd.left}  right={content.onboarding.vibes.crowd.right}  accessLabel="Crowd level"     accessHint="Slide right for lively" />
+          <SliderRow label={content.onboarding.vibes.focus.label}  value={familyVsNightlife} valueLabel={familyLabel}  onChange={setFamilyVsNightlife} left={content.onboarding.vibes.focus.left}  right={content.onboarding.vibes.focus.right}  accessLabel="Resort focus"    accessHint="Slide right for nightlife" />
+          <SliderRow label={content.onboarding.vibes.snow.label}   value={snowImportance}    valueLabel={snowLabel}    onChange={setSnowImportance}    left={content.onboarding.vibes.snow.left}   right={content.onboarding.vibes.snow.right}   accessLabel="Snow importance" accessHint="Slide right if snow is critical" />
         </View>
 
         <View style={styles.footer}>
-          <Button label="← Back" variant="ghost" onPress={() => router.back()} style={styles.backBtn} />
-          <Button label="See Results →" onPress={() => router.push("/(onboarding)/results")} style={styles.nextBtn} size="lg" />
+          <Button label={`← ${content.onboarding.vibes.back}`} variant="ghost" onPress={() => router.back()} style={styles.backBtn} />
+          <Button label={`${content.onboarding.vibes.next} →`} onPress={() => router.push("/(onboarding)/results")} style={styles.nextBtn} size="lg" />
         </View>
       </View>
     </QuizLayout>

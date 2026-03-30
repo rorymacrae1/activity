@@ -15,6 +15,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { getResortById } from "@services/resort";
+import { useContent } from "@hooks/useContent";
 import { colors } from "@theme/colors";
 import { typography } from "@theme/typography";
 import { spacing } from "@theme/spacing";
@@ -27,6 +28,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 export default function MapScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const resort = getResortById(id);
+  const content = useContent();
 
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
@@ -95,7 +97,7 @@ export default function MapScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Resort not found</Text>
+          <Text style={styles.errorText}>{content.map.notFound}</Text>
         </View>
       </SafeAreaView>
     );
@@ -108,7 +110,7 @@ export default function MapScreen() {
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <Text style={styles.backIcon}>←</Text>
         </Pressable>
-        <Text style={styles.title}>{resort.name} Map</Text>
+        <Text style={styles.title}>{resort.name} {content.map.title}</Text>
         <View style={styles.placeholder} />
       </View>
 
@@ -121,45 +123,46 @@ export default function MapScreen() {
                 source={{ uri: resort.assets.pisteMap }}
                 style={styles.mapImage}
                 resizeMode="contain"
+                accessibilityLabel={`Piste map of ${resort.name}`}
               />
             </Animated.View>
           </GestureDetector>
         ) : (
           <View style={styles.noMapContainer}>
             <Text style={styles.noMapEmoji}>🗺️</Text>
-            <Text style={styles.noMapText}>Map coming soon</Text>
+            <Text style={styles.noMapText}>{content.map.noMap}</Text>
           </View>
         )}
       </View>
 
       {/* Legend */}
       <View style={styles.legend}>
-        <Text style={styles.legendTitle}>Legend</Text>
+        <Text style={styles.legendTitle}>{content.map.legend}</Text>
         <View style={styles.legendItems}>
           <View style={styles.legendItem}>
             <View
               style={[styles.legendColor, { backgroundColor: colors.terrain.beginner }]}
             />
-            <Text style={styles.legendText}>Beginner</Text>
+            <Text style={styles.legendText}>{content.map.beginner}</Text>
           </View>
           <View style={styles.legendItem}>
             <View
               style={[styles.legendColor, { backgroundColor: colors.terrain.intermediate }]}
             />
-            <Text style={styles.legendText}>Intermediate</Text>
+            <Text style={styles.legendText}>{content.map.intermediate}</Text>
           </View>
           <View style={styles.legendItem}>
             <View
               style={[styles.legendColor, { backgroundColor: colors.terrain.advanced }]}
             />
-            <Text style={styles.legendText}>Advanced</Text>
+            <Text style={styles.legendText}>{content.map.advanced}</Text>
           </View>
         </View>
       </View>
 
       {/* Instructions */}
       <Text style={styles.instructions}>
-        Pinch to zoom • Double-tap to reset
+        {content.map.instructions}
       </Text>
     </SafeAreaView>
   );

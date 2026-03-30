@@ -1,8 +1,10 @@
 import { View, StyleSheet, FlatList } from "react-native";
+import Head from "expo-router/head";
 import { router } from "expo-router";
 import { useFavoritesStore } from "@stores/favorites";
 import { getResortById } from "@services/resort";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 import { spacing } from "@theme";
 import { EmptyState } from "@components/ui/EmptyState";
 import { SectionHeader } from "@components/ui/SectionHeader";
@@ -18,15 +20,20 @@ export default function FavoritesScreen() {
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
   const favoriteResorts = favoriteIds.map((id) => getResortById(id)).filter(Boolean);
   const { numColumns, hPadding } = useLayout();
+  const content = useContent();
 
   return (
     <ScreenContainer noMaxWidth>
+      <Head>
+        <title>Saved Resorts | PeakWise</title>
+        <meta name="description" content="Your saved ski resorts, ready to compare and revisit." />
+      </Head>
       {favoriteResorts.length === 0 ? (
         <EmptyState
           icon="🔖"
-          title="No saved resorts yet"
-          message="Tap the heart icon on any resort to save it here."
-          action={{ label: "Discover Resorts", onPress: () => router.push("/(main)") }}
+          title={content.favorites.emptyTitle}
+          message={content.favorites.emptyMessage}
+          action={{ label: content.favorites.discover, onPress: () => router.push("/(main)") }}
         />
       ) : (
         <FlatList
@@ -38,7 +45,7 @@ export default function FavoritesScreen() {
           ListHeaderComponent={
             <View style={[styles.header, { paddingHorizontal: hPadding }]}>
               <SectionHeader
-                title="Saved Resorts"
+                title={content.favorites.sectionTitle}
                 action={{ label: `${favoriteResorts.length} saved`, onPress: () => {} }}
               />
             </View>

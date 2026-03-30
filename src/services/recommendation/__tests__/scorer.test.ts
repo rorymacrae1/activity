@@ -35,7 +35,9 @@ const makeResort = (overrides: Partial<Resort["attributes"] & Resort["terrain"]>
 });
 
 const basePrefs: NormalizedPreferences = {
-  skillLevel: 0.5,
+  minSkill: 0.5,
+  maxSkill: 0.5,
+  tripType: null,
   budgetLevel: 0.33,
   quietLively: 0.5,
   familyNightlife: 0.5,
@@ -47,25 +49,25 @@ describe("calculateScores", () => {
   describe("skill score", () => {
     it("scores 100 for perfect intermediate terrain", () => {
       const resort = makeResort({ beginner: 20, intermediate: 55, advanced: 25 });
-      const scores = calculateScores(resort, { ...basePrefs, skillLevel: 0.5 });
+      const scores = calculateScores(resort, { ...basePrefs, minSkill: 0.5, maxSkill: 0.5 });
       expect(scores.skill).toBe(100);
     });
 
     it("scores 100 for perfect beginner terrain", () => {
       const resort = makeResort({ beginner: 50, intermediate: 40, advanced: 10 });
-      const scores = calculateScores(resort, { ...basePrefs, skillLevel: 0 });
+      const scores = calculateScores(resort, { ...basePrefs, minSkill: 0, maxSkill: 0 });
       expect(scores.skill).toBe(100);
     });
 
     it("scores 100 for perfect advanced terrain", () => {
       const resort = makeResort({ beginner: 10, intermediate: 30, advanced: 60 });
-      const scores = calculateScores(resort, { ...basePrefs, skillLevel: 1 });
+      const scores = calculateScores(resort, { ...basePrefs, minSkill: 1, maxSkill: 1 });
       expect(scores.skill).toBe(100);
     });
 
     it("penalises beginner-heavy resort for advanced skier", () => {
       const resort = makeResort({ beginner: 70, intermediate: 20, advanced: 10 });
-      const scores = calculateScores(resort, { ...basePrefs, skillLevel: 1 });
+      const scores = calculateScores(resort, { ...basePrefs, minSkill: 1, maxSkill: 1 });
       expect(scores.skill).toBeLessThan(70);
     });
 

@@ -3,7 +3,8 @@ import { usePreferencesStore } from "@stores/preferences";
 
 const initialState = {
   hasCompletedOnboarding: false,
-  skillLevel: null,
+  tripType: null,
+  groupAbilities: [] as import("@/types/preferences").SkillLevel[],
   budgetLevel: null,
   regions: [] as string[],
   crowdPreference: 3,
@@ -19,15 +20,15 @@ describe("usePreferencesStore", () => {
   it("starts with default state", () => {
     const s = usePreferencesStore.getState();
     expect(s.hasCompletedOnboarding).toBe(false);
-    expect(s.skillLevel).toBeNull();
+    expect(s.groupAbilities).toEqual([]);
     expect(s.budgetLevel).toBeNull();
     expect(s.regions).toHaveLength(0);
     expect(s.crowdPreference).toBe(3);
   });
 
-  it("setSkillLevel updates skillLevel", () => {
-    act(() => usePreferencesStore.getState().setSkillLevel("advanced"));
-    expect(usePreferencesStore.getState().skillLevel).toBe("advanced");
+  it("setGroupAbilities updates groupAbilities", () => {
+    act(() => usePreferencesStore.getState().setGroupAbilities(["intermediate"]));
+    expect(usePreferencesStore.getState().groupAbilities).toEqual(["intermediate"]);
   });
 
   it("setBudgetLevel updates budgetLevel", () => {
@@ -62,13 +63,13 @@ describe("usePreferencesStore", () => {
 
   it("reset restores initial state", () => {
     act(() => {
-      usePreferencesStore.getState().setSkillLevel("beginner");
+      usePreferencesStore.getState().setGroupAbilities(["beginner"]);
       usePreferencesStore.getState().setBudgetLevel("budget");
       usePreferencesStore.getState().setHasCompletedOnboarding(true);
       usePreferencesStore.getState().reset();
     });
     const s = usePreferencesStore.getState();
-    expect(s.skillLevel).toBeNull();
+    expect(s.groupAbilities).toEqual([]);
     expect(s.budgetLevel).toBeNull();
     expect(s.hasCompletedOnboarding).toBe(false);
   });
@@ -76,19 +77,19 @@ describe("usePreferencesStore", () => {
   describe("getPreferencesInput", () => {
     it("returns defaults when nothing is set", () => {
       const prefs = usePreferencesStore.getState().getPreferencesInput();
-      expect(prefs.skillLevel).toBe("intermediate");
+      expect(prefs.groupAbilities).toEqual(["intermediate"]);
       expect(prefs.budgetLevel).toBe("mid");
       expect(prefs.regions.length).toBeGreaterThan(0);
     });
 
     it("returns set values when preferences are populated", () => {
       act(() => {
-        usePreferencesStore.getState().setSkillLevel("advanced");
+        usePreferencesStore.getState().setGroupAbilities(["advanced"]);
         usePreferencesStore.getState().setBudgetLevel("luxury");
         usePreferencesStore.getState().setRegions(["switzerland"]);
       });
       const prefs = usePreferencesStore.getState().getPreferencesInput();
-      expect(prefs.skillLevel).toBe("advanced");
+      expect(prefs.groupAbilities).toEqual(["advanced"]);
       expect(prefs.budgetLevel).toBe("luxury");
       expect(prefs.regions).toEqual(["switzerland"]);
     });

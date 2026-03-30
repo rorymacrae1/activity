@@ -23,20 +23,31 @@ function getIdealDistribution(skill: number): {
 }
 
 /**
- * Calculate skill match score (0-100).
- * Based on how well resort terrain matches user's skill level.
+ * Score how well a resort serves ONE ability level (0-100).
  */
-function calculateSkillScore(resort: Resort, skillLevel: number): number {
-  const ideal = getIdealDistribution(skillLevel);
+function scoreForSkill(resort: Resort, skill: number): number {
+  const ideal = getIdealDistribution(skill);
   const terrain = resort.terrain;
-
-  // Weighted absolute difference from ideal
   const diff =
     Math.abs(terrain.beginner - ideal.beginner) * 0.3 +
     Math.abs(terrain.intermediate - ideal.intermediate) * 0.4 +
     Math.abs(terrain.advanced - ideal.advanced) * 0.3;
-
   return Math.max(0, Math.round(100 - diff));
+}
+
+/**
+ * Calculate skill match score for a group (0-100).
+ * 60% weight on serving the weakest member (accessibility),
+ * 40% weight on serving the strongest member (ceiling/challenge).
+ * For solo/couple (minSkill === maxSkill), this is identical to the previous behaviour.
+ */
+function calculateSkillScore(resort: Resort, prefs: NormalizedPreferences): number {
+  const accessScore = scoreForSkill(resort, prefs.minSkill);
+  const ceilingScore = scoreForSkill(resort, prefs.maxSkill);
+  // Family trips: boost accessibility weight slightly
+  const accessWeight = prefs.tripType === "family" ? 0.7 : 0.6;
+  const ceilingWeight = 1 - accessWeight;
+  return Math.round(accessScore * accessWeight + ceilingScore * ceilingWeight);
 }
 
 /**
@@ -119,7 +130,7 @@ export function calculateScores(
   prefs: NormalizedPreferences,
 ): AttributeScores {
   return {
-    skill: calculateSkillScore(resort, prefs.skillLevel),
+    skill: calculateSkillScore(resort, prefs),
     budget: calculateBudgetScore(resort, prefs.budgetLevel),
     vibe: calculateVibeScore(resort, prefs.quietLively),
     activity: calculateActivityScore(resort, prefs.familyNightlife),

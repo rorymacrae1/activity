@@ -1,7 +1,7 @@
 import { getResortsByRegion } from "../resort";
 import { calculateScores } from "./scorer";
 import { generateExplanations } from "./explainer";
-import type { Preferences, NormalizedPreferences } from "@/types/preferences";
+import type { SkillLevel, Preferences, NormalizedPreferences } from "@/types/preferences";
 import type {
   RecommendationResult,
   AttributeScores,
@@ -11,7 +11,7 @@ import type {
  * Normalize user preferences to 0-1 scale for scoring.
  */
 function normalizePreferences(prefs: Preferences): NormalizedPreferences {
-  const skillMap: Record<string, number> = {
+  const skillMap: Record<SkillLevel, number> = {
     beginner: 0,
     intermediate: 0.5,
     advanced: 1,
@@ -24,8 +24,18 @@ function normalizePreferences(prefs: Preferences): NormalizedPreferences {
     luxury: 1,
   };
 
+  const abilities = prefs.groupAbilities.length > 0
+    ? prefs.groupAbilities
+    : (["intermediate"] as SkillLevel[]);
+
+  const skillValues = abilities.map((s) => skillMap[s]);
+  const minSkill = Math.min(...skillValues);
+  const maxSkill = Math.max(...skillValues);
+
   return {
-    skillLevel: skillMap[prefs.skillLevel] ?? 0.5,
+    minSkill,
+    maxSkill,
+    tripType: prefs.tripType,
     budgetLevel: budgetMap[prefs.budgetLevel] ?? 0.5,
     quietLively: (prefs.crowdPreference - 1) / 4,
     familyNightlife: (prefs.familyVsNightlife - 1) / 4,

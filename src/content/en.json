@@ -1,0 +1,231 @@
+{
+  "onboarding": {
+    "welcome": {
+      "appTitle": "PeakWise",
+      "tagline": "Find your perfect ski resort in seconds",
+      "valueProp1": "Personalised to your skill and style",
+      "valueProp2": "30+ top European resorts",
+      "valueProp3": "Works offline — take it to the slopes",
+      "cta": "Find My Resort",
+      "ctaSubtext": "Takes about 1 minute"
+    },
+    "tripType": {
+      "title": "Who's this trip for?",
+      "subtitle": "This helps us tailor the perfect resort",
+      "options": {
+        "solo": { "title": "Just me", "description": "Flying solo, my own pace" },
+        "couple": { "title": "Couple", "description": "Two of us, similar abilities" },
+        "family": { "title": "Family", "description": "Kids or mixed ages involved" },
+        "friends": { "title": "Friend group", "description": "Squad of various abilities" }
+      },
+      "next": "Next"
+    },
+    "skill": {
+      "title": "Who's skiing in your group?",
+      "subtitle": "Select all that apply",
+      "options": {
+        "beginner": { "title": "Beginners", "description": "Learning the basics, green & blue runs" },
+        "intermediate": { "title": "Intermediates", "description": "Confident on blues, tackling reds" },
+        "advanced": { "title": "Advanced", "description": "All terrain, blacks and off-piste" }
+      },
+      "next": "Next",
+      "back": "Back"
+    },
+    "budget": {
+      "title": "What's your budget?",
+      "subtitle": "Including lift pass, food, and rental",
+      "options": {
+        "budget": {
+          "title": "Budget",
+          "range": "€80–120/day",
+          "description": "Affordable, great value"
+        },
+        "mid": {
+          "title": "Mid-Range",
+          "range": "€120–180/day",
+          "description": "Balance of quality & price"
+        },
+        "premium": {
+          "title": "Premium",
+          "range": "€180–280/day",
+          "description": "High-quality experience"
+        },
+        "luxury": {
+          "title": "Luxury",
+          "range": "€280+/day",
+          "description": "Top-tier everything"
+        }
+      },
+      "back": "Back",
+      "next": "Next"
+    },
+    "region": {
+      "title": "Where do you want to ski?",
+      "subtitle": "Select one or more regions",
+      "selectAll": "Select all regions",
+      "allSelected": "All regions selected",
+      "back": "Back",
+      "next": "Next"
+    },
+    "vibes": {
+      "title": "What's your vibe?",
+      "subtitle": "Tell us about your ideal resort atmosphere",
+      "crowd": {
+        "label": "Crowd Level",
+        "left": "Peaceful",
+        "right": "Bustling",
+        "quiet": "Quiet",
+        "moderate": "Moderate",
+        "lively": "Lively"
+      },
+      "focus": {
+        "label": "Resort Focus",
+        "left": "Family-friendly",
+        "right": "Après-ski",
+        "family": "Family",
+        "balanced": "Balanced",
+        "nightlife": "Nightlife"
+      },
+      "snow": {
+        "label": "Snow Reliability",
+        "left": "Not a priority",
+        "right": "Must have snow",
+        "flexible": "Flexible",
+        "important": "Important",
+        "critical": "Critical"
+      },
+      "back": "Back",
+      "next": "See Results"
+    },
+    "results": {
+      "loading": "Finding your perfect resorts...",
+      "title": "Your Top Matches",
+      "subtitle": "Based on your preferences",
+      "emptyTitle": "No matches found",
+      "emptyMessage": "Try adjusting your preferences.",
+      "retake": "Retake Quiz",
+      "continue": "Continue to App"
+    }
+  },
+  "discover": {
+    "loading": "Loading recommendations...",
+    "sectionTitle": "Your Matches",
+    "retakeQuiz": "Retake Quiz",
+    "emptyTitle": "No matches found",
+    "emptyMessage": "Try adjusting your preferences in your profile.",
+    "updatePreferences": "Update Preferences"
+  },
+  "favorites": {
+    "sectionTitle": "Saved Resorts",
+    "emptyTitle": "No saved resorts yet",
+    "emptyMessage": "Tap the heart icon on any resort to save it here.",
+    "discover": "Discover Resorts"
+  },
+  "profile": {
+    "title": "Profile",
+    "preferencesSection": "Your Preferences",
+    "incompleteWarning": "Some preferences are not set. Complete the quiz for better recommendations.",
+    "skillLevel": "Skill Level",
+    "budget": "Budget",
+    "regions": "Regions",
+    "notSet": "Not set",
+    "regionsCount": "{count} selected",
+    "actionsSection": "Actions",
+    "retakeQuiz": "Retake Quiz",
+    "clearSaved": "Clear Saved Resorts ({count})",
+    "aboutSection": "About",
+    "aboutText": "PeakWise v1.0.0 — Find your perfect ski resort",
+    "language": "Language",
+    "languageSection": "Language",
+    "resetLoading": "Resetting preferences...",
+    "alerts": {
+      "retakeTitle": "Retake Quiz",
+      "retakeMessage": "This will reset your preferences. Are you sure?",
+      "cancel": "Cancel",
+      "retakeConfirm": "Retake",
+      "noSavedTitle": "No Saved Resorts",
+      "noSavedMessage": "You don't have any saved resorts to clear.",
+      "clearTitle": "Clear Saved Resorts",
+      "clearMessage": "Remove {count} saved resort{plural}?",
+      "clearConfirm": "Clear All"
+    }
+  },
+  "resort": {
+    "notFoundTitle": "Resort not found",
+    "notFoundMessage": "This resort doesn't exist or was removed.",
+    "goBack": "Go Back",
+    "save": "Save resort",
+    "unsave": "Remove from saved",
+    "infoTitle": "Resort Info",
+    "terrainTitle": "Terrain Breakdown",
+    "overviewTitle": "Overview",
+    "costsTitle": "Lift Pass Costs",
+    "dayPass": "Day Pass",
+    "sixDayPass": "6-Day Pass",
+    "avgDaily": "Avg. Daily Cost",
+    "viewMap": "View Piste Map"
+  },
+  "map": {
+    "title": "Map",
+    "notFound": "Resort not found",
+    "noMap": "Map coming soon",
+    "legend": "Legend",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced",
+    "instructions": "Pinch to zoom • Double-tap to reset"
+  },
+  "infoGrid": {
+    "snowSureness": "SNOW SURENESS",
+    "slopeDistance": "SLOPE DISTANCE",
+    "slopeDifficulty": "SLOPE DIFFICULTY",
+    "transferTime": "TRANSFER TIME",
+    "townStyle": "TOWN STYLE",
+    "familyFriendly": "FAMILY FRIENDLY",
+    "otherActivities": "OTHER ACTIVITIES",
+    "snow": {
+      "excellent": "Excellent",
+      "veryGood": "Very good",
+      "good": "Good",
+      "fair": "Fair",
+      "variable": "Variable"
+    },
+    "runs": "{runs} runs",
+    "lifts": "{lifts} lifts",
+    "beginner": "Beginner-friendly",
+    "expert": "Expert-heavy",
+    "intermediate": "Intermediate focus",
+    "transferHoursMinutes": "{h}h {m}m",
+    "transferHours": "{h}h",
+    "from": "from {airport}",
+    "crowdQuiet": "Quiet & uncrowded",
+    "crowdModerate": "Moderate crowds",
+    "crowdBusy": "Busy & lively",
+    "family": {
+      "excellent": "Excellent",
+      "great": "Great",
+      "good": "Good",
+      "limited": "Limited",
+      "notRecommended": "Not recommended"
+    },
+    "nightlifeHigh": "Excellent nightlife",
+    "nightlifeMedium": "Good nightlife",
+    "nightlifeLow": "Relaxed evenings",
+    "barsLabel": "APRÈS-SKI BARS",
+    "barsCount": "~{count} bars"
+  },
+  "resortCard": {
+    "rank": "#{rank}",
+    "km": "{km}km",
+    "snow": "{snow}/5 snow",
+    "cost": "€{cost}/day"
+  },
+  "progress": {
+    "step": "Step {current} of {total}"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}

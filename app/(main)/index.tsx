@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
+import Head from "expo-router/head";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { getRecommendations } from "@services/recommendation";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 import { colors, spacing } from "@theme";
 import { Text } from "@components/ui/Text";
 import { SectionHeader } from "@components/ui/SectionHeader";
@@ -17,6 +19,7 @@ export default function DiscoverScreen() {
   const [results, setResults] = useState<RecommendationResult[]>([]);
   const [loading, setLoading] = useState(true);
   const { numColumns, hPadding } = useLayout();
+  const content = useContent();
 
   useEffect(() => {
     // Get preferences snapshot once on mount (not as a reactive selector)
@@ -30,7 +33,7 @@ export default function DiscoverScreen() {
   if (loading) {
     return (
       <ScreenContainer>
-        <LoadingState icon="🎿" message="Loading recommendations..." />
+        <LoadingState icon="🎿" message={content.discover.loading} />
       </ScreenContainer>
     );
   }
@@ -40,10 +43,10 @@ export default function DiscoverScreen() {
       <ScreenContainer>
         <EmptyState
           icon="🤔"
-          title="No matches found"
-          message="Try adjusting your preferences in your profile."
+          title={content.discover.emptyTitle}
+          message={content.discover.emptyMessage}
           action={{
-            label: "Update Preferences",
+            label: content.discover.updatePreferences,
             onPress: () => router.push("/(main)/profile"),
           }}
         />
@@ -53,6 +56,10 @@ export default function DiscoverScreen() {
 
   return (
     <ScreenContainer noMaxWidth>
+      <Head>
+        <title>Your Ski Matches | PeakWise</title>
+        <meta name="description" content="Your personalised ski resort recommendations based on your skill level, budget, and preferences." />
+      </Head>
       <FlatList
         data={results}
         keyExtractor={(item) => item.resort.id}
@@ -62,9 +69,9 @@ export default function DiscoverScreen() {
         ListHeaderComponent={
           <View style={[styles.header, { paddingHorizontal: hPadding }]}>
             <SectionHeader
-              title="Your Matches"
+              title={content.discover.sectionTitle}
               action={{
-                label: "Retake Quiz",
+                label: content.discover.retakeQuiz,
                 onPress: () => router.replace("/(onboarding)"),
               }}
             />

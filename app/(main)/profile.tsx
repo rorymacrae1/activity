@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { View, StyleSheet, ScrollView, Alert } from "react-native";
+import { View, StyleSheet, ScrollView, Alert, Pressable } from "react-native";
+import Head from "expo-router/head";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { useFavoritesStore } from "@stores/favorites";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -14,72 +16,118 @@ import { ScreenContainer } from "@components/ui/ScreenContainer";
 
 export default function ProfileScreen() {
   const [isResetting, setIsResetting] = useState(false);
-  const { skillLevel, budgetLevel, regions, reset } = usePreferencesStore();
+  const { groupAbilities, budgetLevel, regions, reset, language, setLanguage } = usePreferencesStore();
   const { favoriteIds, clearAll: clearFavorites } = useFavoritesStore();
   const { hPadding } = useLayout();
+  const content = useContent();
 
   const handleRetakeQuiz = () => {
-    Alert.alert("Retake Quiz", "This will reset your preferences. Are you sure?", [
-      { text: "Cancel", style: "cancel" },
-      { text: "Retake", style: "destructive", onPress: () => { setIsResetting(true); reset(); router.replace("/(onboarding)"); } },
+    Alert.alert(content.profile.alerts.retakeTitle, content.profile.alerts.retakeMessage, [
+      { text: content.profile.alerts.cancel, style: "cancel" },
+      { text: content.profile.alerts.retakeConfirm, style: "destructive", onPress: () => { setIsResetting(true); reset(); router.replace("/(onboarding)"); } },
     ]);
   };
 
   const handleClearFavorites = () => {
-    if (favoriteIds.length === 0) { Alert.alert("No Saved Resorts", "You don't have any saved resorts to clear."); return; }
-    Alert.alert("Clear Saved Resorts", `Remove ${favoriteIds.length} saved resort${favoriteIds.length === 1 ? "" : "s"}?`, [
-      { text: "Cancel", style: "cancel" },
-      { text: "Clear All", style: "destructive", onPress: clearFavorites },
+    if (favoriteIds.length === 0) { Alert.alert(content.profile.alerts.noSavedTitle, content.profile.alerts.noSavedMessage); return; }
+    const plural = favoriteIds.length === 1 ? "" : "s";
+    const clearMessage = content.profile.alerts.clearMessage
+      .replace("{count}", String(favoriteIds.length))
+      .replace("{plural}", plural);
+    Alert.alert(content.profile.alerts.clearTitle, clearMessage, [
+      { text: content.profile.alerts.cancel, style: "cancel" },
+      { text: content.profile.alerts.clearConfirm, style: "destructive", onPress: clearFavorites },
     ]);
   };
 
   if (isResetting) {
-    return <ScreenContainer><LoadingState message="Resetting preferences..." /></ScreenContainer>;
+    return <ScreenContainer><LoadingState message={content.profile.resetLoading} /></ScreenContainer>;
   }
 
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-  const hasCompletedSetup = skillLevel && budgetLevel && regions.length > 0;
+  const hasCompletedSetup = groupAbilities.length > 0 && budgetLevel && regions.length > 0;
 
   return (
     <ScreenContainer>
+      <Head>
+        <title>Profile | PeakWise</title>
+        <meta name="description" content="Update your ski preferences to get fresh resort recommendations." />
+      </Head>
       <ScrollView contentContainerStyle={[styles.scrollContent, { paddingHorizontal: hPadding }]}>
         <View style={styles.pageHeader}>
-          <Text variant="h1">Profile</Text>
+          <Text variant="h1">{content.profile.title}</Text>
         </View>
 
         {/* Preferences */}
         <View style={styles.section}>
-          <SectionHeader title="Your Preferences" />
+          <SectionHeader title={content.profile.preferencesSection} />
           {!hasCompletedSetup ? (
             <View style={styles.warningBanner}>
               <Text variant="bodySmall" color={colors.warning}>
-                ⚠️ Some preferences are not set. Complete the quiz for better recommendations.
+                ⚠️ {content.profile.incompleteWarning}
               </Text>
             </View>
           ) : null}
           <Card elevation="sm" style={styles.prefsCard}>
-            <PrefRow label="Skill Level" value={skillLevel ? capitalize(skillLevel) : "Not set"} />
+            <PrefRow label={content.profile.skillLevel} value={groupAbilities.length > 0 ? groupAbilities.map(capitalize).join(", ") : content.profile.notSet} />
             <View style={styles.divider} />
-            <PrefRow label="Budget" value={budgetLevel ? capitalize(budgetLevel) : "Not set"} />
+            <PrefRow label={content.profile.budget} value={budgetLevel ? capitalize(budgetLevel) : content.profile.notSet} />
             <View style={styles.divider} />
-            <PrefRow label="Regions" value={regions.length > 0 ? `${regions.length} selected` : "Not set"} />
+            <PrefRow
+              label={content.profile.regions}
+              value={regions.length > 0 ? content.profile.regionsCount.replace("{count}", String(regions.length)) : content.profile.notSet}
+            />
           </Card>
         </View>
 
         {/* Actions */}
         <View style={styles.section}>
-          <SectionHeader title="Actions" />
+          <SectionHeader title={content.profile.actionsSection} />
           <View style={styles.actions}>
-            <Button label="🔄  Retake Quiz" variant="secondary" onPress={handleRetakeQuiz} fullWidth />
-            <Button label={`🗑️  Clear Saved Resorts (${favoriteIds.length})`} variant="danger" onPress={handleClearFavorites} fullWidth />
+            <Button label={`🔄  ${content.profile.retakeQuiz}`} variant="secondary" onPress={handleRetakeQuiz} fullWidth />
+            <Button
+              label={`🗑️  ${content.profile.clearSaved.replace("{count}", String(favoriteIds.length))}`}
+              variant="danger"
+              onPress={handleClearFavorites}
+              fullWidth
+            />
+          </View>
+        </View>
+
+        {/* Language */}
+        <View style={styles.section}>
+          <Text variant="h4" style={{ paddingHorizontal: hPadding, marginBottom: spacing.sm }}>
+            {content.profile.languageSection}
+          </Text>
+          <View style={[styles.langRow, { paddingHorizontal: hPadding }]}>
+            {(["en", "fr", "de"] as const).map((lang) => {
+              const langLabel = lang === "en" ? content.languages.en : lang === "fr" ? content.languages.fr : content.languages.de;
+              return (
+                <Pressable
+                  key={lang}
+                  style={[styles.langBtn, language === lang && styles.langBtnActive]}
+                  onPress={() => setLanguage(lang)}
+                  accessibilityRole="button"
+                  accessibilityLabel={langLabel}
+                  accessibilityState={{ selected: language === lang }}
+                >
+                  <Text
+                    variant="bodySmall"
+                    style={language === lang ? styles.langTextActive : undefined}
+                  >
+                    {langLabel}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
         </View>
 
         {/* About */}
         <View style={styles.section}>
-          <SectionHeader title="About" />
+          <SectionHeader title={content.profile.aboutSection} />
           <Text variant="bodySmall" color={colors.text.secondary}>
-            PeakWise v1.0.0 — Find your perfect ski resort
+            {content.profile.aboutText}
           </Text>
         </View>
       </ScrollView>
@@ -114,4 +162,16 @@ const styles = StyleSheet.create({
   prefRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: spacing.sm },
   divider: { height: 1, backgroundColor: colors.surface.divider },
   actions: { gap: spacing.sm, marginTop: spacing.xs },
+  langRow: { flexDirection: "row", gap: spacing.sm },
+  langBtn: {
+    flex: 1,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: "center",
+  },
+  langBtnActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  langTextActive: { color: "#fff" },
 });

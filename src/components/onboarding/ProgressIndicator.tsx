@@ -1,5 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import { Text } from "@components/ui/Text";
+import { useContent } from "@hooks/useContent";
 import { colors, spacing } from "@theme";
 
 interface ProgressIndicatorProps {
@@ -14,6 +15,7 @@ interface ProgressIndicatorProps {
  * Pill-style dots — current step is wider and primary-coloured.
  */
 export function ProgressIndicator({ current, total, showLabel = false }: ProgressIndicatorProps) {
+  const content = useContent();
   return (
     <View style={styles.wrapper}>
       <View style={styles.dots}>
@@ -34,7 +36,7 @@ export function ProgressIndicator({ current, total, showLabel = false }: Progres
       </View>
       {showLabel ? (
         <Text variant="captionMedium" color={colors.text.tertiary}>
-          Step {current} of {total}
+          {content.progress.step.replace("{current}", String(current)).replace("{total}", String(total))}
         </Text>
       ) : null}
     </View>

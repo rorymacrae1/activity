@@ -2,6 +2,7 @@ import { View, StyleSheet, Image } from "react-native";
 import { Card } from "@components/ui/Card";
 import { Text } from "@components/ui/Text";
 import { Badge } from "@components/ui/Badge";
+import { useContent } from "@hooks/useContent";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, typography } from "@theme";
 import type { RecommendationResult } from "@/types/recommendation";
@@ -30,6 +31,7 @@ export function ResortCard({
   onPress,
   showMatchScore = true,
 }: ResortCardProps) {
+  const content = useContent();
   const { resort, matchScore, matchReasons } = result;
   const { cardImageHeight } = useLayout();
 
@@ -50,7 +52,7 @@ export function ResortCard({
         {rank ? (
           <View style={styles.rankBadge}>
             <Text style={[typography.captionMedium, { color: colors.text.inverse }]}>
-              #{rank}
+              {content.resortCard.rank.replace("{rank}", String(rank))}
             </Text>
           </View>
         ) : null}
@@ -73,9 +75,9 @@ export function ResortCard({
 
         {/* Stats row */}
         <View style={styles.stats}>
-          <StatPill icon="⛷️" label={`${resort.stats.totalKm}km`} />
-          <StatPill icon="❄️" label={`${resort.attributes.snowReliability}/5 snow`} />
-          <StatPill icon="💰" label={`€${resort.attributes.averageDailyCost}/day`} />
+          <StatPill icon="⛷️" label={content.resortCard.km.replace("{km}", String(resort.stats.totalKm))} />
+          <StatPill icon="❄️" label={content.resortCard.snow.replace("{snow}", String(resort.attributes.snowReliability))} />
+          <StatPill icon="💰" label={content.resortCard.cost.replace("{cost}", String(resort.attributes.averageDailyCost))} />
         </View>
 
         {/* Match reasons */}

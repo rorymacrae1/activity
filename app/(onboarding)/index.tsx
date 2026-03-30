@@ -1,30 +1,37 @@
 import { View, StyleSheet } from "react-native";
+import Head from "expo-router/head";
 import { router } from "expo-router";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 import { colors, spacing } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { Card } from "@components/ui/Card";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 
-const VALUE_PROPS = [
-  { icon: "🎯", text: "Personalised to your skill and style" },
-  { icon: "🏔️", text: "30+ top European resorts" },
-  { icon: "📱", text: "Works offline — take it to the slopes" },
-];
-
 export default function WelcomeScreen() {
   const { isTablet, hPadding } = useLayout();
+  const content = useContent();
+
+  const VALUE_PROPS = [
+    { icon: "🎯", text: content.onboarding.welcome.valueProp1 },
+    { icon: "🏔️", text: content.onboarding.welcome.valueProp2 },
+    { icon: "📱", text: content.onboarding.welcome.valueProp3 },
+  ];
 
   return (
     <QuizLayout>
+      <Head>
+        <title>Find Your Perfect Ski Resort | PeakWise</title>
+        <meta name="description" content="Answer a few quick questions and we'll match you with the ideal ski resort for your skill level, budget, and vibe." />
+      </Head>
       <View style={[styles.content, { paddingHorizontal: isTablet ? spacing.xl : hPadding }]}>
         {/* Hero */}
         <View style={styles.hero}>
           <Text style={[styles.logo, isTablet && styles.logoLarge]}>⛷️</Text>
-          <Text variant={isTablet ? "display" : "h1"} align="center">PeakWise</Text>
+          <Text variant={isTablet ? "display" : "h1"} align="center">{content.onboarding.welcome.appTitle}</Text>
           <Text variant="body" color={colors.text.secondary} align="center" style={styles.tagline}>
-            Find your perfect ski resort{"\n"}in seconds
+            {content.onboarding.welcome.tagline}
           </Text>
         </View>
 
@@ -40,8 +47,8 @@ export default function WelcomeScreen() {
 
         {/* CTA */}
         <View style={styles.cta}>
-          <Button label="Find My Resort" onPress={() => router.push("/(onboarding)/skill")} fullWidth size="lg" />
-          <Text variant="caption" color={colors.text.tertiary} align="center">Takes about 1 minute</Text>
+          <Button label={content.onboarding.welcome.cta} onPress={() => router.push("/(onboarding)/trip-type")} fullWidth size="lg" />
+          <Text variant="caption" color={colors.text.tertiary} align="center">{content.onboarding.welcome.ctaSubtext}</Text>
         </View>
       </View>
     </QuizLayout>

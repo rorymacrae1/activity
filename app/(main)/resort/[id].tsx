@@ -1,9 +1,12 @@
 import { useLocalSearchParams, router } from "expo-router";
+import Head from "expo-router/head";
 import { View, StyleSheet, ScrollView, Pressable, Image } from "react-native";
+import { getResortSchema, getResortBreadcrumbs } from "@/utils/schema";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getResortById } from "@services/resort";
 import { useFavoritesStore } from "@stores/favorites";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -18,15 +21,16 @@ export default function ResortDetailScreen() {
   const resort = getResortById(id);
   const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
   const { heroHeight, hPadding, isTablet } = useLayout();
+  const content = useContent();
 
   if (!resort) {
     return (
       <SafeAreaView style={styles.container}>
         <EmptyState
           icon="🏔️"
-          title="Resort not found"
-          message="This resort doesn't exist or was removed."
-          action={{ label: "Go Back", onPress: () => router.back() }}
+          title={content.resort.notFoundTitle}
+          message={content.resort.notFoundMessage}
+          action={{ label: content.resort.goBack, onPress: () => router.back() }}
         />
       </SafeAreaView>
     );
@@ -38,6 +42,20 @@ export default function ResortDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
+      <Head>
+        <title>{resort.name} — Ski Resort in {resort.country} | PeakWise</title>
+        <meta name="description" content={`${resort.content.highlights[0]}. ${resort.attributes.snowReliability >= 4 ? "Excellent snow reliability." : ""} Located in ${resort.region}.`} />
+        <meta property="og:title" content={`${resort.name} | PeakWise`} />
+        <meta property="og:description" content={resort.content.description} />
+        <meta property="og:image" content={resort.assets.heroImage} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={resort.name} />
+        <meta name="twitter:description" content={resort.content.highlights[0]} />
+        <meta name="twitter:image" content={resort.assets.heroImage} />
+        <script type="application/ld+json">{JSON.stringify(getResortSchema(resort))}</script>
+        <script type="application/ld+json">{JSON.stringify(getResortBreadcrumbs(resort))}</script>
+      </Head>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
 
         {/* Full-bleed hero */}
@@ -46,6 +64,7 @@ export default function ResortDetailScreen() {
             source={{ uri: resort.assets.heroImage }}
             style={styles.heroImage}
             resizeMode="cover"
+            accessibilityLabel={`${resort.name} ski resort`}
           />
           <View style={styles.heroOverlay}>
             <Pressable style={styles.iconButton} onPress={() => router.back()}
@@ -53,7 +72,7 @@ export default function ResortDetailScreen() {
               <Text style={styles.iconButtonText}>←</Text>
             </Pressable>
             <Pressable style={styles.iconButton} onPress={handleToggleFavorite}
-              accessibilityRole="button" accessibilityLabel={isSaved ? "Remove from saved" : "Save resort"}>
+              accessibilityRole="button" accessibilityLabel={isSaved ? content.resort.unsave : content.resort.save}>
               <Text style={styles.iconButtonText}>{isSaved ? "❤️" : "🤍"}</Text>
             </Pressable>
           </View>
@@ -86,36 +105,36 @@ export default function ResortDetailScreen() {
             </View>
 
             {/* ── At-a-Glance Info Grid ── */}
-            <SectionBlock title="Resort Info">
+            <SectionBlock title={content.resort.infoTitle}>
               <ResortInfoGrid resort={resort} />
             </SectionBlock>
 
             {/* Terrain breakdown */}
-            <SectionBlock title="Terrain Breakdown">
+            <SectionBlock title={content.resort.terrainTitle}>
               <TerrainChart terrain={resort.terrain} />
             </SectionBlock>
 
             {/* Overview */}
-            <SectionBlock title="Overview">
+            <SectionBlock title={content.resort.overviewTitle}>
               <Text variant="body" color={colors.text.secondary} style={styles.description}>
                 {resort.content.description}
               </Text>
             </SectionBlock>
 
             {/* Costs */}
-            <SectionBlock title="Lift Pass Costs">
+            <SectionBlock title={content.resort.costsTitle}>
               <Card elevation="sm">
-                <CostRow label="Day Pass"        value={`€${resort.attributes.liftPassDayCost}`} />
+                <CostRow label={content.resort.dayPass}     value={`€${resort.attributes.liftPassDayCost}`} />
                 <View style={styles.divider} />
-                <CostRow label="6-Day Pass"      value={`€${resort.attributes.liftPassSixDayCost}`} />
+                <CostRow label={content.resort.sixDayPass}  value={`€${resort.attributes.liftPassSixDayCost}`} />
                 <View style={styles.divider} />
-                <CostRow label="Avg. Daily Cost" value={`~€${resort.attributes.averageDailyCost}`} />
+                <CostRow label={content.resort.avgDaily}    value={`~€${resort.attributes.averageDailyCost}`} />
               </Card>
             </SectionBlock>
 
             {/* Map CTA */}
             <Button
-              label="🗺️  View Piste Map"
+              label={`🗺️  ${content.resort.viewMap}`}
               onPress={() => router.push(`/(main)/map/${resort.id}`)}
               fullWidth
               style={styles.mapButton}

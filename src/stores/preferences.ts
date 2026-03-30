@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { SkillLevel, BudgetLevel, Preferences } from "@/types/preferences";
+import type { SkillLevel, BudgetLevel, Preferences, TripType } from "@/types/preferences";
+import type { Language } from "@/content";
 import { zustandStorage } from "@lib/storage";
 
 interface PreferencesState {
@@ -8,7 +9,8 @@ interface PreferencesState {
   hasCompletedOnboarding: boolean;
 
   // Preferences
-  skillLevel: SkillLevel | null;
+  tripType: TripType | null;
+  groupAbilities: SkillLevel[];
   budgetLevel: BudgetLevel | null;
   regions: string[];
   crowdPreference: number; // 1-5
@@ -17,24 +19,29 @@ interface PreferencesState {
 
   // Actions
   setHasCompletedOnboarding: (completed: boolean) => void;
-  setSkillLevel: (level: SkillLevel) => void;
+  setTripType: (type: TripType) => void;
+  setGroupAbilities: (abilities: SkillLevel[]) => void;
   setBudgetLevel: (level: BudgetLevel) => void;
   setRegions: (regions: string[]) => void;
   setCrowdPreference: (value: number) => void;
   setFamilyVsNightlife: (value: number) => void;
   setSnowImportance: (value: number) => void;
+  language: Language;
+  setLanguage: (lang: Language) => void;
   reset: () => void;
   getPreferencesInput: () => Preferences;
 }
 
 const initialState = {
   hasCompletedOnboarding: false,
-  skillLevel: null as SkillLevel | null,
+  tripType: null as TripType | null,
+  groupAbilities: [] as SkillLevel[],
   budgetLevel: null as BudgetLevel | null,
   regions: [] as string[],
   crowdPreference: 3,
   familyVsNightlife: 3,
   snowImportance: 3,
+  language: "en" as Language,
 };
 
 /**
@@ -49,7 +56,9 @@ export const usePreferencesStore = create<PreferencesState>()(
       setHasCompletedOnboarding: (completed) =>
         set({ hasCompletedOnboarding: completed }),
 
-      setSkillLevel: (level) => set({ skillLevel: level }),
+      setTripType: (type) => set({ tripType: type }),
+
+      setGroupAbilities: (abilities) => set({ groupAbilities: abilities }),
 
       setBudgetLevel: (level) => set({ budgetLevel: level }),
 
@@ -61,12 +70,15 @@ export const usePreferencesStore = create<PreferencesState>()(
 
       setSnowImportance: (value) => set({ snowImportance: value }),
 
+      setLanguage: (lang) => set({ language: lang }),
+
       reset: () => set(initialState),
 
       getPreferencesInput: (): Preferences => {
         const state = get();
         return {
-          skillLevel: state.skillLevel ?? "intermediate",
+          tripType: state.tripType,
+          groupAbilities: state.groupAbilities.length > 0 ? state.groupAbilities : ["intermediate"],
           budgetLevel: state.budgetLevel ?? "mid",
           regions:
             state.regions.length > 0

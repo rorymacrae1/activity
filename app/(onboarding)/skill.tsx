@@ -2,6 +2,7 @@ import { View, StyleSheet, Pressable } from "react-native";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -9,45 +10,65 @@ import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
 import type { SkillLevel } from "@/types/preferences";
 
-const OPTIONS: Array<{ level: SkillLevel; title: string; description: string; icon: string }> = [
-  { level: "beginner",     title: "Beginner",     description: "Learning the basics, comfortable on green runs", icon: "🟢" },
-  { level: "intermediate", title: "Intermediate", description: "Confident on blue runs, working on red",         icon: "🔵" },
-  { level: "advanced",     title: "Advanced",     description: "Comfortable on all terrain including blacks",    icon: "⚫" },
-];
-
 export default function SkillScreen() {
-  const { skillLevel, setSkillLevel } = usePreferencesStore();
+  const { groupAbilities, setGroupAbilities } = usePreferencesStore();
   const { isTablet, hPadding } = useLayout();
+  const content = useContent();
+
+  const OPTIONS: Array<{ level: SkillLevel; icon: string }> = [
+    { level: "beginner",     icon: "🟢" },
+    { level: "intermediate", icon: "🔵" },
+    { level: "advanced",     icon: "⚫" },
+  ];
+
+  const toggle = (level: SkillLevel) => {
+    if (groupAbilities.includes(level)) {
+      // Deselect only if it won't leave nothing selected
+      if (groupAbilities.length > 1) {
+        setGroupAbilities(groupAbilities.filter((l) => l !== level));
+      }
+    } else {
+      setGroupAbilities([...groupAbilities, level]);
+    }
+  };
 
   return (
     <QuizLayout>
       <View style={[styles.inner, { paddingHorizontal: isTablet ? spacing.xl : hPadding }]}>
-        <ProgressIndicator current={1} total={5} showLabel />
+        <ProgressIndicator current={2} total={5} showLabel />
 
         <View style={styles.header}>
-          <Text variant="h2">What's your skiing level?</Text>
+          <Text variant="h2">{content.onboarding.skill.title}</Text>
           <Text variant="body" color={colors.text.secondary}>
-            We'll find resorts that match your ability
+            {content.onboarding.skill.subtitle}
           </Text>
         </View>
 
         <View style={[styles.options, isTablet && styles.optionsRow]}>
           {OPTIONS.map((opt) => {
-            const active = skillLevel === opt.level;
+            const optContent = content.onboarding.skill.options[opt.level];
+            const active = groupAbilities.includes(opt.level);
             return (
               <Pressable
                 key={opt.level}
                 style={[styles.option, active && styles.optionActive, isTablet && styles.optionTablet]}
-                onPress={() => setSkillLevel(opt.level)}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: active }}
-                accessibilityLabel={`${opt.title}: ${opt.description}`}
+                onPress={() => toggle(opt.level)}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: active }}
+                accessibilityLabel={`${optContent.title}: ${optContent.description}`}
               >
                 <Text style={styles.optionIcon}>{opt.icon}</Text>
                 <View style={styles.optionText}>
-                  <Text variant="h4" color={active ? colors.primary : colors.text.primary}>{opt.title}</Text>
-                  <Text variant="bodySmall" color={colors.text.secondary}>{opt.description}</Text>
+                  <Text variant="h4" color={active ? colors.primary : colors.text.primary}>
+                    {optContent.title}
+                  </Text>
+                  <Text variant="bodySmall" color={colors.text.secondary}>
+                    {optContent.description}
+                  </Text>
                 </View>
+                {active && (
+                  <Text style={styles.checkmark} color={colors.primary}>✓</Text>
+                )}
               </Pressable>
             );
           })}
@@ -55,10 +76,16 @@ export default function SkillScreen() {
 
         <View style={styles.footer}>
           <Button
-            label="Next →"
-            onPress={() => skillLevel && router.push("/(onboarding)/budget")}
-            disabled={!skillLevel}
-            fullWidth
+            label={`← ${content.onboarding.skill.back}`}
+            variant="ghost"
+            onPress={() => router.back()}
+            style={styles.backBtn}
+          />
+          <Button
+            label={`${content.onboarding.skill.next} →`}
+            onPress={() => router.push("/(onboarding)/budget")}
+            disabled={groupAbilities.length === 0}
+            style={styles.nextBtn}
             size="lg"
           />
         </View>
@@ -86,6 +113,8 @@ const styles = StyleSheet.create({
   optionActive: { borderColor: colors.primary, backgroundColor: colors.primarySubtle },
   optionIcon: { fontSize: 32 },
   optionText: { flex: 1 },
-  footer: { paddingTop: spacing.md, paddingBottom: spacing.sm },
-  tabletCenter: { maxWidth: 520, alignSelf: "center" as const, width: "100%" },
+  checkmark: { fontSize: 20, fontWeight: "700" as const },
+  footer: { flexDirection: "row", gap: spacing.sm, paddingTop: spacing.md, paddingBottom: spacing.sm },
+  backBtn: { flex: 1 },
+  nextBtn: { flex: 2 },
 });

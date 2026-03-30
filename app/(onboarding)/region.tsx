@@ -2,6 +2,7 @@ import { View, StyleSheet, Pressable, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -19,6 +20,7 @@ const REGIONS = [
 export default function RegionScreen() {
   const { regions, setRegions } = usePreferencesStore();
   const { isTablet, hPadding } = useLayout();
+  const content = useContent();
   const allSelected = regions.length === REGIONS.length;
 
   const toggle = (id: string) =>
@@ -27,11 +29,11 @@ export default function RegionScreen() {
   return (
     <QuizLayout scrollable>
       <View style={[styles.inner, { paddingHorizontal: isTablet ? spacing.xl : hPadding }]}>
-        <ProgressIndicator current={3} total={5} showLabel />
+        <ProgressIndicator current={4} total={5} showLabel />
 
         <View style={styles.header}>
-          <Text variant="h2">Where do you want to ski?</Text>
-          <Text variant="body" color={colors.text.secondary}>Select one or more regions</Text>
+          <Text variant="h2">{content.onboarding.region.title}</Text>
+          <Text variant="body" color={colors.text.secondary}>{content.onboarding.region.subtitle}</Text>
         </View>
 
         {/* Select all toggle */}
@@ -43,7 +45,7 @@ export default function RegionScreen() {
         >
           <Text variant="bodySmall" color={allSelected ? colors.primary : colors.text.secondary}
             style={allSelected ? styles.selectAllActiveText : undefined}>
-            {allSelected ? "✓ All regions selected" : "Select all regions"}
+            {allSelected ? `✓ ${content.onboarding.region.allSelected}` : content.onboarding.region.selectAll}
           </Text>
         </Pressable>
 
@@ -74,8 +76,8 @@ export default function RegionScreen() {
         </View>
 
         <View style={styles.footer}>
-          <Button label="← Back" variant="ghost" onPress={() => router.back()} style={styles.backBtn} />
-          <Button label="Next →" onPress={() => regions.length > 0 && router.push("/(onboarding)/vibes")} disabled={regions.length === 0} style={styles.nextBtn} size="lg" />
+          <Button label={`← ${content.onboarding.region.back}`} variant="ghost" onPress={() => router.back()} style={styles.backBtn} />
+          <Button label={`${content.onboarding.region.next} →`} onPress={() => regions.length > 0 && router.push("/(onboarding)/vibes")} disabled={regions.length === 0} style={styles.nextBtn} size="lg" />
         </View>
       </View>
     </QuizLayout>

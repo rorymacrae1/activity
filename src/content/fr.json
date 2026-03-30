@@ -1,0 +1,231 @@
+{
+  "onboarding": {
+    "welcome": {
+      "appTitle": "PeakWise",
+      "tagline": "Trouvez votre station idéale en quelques secondes",
+      "valueProp1": "Personnalisé selon votre niveau et votre style",
+      "valueProp2": "Plus de 30 stations européennes de premier plan",
+      "valueProp3": "Fonctionne hors ligne — emportez-le sur les pistes",
+      "cta": "Trouver ma station",
+      "ctaSubtext": "Prend environ 1 minute"
+    },
+    "tripType": {
+      "title": "Pour qui est ce voyage ?",
+      "subtitle": "Cela nous aide à trouver la station parfaite",
+      "options": {
+        "solo": { "title": "Juste moi", "description": "En solitaire, à mon rythme" },
+        "couple": { "title": "En couple", "description": "Nous deux, niveaux similaires" },
+        "family": { "title": "En famille", "description": "Avec des enfants ou niveaux mixtes" },
+        "friends": { "title": "Groupe d'amis", "description": "Un groupe de niveaux variés" }
+      },
+      "next": "Suivant"
+    },
+    "skill": {
+      "title": "Qui skie dans votre groupe ?",
+      "subtitle": "Sélectionnez tout ce qui s'applique",
+      "options": {
+        "beginner": { "title": "Débutants", "description": "Apprentissage des bases, pistes vertes et bleues" },
+        "intermediate": { "title": "Intermédiaires", "description": "À l'aise sur les bleues, abordant les rouges" },
+        "advanced": { "title": "Avancés", "description": "Tous terrains, noires et hors-piste" }
+      },
+      "next": "Suivant",
+      "back": "Retour"
+    },
+    "budget": {
+      "title": "Quel est votre budget ?",
+      "subtitle": "Forfait remontées, repas et location inclus",
+      "options": {
+        "budget": {
+          "title": "Économique",
+          "range": "€80–120/jour",
+          "description": "Abordable, excellent rapport qualité-prix"
+        },
+        "mid": {
+          "title": "Milieu de gamme",
+          "range": "€120–180/jour",
+          "description": "Équilibre qualité & prix"
+        },
+        "premium": {
+          "title": "Premium",
+          "range": "€180–280/jour",
+          "description": "Expérience haut de gamme"
+        },
+        "luxury": {
+          "title": "Luxe",
+          "range": "€280+/jour",
+          "description": "Le meilleur de tout"
+        }
+      },
+      "back": "Retour",
+      "next": "Suivant"
+    },
+    "region": {
+      "title": "Où souhaitez-vous skier ?",
+      "subtitle": "Sélectionnez une ou plusieurs régions",
+      "selectAll": "Sélectionner toutes les régions",
+      "allSelected": "Toutes les régions sélectionnées",
+      "back": "Retour",
+      "next": "Suivant"
+    },
+    "vibes": {
+      "title": "Quelle est votre ambiance ?",
+      "subtitle": "Dites-nous l'atmosphère idéale pour votre station",
+      "crowd": {
+        "label": "Fréquentation",
+        "left": "Tranquille",
+        "right": "Animé",
+        "quiet": "Calme",
+        "moderate": "Modéré",
+        "lively": "Vivant"
+      },
+      "focus": {
+        "label": "Ambiance de la station",
+        "left": "Familiale",
+        "right": "Après-ski",
+        "family": "Famille",
+        "balanced": "Équilibré",
+        "nightlife": "Vie nocturne"
+      },
+      "snow": {
+        "label": "Fiabilité de l'enneigement",
+        "left": "Pas une priorité",
+        "right": "La neige est indispensable",
+        "flexible": "Flexible",
+        "important": "Important",
+        "critical": "Essentiel"
+      },
+      "back": "Retour",
+      "next": "Voir les résultats"
+    },
+    "results": {
+      "loading": "Recherche de vos stations idéales...",
+      "title": "Vos meilleures correspondances",
+      "subtitle": "En fonction de vos préférences",
+      "emptyTitle": "Aucun résultat trouvé",
+      "emptyMessage": "Essayez d'ajuster vos préférences.",
+      "retake": "Refaire le quiz",
+      "continue": "Accéder à l'application"
+    }
+  },
+  "discover": {
+    "loading": "Chargement des recommandations...",
+    "sectionTitle": "Vos correspondances",
+    "retakeQuiz": "Refaire le quiz",
+    "emptyTitle": "Aucun résultat trouvé",
+    "emptyMessage": "Essayez d'ajuster vos préférences dans votre profil.",
+    "updatePreferences": "Mettre à jour les préférences"
+  },
+  "favorites": {
+    "sectionTitle": "Stations sauvegardées",
+    "emptyTitle": "Aucune station sauvegardée",
+    "emptyMessage": "Appuyez sur l'icône cœur d'une station pour la sauvegarder ici.",
+    "discover": "Découvrir des stations"
+  },
+  "profile": {
+    "title": "Profil",
+    "preferencesSection": "Vos préférences",
+    "incompleteWarning": "Certaines préférences ne sont pas définies. Complétez le quiz pour de meilleures recommandations.",
+    "skillLevel": "Niveau de ski",
+    "budget": "Budget",
+    "regions": "Régions",
+    "notSet": "Non défini",
+    "regionsCount": "{count} sélectionnée(s)",
+    "actionsSection": "Actions",
+    "retakeQuiz": "Refaire le quiz",
+    "clearSaved": "Effacer les stations sauvegardées ({count})",
+    "aboutSection": "À propos",
+    "aboutText": "PeakWise v1.0.0 — Trouvez votre station de ski idéale",
+    "language": "Langue",
+    "languageSection": "Langue",
+    "resetLoading": "Réinitialisation des préférences...",
+    "alerts": {
+      "retakeTitle": "Refaire le quiz",
+      "retakeMessage": "Cela réinitialisera vos préférences. Êtes-vous sûr ?",
+      "cancel": "Annuler",
+      "retakeConfirm": "Refaire",
+      "noSavedTitle": "Aucune station sauvegardée",
+      "noSavedMessage": "Vous n'avez aucune station sauvegardée à effacer.",
+      "clearTitle": "Effacer les stations sauvegardées",
+      "clearMessage": "Supprimer {count} station(s) sauvegardée(s){plural} ?",
+      "clearConfirm": "Tout effacer"
+    }
+  },
+  "resort": {
+    "notFoundTitle": "Station introuvable",
+    "notFoundMessage": "Cette station n'existe pas ou a été supprimée.",
+    "goBack": "Retour",
+    "save": "Sauvegarder la station",
+    "unsave": "Retirer des favoris",
+    "infoTitle": "Infos sur la station",
+    "terrainTitle": "Répartition du terrain",
+    "overviewTitle": "Aperçu",
+    "costsTitle": "Tarifs des forfaits",
+    "dayPass": "Forfait journée",
+    "sixDayPass": "Forfait 6 jours",
+    "avgDaily": "Coût journalier moyen",
+    "viewMap": "Voir le plan des pistes"
+  },
+  "map": {
+    "title": "Carte",
+    "notFound": "Station introuvable",
+    "noMap": "Carte bientôt disponible",
+    "legend": "Légende",
+    "beginner": "Débutant",
+    "intermediate": "Intermédiaire",
+    "advanced": "Avancé",
+    "instructions": "Pincez pour zoomer • Double-appui pour réinitialiser"
+  },
+  "infoGrid": {
+    "snowSureness": "FIABILITÉ NEIGE",
+    "slopeDistance": "DISTANCE DE PISTE",
+    "slopeDifficulty": "DIFFICULTÉ",
+    "transferTime": "TEMPS DE TRANSFERT",
+    "townStyle": "STYLE DU VILLAGE",
+    "familyFriendly": "CONVIVIALITÉ FAMILLE",
+    "otherActivities": "AUTRES ACTIVITÉS",
+    "snow": {
+      "excellent": "Excellent",
+      "veryGood": "Très bon",
+      "good": "Bon",
+      "fair": "Correct",
+      "variable": "Variable"
+    },
+    "runs": "{runs} pistes",
+    "lifts": "{lifts} remontées",
+    "beginner": "Idéal pour débutants",
+    "expert": "Orienté experts",
+    "intermediate": "Axé intermédiaires",
+    "transferHoursMinutes": "{h}h {m}min",
+    "transferHours": "{h}h",
+    "from": "depuis {airport}",
+    "crowdQuiet": "Calme & peu fréquenté",
+    "crowdModerate": "Fréquentation modérée",
+    "crowdBusy": "Animé & fréquenté",
+    "family": {
+      "excellent": "Excellent",
+      "great": "Très bien",
+      "good": "Bien",
+      "limited": "Limité",
+      "notRecommended": "Déconseillé"
+    },
+    "nightlifeHigh": "Vie nocturne excellente",
+    "nightlifeMedium": "Bonne vie nocturne",
+    "nightlifeLow": "Soirées tranquilles",
+    "barsLabel": "BARS APRÈS-SKI",
+    "barsCount": "~{count} bars"
+  },
+  "resortCard": {
+    "rank": "#{rank}",
+    "km": "{km} km",
+    "snow": "{snow}/5 neige",
+    "cost": "€{cost}/jour"
+  },
+  "progress": {
+    "step": "Étape {current} sur {total}"
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français",
+    "de": "Deutsch"
+  }
+}

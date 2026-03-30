@@ -32,7 +32,9 @@ const makeResort = (attrs: Partial<Resort["attributes"]> = {}): Resort => ({
 });
 
 const basePrefs: NormalizedPreferences = {
-  skillLevel: 0.5,
+  minSkill: 0.5,
+  maxSkill: 0.5,
+  tripType: null,
   budgetLevel: 0.33,
   quietLively: 0.5,
   familyNightlife: 0.5,

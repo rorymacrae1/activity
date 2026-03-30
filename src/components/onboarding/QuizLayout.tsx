@@ -8,7 +8,7 @@ import { colors, spacing, radius, shadows } from "@theme";
  * Hosted on Unsplash — same CDN already used for resort hero images.
  */
 const BACKGROUND_IMAGE =
-  "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1600&q=80";
+  "https://images.unsplash.com/photo-1551524559-8af4e6624178?w=800";
 
 interface QuizLayoutProps {
   /** Quiz card content */

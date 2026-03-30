@@ -1,6 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { Text } from "@components/ui/Text";
 import { Badge } from "@components/ui/Badge";
+import { useContent } from "@hooks/useContent";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius } from "@theme";
 import type { Resort } from "@/types/resort";
@@ -17,78 +18,89 @@ interface ResortInfoGridProps {
  */
 export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
   const { isTablet } = useLayout();
+  const content = useContent();
   const { attributes, stats, terrain } = resort;
 
-  // Derived helpers
+  // Derived helpers — accept content so they work inside the component
   const snowLabel = (n: number) =>
-    n >= 5 ? "Excellent" : n >= 4 ? "Very good" : n >= 3 ? "Good" : n >= 2 ? "Fair" : "Variable";
+    n >= 5 ? content.infoGrid.snow.excellent
+    : n >= 4 ? content.infoGrid.snow.veryGood
+    : n >= 3 ? content.infoGrid.snow.good
+    : n >= 2 ? content.infoGrid.snow.fair
+    : content.infoGrid.snow.variable;
   const snowVariant = (n: number): "success" | "primary" | "warning" | "error" =>
     n >= 4 ? "success" : n >= 3 ? "primary" : n >= 2 ? "warning" : "error";
 
   const familyLabel = (n: number) =>
-    n >= 5 ? "Excellent" : n >= 4 ? "Great" : n >= 3 ? "Good" : n >= 2 ? "Limited" : "Not recommended";
+    n >= 5 ? content.infoGrid.family.excellent
+    : n >= 4 ? content.infoGrid.family.great
+    : n >= 3 ? content.infoGrid.family.good
+    : n >= 2 ? content.infoGrid.family.limited
+    : content.infoGrid.family.notRecommended;
   const familyVariant = (n: number): "success" | "primary" | "warning" | "error" =>
     n >= 4 ? "success" : n >= 3 ? "primary" : n >= 2 ? "warning" : "error";
 
   const transferHrs = Math.floor(attributes.transferTimeMinutes / 60);
   const transferMins = attributes.transferTimeMinutes % 60;
-  const transferLabel = transferMins > 0 ? `${transferHrs}h ${transferMins}m` : `${transferHrs}h`;
+  const transferLabel = transferMins > 0
+    ? content.infoGrid.transferHoursMinutes.replace("{h}", String(transferHrs)).replace("{m}", String(transferMins))
+    : content.infoGrid.transferHours.replace("{h}", String(transferHrs));
 
   const dominantTerrain =
     terrain.beginner >= terrain.intermediate && terrain.beginner >= terrain.advanced
-      ? "Beginner-friendly"
+      ? content.infoGrid.beginner
       : terrain.advanced >= terrain.intermediate
-        ? "Expert-heavy"
-        : "Intermediate focus";
+        ? content.infoGrid.expert
+        : content.infoGrid.intermediate;
 
   const cells = [
     {
       icon: "❄️",
-      label: "Snow Sureness",
+      label: content.infoGrid.snowSureness,
       primary: snowLabel(attributes.snowReliability),
       sub: `${attributes.snowReliability}/5 rating`,
       badge: { label: snowLabel(attributes.snowReliability), variant: snowVariant(attributes.snowReliability) } as const,
     },
     {
       icon: "⛷️",
-      label: "Slope Distance",
+      label: content.infoGrid.slopeDistance,
       primary: `${stats.totalKm} km`,
-      sub: `${stats.totalRuns} runs • ${stats.lifts} lifts`,
+      sub: content.infoGrid.runs.replace("{runs}", String(stats.totalRuns)) + " • " + content.infoGrid.lifts.replace("{lifts}", String(stats.lifts)),
     },
     {
       icon: "🎿",
-      label: "Slope Difficulty",
+      label: content.infoGrid.slopeDifficulty,
       primary: dominantTerrain,
       sub: `${terrain.beginner}% green · ${terrain.intermediate}% blue · ${terrain.advanced}% black`,
     },
     {
       icon: "✈️",
-      label: "Transfer Time",
+      label: content.infoGrid.transferTime,
       primary: transferLabel,
-      sub: `from ${attributes.nearestAirport}`,
+      sub: content.infoGrid.from.replace("{airport}", attributes.nearestAirport),
     },
     {
       icon: "🏘️",
-      label: "Town Style",
+      label: content.infoGrid.townStyle,
       primary: attributes.townStyle,
-      sub: attributes.crowdLevel <= 2 ? "Quiet & uncrowded" : attributes.crowdLevel >= 4 ? "Busy & lively" : "Moderate crowds",
+      sub: attributes.crowdLevel <= 2 ? content.infoGrid.crowdQuiet : attributes.crowdLevel >= 4 ? content.infoGrid.crowdBusy : content.infoGrid.crowdModerate,
     },
     {
       icon: "👨‍👩‍👧",
-      label: "Family Friendly",
+      label: content.infoGrid.familyFriendly,
       primary: familyLabel(attributes.familyScore),
       sub: `${attributes.familyScore}/5 family score`,
       badge: { label: familyLabel(attributes.familyScore), variant: familyVariant(attributes.familyScore) } as const,
     },
     {
       icon: "🍻",
-      label: "Après-ski Bars",
-      primary: `~${attributes.barCount} bars`,
-      sub: attributes.nightlifeScore >= 4 ? "Excellent nightlife" : attributes.nightlifeScore >= 3 ? "Good nightlife" : "Relaxed evenings",
+      label: content.infoGrid.barsLabel,
+      primary: content.infoGrid.barsCount.replace("{count}", String(attributes.barCount)),
+      sub: attributes.nightlifeScore >= 4 ? content.infoGrid.nightlifeHigh : attributes.nightlifeScore >= 3 ? content.infoGrid.nightlifeMedium : content.infoGrid.nightlifeLow,
     },
     {
       icon: "🏔️",
-      label: "Other Activities",
+      label: content.infoGrid.otherActivities,
       primary: null,
       sub: null,
       activities: attributes.otherActivities,
@@ -102,7 +114,7 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
           <View style={styles.cellHeader}>
             <Text style={styles.cellIcon}>{cell.icon}</Text>
             <Text variant="captionMedium" color={colors.text.tertiary} style={styles.cellLabel}>
-              {cell.label.toUpperCase()}
+              {cell.label}
             </Text>
           </View>
 

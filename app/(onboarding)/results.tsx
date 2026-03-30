@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
+import Head from "expo-router/head";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { getRecommendations } from "@services/recommendation";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 import { colors, spacing } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -17,6 +19,7 @@ export default function ResultsScreen() {
   const [results, setResults] = useState<RecommendationResult[]>([]);
   const [loading, setLoading] = useState(true);
   const { numColumns, hPadding } = useLayout();
+  const content = useContent();
 
   useEffect(() => {
     // Get preferences snapshot once on mount (not as a reactive selector)
@@ -35,13 +38,18 @@ export default function ResultsScreen() {
   if (loading) {
     return (
       <ScreenContainer>
-        <LoadingState icon="��" message="Finding your perfect resorts..." />
+        <LoadingState icon="��" message={content.onboarding.results.loading} />
       </ScreenContainer>
     );
   }
 
   return (
     <ScreenContainer noMaxWidth>
+      <Head>
+        <title>Your Top Ski Matches | PeakWise</title>
+        <meta name="description" content="Your personalised ski resort recommendations are ready. Explore your top matches." />
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
       <FlatList
         data={results}
         keyExtractor={(item) => item.resort.id}
@@ -50,9 +58,9 @@ export default function ResultsScreen() {
         columnWrapperStyle={numColumns > 1 ? styles.cols : undefined}
         ListHeaderComponent={
           <View style={[styles.header, { paddingHorizontal: hPadding }]}>
-            <Text variant="h1">Your Top Matches</Text>
+            <Text variant="h1">{content.onboarding.results.title}</Text>
             <Text variant="body" color={colors.text.secondary}>
-              Based on your preferences
+              {content.onboarding.results.subtitle}
             </Text>
           </View>
         }
@@ -70,10 +78,10 @@ export default function ResultsScreen() {
         ListEmptyComponent={
           <EmptyState
             icon="🤔"
-            title="No matches found"
-            message="Try adjusting your preferences."
+            title={content.onboarding.results.emptyTitle}
+            message={content.onboarding.results.emptyMessage}
             action={{
-              label: "Retake Quiz",
+              label: content.onboarding.results.retake,
               onPress: () => router.replace("/(onboarding)"),
             }}
           />
@@ -81,12 +89,12 @@ export default function ResultsScreen() {
       />
       <View style={[styles.footer, { paddingHorizontal: hPadding }]}>
         <Button
-          label="Continue to App"
+          label={content.onboarding.results.continue}
           onPress={() => router.replace("/(main)")}
           fullWidth
         />
         <Button
-          label="Retake Quiz"
+          label={content.onboarding.results.retake}
           variant="ghost"
           onPress={() => router.replace("/(onboarding)")}
           fullWidth

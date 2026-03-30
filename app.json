@@ -3,6 +3,7 @@
     "name": "PeakWise",
     "slug": "peakwise",
     "version": "1.0.0",
+    "description": "Find your perfect ski resort. Personalised recommendations based on your skill level, budget, and style.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -29,7 +30,9 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
-      "output": "single"
+      "output": "single",
+      "backgroundColor": "#f8fafc",
+      "themeColor": "#1a365d"
     },
     "plugins": ["expo-router"],
     "experiments": {
