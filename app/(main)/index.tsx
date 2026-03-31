@@ -59,7 +59,10 @@ export default function DiscoverScreen() {
     <ScreenContainer noMaxWidth>
       <Head>
         <title>Your Ski Matches | PisteWise</title>
-        <meta name="description" content="Your personalised ski resort recommendations based on your skill level, budget, and preferences." />
+        <meta
+          name="description"
+          content="Your personalised ski resort recommendations based on your skill level, budget, and preferences."
+        />
       </Head>
       <NavHeader />
       <FlatList

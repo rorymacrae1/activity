@@ -17,5 +17,7 @@ const mmkv = createMMKV({ id: "pistewise-store" });
 export const zustandStorage: StorageAdapter = {
   getItem: (name) => mmkv.getString(name) ?? null,
   setItem: (name, value) => mmkv.set(name, value),
-  removeItem: (name) => { mmkv.remove(name); },
+  removeItem: (name) => {
+    mmkv.remove(name);
+  },
 };
