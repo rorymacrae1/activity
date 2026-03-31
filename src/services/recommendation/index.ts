@@ -1,7 +1,11 @@
 import { getResortsByRegion } from "../resort";
 import { calculateScores } from "./scorer";
 import { generateExplanations } from "./explainer";
-import type { SkillLevel, Preferences, NormalizedPreferences } from "@/types/preferences";
+import type {
+  SkillLevel,
+  Preferences,
+  NormalizedPreferences,
+} from "@/types/preferences";
 import type {
   RecommendationResult,
   AttributeScores,
@@ -12,8 +16,10 @@ import type {
  */
 function normalizePreferences(prefs: Preferences): NormalizedPreferences {
   const skillMap: Record<SkillLevel, number> = {
-    beginner: 0,
+    firstTimer: 0,
+    beginner: 0.25,
     intermediate: 0.5,
+    red: 0.75,
     advanced: 1,
   };
 
@@ -24,9 +30,10 @@ function normalizePreferences(prefs: Preferences): NormalizedPreferences {
     luxury: 1,
   };
 
-  const abilities = prefs.groupAbilities.length > 0
-    ? prefs.groupAbilities
-    : (["intermediate"] as SkillLevel[]);
+  const abilities =
+    prefs.groupAbilities.length > 0
+      ? prefs.groupAbilities
+      : (["intermediate"] as SkillLevel[]);
 
   const skillValues = abilities.map((s) => skillMap[s]);
   const minSkill = Math.min(...skillValues);

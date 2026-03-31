@@ -167,12 +167,27 @@ export default function BudgetScreen() {
   ];
 
   return (
-    <QuizLayout>
+    <QuizLayout
+      footer={
+        <View style={styles.footer}>
+          <Button
+            label={`← ${content.onboarding.budget.back}`}
+            variant="ghost"
+            onPress={() => router.back()}
+            style={styles.backBtn}
+          />
+          <Button
+            label={`${content.onboarding.budget.next} →`}
+            onPress={() => budgetLevel && router.push("/(onboarding)/region")}
+            disabled={!budgetLevel}
+            style={styles.nextBtn}
+            size="prominent"
+          />
+        </View>
+      }
+    >
       <View
-        style={[
-          styles.inner,
-          { paddingHorizontal: isTablet ? spacing.xl : hPadding },
-        ]}
+        style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
       >
         <ProgressIndicator current={3} total={5} showLabel />
 
@@ -210,23 +225,6 @@ export default function BudgetScreen() {
             {content.onboarding.budget.hint}
           </Text>
         </ScrollView>
-
-        {/* Footer navigation - fixed at bottom */}
-        <View style={styles.footer}>
-          <Button
-            label={`← ${content.onboarding.budget.back}`}
-            variant="ghost"
-            onPress={() => router.back()}
-            style={styles.backBtn}
-          />
-          <Button
-            label={`${content.onboarding.budget.next} →`}
-            onPress={() => budgetLevel && router.push("/(onboarding)/region")}
-            disabled={!budgetLevel}
-            style={styles.nextBtn}
-            size="prominent"
-          />
-        </View>
       </View>
     </QuizLayout>
   );
@@ -235,12 +233,10 @@ export default function BudgetScreen() {
 const styles = StyleSheet.create({
   inner: {
     flex: 1,
-    paddingVertical: spacing.sm,
   },
   header: {
-    marginTop: spacing.xs,
-    marginBottom: spacing.md,
-    gap: spacing.xxs,
+    marginBottom: spacing.lg,
+    gap: spacing.xs,
   },
   scrollArea: {
     flex: 1,
@@ -315,10 +311,6 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: "row",
     gap: spacing.sm,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xs,
-    borderTopWidth: 1,
-    borderTopColor: colors.surface.divider,
   },
   backBtn: {
     flex: 1,

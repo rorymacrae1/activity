@@ -1,13 +1,9 @@
-import {
-  View,
-  StyleSheet,
-  LayoutChangeEvent,
-} from "react-native";
+import { View, StyleSheet, LayoutChangeEvent } from "react-native";
 import { useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { colors } from "@theme/colors";
@@ -53,7 +49,8 @@ export function Slider({
   const handleLayout = (e: LayoutChangeEvent) => {
     const w = e.nativeEvent.layout.width;
     setContainerWidth(w);
-    thumbX.value = ((value - minimumValue) / range) * Math.max(0, w - THUMB_SIZE);
+    thumbX.value =
+      ((value - minimumValue) / range) * Math.max(0, w - THUMB_SIZE);
   };
 
   const panGesture = Gesture.Pan()
@@ -69,7 +66,7 @@ export function Slider({
       const rawValue = (thumbX.value / trackWidth) * range + minimumValue;
       const snappedValue = snapToStep(rawValue);
       const snappedX = ((snappedValue - minimumValue) / range) * trackWidth;
-      thumbX.value = withSpring(snappedX, { damping: 15 });
+      thumbX.value = withTiming(snappedX, { duration: 100 });
     });
 
   const thumbStyle = useAnimatedStyle(() => ({

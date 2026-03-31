@@ -1,34 +1,216 @@
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Platform, Pressable } from "react-native";
 import { router } from "expo-router";
+import * as Haptics from "expo-haptics";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+  interpolate,
+} from "react-native-reanimated";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
-import { colors, spacing, radius } from "@theme";
+import { colors, spacing, radius, shadows } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
 import type { TripType } from "@/types/preferences";
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+/**
+ * Stylized person silhouette — luxury line-art aesthetic.
+ * Uses a simple geometric approach: circle head + curved body.
+ */
+function PersonIcon({
+  size = 24,
+  color,
+  style,
+}: {
+  size?: number;
+  color: string;
+  style?: object;
+}) {
+  const headSize = size * 0.35;
+  const bodyWidth = size * 0.45;
+  const bodyHeight = size * 0.5;
+
+  return (
+    <View style={[{ width: size, height: size, alignItems: "center" }, style]}>
+      {/* Head */}
+      <View
+        style={{
+          width: headSize,
+          height: headSize,
+          borderRadius: headSize / 2,
+          backgroundColor: color,
+        }}
+      />
+      {/* Body - rounded trapezoid shape */}
+      <View
+        style={{
+          width: bodyWidth,
+          height: bodyHeight,
+          backgroundColor: color,
+          borderTopLeftRadius: bodyWidth * 0.3,
+          borderTopRightRadius: bodyWidth * 0.3,
+          borderBottomLeftRadius: bodyWidth * 0.5,
+          borderBottomRightRadius: bodyWidth * 0.5,
+          marginTop: size * 0.05,
+        }}
+      />
+    </View>
+  );
+}
+
+/**
+ * Visual group composition with stylized person silhouettes.
+ */
+function GroupVisual({ type, active }: { type: TripType; active: boolean }) {
+  const color = active ? colors.brand.primary : colors.ink.muted;
+  const configs: Record<TripType, { count: number; sizes: number[] }> = {
+    solo: { count: 1, sizes: [32] },
+    couple: { count: 2, sizes: [28, 28] },
+    family: { count: 4, sizes: [26, 26, 18, 18] }, // Adults + kids
+    friends: { count: 4, sizes: [24, 24, 24, 24] },
+  };
+
+  const { sizes } = configs[type];
+
+  return (
+    <View style={groupStyles.container}>
+      {sizes.map((size, i) => (
+        <PersonIcon key={i} size={size} color={color} />
+      ))}
+    </View>
+  );
+}
+
+const groupStyles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "center",
+    gap: 4,
+    height: 40,
+    marginBottom: spacing.sm,
+  },
+});
+
+/**
+ * Animated option card with press feedback.
+ */
+function OptionCard({
+  value,
+  title,
+  description,
+  active,
+  onSelect,
+  isTablet,
+}: {
+  value: TripType;
+  title: string;
+  description: string;
+  active: boolean;
+  onSelect: () => void;
+  isTablet: boolean;
+}) {
+  const scale = useSharedValue(1);
+  const pressed = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    shadowOpacity: interpolate(pressed.value, [0, 1], [0.08, 0.15]),
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.97, { damping: 15, stiffness: 400 });
+    pressed.value = withTiming(1, { duration: 100 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, { damping: 12, stiffness: 300 });
+    pressed.value = withTiming(0, { duration: 200 });
+  };
+
+  const handlePress = () => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    onSelect();
+  };
+
+  return (
+    <AnimatedPressable
+      style={[
+        styles.option,
+        active && styles.optionActive,
+        isTablet && styles.optionTablet,
+        animatedStyle,
+      ]}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      accessibilityRole="radio"
+      accessibilityState={{ selected: active }}
+      accessibilityLabel={`${title}: ${description}`}
+    >
+      {/* Group visual */}
+      <GroupVisual type={value} active={active} />
+
+      {/* Title */}
+      <Text
+        variant="h3"
+        color={active ? colors.brand.primary : colors.ink.rich}
+        style={styles.optionTitle}
+      >
+        {title}
+      </Text>
+
+      {/* Description */}
+      <Text
+        variant="bodySmall"
+        color={colors.ink.muted}
+        style={styles.optionDesc}
+      >
+        {description}
+      </Text>
+
+      {/* Selection indicator */}
+      {active && (
+        <View style={styles.checkmark}>
+          <Text style={styles.checkmarkText}>✓</Text>
+        </View>
+      )}
+    </AnimatedPressable>
+  );
+}
+
 export default function TripTypeScreen() {
   const { tripType, setTripType } = usePreferencesStore();
   const { isTablet, hPadding } = useLayout();
   const content = useContent();
 
-  const OPTIONS: Array<{ value: TripType; icon: string }> = [
-    { value: "solo", icon: "🧑" },
-    { value: "couple", icon: "💑" },
-    { value: "family", icon: "👨‍👩‍👧" },
-    { value: "friends", icon: "👥" },
-  ];
+  const OPTIONS: TripType[] = ["solo", "couple", "family", "friends"];
 
   return (
-    <QuizLayout>
+    <QuizLayout
+      footer={
+        <View style={styles.footer}>
+          <Button
+            label={`${content.onboarding.tripType.next} →`}
+            onPress={() => tripType && router.push("/(onboarding)/skill")}
+            disabled={!tripType}
+            fullWidth
+            size="prominent"
+          />
+        </View>
+      }
+    >
       <View
-        style={[
-          styles.inner,
-          { paddingHorizontal: isTablet ? spacing.xl : hPadding },
-        ]}
+        style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
       >
         <ProgressIndicator current={1} total={5} showLabel />
 
@@ -39,48 +221,21 @@ export default function TripTypeScreen() {
           </Text>
         </View>
 
-        <View style={[styles.options, isTablet && styles.optionsRow]}>
-          {OPTIONS.map((opt) => {
-            const optContent = content.onboarding.tripType.options[opt.value];
-            const active = tripType === opt.value;
+        <View style={[styles.options, isTablet && styles.optionsTablet]}>
+          {OPTIONS.map((value) => {
+            const optContent = content.onboarding.tripType.options[value];
             return (
-              <Pressable
-                key={opt.value}
-                style={[
-                  styles.option,
-                  active && styles.optionActive,
-                  isTablet && styles.optionTablet,
-                ]}
-                onPress={() => setTripType(opt.value)}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: active }}
-                accessibilityLabel={`${optContent.title}: ${optContent.description}`}
-              >
-                <Text style={styles.optionIcon}>{opt.icon}</Text>
-                <View style={styles.optionText}>
-                  <Text
-                    variant="h4"
-                    color={active ? colors.primary : colors.text.primary}
-                  >
-                    {optContent.title}
-                  </Text>
-                  <Text variant="bodySmall" color={colors.text.secondary}>
-                    {optContent.description}
-                  </Text>
-                </View>
-              </Pressable>
+              <OptionCard
+                key={value}
+                value={value}
+                title={optContent.title}
+                description={optContent.description}
+                active={tripType === value}
+                onSelect={() => setTripType(value)}
+                isTablet={isTablet}
+              />
             );
           })}
-        </View>
-
-        <View style={styles.footer}>
-          <Button
-            label={`${content.onboarding.tripType.next} →`}
-            onPress={() => tripType && router.push("/(onboarding)/skill")}
-            disabled={!tripType}
-            fullWidth
-            size="prominent"
-          />
         </View>
       </View>
     </QuizLayout>
@@ -88,33 +243,75 @@ export default function TripTypeScreen() {
 }
 
 const styles = StyleSheet.create({
-  inner: { flex: 1, paddingVertical: spacing.md },
-  header: { marginTop: spacing.md, marginBottom: spacing.lg, gap: spacing.xs },
-  options: { flex: 1, gap: spacing.md, justifyContent: "center" },
-  optionsRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
-  option: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.background.secondary,
-    padding: spacing.lg,
-    borderRadius: radius.lg,
-    borderWidth: 2,
-    borderColor: colors.background.secondary,
+  inner: { flex: 1 },
+  header: { marginBottom: spacing.xl, gap: spacing.xs },
+  options: {
+    flex: 1,
     gap: spacing.md,
+    justifyContent: "center",
+  },
+  optionsTablet: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.lg,
+    justifyContent: "center",
+  },
+  option: {
+    backgroundColor: colors.surface.primary,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.xl,
+    borderWidth: 2,
+    borderColor: colors.border.subtle,
+    alignItems: "center",
+    position: "relative",
+    // Multi-layer shadow for depth
+    shadowColor: colors.ink.rich,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
   },
   optionTablet: {
-    flex: 1,
-    minWidth: "45%",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
+    width: "47%",
+    minWidth: 200,
+    maxWidth: 240,
   },
   optionActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primarySubtle,
+    borderColor: colors.brand.primary,
+    backgroundColor: colors.brand.primarySubtle,
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 6 },
   },
-  optionIcon: { fontSize: 32 },
-  optionText: { flex: 1 },
-  footer: { paddingTop: spacing.md, paddingBottom: spacing.sm },
+  optionTitle: {
+    textAlign: "center",
+    marginBottom: spacing.xxs,
+  },
+  optionDesc: {
+    textAlign: "center",
+    lineHeight: 18,
+  },
+  checkmark: {
+    position: "absolute",
+    top: spacing.sm,
+    right: spacing.sm,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.brand.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    // Subtle shadow on checkmark
+    shadowColor: colors.brand.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  checkmarkText: {
+    color: colors.ink.onBrand,
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  footer: {},
 });

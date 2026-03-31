@@ -33,20 +33,28 @@
       "next": "Next"
     },
     "skill": {
-      "title": "Who's skiing in your group?",
+      "title": "Who's hitting the slopes?",
       "subtitle": "Select all that apply",
       "options": {
+        "firstTimer": {
+          "title": "First Timer",
+          "description": "Never skiied — here for the vibes"
+        },
         "beginner": {
-          "title": "Beginners",
-          "description": "Learning the basics, green & blue runs"
+          "title": "Green & Blue",
+          "description": "Learning the ropes, sticking to gentler runs"
         },
         "intermediate": {
-          "title": "Intermediates",
-          "description": "Confident on blues, tackling reds"
+          "title": "Blue Cruiser",
+          "description": "Confident on blues, starting to explore reds"
+        },
+        "red": {
+          "title": "Red Runner",
+          "description": "Owns the reds, flirting with blacks"
         },
         "advanced": {
-          "title": "Advanced",
-          "description": "All terrain, blacks and off-piste"
+          "title": "All Mountain",
+          "description": "Blacks, off-piste, powder — bring it on"
         }
       },
       "next": "Next",

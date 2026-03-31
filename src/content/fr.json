@@ -33,20 +33,28 @@
       "next": "Suivant"
     },
     "skill": {
-      "title": "Qui skie dans votre groupe ?",
+      "title": "Qui dévale les pentes ?",
       "subtitle": "Sélectionnez tout ce qui s'applique",
       "options": {
+        "firstTimer": {
+          "title": "Première fois",
+          "description": "Jamais skié — ici pour l'ambiance"
+        },
         "beginner": {
-          "title": "Débutants",
-          "description": "Apprentissage des bases, pistes vertes et bleues"
+          "title": "Vertes & Bleues",
+          "description": "Apprentissage, pistes douces"
         },
         "intermediate": {
-          "title": "Intermédiaires",
-          "description": "À l'aise sur les bleues, abordant les rouges"
+          "title": "Bleu confort",
+          "description": "À l'aise sur les bleues, découvre les rouges"
+        },
+        "red": {
+          "title": "Chasseur de rouges",
+          "description": "Maîtrise les rouges, tente les noires"
         },
         "advanced": {
-          "title": "Avancés",
-          "description": "Tous terrains, noires et hors-piste"
+          "title": "Tout terrain",
+          "description": "Noires, hors-piste, poudreuse — on y va"
         }
       },
       "next": "Suivant",

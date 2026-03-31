@@ -13,20 +13,49 @@
       "title": "Für wen ist diese Reise?",
       "subtitle": "Das hilft uns, das perfekte Skigebiet zu finden",
       "options": {
-        "solo": { "title": "Nur ich", "description": "Alleine unterwegs, mein eigenes Tempo" },
-        "couple": { "title": "Zu zweit", "description": "Wir beide, ähnliches Niveau" },
-        "family": { "title": "Familie", "description": "Mit Kindern oder gemischten Altersgruppen" },
-        "friends": { "title": "Freundesgruppe", "description": "Gruppe mit verschiedenen Niveaus" }
+        "solo": {
+          "title": "Nur ich",
+          "description": "Alleine unterwegs, mein eigenes Tempo"
+        },
+        "couple": {
+          "title": "Zu zweit",
+          "description": "Wir beide, ähnliches Niveau"
+        },
+        "family": {
+          "title": "Familie",
+          "description": "Mit Kindern oder gemischten Altersgruppen"
+        },
+        "friends": {
+          "title": "Freundesgruppe",
+          "description": "Gruppe mit verschiedenen Niveaus"
+        }
       },
       "next": "Weiter"
     },
     "skill": {
-      "title": "Wer fährt Ski in deiner Gruppe?",
+      "title": "Wer geht auf die Piste?",
       "subtitle": "Alles Zutreffende auswählen",
       "options": {
-        "beginner": { "title": "Anfänger", "description": "Grundlagen lernen, grüne & blaue Pisten" },
-        "intermediate": { "title": "Fortgeschrittene", "description": "Sicher auf Blauen, rote Pisten in Angriff nehmen" },
-        "advanced": { "title": "Experten", "description": "Alle Pisten, Schwarze und Tiefschnee" }
+        "firstTimer": {
+          "title": "Erstes Mal",
+          "description": "Noch nie Ski gefahren — hier für die Stimmung"
+        },
+        "beginner": {
+          "title": "Grün & Blau",
+          "description": "Lernt die Grundlagen, sanfte Pisten"
+        },
+        "intermediate": {
+          "title": "Blauer Cruiser",
+          "description": "Sicher auf Blauen, erkundet die Roten"
+        },
+        "red": {
+          "title": "Rote-Pisten-Profi",
+          "description": "Meistert Rote, probiert Schwarze"
+        },
+        "advanced": {
+          "title": "Allround",
+          "description": "Schwarze, Tiefschnee, Powder — her damit"
+        }
       },
       "next": "Weiter",
       "back": "Zurück"

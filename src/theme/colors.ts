@@ -64,6 +64,15 @@ const primitive = {
   black: "#000000",
   transparent: "transparent",
 
+  // Piste markers — authentic European ski signage colors
+  piste: {
+    green: "#2D8F52",
+    blue: "#2563EB",
+    red: "#DC2626",
+    black: "#0F172A",
+    pink: "#F9C6D3",
+  },
+
   // Semantic colors — desaturated for luxury feel
   emerald: {
     50: "#F0FAF5",
@@ -205,9 +214,11 @@ export const colors = {
 
   // === Terrain (piste colours) ===
   terrain: {
-    beginner: primitive.emerald[500],
-    intermediate: primitive.glacier[500],
-    advanced: primitive.night[900],
+    firstTimer: primitive.piste.pink,
+    beginner: primitive.piste.green,
+    intermediate: primitive.piste.blue,
+    red: primitive.piste.red,
+    advanced: primitive.piste.black,
     offPiste: primitive.gold[500],
   },
 
