@@ -1,7 +1,7 @@
 {
   "onboarding": {
     "welcome": {
-      "appTitle": "PeakWise",
+      "appTitle": "PisteWise",
       "tagline": "Trouvez votre station idéale en quelques secondes",
       "valueProp1": "Personnalisé selon votre niveau et votre style",
       "valueProp2": "Plus de 30 stations européennes de premier plan",
@@ -165,7 +165,7 @@
     "retakeQuiz": "Refaire le quiz",
     "clearSaved": "Effacer les stations sauvegardées ({count})",
     "aboutSection": "À propos",
-    "aboutText": "PeakWise v1.0.0 — Trouvez votre station de ski idéale",
+    "aboutText": "PisteWise v1.0.0 — Trouvez votre station de ski idéale",
     "language": "Langue",
     "languageSection": "Langue",
     "resetLoading": "Réinitialisation des préférences...",

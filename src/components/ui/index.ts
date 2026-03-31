@@ -9,3 +9,4 @@ export { SectionHeader } from "./SectionHeader";
 export { EmptyState } from "./EmptyState";
 export { LoadingState } from "./LoadingState";
 export { ScreenContainer } from "./ScreenContainer";
+export { NavHeader } from "./NavHeader";

@@ -77,12 +77,8 @@ export function useLayout(): LayoutInfo {
     hPadding,
     // Hero image: ~35% of screen height, capped on large screens
     heroHeight: Math.min(Math.round(height * 0.35), isTablet ? 400 : 280),
-    // Card image: scales with grid layout
-    cardImageHeight: isDesktop
-      ? Math.round(width * 0.12)
-      : isTablet
-        ? Math.round(width * 0.2)
-        : 160,
+    // Card image: fixed heights for consistent grid appearance
+    cardImageHeight: isDesktop ? 160 : isTablet ? 180 : 160,
     isWeb,
     showSideNav: isDesktop && isWeb,
   };

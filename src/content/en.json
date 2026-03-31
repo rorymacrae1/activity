@@ -1,7 +1,7 @@
 {
   "onboarding": {
     "welcome": {
-      "appTitle": "PeakWise",
+      "appTitle": "PisteWise",
       "tagline": "Find your perfect ski resort in seconds",
       "valueProp1": "Personalised to your skill and style",
       "valueProp2": "30+ top European resorts",
@@ -165,7 +165,7 @@
     "retakeQuiz": "Retake Quiz",
     "clearSaved": "Clear Saved Resorts ({count})",
     "aboutSection": "About",
-    "aboutText": "PeakWise v1.0.0 — Find your perfect ski resort",
+    "aboutText": "PisteWise v1.0.0 — Find your perfect ski resort",
     "language": "Language",
     "languageSection": "Language",
     "resetLoading": "Resetting preferences...",

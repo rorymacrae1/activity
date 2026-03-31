@@ -46,8 +46,11 @@ export default function ResultsScreen() {
   return (
     <ScreenContainer noMaxWidth>
       <Head>
-        <title>Your Top Ski Matches | PeakWise</title>
-        <meta name="description" content="Your personalised ski resort recommendations are ready. Explore your top matches." />
+        <title>Your Top Ski Matches | PisteWise</title>
+        <meta
+          name="description"
+          content="Your personalised ski resort recommendations are ready. Explore your top matches."
+        />
         <meta name="robots" content="noindex, nofollow" />
       </Head>
       <FlatList
@@ -58,10 +61,18 @@ export default function ResultsScreen() {
         columnWrapperStyle={numColumns > 1 ? styles.cols : undefined}
         ListHeaderComponent={
           <View style={[styles.header, { paddingHorizontal: hPadding }]}>
-            <Text variant="h1">{content.onboarding.results.title}</Text>
-            <Text variant="body" color={colors.text.secondary}>
-              {content.onboarding.results.subtitle}
-            </Text>
+            <View style={styles.headerContent}>
+              <Text variant="h1">{content.onboarding.results.title}</Text>
+              <Text variant="body" color={colors.text.secondary}>
+                {content.onboarding.results.subtitle}
+              </Text>
+            </View>
+            <Button
+              label={content.onboarding.results.retake}
+              variant="ghost"
+              size="compact"
+              onPress={() => router.replace("/(onboarding)")}
+            />
           </View>
         }
         renderItem={({ item, index }) => (
@@ -92,12 +103,7 @@ export default function ResultsScreen() {
           label={content.onboarding.results.continue}
           onPress={() => router.replace("/(main)")}
           fullWidth
-        />
-        <Button
-          label={content.onboarding.results.retake}
-          variant="ghost"
-          onPress={() => router.replace("/(onboarding)")}
-          fullWidth
+          size="prominent"
         />
       </View>
     </ScreenContainer>
@@ -106,18 +112,29 @@ export default function ResultsScreen() {
 
 const styles = StyleSheet.create({
   header: {
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
+    gap: spacing.md,
+  },
+  headerContent: {
+    flex: 1,
     gap: spacing.xxs,
   },
-  list: { paddingBottom: spacing.md, gap: spacing.md },
-  cols: { gap: spacing.md },
+  list: {
+    paddingBottom: spacing.md,
+    gap: spacing.lg,
+  },
+  cols: { gap: spacing.lg },
   colItem: { flex: 1 },
   singleItem: { flex: 1 },
   footer: {
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.lg,
+    paddingBottom: spacing.xl,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: colors.border.default,
-    gap: spacing.sm,
+    borderTopColor: colors.border.subtle,
   },
 });

@@ -12,6 +12,7 @@ import { SectionHeader } from "@components/ui/SectionHeader";
 import { LoadingState } from "@components/ui/LoadingState";
 import { EmptyState } from "@components/ui/EmptyState";
 import { ScreenContainer } from "@components/ui/ScreenContainer";
+import { NavHeader } from "@components/ui/NavHeader";
 import { ResortCard } from "@components/resort/ResortCard";
 import type { RecommendationResult } from "@/types/recommendation";
 
@@ -57,9 +58,10 @@ export default function DiscoverScreen() {
   return (
     <ScreenContainer noMaxWidth>
       <Head>
-        <title>Your Ski Matches | PeakWise</title>
+        <title>Your Ski Matches | PisteWise</title>
         <meta name="description" content="Your personalised ski resort recommendations based on your skill level, budget, and preferences." />
       </Head>
+      <NavHeader />
       <FlatList
         data={results}
         keyExtractor={(item) => item.resort.id}

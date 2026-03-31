@@ -1,10 +1,9 @@
 import { View, StyleSheet, Image } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { Card } from "@components/ui/Card";
 import { Text } from "@components/ui/Text";
-import { Badge } from "@components/ui/Badge";
-import { useContent } from "@hooks/useContent";
 import { useLayout } from "@hooks/useLayout";
-import { colors, spacing, typography } from "@theme";
+import { colors, spacing, radius } from "@theme";
 import type { RecommendationResult } from "@/types/recommendation";
 
 interface ResortCardProps {
@@ -14,18 +13,9 @@ interface ResortCardProps {
   showMatchScore?: boolean;
 }
 
-const getMatchVariant = (
-  score: number,
-): "success" | "brand" | "warning" | "error" => {
-  if (score >= 80) return "success";
-  if (score >= 60) return "brand";
-  if (score >= 40) return "warning";
-  return "error";
-};
-
 /**
- * Card component displaying a resort in the recommendations list.
- * Adapts hero image height based on screen size.
+ * Luxury resort card for recommendations list.
+ * Features gradient overlays, refined typography, and premium visual treatment.
  */
 export function ResortCard({
   result,
@@ -33,96 +23,99 @@ export function ResortCard({
   onPress,
   showMatchScore = true,
 }: ResortCardProps) {
-  const content = useContent();
   const { resort, matchScore, matchReasons } = result;
   const { cardImageHeight } = useLayout();
 
+  const isTopPick = rank === 1;
+
   return (
     <Card
-      elevation="standard"
+      elevation={isTopPick ? "elevated" : "standard"}
       onPress={onPress}
       noPadding
+      style={isTopPick ? styles.topPick : undefined}
       accessibilityLabel={`${resort.name}, ${matchScore}% match`}
     >
-      {/* Hero image — height adapts to screen size */}
+      {/* Hero image with gradient overlay */}
       <View style={[styles.imageContainer, { height: cardImageHeight }]}>
         <Image
           source={{ uri: resort.assets.heroImage }}
           style={styles.image}
           resizeMode="cover"
         />
+        {/* Bottom gradient for depth */}
+        <LinearGradient
+          colors={["transparent", "rgba(0,0,0,0.4)"]}
+          style={styles.imageGradient}
+        />
+        {/* Rank badge - gold for #1, refined dark for others */}
         {rank ? (
-          <View style={styles.rankBadge}>
-            <Text
-              style={[typography.captionMedium, { color: colors.text.inverse }]}
-            >
-              {content.resortCard.rank.replace("{rank}", String(rank))}
+          <View style={[styles.rankBadge, isTopPick && styles.rankBadgeGold]}>
+            <Text style={[styles.rankText, isTopPick && styles.rankTextGold]}>
+              #{rank}
             </Text>
+          </View>
+        ) : null}
+        {/* Match score - elegant circular indicator */}
+        {showMatchScore && matchScore > 0 ? (
+          <View style={styles.matchBadge}>
+            <Text style={styles.matchScore}>{matchScore}</Text>
+            <Text style={styles.matchPercent}>%</Text>
           </View>
         ) : null}
       </View>
 
-      {/* Content */}
+      {/* Content area */}
       <View style={styles.content}>
-        {/* Header row */}
-        <View style={styles.header}>
-          <View style={styles.titleBlock}>
-            <Text variant="h3" numberOfLines={1}>
-              {resort.name}
-            </Text>
-            <Text
-              variant="caption"
-              color={colors.text.tertiary}
-              style={styles.location}
-            >
-              {resort.country} • {resort.region}
-            </Text>
+        {/* Resort name - prominent */}
+        <Text variant="h3" numberOfLines={1}>
+          {resort.name}
+        </Text>
+
+        {/* Location with refined separator */}
+        <Text variant="caption" color={colors.ink.muted}>
+          {resort.country} · {resort.region}
+        </Text>
+
+        {/* Stats row - refined presentation */}
+        <View style={styles.statsRow}>
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>{resort.stats.totalKm}</Text>
+            <Text style={styles.statLabel}>km</Text>
           </View>
-          {showMatchScore && matchScore > 0 ? (
-            <Badge
-              label={`${matchScore}%`}
-              variant={getMatchVariant(matchScore)}
-            />
-          ) : null}
+          <View style={styles.statDivider} />
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>
+              {resort.attributes.snowReliability}/5
+            </Text>
+            <Text style={styles.statLabel}>snow</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.stat}>
+            <Text style={styles.statValue}>
+              €{resort.attributes.averageDailyCost}
+            </Text>
+            <Text style={styles.statLabel}>/day</Text>
+          </View>
         </View>
 
-        {/* Stats row */}
-        <View style={styles.stats}>
-          <StatPill
-            icon="⛷️"
-            label={content.resortCard.km.replace(
-              "{km}",
-              String(resort.stats.totalKm),
-            )}
-          />
-          <StatPill
-            icon="❄️"
-            label={content.resortCard.snow.replace(
-              "{snow}",
-              String(resort.attributes.snowReliability),
-            )}
-          />
-          <StatPill
-            icon="💰"
-            label={content.resortCard.cost.replace(
-              "{cost}",
-              String(resort.attributes.averageDailyCost),
-            )}
-          />
-        </View>
-
-        {/* Match reasons */}
+        {/* Match reasons - elegant checkmarks */}
         {showMatchScore && matchReasons.length > 0 ? (
           <View style={styles.reasons}>
             {matchReasons.slice(0, 2).map((reason, i) => (
-              <Text
-                key={i}
-                variant="caption"
-                color={colors.success}
-                numberOfLines={1}
-              >
-                ✓ {reason}
-              </Text>
+              <View key={i} style={styles.reasonRow}>
+                <View style={styles.checkCircle}>
+                  <Text style={styles.checkMark}>✓</Text>
+                </View>
+                <Text
+                  variant="caption"
+                  color={colors.ink.normal}
+                  numberOfLines={1}
+                  style={styles.reasonText}
+                >
+                  {reason}
+                </Text>
+              </View>
             ))}
           </View>
         ) : null}
@@ -131,66 +124,140 @@ export function ResortCard({
   );
 }
 
-function StatPill({ icon, label }: { icon: string; label: string }) {
-  return (
-    <View style={styles.stat}>
-      <Text style={styles.statIcon}>{icon}</Text>
-      <Text variant="caption" color={colors.text.secondary}>
-        {label}
-      </Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
+  topPick: {
+    borderWidth: 2,
+    borderColor: colors.brand.accent,
+    // Subtle gold glow
+    shadowColor: colors.brand.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+  },
   imageContainer: {
     position: "relative",
+    overflow: "hidden",
   },
   image: {
     width: "100%",
     height: "100%",
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.canvas.subtle,
+  },
+  imageGradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
   },
   rankBadge: {
     position: "absolute",
     top: spacing.sm,
     left: spacing.sm,
-    backgroundColor: colors.background.overlay,
+    backgroundColor: colors.surface.overlay,
     paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs,
-    borderRadius: 6,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.md,
+    minWidth: 32,
+    alignItems: "center",
+  },
+  rankBadgeGold: {
+    backgroundColor: colors.brand.accent,
+  },
+  rankText: {
+    color: colors.ink.inverse,
+    fontSize: 13,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+  rankTextGold: {
+    color: colors.ink.rich,
+  },
+  matchBadge: {
+    position: "absolute",
+    top: spacing.sm,
+    right: spacing.sm,
+    backgroundColor: colors.surface.glass,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.lg,
+    flexDirection: "row",
+    alignItems: "baseline",
+    // Subtle shadow
+    shadowColor: colors.ink.rich,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  matchScore: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: colors.brand.primary,
+    letterSpacing: -0.5,
+  },
+  matchPercent: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: colors.brand.primary,
+    marginLeft: 1,
   },
   content: {
     padding: spacing.md,
-    gap: spacing.sm,
+    paddingTop: spacing.sm,
+    gap: spacing.xs,
   },
-  header: {
+  statsRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: spacing.sm,
-  },
-  titleBlock: {
-    flex: 1,
-    gap: spacing.xxs,
-  },
-  location: {
-    marginTop: 2,
-  },
-  stats: {
-    flexDirection: "row",
-    gap: spacing.md,
-    flexWrap: "wrap",
+    alignItems: "center",
+    marginTop: spacing.xs,
+    paddingTop: spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.subtle,
   },
   stat: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xxs,
+    alignItems: "baseline",
+    gap: 3,
   },
-  statIcon: {
+  statValue: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.ink.rich,
+  },
+  statLabel: {
     fontSize: 12,
+    color: colors.ink.muted,
+  },
+  statDivider: {
+    width: 1,
+    height: 14,
+    backgroundColor: colors.border.subtle,
+    marginHorizontal: spacing.sm,
   },
   reasons: {
-    gap: spacing.xxs,
+    marginTop: spacing.xs,
+    gap: spacing.xs,
+  },
+  reasonRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  checkCircle: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: colors.brand.primarySubtle,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkMark: {
+    fontSize: 9,
+    fontWeight: "700",
+    color: colors.brand.primary,
+  },
+  reasonText: {
+    flex: 1,
   },
 });

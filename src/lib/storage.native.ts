@@ -12,7 +12,7 @@ export type StorageAdapter = {
   removeItem: (name: string) => void | Promise<void>;
 };
 
-const mmkv = createMMKV({ id: "peakwise-store" });
+const mmkv = createMMKV({ id: "pistewise-store" });
 
 export const zustandStorage: StorageAdapter = {
   getItem: (name) => mmkv.getString(name) ?? null,

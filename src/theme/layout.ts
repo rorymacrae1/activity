@@ -32,6 +32,8 @@ export const maxContentWidth = {
   content: 960,
   /** Max-width for full-width sections on desktop */
   wide: 1200,
+  /** App-wide max-width for the entire shell on large monitors */
+  app: 1440,
 } as const;
 
 /**

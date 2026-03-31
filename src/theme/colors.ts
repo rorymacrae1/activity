@@ -1,5 +1,5 @@
 /**
- * PeakWise Design System — Luxury Alpine Color Palette
+ * PisteWise Design System — Luxury Alpine Color Palette
  *
  * Philosophy: High-end ski resort aesthetics — think Four Seasons
  * meets alpine minimalism. Muted sophistication, not tech-startup blue.
