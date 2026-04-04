@@ -1,6 +1,6 @@
 import { Text as RNText, type TextProps as RNTextProps } from "react-native";
 import { typography, colors } from "@theme";
-import type { TypographyVariant } from "@theme";
+import type { TypographyKey } from "@theme";
 
 /**
  * Text color presets — semantic naming
@@ -32,7 +32,7 @@ const COLOR_MAP: Record<TextColor, string> = {
 
 interface TextProps extends RNTextProps {
   /** Typography variant from the design system */
-  variant?: TypographyVariant;
+  variant?: TypographyKey;
   /** Semantic color preset (preferred) or custom color string */
   color?: TextColor | string;
   /** Text alignment */

@@ -1,25 +1,24 @@
 import type { TextStyle } from "react-native";
+import { fontFamily } from "./fonts";
 
 /**
- * PeakWise Typography System — Luxury Alpine
+ * PisteWise Typography System — Montserrat
  *
  * Philosophy: Refined hierarchy with generous breathing room.
  * Headlines are confident but not shouty. Body copy is comfortable.
  *
+ * Font: Montserrat — geometric sans-serif with elegant proportions
+ *
  * Scale: 11 / 13 / 15 / 17 / 21 / 26 / 34 / 48 (near-golden ratio)
  * Line heights: 1.4–1.6× for readability
  *
- * Weight semantic naming:
- * - "light" (300) — elegant display text
- * - "regular" (400) — body copy
- * - "medium" (500) — emphasis, labels
- * - "semibold" (600) — subheadings
- * - "bold" (700) — headlines
+ * Weight allocation:
+ * - Light (300) — elegant display text
+ * - Regular (400) — body copy
+ * - Medium (500) — buttons, labels
+ * - SemiBold (600) — subheadings, emphasis
+ * - Bold (700) — headlines
  */
-
-const base: TextStyle = {
-  fontFamily: undefined, // System font (SF Pro / Roboto)
-};
 
 // === Scale Constants ===
 const scale = {
@@ -36,150 +35,174 @@ const scale = {
 export const typography = {
   // === Display — Hero moments ===
   displayLarge: {
-    ...base,
+    fontFamily: fontFamily.light,
     fontSize: scale["3xl"],
-    fontWeight: "300", // Light for elegance
+    lineHeight: 56,
+    letterSpacing: -1.5,
+  } as TextStyle,
+
+  displayLargeItalic: {
+    fontFamily: fontFamily.lightItalic,
+    fontSize: scale["3xl"],
     lineHeight: 56,
     letterSpacing: -1.5,
   } as TextStyle,
 
   display: {
-    ...base,
+    fontFamily: fontFamily.light,
     fontSize: scale["2xl"],
-    fontWeight: "300",
+    lineHeight: 42,
+    letterSpacing: -1,
+  } as TextStyle,
+
+  displayItalic: {
+    fontFamily: fontFamily.lightItalic,
+    fontSize: scale["2xl"],
     lineHeight: 42,
     letterSpacing: -1,
   } as TextStyle,
 
   // === Headlines — Section anchors ===
   h1: {
-    ...base,
+    fontFamily: fontFamily.bold,
     fontSize: scale.xl, // 26px
-    fontWeight: "600",
     lineHeight: 34,
     letterSpacing: -0.5,
   } as TextStyle,
 
   h2: {
-    ...base,
+    fontFamily: fontFamily.semiBold,
     fontSize: scale.lg, // 21px
-    fontWeight: "600",
     lineHeight: 28,
     letterSpacing: -0.3,
   } as TextStyle,
 
   h3: {
-    ...base,
+    fontFamily: fontFamily.semiBold,
     fontSize: scale.md, // 17px
-    fontWeight: "600",
     lineHeight: 24,
     letterSpacing: -0.2,
   } as TextStyle,
 
   h4: {
-    ...base,
+    fontFamily: fontFamily.semiBold,
     fontSize: scale.base, // 15px
-    fontWeight: "600",
     lineHeight: 22,
     letterSpacing: 0,
   } as TextStyle,
 
   // === Body — Long-form reading ===
   bodyLarge: {
-    ...base,
+    fontFamily: fontFamily.regular,
     fontSize: scale.md, // 17px
-    fontWeight: "400",
+    lineHeight: 26,
+    letterSpacing: 0,
+  } as TextStyle,
+
+  bodyLargeItalic: {
+    fontFamily: fontFamily.italic,
+    fontSize: scale.md,
     lineHeight: 26,
     letterSpacing: 0,
   } as TextStyle,
 
   body: {
-    ...base,
+    fontFamily: fontFamily.regular,
     fontSize: scale.base, // 15px
-    fontWeight: "400",
+    lineHeight: 24,
+    letterSpacing: 0,
+  } as TextStyle,
+
+  bodyItalic: {
+    fontFamily: fontFamily.italic,
+    fontSize: scale.base,
     lineHeight: 24,
     letterSpacing: 0,
   } as TextStyle,
 
   bodyMedium: {
-    ...base,
+    fontFamily: fontFamily.medium,
     fontSize: scale.base,
-    fontWeight: "500",
     lineHeight: 24,
     letterSpacing: 0,
   } as TextStyle,
 
   bodySmall: {
-    ...base,
+    fontFamily: fontFamily.regular,
     fontSize: scale.sm, // 13px
-    fontWeight: "400",
+    lineHeight: 20,
+    letterSpacing: 0.1,
+  } as TextStyle,
+
+  bodySmallItalic: {
+    fontFamily: fontFamily.italic,
+    fontSize: scale.sm,
     lineHeight: 20,
     letterSpacing: 0.1,
   } as TextStyle,
 
   bodySmallMedium: {
-    ...base,
+    fontFamily: fontFamily.medium,
     fontSize: scale.sm,
-    fontWeight: "500",
     lineHeight: 20,
     letterSpacing: 0.1,
   } as TextStyle,
 
   // === UI Elements ===
   button: {
-    ...base,
+    fontFamily: fontFamily.medium,
     fontSize: scale.base, // 15px
-    fontWeight: "500",
     lineHeight: 22,
-    letterSpacing: 0.3, // Slight tracking for buttons
+    letterSpacing: 0.3,
   } as TextStyle,
 
   buttonSmall: {
-    ...base,
+    fontFamily: fontFamily.medium,
     fontSize: scale.sm, // 13px
-    fontWeight: "500",
     lineHeight: 18,
     letterSpacing: 0.3,
   } as TextStyle,
 
   label: {
-    ...base,
+    fontFamily: fontFamily.medium,
     fontSize: scale.sm, // 13px
-    fontWeight: "500",
     lineHeight: 18,
     letterSpacing: 0.2,
   } as TextStyle,
 
   labelSmall: {
-    ...base,
+    fontFamily: fontFamily.medium,
     fontSize: scale.xs, // 11px
-    fontWeight: "500",
     lineHeight: 16,
     letterSpacing: 0.3,
   } as TextStyle,
 
   // === Captions & Fine Print ===
   caption: {
-    ...base,
+    fontFamily: fontFamily.regular,
     fontSize: scale.xs, // 11px
-    fontWeight: "400",
+    lineHeight: 16,
+    letterSpacing: 0.2,
+  } as TextStyle,
+
+  captionItalic: {
+    fontFamily: fontFamily.italic,
+    fontSize: scale.xs,
     lineHeight: 16,
     letterSpacing: 0.2,
   } as TextStyle,
 
   captionMedium: {
-    ...base,
+    fontFamily: fontFamily.medium,
     fontSize: scale.xs,
-    fontWeight: "500",
     lineHeight: 16,
     letterSpacing: 0.2,
   } as TextStyle,
 
   // === Eyebrow/Overline — Category labels ===
   overline: {
-    ...base,
+    fontFamily: fontFamily.semiBold,
     fontSize: scale.xs, // 11px
-    fontWeight: "600",
     lineHeight: 16,
     letterSpacing: 1.2, // Wide tracking
     textTransform: "uppercase",
@@ -189,26 +212,23 @@ export const typography = {
   mono: {
     fontFamily: "Menlo", // Falls back to system mono
     fontSize: scale.sm,
-    fontWeight: "400",
     lineHeight: 20,
     letterSpacing: 0,
   } as TextStyle,
 
-  // === Legacy / Data Display ===
+  // === Data Display ===
   /** Large numbers in stats grids */
   stat: {
-    ...base,
+    fontFamily: fontFamily.semiBold,
     fontSize: scale.xl, // 26px
-    fontWeight: "600",
     lineHeight: 32,
     letterSpacing: -0.3,
   } as TextStyle,
 
   /** Labels under stat numbers */
   statLabel: {
-    ...base,
+    fontFamily: fontFamily.medium,
     fontSize: scale.xs, // 11px
-    fontWeight: "500",
     lineHeight: 14,
     letterSpacing: 0.3,
     textTransform: "uppercase",
@@ -216,12 +236,12 @@ export const typography = {
 
   /** Tab bar labels */
   tabLabel: {
-    ...base,
+    fontFamily: fontFamily.medium,
     fontSize: 10,
-    fontWeight: "500",
-    lineHeight: 14,
+    lineHeight: 12,
+    letterSpacing: 0.2,
   } as TextStyle,
 } as const;
 
 export type Typography = typeof typography;
-export type TypographyVariant = keyof Typography;
+export type TypographyKey = keyof Typography;

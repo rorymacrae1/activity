@@ -1,4 +1,4 @@
-import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { View, StyleSheet, Pressable, Platform, Image } from "react-native";
 import { useState } from "react";
 import Animated, {
   useAnimatedStyle,
@@ -21,74 +21,27 @@ const COMING_SOON = [
   { id: "reviews", label: "Community Reviews", icon: "⭐" },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const logoImage = require("../../../assets/Piste Wise logo with mountain icon.png");
+
 /**
- * PisteWise logo component — mocked with SVG-like styling
+ * PisteWise logo component — uses actual logo image
  */
 function Logo() {
   return (
-    <View style={logoStyles.container}>
-      {/* Piste marker icon */}
-      <View style={logoStyles.iconContainer}>
-        <View style={logoStyles.pisteMarker}>
-          <View style={logoStyles.pisteInner} />
-        </View>
-      </View>
-      {/* Wordmark */}
-      <View style={logoStyles.wordmark}>
-        <Text style={logoStyles.piste}>Piste</Text>
-        <Text style={logoStyles.wise}>Wise</Text>
-      </View>
-    </View>
+    <Image
+      source={logoImage}
+      style={logoStyles.image}
+      resizeMode="contain"
+      accessibilityLabel="PisteWise logo"
+    />
   );
 }
 
 const logoStyles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  iconContainer: {
-    width: 28,
-    height: 28,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pisteMarker: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: colors.brand.primary,
-    alignItems: "center",
-    justifyContent: "center",
-    // Subtle shadow for depth
-    shadowColor: colors.brand.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  pisteInner: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.ink.onBrand,
-  },
-  wordmark: {
-    flexDirection: "row",
-    alignItems: "baseline",
-  },
-  piste: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: colors.ink.rich,
-    letterSpacing: -0.5,
-  },
-  wise: {
-    fontSize: 20,
-    fontWeight: "400",
-    color: colors.brand.primary,
-    letterSpacing: -0.5,
+  image: {
+    width: 140,
+    height: 40,
   },
 });
 

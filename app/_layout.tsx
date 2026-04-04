@@ -2,10 +2,11 @@ import { Stack } from "expo-router";
 import Head from "expo-router/head";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, View, Platform, ActivityIndicator } from "react-native";
+import { useFonts } from "expo-font";
 import { ErrorBoundary } from "@components/ui/ErrorBoundary";
 import { maxContentWidth } from "@theme/layout";
-import { colors } from "@theme";
+import { colors, fontAssets } from "@theme";
 
 /**
  * Root layout component for the app.
@@ -14,6 +15,18 @@ import { colors } from "@theme";
  */
 export default function RootLayout() {
   const isWeb = Platform.OS === "web";
+
+  // Load Montserrat fonts
+  const [fontsLoaded] = useFonts(fontAssets);
+
+  // Show loading state while fonts are loading
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.brand.primary} />
+      </View>
+    );
+  }
 
   return (
     <Head.Provider>
@@ -29,7 +42,7 @@ export default function RootLayout() {
               name="viewport"
               content="width=device-width, initial-scale=1"
             />
-            <meta name="theme-color" content="#4E9085" />
+            <meta name="theme-color" content="#1E2A38" />
             <meta charSet="utf-8" />
             <meta property="og:site_name" content="PisteWise" />
             <meta property="og:type" content="website" />
@@ -59,6 +72,12 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.canvas.default,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.canvas.muted, // Visible behind app shell on ultra-wide

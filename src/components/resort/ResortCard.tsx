@@ -48,10 +48,10 @@ export function ResortCard({
           colors={["transparent", "rgba(0,0,0,0.4)"]}
           style={styles.imageGradient}
         />
-        {/* Rank badge - gold for #1, refined dark for others */}
+        {/* Rank badge - Alpine Blue for #1, refined dark for others */}
         {rank ? (
-          <View style={[styles.rankBadge, isTopPick && styles.rankBadgeGold]}>
-            <Text style={[styles.rankText, isTopPick && styles.rankTextGold]}>
+          <View style={[styles.rankBadge, isTopPick && styles.rankBadgeTop]}>
+            <Text style={[styles.rankText, isTopPick && styles.rankTextTop]}>
               #{rank}
             </Text>
           </View>
@@ -127,9 +127,9 @@ export function ResortCard({
 const styles = StyleSheet.create({
   topPick: {
     borderWidth: 2,
-    borderColor: colors.brand.accent,
-    // Subtle gold glow
-    shadowColor: colors.brand.accent,
+    borderColor: colors.brand.primary,
+    // Subtle Alpine Blue glow
+    shadowColor: colors.brand.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 12,
@@ -161,8 +161,8 @@ const styles = StyleSheet.create({
     minWidth: 32,
     alignItems: "center",
   },
-  rankBadgeGold: {
-    backgroundColor: colors.brand.accent,
+  rankBadgeTop: {
+    backgroundColor: colors.brand.primary,
   },
   rankText: {
     color: colors.ink.inverse,
@@ -170,8 +170,8 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 0.5,
   },
-  rankTextGold: {
-    color: colors.ink.rich,
+  rankTextTop: {
+    color: colors.ink.onBrand,
   },
   matchBadge: {
     position: "absolute",

@@ -34,7 +34,10 @@
       "backgroundColor": "#f8fafc",
       "themeColor": "#1a365d"
     },
-    "plugins": ["expo-router"],
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
     "experiments": {
       "typedRoutes": true
     }

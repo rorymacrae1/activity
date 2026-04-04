@@ -1,62 +1,82 @@
 /**
- * PisteWise Design System — Luxury Alpine Color Palette
+ * PisteWise Design System — Alpine Luxe Color Palette
  *
- * Philosophy: High-end ski resort aesthetics — think Four Seasons
- * meets alpine minimalism. Muted sophistication, not tech-startup blue.
+ * Philosophy: Airbnb / Apple-level calmness meets alpine identity.
+ * Sophisticated, premium, and restrained — not bright or playful.
  *
- * Core Brand: Deep charcoal ("Alpine Night"), warm ivory ("Fresh Snow"),
- * muted sage ("Glacier"), and bronze accents ("Summit Gold").
+ * Foundation:
+ *   Alpine Navy (#1E2A38) — primary brand, deep & confident
+ *   Snow White (#F7F9FB) — soft background, not harsh
+ *   Glacier Grey (#E5E7EB) — borders, dividers
+ *   Charcoal (#1A1A1A) — primary text
+ *   Mist Grey (#6B7280) — secondary text
+ *
+ * Ski Accents:
+ *   Ice Blue (#D6EAF8) — card backgrounds, highlights
+ *   Alpine Blue (#4A90A4) — subtle highlights, links
+ *   Signal Red (#C23B3B) — CTA buttons (muted, not bright)
  */
 
 // === Primitive Palette ===
-// These are internal — never use directly in components
+// Internal use only — never reference directly in components
 const primitive = {
-  // Alpine Night — primary dark (replaces generic navy)
-  night: {
-    950: "#0C0F14",
-    900: "#141820",
-    800: "#1C222C",
-    700: "#262D3A",
-    600: "#353E4F",
-    500: "#4A5568",
+  // Alpine Navy — primary brand color
+  navy: {
+    950: "#0D1117",
+    900: "#1E2A38", // ← Primary
+    800: "#2C3E50",
+    700: "#3D5166",
+    600: "#4E647C",
+    500: "#607892",
   },
 
-  // Fresh Snow — warm whites (not sterile pure white)
+  // Snow — soft whites (warm, not sterile)
   snow: {
-    50: "#FDFCFA",
-    100: "#FAF9F7",
-    200: "#F5F3F0",
-    300: "#EBE8E4",
-    400: "#D9D5CF",
-    500: "#C4BFB8",
+    50: "#F7F9FB", // ← Main background
+    100: "#F1F4F8",
+    200: "#E8ECF1",
+    300: "#E5E7EB", // ← Glacier Grey (borders)
+    400: "#D1D5DB",
+    500: "#9CA3AF",
   },
 
-  // Glacier — muted sage/teal accent
-  glacier: {
-    50: "#F4F9F8",
-    100: "#E3F0EE",
-    200: "#C7E0DC",
-    300: "#9CC8C1",
-    400: "#6BABA1",
-    500: "#4E9085",
-    600: "#3D756C",
-    700: "#345D57",
-    800: "#2D4B47",
-    900: "#283E3B",
+  // Ice — blue tints for cards and highlights
+  ice: {
+    50: "#F0F7FC",
+    100: "#D6EAF8", // ← Card backgrounds
+    200: "#B8DAF2",
+    300: "#8AC4EA",
+    400: "#5AABDE",
+    500: "#4A90A4", // ← Alpine Blue
+    600: "#3D7A8C",
+    700: "#326573",
+    800: "#28505B",
+    900: "#1F3D45",
   },
 
-  // Summit Gold — warm bronze accent for highlights
-  gold: {
-    50: "#FBF8F3",
-    100: "#F5EDE0",
-    200: "#EBD9BE",
-    300: "#DFC193",
-    400: "#D4A76D",
-    500: "#C4894A",
-    600: "#A66F3D",
-    700: "#875735",
-    800: "#6E4731",
-    900: "#5C3C2B",
+  // Charcoal — text greys
+  ink: {
+    900: "#1A1A1A", // ← Charcoal (primary text)
+    800: "#2D2D2D",
+    700: "#404040",
+    600: "#525252",
+    500: "#6B7280", // ← Mist Grey (secondary text)
+    400: "#9CA3AF",
+    300: "#D1D5DB",
+  },
+
+  // Signal — CTA and action colors (muted red)
+  signal: {
+    50: "#FEF5F5",
+    100: "#FDE8E8",
+    200: "#FBD0D0",
+    300: "#F7A8A8",
+    400: "#E56B6B",
+    500: "#C23B3B", // ← Signal Red (CTA)
+    600: "#A32E2E",
+    700: "#862525",
+    800: "#6B1F1F",
+    900: "#581C1C",
   },
 
   // Pure values
@@ -64,67 +84,67 @@ const primitive = {
   black: "#000000",
   transparent: "transparent",
 
-  // Piste markers — authentic European ski signage colors
+  // Piste markers — authentic European ski signage
   piste: {
-    green: "#2D8F52",
-    blue: "#2563EB",
-    red: "#DC2626",
+    green: "#22C55E",
+    blue: "#3B82F6",
+    red: "#EF4444",
     black: "#0F172A",
-    pink: "#F9C6D3",
+    pink: "#FBCFE8",
   },
 
-  // Semantic colors — desaturated for luxury feel
+  // Semantic feedback (desaturated for premium feel)
   emerald: {
-    50: "#F0FAF5",
-    100: "#D1F0E0",
-    500: "#3B9D6E",
-    600: "#2E7D57",
+    50: "#F0FDF4",
+    100: "#DCFCE7",
+    500: "#22C55E",
+    600: "#16A34A",
   },
   amber: {
     50: "#FFFBEB",
     100: "#FEF3C7",
-    500: "#C4894A", // Uses our gold
-    600: "#A66F3D",
+    500: "#F59E0B",
+    600: "#D97706",
   },
   rose: {
-    50: "#FFF5F5",
-    100: "#FEE2E2",
-    500: "#B85450",
-    600: "#9B3D3A",
+    50: "#FFF1F2",
+    100: "#FFE4E6",
+    500: "#F43F5E",
+    600: "#E11D48",
   },
 } as const;
 
 // === Semantic Tokens ===
-// Brand-driven naming — what it IS, not what it looks like
+// Brand-driven naming — reference by meaning, not appearance
 export const colors = {
   // === Brand Identity ===
   brand: {
-    primary: primitive.glacier[500],
-    primaryMuted: primitive.glacier[400],
-    primarySubtle: primitive.glacier[50],
-    primaryStrong: primitive.glacier[700],
-    accent: primitive.gold[500],
-    accentMuted: primitive.gold[400],
-    accentSubtle: primitive.gold[50],
+    primary: primitive.ice[500], // Alpine Blue
+    primaryMuted: primitive.ice[400],
+    primarySubtle: primitive.ice[100], // Ice Blue cards
+    primaryStrong: primitive.ice[700],
+    accent: primitive.signal[500], // Signal Red
+    accentMuted: primitive.signal[400],
+    accentSubtle: primitive.signal[50],
   },
 
   // === Canvas (page backgrounds) ===
   canvas: {
-    default: primitive.snow[50], // Warm off-white, not harsh
+    default: primitive.snow[50], // Snow White
     subtle: primitive.snow[100],
     muted: primitive.snow[200],
-    inset: primitive.snow[300], // For inset/sunken areas
-    inverse: primitive.night[900],
+    inset: primitive.snow[300], // Glacier Grey
+    inverse: primitive.navy[900], // Alpine Navy
   },
 
   // === Surface (cards, modals, elevated elements) ===
   surface: {
     primary: primitive.white,
     secondary: primitive.snow[100],
-    tertiary: primitive.snow[200],
+    tertiary: primitive.ice[100], // Ice Blue for feature cards
     elevated: primitive.white,
-    overlay: "rgba(12, 15, 20, 0.7)",
-    glass: "rgba(255, 255, 255, 0.85)",
+    overlay: "rgba(30, 42, 56, 0.75)", // Navy overlay
+    glass: "rgba(255, 255, 255, 0.9)",
     /** @deprecated Use colors.surface.primary */
     default: primitive.white,
     /** @deprecated Use colors.border.subtle */
@@ -133,31 +153,31 @@ export const colors = {
 
   // === Ink (text and icons) ===
   ink: {
-    rich: primitive.night[900], // Primary text
-    normal: primitive.night[700], // Secondary text
-    muted: primitive.night[500], // Tertiary/placeholder
-    faint: primitive.night[600], // Borders, subtle lines
-    disabled: primitive.snow[400],
+    rich: primitive.ink[900], // Charcoal — primary text
+    normal: primitive.ink[700], // Body text
+    muted: primitive.ink[500], // Mist Grey — secondary
+    faint: primitive.ink[400], // Placeholder, hints
+    disabled: primitive.snow[500],
     inverse: primitive.snow[50],
     onBrand: primitive.white,
   },
 
   // === Border ===
   border: {
-    subtle: primitive.snow[300],
+    subtle: primitive.snow[300], // Glacier Grey
     default: primitive.snow[400],
     strong: primitive.snow[500],
-    focus: primitive.glacier[400],
-    selected: primitive.glacier[500],
+    focus: primitive.ice[500], // Alpine Blue focus ring
+    selected: primitive.ice[500],
   },
 
   // === Interactive states ===
   interactive: {
-    default: primitive.glacier[500],
-    hover: primitive.glacier[600],
-    active: primitive.glacier[700],
+    default: primitive.ice[500], // Alpine Blue
+    hover: primitive.ice[600],
+    active: primitive.ice[700],
     disabled: primitive.snow[400],
-    focus: primitive.glacier[400],
+    focus: primitive.ice[400],
   },
 
   // === Sentiment (semantic feedback) ===
@@ -170,28 +190,38 @@ export const colors = {
     warningSubtle: primitive.amber[50],
     warningMuted: primitive.amber[100],
 
-    error: primitive.rose[500],
-    errorSubtle: primitive.rose[50],
-    errorMuted: primitive.rose[100],
+    error: primitive.signal[500], // Signal Red
+    errorSubtle: primitive.signal[50],
+    errorMuted: primitive.signal[100],
 
-    info: primitive.glacier[500],
-    infoSubtle: primitive.glacier[50],
-    infoMuted: primitive.glacier[100],
+    info: primitive.ice[500],
+    infoSubtle: primitive.ice[50],
+    infoMuted: primitive.ice[100],
+  },
+
+  // === CTA (Call to Action) ===
+  cta: {
+    primary: primitive.signal[500], // Signal Red
+    primaryHover: primitive.signal[600],
+    primaryActive: primitive.signal[700],
+    secondary: primitive.navy[900], // Alpine Navy
+    secondaryHover: primitive.navy[800],
+    secondaryActive: primitive.navy[700],
   },
 
   // === Deprecated aliases (for migration) ===
   /** @deprecated Use colors.brand.primary */
-  primary: primitive.glacier[500],
+  primary: primitive.ice[500],
   /** @deprecated Use colors.brand.primarySubtle */
-  primarySubtle: primitive.glacier[50],
+  primarySubtle: primitive.ice[100],
   /** @deprecated Use colors.ink.rich */
   text: {
-    primary: primitive.night[900],
-    secondary: primitive.night[700],
-    tertiary: primitive.night[500],
-    disabled: primitive.snow[400],
+    primary: primitive.ink[900],
+    secondary: primitive.ink[700],
+    tertiary: primitive.ink[500],
+    disabled: primitive.snow[500],
     inverse: primitive.snow[50],
-    link: primitive.glacier[500],
+    link: primitive.ice[500],
     onDark: primitive.snow[50],
   },
   /** @deprecated Use colors.canvas or colors.surface */
@@ -200,34 +230,34 @@ export const colors = {
     secondary: primitive.snow[100],
     tertiary: primitive.snow[200],
     elevated: primitive.white,
-    overlay: "rgba(12, 15, 20, 0.7)",
+    overlay: "rgba(30, 42, 56, 0.75)",
   },
   /** @deprecated Use colors.sentiment */
   success: primitive.emerald[500],
   successSubtle: primitive.emerald[50],
   warning: primitive.amber[500],
   warningSubtle: primitive.amber[50],
-  error: primitive.rose[500],
-  errorSubtle: primitive.rose[50],
-  info: primitive.glacier[500],
-  infoSubtle: primitive.glacier[50],
+  error: primitive.signal[500],
+  errorSubtle: primitive.signal[50],
+  info: primitive.ice[500],
+  infoSubtle: primitive.ice[50],
 
-  // === Terrain (piste colours) ===
+  // === Terrain (piste colours) — authentic ski markers ===
   terrain: {
     firstTimer: primitive.piste.pink,
     beginner: primitive.piste.green,
     intermediate: primitive.piste.blue,
     red: primitive.piste.red,
     advanced: primitive.piste.black,
-    offPiste: primitive.gold[500],
+    offPiste: primitive.ink[700],
   },
 
   // === Match score gradient ===
   match: {
     excellent: primitive.emerald[500], // 80-100%
-    good: primitive.glacier[400], // 60-79%
-    fair: primitive.gold[500], // 40-59%
-    poor: primitive.rose[500], // 0-39%
+    good: primitive.ice[500], // 60-79%
+    fair: primitive.amber[500], // 40-59%
+    poor: primitive.signal[500], // 0-39%
   },
 } as const;
 
