@@ -20,6 +20,7 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
+import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
 import type { BudgetLevel } from "@/types/preferences";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -186,46 +187,48 @@ export default function BudgetScreen() {
         </View>
       }
     >
-      <View
-        style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
-      >
-        <ProgressIndicator current={3} total={5} showLabel />
-
-        {/* Header */}
-        <View style={styles.header}>
-          <Text variant="h2">{content.onboarding.budget.title}</Text>
-          <Text variant="bodySmall" color={colors.text.secondary}>
-            {content.onboarding.budget.subtitle}
-          </Text>
-        </View>
-
-        {/* Scrollable options area for mobile */}
-        <ScrollView
-          style={styles.scrollArea}
-          contentContainerStyle={[styles.grid, isTablet && styles.gridTablet]}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
+      <AnimatedQuizContent animation="parallax">
+        <View
+          style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
         >
-          {OPTIONS.map((opt) => (
-            <OptionCard
-              key={opt.level}
-              opt={opt}
-              active={budgetLevel === opt.level}
-              onSelect={() => setBudgetLevel(opt.level)}
-              isTablet={isTablet}
-            />
-          ))}
+          <ProgressIndicator current={3} total={5} showLabel />
 
-          {/* Reassurance hint - inside scroll on mobile */}
-          <Text
-            variant="caption"
-            color={colors.text.tertiary}
-            style={styles.hint}
+          {/* Header */}
+          <View style={styles.header}>
+            <Text variant="h2">{content.onboarding.budget.title}</Text>
+            <Text variant="bodySmall" color={colors.text.secondary}>
+              {content.onboarding.budget.subtitle}
+            </Text>
+          </View>
+
+          {/* Scrollable options area for mobile */}
+          <ScrollView
+            style={styles.scrollArea}
+            contentContainerStyle={[styles.grid, isTablet && styles.gridTablet]}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
           >
-            {content.onboarding.budget.hint}
-          </Text>
-        </ScrollView>
-      </View>
+            {OPTIONS.map((opt) => (
+              <OptionCard
+                key={opt.level}
+                opt={opt}
+                active={budgetLevel === opt.level}
+                onSelect={() => setBudgetLevel(opt.level)}
+                isTablet={isTablet}
+              />
+            ))}
+
+            {/* Reassurance hint - inside scroll on mobile */}
+            <Text
+              variant="caption"
+              color={colors.text.tertiary}
+              style={styles.hint}
+            >
+              {content.onboarding.budget.hint}
+            </Text>
+          </ScrollView>
+        </View>
+      </AnimatedQuizContent>
     </QuizLayout>
   );
 }

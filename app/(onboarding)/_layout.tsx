@@ -1,8 +1,9 @@
 import { Stack } from "expo-router";
+import { colors } from "@/theme";
 
 /**
  * Layout for onboarding flow.
- * Prevents going back with gestures and hides header.
+ * Uses native slide transition for seamless forward/backward navigation.
  */
 export default function OnboardingLayout() {
   return (
@@ -10,10 +11,16 @@ export default function OnboardingLayout() {
       screenOptions={{
         headerShown: false,
         animation: "slide_from_right",
-        gestureEnabled: false,
+        gestureEnabled: true,
+        gestureDirection: "horizontal",
+        // Prevent white flash between screens
+        contentStyle: { backgroundColor: colors.background.primary },
+        // Smooth animation timing
+        animationDuration: 350,
       }}
     >
       <Stack.Screen name="index" />
+      <Stack.Screen name="trip-type" />
       <Stack.Screen name="skill" />
       <Stack.Screen name="budget" />
       <Stack.Screen name="region" />

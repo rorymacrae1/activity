@@ -38,7 +38,7 @@ export default function ResultsScreen() {
   if (loading) {
     return (
       <ScreenContainer>
-        <LoadingState icon="��" message={content.onboarding.results.loading} />
+        <LoadingState message={content.onboarding.results.loading} />
       </ScreenContainer>
     );
   }

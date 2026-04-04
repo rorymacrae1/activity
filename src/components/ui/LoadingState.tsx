@@ -1,57 +1,25 @@
-import { View, ActivityIndicator, StyleSheet } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-  withSequence,
-} from "react-native-reanimated";
-import { useEffect } from "react";
+import { View, Image, StyleSheet } from "react-native";
 import { Text } from "./Text";
-import { colors, spacing, animation } from "@theme";
+import { colors, spacing } from "@theme";
+
+// Yeti loading GIF
+const LOADING_YETI = require("../../../assets/LoadingYeti.gif");
 
 interface LoadingStateProps {
   /** Loading message */
   message?: string;
-  /** Decorative icon (emoji) — will animate */
-  icon?: string;
 }
 
 /**
- * Refined loading state with subtle animation.
- *
- * Features gentle icon pulse for visual interest without being distracting.
+ * Loading state with animated yeti.
  *
  * @example
- * <LoadingState icon="🎿" message="Finding your perfect resorts..." />
+ * <LoadingState message="Finding your perfect resorts..." />
  */
-export function LoadingState({ message, icon }: LoadingStateProps) {
-  const scale = useSharedValue(1);
-
-  useEffect(() => {
-    // Gentle breathing animation
-    scale.value = withRepeat(
-      withSequence(
-        withTiming(1.08, { duration: 1200 }),
-        withTiming(1, { duration: 1200 }),
-      ),
-      -1, // Infinite
-      true,
-    );
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
+export function LoadingState({ message }: LoadingStateProps) {
   return (
     <View style={styles.container}>
-      {icon ? (
-        <Animated.View style={animatedStyle}>
-          <Text style={styles.icon}>{icon}</Text>
-        </Animated.View>
-      ) : null}
-      <ActivityIndicator size="large" color={colors.brand.primary} />
+      <Image source={LOADING_YETI} style={styles.yeti} />
       {message ? (
         <Text
           variant="body"
@@ -71,14 +39,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: spacing.xl,
+    gap: spacing.lg,
     padding: spacing["2xl"],
   },
-  icon: {
-    fontSize: 56,
+  yeti: {
+    width: 120,
+    height: 120,
   },
   message: {
-    marginTop: spacing.sm,
+    marginTop: spacing.xs,
     maxWidth: 240,
   },
 });

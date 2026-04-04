@@ -8,6 +8,7 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
+import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
 import type { SkillLevel } from "@/types/preferences";
 
 /** Piste marker colors matching real European ski signage */
@@ -88,59 +89,61 @@ export default function SkillScreen() {
         </View>
       }
     >
-      <View
-        style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
-      >
-        <ProgressIndicator current={2} total={5} showLabel />
+      <AnimatedQuizContent animation="parallax">
+        <View
+          style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
+        >
+          <ProgressIndicator current={2} total={5} showLabel />
 
-        <View style={styles.header}>
-          <Text variant="h2">{content.onboarding.skill.title}</Text>
-          <Text variant="body" color={colors.text.secondary}>
-            {content.onboarding.skill.subtitle}
-          </Text>
-        </View>
+          <View style={styles.header}>
+            <Text variant="h2">{content.onboarding.skill.title}</Text>
+            <Text variant="body" color={colors.text.secondary}>
+              {content.onboarding.skill.subtitle}
+            </Text>
+          </View>
 
-        <View style={[styles.options, isTablet && styles.optionsTablet]}>
-          {OPTIONS.map((level) => {
-            const optContent = content.onboarding.skill.options[level];
-            const active = groupAbilities.includes(level);
-            return (
-              <Pressable
-                key={level}
-                style={[
-                  styles.option,
-                  active && styles.optionActive,
-                  isTablet && styles.optionRow,
-                ]}
-                onPress={() => toggle(level)}
-                accessibilityRole="checkbox"
-                accessibilityState={{ checked: active }}
-                accessibilityLabel={`${optContent.title}: ${optContent.description}`}
-              >
-                <PisteMarker level={level} />
-                <View style={styles.optionText}>
-                  <Text
-                    variant="h4"
-                    color={active ? colors.primary : colors.text.primary}
-                  >
-                    {optContent.title}
-                  </Text>
-                  <Text variant="bodySmall" color={colors.text.secondary}>
-                    {optContent.description}
-                  </Text>
-                </View>
-                {active && (
-                  <View style={styles.checkmark}>
-                    <Text variant="caption" color={colors.primary}>
-                      ✓
+          <View style={[styles.options, isTablet && styles.optionsTablet]}>
+            {OPTIONS.map((level) => {
+              const optContent = content.onboarding.skill.options[level];
+              const active = groupAbilities.includes(level);
+              return (
+                <Pressable
+                  key={level}
+                  style={[
+                    styles.option,
+                    active && styles.optionActive,
+                    isTablet && styles.optionRow,
+                  ]}
+                  onPress={() => toggle(level)}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: active }}
+                  accessibilityLabel={`${optContent.title}: ${optContent.description}`}
+                >
+                  <PisteMarker level={level} />
+                  <View style={styles.optionText}>
+                    <Text
+                      variant="h4"
+                      color={active ? colors.primary : colors.text.primary}
+                    >
+                      {optContent.title}
+                    </Text>
+                    <Text variant="bodySmall" color={colors.text.secondary}>
+                      {optContent.description}
                     </Text>
                   </View>
-                )}
-              </Pressable>
-            );
-          })}
+                  {active && (
+                    <View style={styles.checkmark}>
+                      <Text variant="caption" color={colors.primary}>
+                        ✓
+                      </Text>
+                    </View>
+                  )}
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
-      </View>
+      </AnimatedQuizContent>
     </QuizLayout>
   );
 }

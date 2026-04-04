@@ -16,6 +16,7 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
+import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
 import type { TripType } from "@/types/preferences";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -209,35 +210,37 @@ export default function TripTypeScreen() {
         </View>
       }
     >
-      <View
-        style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
-      >
-        <ProgressIndicator current={1} total={5} showLabel />
+      <AnimatedQuizContent animation="parallax">
+        <View
+          style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
+        >
+          <ProgressIndicator current={1} total={5} showLabel />
 
-        <View style={styles.header}>
-          <Text variant="h2">{content.onboarding.tripType.title}</Text>
-          <Text variant="body" color={colors.text.secondary}>
-            {content.onboarding.tripType.subtitle}
-          </Text>
-        </View>
+          <View style={styles.header}>
+            <Text variant="h2">{content.onboarding.tripType.title}</Text>
+            <Text variant="body" color={colors.text.secondary}>
+              {content.onboarding.tripType.subtitle}
+            </Text>
+          </View>
 
-        <View style={[styles.options, isTablet && styles.optionsTablet]}>
-          {OPTIONS.map((value) => {
-            const optContent = content.onboarding.tripType.options[value];
-            return (
-              <OptionCard
-                key={value}
-                value={value}
-                title={optContent.title}
-                description={optContent.description}
-                active={tripType === value}
-                onSelect={() => setTripType(value)}
-                isTablet={isTablet}
-              />
-            );
-          })}
+          <View style={[styles.options, isTablet && styles.optionsTablet]}>
+            {OPTIONS.map((value) => {
+              const optContent = content.onboarding.tripType.options[value];
+              return (
+                <OptionCard
+                  key={value}
+                  value={value}
+                  title={optContent.title}
+                  description={optContent.description}
+                  active={tripType === value}
+                  onSelect={() => setTripType(value)}
+                  isTablet={isTablet}
+                />
+              );
+            })}
+          </View>
         </View>
-      </View>
+      </AnimatedQuizContent>
     </QuizLayout>
   );
 }

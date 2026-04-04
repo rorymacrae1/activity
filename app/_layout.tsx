@@ -2,11 +2,14 @@ import { Stack } from "expo-router";
 import Head from "expo-router/head";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StyleSheet, View, Platform, ActivityIndicator } from "react-native";
+import { StyleSheet, View, Platform, Image } from "react-native";
 import { useFonts } from "expo-font";
 import { ErrorBoundary } from "@components/ui/ErrorBoundary";
 import { maxContentWidth } from "@theme/layout";
 import { colors, fontAssets } from "@theme";
+
+// Yeti loading GIF
+const LOADING_YETI = require("../assets/LoadingYeti.gif");
 
 /**
  * Root layout component for the app.
@@ -23,7 +26,7 @@ export default function RootLayout() {
   if (!fontsLoaded) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.brand.primary} />
+        <Image source={LOADING_YETI} style={styles.loadingYeti} />
       </View>
     );
   }
@@ -77,6 +80,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.canvas.default,
+  },
+  loadingYeti: {
+    width: 150,
+    height: 150,
   },
   container: {
     flex: 1,

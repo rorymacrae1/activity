@@ -16,6 +16,7 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
+import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -231,59 +232,61 @@ export default function RegionScreen() {
         </View>
       }
     >
-      <View
-        style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
-      >
-        <ProgressIndicator current={4} total={5} showLabel />
-
-        {/* Header */}
-        <View style={styles.header}>
-          <Text variant="h2">{content.onboarding.region.title}</Text>
-          <Text variant="body" color={colors.text.secondary}>
-            {content.onboarding.region.subtitle}
-          </Text>
-        </View>
-
-        {/* Select all toggle */}
-        <Pressable
-          style={[styles.selectAll, allSelected && styles.selectAllActive]}
-          onPress={handleSelectAll}
-          accessibilityRole="checkbox"
-          accessibilityState={{ checked: allSelected }}
+      <AnimatedQuizContent animation="parallax">
+        <View
+          style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
         >
-          <View
-            style={[
-              styles.selectAllCheck,
-              allSelected && styles.selectAllCheckActive,
-            ]}
-          >
-            {allSelected ? (
-              <Text style={styles.selectAllCheckIcon}>✓</Text>
-            ) : null}
-          </View>
-          <Text
-            variant="bodyMedium"
-            color={allSelected ? colors.brand.primary : colors.ink.normal}
-          >
-            {allSelected
-              ? content.onboarding.region.allSelected
-              : content.onboarding.region.selectAll}
-          </Text>
-        </Pressable>
+          <ProgressIndicator current={4} total={5} showLabel />
 
-        {/* Region grid — 2 cols on tablet */}
-        <View style={[styles.grid, isTablet && styles.gridTablet]}>
-          {AVAILABLE_REGIONS.map((region) => (
-            <RegionCard
-              key={region.id}
-              region={region}
-              selected={regions.includes(region.id)}
-              onToggle={() => toggle(region.id)}
-              isTablet={isTablet}
-            />
-          ))}
+          {/* Header */}
+          <View style={styles.header}>
+            <Text variant="h2">{content.onboarding.region.title}</Text>
+            <Text variant="body" color={colors.text.secondary}>
+              {content.onboarding.region.subtitle}
+            </Text>
+          </View>
+
+          {/* Select all toggle */}
+          <Pressable
+            style={[styles.selectAll, allSelected && styles.selectAllActive]}
+            onPress={handleSelectAll}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: allSelected }}
+          >
+            <View
+              style={[
+                styles.selectAllCheck,
+                allSelected && styles.selectAllCheckActive,
+              ]}
+            >
+              {allSelected ? (
+                <Text style={styles.selectAllCheckIcon}>✓</Text>
+              ) : null}
+            </View>
+            <Text
+              variant="bodyMedium"
+              color={allSelected ? colors.brand.primary : colors.ink.normal}
+            >
+              {allSelected
+                ? content.onboarding.region.allSelected
+                : content.onboarding.region.selectAll}
+            </Text>
+          </Pressable>
+
+          {/* Region grid — 2 cols on tablet */}
+          <View style={[styles.grid, isTablet && styles.gridTablet]}>
+            {AVAILABLE_REGIONS.map((region) => (
+              <RegionCard
+                key={region.id}
+                region={region}
+                selected={regions.includes(region.id)}
+                onToggle={() => toggle(region.id)}
+                isTablet={isTablet}
+              />
+            ))}
+          </View>
         </View>
-      </View>
+      </AnimatedQuizContent>
     </QuizLayout>
   );
 }

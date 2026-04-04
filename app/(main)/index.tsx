@@ -34,7 +34,7 @@ export default function DiscoverScreen() {
   if (loading) {
     return (
       <ScreenContainer>
-        <LoadingState icon="🎿" message={content.discover.loading} />
+        <LoadingState message={content.discover.loading} />
       </ScreenContainer>
     );
   }
