@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Stack } from "expo-router";
 import Head from "expo-router/head";
 import { StatusBar } from "expo-status-bar";
@@ -7,6 +8,7 @@ import { useFonts } from "expo-font";
 import { ErrorBoundary } from "@components/ui/ErrorBoundary";
 import { maxContentWidth } from "@theme/layout";
 import { colors, fontAssets } from "@theme";
+import { useAuthStore } from "@stores/auth";
 
 // Yeti loading GIF
 const LOADING_YETI = require("../assets/LoadingYeti.gif");
@@ -18,9 +20,15 @@ const LOADING_YETI = require("../assets/LoadingYeti.gif");
  */
 export default function RootLayout() {
   const isWeb = Platform.OS === "web";
+  const initializeAuth = useAuthStore((state) => state.initialize);
 
   // Load Montserrat fonts
   const [fontsLoaded] = useFonts(fontAssets);
+
+  // Initialize auth on app start
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
 
   // Show loading state while fonts are loading
   if (!fontsLoaded) {
@@ -47,6 +55,7 @@ export default function RootLayout() {
             />
             <meta name="theme-color" content="#1E2A38" />
             <meta charSet="utf-8" />
+            <meta httpEquiv="content-language" content="en" />
             <meta property="og:site_name" content="PisteWise" />
             <meta property="og:type" content="website" />
             <meta name="twitter:card" content="summary_large_image" />
@@ -66,6 +75,13 @@ export default function RootLayout() {
                 options={{ gestureEnabled: false }}
               />
               <Stack.Screen name="(main)" options={{ gestureEnabled: false }} />
+              <Stack.Screen
+                name="(auth)"
+                options={{
+                  presentation: "modal",
+                  animation: "slide_from_bottom",
+                }}
+              />
             </Stack>
           </View>
         </GestureHandlerRootView>

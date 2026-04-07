@@ -92,9 +92,9 @@
     },
     "region": {
       "title": "Où souhaitez-vous skier ?",
-      "subtitle": "Sélectionnez une ou plusieurs régions",
-      "selectAll": "Sélectionner toutes les régions",
-      "allSelected": "Toutes les régions sélectionnées",
+      "subtitle": "Sélectionnez un ou plusieurs pays",
+      "selectAll": "Sélectionner tous les pays",
+      "allSelected": "Tous les pays sélectionnés",
       "back": "Retour",
       "next": "Suivant"
     },
@@ -258,5 +258,20 @@
     "en": "English",
     "fr": "Français",
     "de": "Deutsch"
+  },
+  "countries": {
+    "Andorra": { "name": "Andorre", "flag": "🇦🇩" },
+    "Austria": { "name": "Autriche", "flag": "🇦🇹" },
+    "Bulgaria": { "name": "Bulgarie", "flag": "🇧🇬" },
+    "Finland": { "name": "Finlande", "flag": "🇫🇮" },
+    "France": { "name": "France", "flag": "🇫🇷" },
+    "Italy": { "name": "Italie", "flag": "🇮🇹" },
+    "Norway": { "name": "Norvège", "flag": "🇳🇴" },
+    "Romania": { "name": "Roumanie", "flag": "🇷🇴" },
+    "Slovakia": { "name": "Slovaquie", "flag": "🇸🇰" },
+    "Slovenia": { "name": "Slovénie", "flag": "🇸🇮" },
+    "Spain": { "name": "Espagne", "flag": "🇪🇸" },
+    "Switzerland": { "name": "Suisse", "flag": "🇨🇭" },
+    "UK": { "name": "Royaume-Uni", "flag": "🇬🇧" }
   }
 }

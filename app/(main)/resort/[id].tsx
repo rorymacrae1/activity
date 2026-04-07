@@ -1,9 +1,10 @@
+import { useEffect, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import Head from "expo-router/head";
 import { View, StyleSheet, ScrollView, Pressable, Image } from "react-native";
 import { getResortSchema, getResortBreadcrumbs } from "@/utils/schema";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getResortById } from "@services/resort";
+import { getResortByIdAsync } from "@services/resort";
 import { useFavoritesStore } from "@stores/favorites";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
@@ -13,24 +14,52 @@ import { Button } from "@components/ui/Button";
 import { Badge } from "@components/ui/Badge";
 import { Card } from "@components/ui/Card";
 import { EmptyState } from "@components/ui/EmptyState";
+import { LoadingState } from "@components/ui/LoadingState";
 import { TerrainChart } from "@components/resort/TerrainChart";
 import { ResortInfoGrid } from "@components/resort/ResortInfoGrid";
+import type { Resort } from "@/types/resort";
 
 export default function ResortDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const resort = getResortById(id);
+  const [resort, setResort] = useState<Resort | null>(null);
+  const [loading, setLoading] = useState(true);
   const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
   const { heroHeight, hPadding, isTablet } = useLayout();
   const content = useContent();
 
+  useEffect(() => {
+    async function loadResort() {
+      setLoading(true);
+      const data = await getResortByIdAsync(id);
+      setResort(data ?? null);
+      setLoading(false);
+    }
+    loadResort();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LoadingState message="Loading resort..." />
+      </SafeAreaView>
+    );
+  }
+
   if (!resort) {
     return (
       <SafeAreaView style={styles.container}>
+        <Head>
+          <title>Resort Not Found | PisteWise</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Head>
         <EmptyState
           icon="🏔️"
           title={content.resort.notFoundTitle}
           message={content.resort.notFoundMessage}
-          action={{ label: content.resort.goBack, onPress: () => router.back() }}
+          action={{
+            label: content.resort.goBack,
+            onPress: () => router.back(),
+          }}
         />
       </SafeAreaView>
     );
@@ -43,21 +72,39 @@ export default function ResortDetailScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <Head>
-        <title>{resort.name} — Ski Resort in {resort.country} | PeakWise</title>
-        <meta name="description" content={`${resort.content.highlights[0]}. ${resort.attributes.snowReliability >= 4 ? "Excellent snow reliability." : ""} Located in ${resort.region}.`} />
-        <meta property="og:title" content={`${resort.name} | PeakWise`} />
+        <title>
+          {resort.name} — Ski Resort in {resort.country} | PisteWise
+        </title>
+        <link
+          rel="canonical"
+          href={`https://pistewise.app/resort/${resort.id}`}
+        />
+        <meta
+          name="description"
+          content={`${resort.content.highlights[0]}. ${resort.attributes.snowReliability >= 4 ? "Excellent snow reliability." : ""} Located in ${resort.region}.`}
+        />
+        <meta property="og:title" content={`${resort.name} | PisteWise`} />
         <meta property="og:description" content={resort.content.description} />
         <meta property="og:image" content={resort.assets.heroImage} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={resort.name} />
-        <meta name="twitter:description" content={resort.content.highlights[0]} />
+        <meta
+          name="twitter:description"
+          content={resort.content.highlights[0]}
+        />
         <meta name="twitter:image" content={resort.assets.heroImage} />
-        <script type="application/ld+json">{JSON.stringify(getResortSchema(resort))}</script>
-        <script type="application/ld+json">{JSON.stringify(getResortBreadcrumbs(resort))}</script>
+        <script type="application/ld+json">
+          {JSON.stringify(getResortSchema(resort))}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(getResortBreadcrumbs(resort))}
+        </script>
       </Head>
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Full-bleed hero */}
         <View style={[styles.heroContainer, { height: heroHeight }]}>
           <Image
@@ -67,12 +114,22 @@ export default function ResortDetailScreen() {
             accessibilityLabel={`${resort.name} ski resort`}
           />
           <View style={styles.heroOverlay}>
-            <Pressable style={styles.iconButton} onPress={() => router.back()}
-              accessibilityRole="button" accessibilityLabel="Go back">
+            <Pressable
+              style={styles.iconButton}
+              onPress={() => router.back()}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+            >
               <Text style={styles.iconButtonText}>←</Text>
             </Pressable>
-            <Pressable style={styles.iconButton} onPress={handleToggleFavorite}
-              accessibilityRole="button" accessibilityLabel={isSaved ? content.resort.unsave : content.resort.save}>
+            <Pressable
+              style={styles.iconButton}
+              onPress={handleToggleFavorite}
+              accessibilityRole="button"
+              accessibilityLabel={
+                isSaved ? content.resort.unsave : content.resort.save
+              }
+            >
               <Text style={styles.iconButtonText}>{isSaved ? "❤️" : "🤍"}</Text>
             </Pressable>
           </View>
@@ -81,15 +138,17 @@ export default function ResortDetailScreen() {
         {/* Content */}
         <View style={[styles.centeredContent, isTablet && styles.tabletCenter]}>
           <View style={[styles.content, { paddingHorizontal: hPadding }]}>
-
             {/* Header */}
             <View style={styles.header}>
               <View style={styles.titleRow}>
-                <Text variant="h1" style={styles.name}>{resort.name}</Text>
+                <Text variant="h1" style={styles.name}>
+                  {resort.name}
+                </Text>
                 <Badge label={resort.country} variant="neutral" />
               </View>
               <Text variant="body" color={colors.text.secondary}>
-                {resort.region} • {resort.location.villageAltitude}m – {resort.location.peakAltitude}m
+                {resort.region} • {resort.location.villageAltitude}m –{" "}
+                {resort.location.peakAltitude}m
               </Text>
             </View>
 
@@ -97,7 +156,11 @@ export default function ResortDetailScreen() {
             <View style={styles.highlights}>
               {resort.content.highlights.slice(0, 3).map((h, i) => (
                 <View key={i} style={styles.highlightChip}>
-                  <Text variant="caption" color={colors.success} style={styles.highlightText}>
+                  <Text
+                    variant="caption"
+                    color={colors.success}
+                    style={styles.highlightText}
+                  >
                     ✓ {h}
                   </Text>
                 </View>
@@ -116,7 +179,11 @@ export default function ResortDetailScreen() {
 
             {/* Overview */}
             <SectionBlock title={content.resort.overviewTitle}>
-              <Text variant="body" color={colors.text.secondary} style={styles.description}>
+              <Text
+                variant="body"
+                color={colors.text.secondary}
+                style={styles.description}
+              >
                 {resort.content.description}
               </Text>
             </SectionBlock>
@@ -124,11 +191,20 @@ export default function ResortDetailScreen() {
             {/* Costs */}
             <SectionBlock title={content.resort.costsTitle}>
               <Card elevation="subtle">
-                <CostRow label={content.resort.dayPass}     value={`€${resort.attributes.liftPassDayCost}`} />
+                <CostRow
+                  label={content.resort.dayPass}
+                  value={`€${resort.attributes.liftPassDayCost}`}
+                />
                 <View style={styles.divider} />
-                <CostRow label={content.resort.sixDayPass}  value={`€${resort.attributes.liftPassSixDayCost}`} />
+                <CostRow
+                  label={content.resort.sixDayPass}
+                  value={`€${resort.attributes.liftPassSixDayCost}`}
+                />
                 <View style={styles.divider} />
-                <CostRow label={content.resort.avgDaily}    value={`~€${resort.attributes.averageDailyCost}`} />
+                <CostRow
+                  label={content.resort.avgDaily}
+                  value={`~€${resort.attributes.averageDailyCost}`}
+                />
               </Card>
             </SectionBlock>
 
@@ -148,10 +224,18 @@ export default function ResortDetailScreen() {
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function SectionBlock({ title, children }: { title: string; children: React.ReactNode }) {
+function SectionBlock({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <View style={styles.section}>
-      <Text variant="h3" style={styles.sectionTitle}>{title}</Text>
+      <Text variant="h3" style={styles.sectionTitle}>
+        {title}
+      </Text>
       {children}
     </View>
   );
@@ -160,8 +244,12 @@ function SectionBlock({ title, children }: { title: string; children: React.Reac
 function CostRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.costRow}>
-      <Text variant="body" color={colors.text.secondary}>{label}</Text>
-      <Text variant="body" style={styles.costValue}>{value}</Text>
+      <Text variant="body" color={colors.text.secondary}>
+        {label}
+      </Text>
+      <Text variant="body" style={styles.costValue}>
+        {value}
+      </Text>
     </View>
   );
 }

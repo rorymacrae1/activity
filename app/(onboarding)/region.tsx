@@ -1,5 +1,13 @@
-import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Platform,
+  ActivityIndicator,
+} from "react-native";
 import { router } from "expo-router";
+import Head from "expo-router/head";
 import * as Haptics from "expo-haptics";
 import Animated, {
   useAnimatedStyle,
@@ -11,6 +19,7 @@ import Animated, {
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
+import { getResortCountsByCountry } from "@services/resort";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -20,68 +29,13 @@ import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent"
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-/** Organized by region for future filtering/grouping */
-const REGIONS = [
-  // Europe
-  {
-    id: "france-alps",
-    name: "French Alps",
-    flag: "🇫🇷",
-    resorts: 8,
-    continent: "europe",
-  },
-  {
-    id: "austria",
-    name: "Austria",
-    flag: "🇦🇹",
-    resorts: 8,
-    continent: "europe",
-  },
-  {
-    id: "switzerland",
-    name: "Switzerland",
-    flag: "🇨🇭",
-    resorts: 6,
-    continent: "europe",
-  },
-  { id: "italy", name: "Italy", flag: "🇮🇹", resorts: 5, continent: "europe" },
-  {
-    id: "andorra-spain",
-    name: "Andorra & Spain",
-    flag: "🇦🇩",
-    resorts: 3,
-    continent: "europe",
-  },
-  // North America
-  {
-    id: "usa-colorado",
-    name: "Colorado",
-    flag: "🇺🇸",
-    resorts: 0,
-    continent: "north-america",
-  },
-  {
-    id: "usa-utah",
-    name: "Utah",
-    flag: "🇺🇸",
-    resorts: 0,
-    continent: "north-america",
-  },
-  {
-    id: "canada-bc",
-    name: "British Columbia",
-    flag: "🇨🇦",
-    resorts: 0,
-    continent: "north-america",
-  },
-  // Asia
-  { id: "japan", name: "Japan", flag: "🇯🇵", resorts: 0, continent: "asia" },
-  // Scandinavia
-  { id: "norway", name: "Norway", flag: "🇳🇴", resorts: 1, continent: "europe" },
-];
-
-/** Currently available regions (resorts > 0) */
-const AVAILABLE_REGIONS = REGIONS.filter((r) => r.resorts > 0);
+/** Country with resort count */
+interface CountryWithCount {
+  id: string; // Country name as stored in DB (used as ID)
+  name: string; // Localized display name
+  flag: string; // Emoji flag
+  resorts: number; // Number of resorts
+}
 
 /**
  * Flag display component.
@@ -114,15 +68,15 @@ const flagStyles = StyleSheet.create({
 });
 
 /**
- * Animated region card with press feedback and luxury styling.
+ * Animated country card with press feedback and luxury styling.
  */
-function RegionCard({
-  region,
+function CountryCard({
+  country,
   selected,
   onToggle,
   isTablet,
 }: {
-  region: (typeof AVAILABLE_REGIONS)[0];
+  country: CountryWithCount;
   selected: boolean;
   onToggle: () => void;
   isTablet: boolean;
@@ -165,21 +119,21 @@ function RegionCard({
       onPressOut={handlePressOut}
       accessibilityRole="checkbox"
       accessibilityState={{ checked: selected }}
-      accessibilityLabel={`${region.name}, ${region.resorts} resorts`}
+      accessibilityLabel={`${country.name}, ${country.resorts} resorts`}
     >
       {/* Flag */}
-      <FlagBadge flag={region.flag} selected={selected} />
+      <FlagBadge flag={country.flag} selected={selected} />
 
-      {/* Region info */}
+      {/* Country info */}
       <View style={styles.regionInfo}>
         <Text
           variant="h4"
           color={selected ? colors.brand.primary : colors.ink.rich}
         >
-          {region.name}
+          {country.name}
         </Text>
         <Text variant="caption" color={colors.ink.muted}>
-          {region.resorts} resorts
+          {country.resorts} resorts
         </Text>
       </View>
 
@@ -195,7 +149,45 @@ export default function RegionScreen() {
   const { regions, setRegions } = usePreferencesStore();
   const { isTablet, hPadding, layoutMode } = useLayout();
   const content = useContent();
-  const allSelected = regions.length === AVAILABLE_REGIONS.length;
+
+  const [availableCountries, setAvailableCountries] = useState<
+    CountryWithCount[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch countries with resort counts from Supabase
+  useEffect(() => {
+    async function loadCountries() {
+      setLoading(true);
+      const countsByCountry = await getResortCountsByCountry();
+
+      // Build country list from DB data, using content.json for localized names/flags
+      const countriesContent = (content as any).countries || {};
+      const countries: CountryWithCount[] = Object.entries(countsByCountry)
+        .filter(([_, count]) => count > 0)
+        .map(([countryId, count]) => {
+          const localized = countriesContent[countryId] || {
+            name: countryId,
+            flag: "🏔️",
+          };
+          return {
+            id: countryId, // DB country name (e.g., "France")
+            name: localized.name, // Localized display name
+            flag: localized.flag, // Emoji flag
+            resorts: count,
+          };
+        })
+        .sort((a, b) => b.resorts - a.resorts); // Sort by resort count descending
+
+      setAvailableCountries(countries);
+      setLoading(false);
+    }
+    loadCountries();
+  }, [content]);
+
+  const allSelected =
+    availableCountries.length > 0 &&
+    regions.length === availableCountries.length;
 
   const toggle = (id: string) =>
     setRegions(
@@ -206,94 +198,120 @@ export default function RegionScreen() {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
-    setRegions(allSelected ? [] : AVAILABLE_REGIONS.map((r) => r.id));
+    setRegions(allSelected ? [] : availableCountries.map((c) => c.id));
   };
 
-  return (
-    <QuizLayout
-      scrollable
-      footer={
-        <View style={styles.footer}>
-          <Button
-            label={`← ${content.onboarding.region.back}`}
-            variant="ghost"
-            onPress={() => router.back()}
-            style={styles.backBtn}
-          />
-          <Button
-            label={`${content.onboarding.region.next} →`}
-            onPress={() =>
-              regions.length > 0 && router.push("/(onboarding)/vibes")
-            }
-            disabled={regions.length === 0}
-            style={styles.nextBtn}
-            size="prominent"
-          />
-        </View>
-      }
-    >
-      <AnimatedQuizContent animation="parallax">
-        <View
-          style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
-        >
-          <ProgressIndicator current={4} total={5} showLabel />
-
-          {/* Header */}
-          <View style={styles.header}>
-            <Text variant="h2">{content.onboarding.region.title}</Text>
-            <Text variant="body" color={colors.text.secondary}>
-              {content.onboarding.region.subtitle}
-            </Text>
-          </View>
-
-          {/* Select all toggle */}
-          <Pressable
-            style={[styles.selectAll, allSelected && styles.selectAllActive]}
-            onPress={handleSelectAll}
-            accessibilityRole="checkbox"
-            accessibilityState={{ checked: allSelected }}
+  if (loading) {
+    return (
+      <QuizLayout scrollable>
+        <View style={[styles.inner, styles.loadingContainer]}>
+          <ActivityIndicator size="large" color={colors.brand.primary} />
+          <Text
+            variant="body"
+            color={colors.ink.muted}
+            style={{ marginTop: spacing.md }}
           >
-            <View
-              style={[
-                styles.selectAllCheck,
-                allSelected && styles.selectAllCheckActive,
-              ]}
-            >
-              {allSelected ? (
-                <Text style={styles.selectAllCheckIcon}>✓</Text>
-              ) : null}
-            </View>
-            <Text
-              variant="bodyMedium"
-              color={allSelected ? colors.brand.primary : colors.ink.normal}
-            >
-              {allSelected
-                ? content.onboarding.region.allSelected
-                : content.onboarding.region.selectAll}
-            </Text>
-          </Pressable>
-
-          {/* Region grid — 2 cols on tablet */}
-          <View style={[styles.grid, isTablet && styles.gridTablet]}>
-            {AVAILABLE_REGIONS.map((region) => (
-              <RegionCard
-                key={region.id}
-                region={region}
-                selected={regions.includes(region.id)}
-                onToggle={() => toggle(region.id)}
-                isTablet={isTablet}
-              />
-            ))}
-          </View>
+            Loading countries...
+          </Text>
         </View>
-      </AnimatedQuizContent>
-    </QuizLayout>
+      </QuizLayout>
+    );
+  }
+
+  return (
+    <>
+      <Head>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+      <QuizLayout
+        scrollable
+        footer={
+          <View style={styles.footer}>
+            <Button
+              label={`← ${content.onboarding.region.back}`}
+              variant="ghost"
+              onPress={() => router.back()}
+              style={styles.backBtn}
+            />
+            <Button
+              label={`${content.onboarding.region.next} →`}
+              onPress={() =>
+                regions.length > 0 && router.push("/(onboarding)/vibes")
+              }
+              disabled={regions.length === 0}
+              style={styles.nextBtn}
+              size="prominent"
+            />
+          </View>
+        }
+      >
+        <AnimatedQuizContent animation="parallax">
+          <View
+            style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
+          >
+            <ProgressIndicator current={4} total={5} showLabel />
+
+            {/* Header */}
+            <View style={styles.header}>
+              <Text variant="h2">{content.onboarding.region.title}</Text>
+              <Text variant="body" color={colors.text.secondary}>
+                {content.onboarding.region.subtitle}
+              </Text>
+            </View>
+
+            {/* Select all toggle */}
+            <Pressable
+              style={[styles.selectAll, allSelected && styles.selectAllActive]}
+              onPress={handleSelectAll}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: allSelected }}
+            >
+              <View
+                style={[
+                  styles.selectAllCheck,
+                  allSelected && styles.selectAllCheckActive,
+                ]}
+              >
+                {allSelected ? (
+                  <Text style={styles.selectAllCheckIcon}>✓</Text>
+                ) : null}
+              </View>
+              <Text
+                variant="bodyMedium"
+                color={allSelected ? colors.brand.primary : colors.ink.normal}
+              >
+                {allSelected
+                  ? content.onboarding.region.allSelected
+                  : content.onboarding.region.selectAll}
+              </Text>
+            </Pressable>
+
+            {/* Country grid — 2 cols on tablet */}
+            <View style={[styles.grid, isTablet && styles.gridTablet]}>
+              {availableCountries.map((country) => (
+                <CountryCard
+                  key={country.id}
+                  country={country}
+                  selected={regions.includes(country.id)}
+                  onToggle={() => toggle(country.id)}
+                  isTablet={isTablet}
+                />
+              ))}
+            </View>
+          </View>
+        </AnimatedQuizContent>
+      </QuizLayout>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   inner: {
     flex: 1,
+  },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
     marginBottom: spacing.md,

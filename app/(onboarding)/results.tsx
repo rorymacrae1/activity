@@ -26,6 +26,7 @@ export default function ResultsScreen() {
     const preferences = usePreferencesStore.getState().getPreferencesInput();
     const setHasCompletedOnboarding =
       usePreferencesStore.getState().setHasCompletedOnboarding;
+
     getRecommendations(preferences)
       .then((r) => {
         setResults(r);

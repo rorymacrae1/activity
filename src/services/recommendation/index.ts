@@ -1,4 +1,4 @@
-import { getResortsByRegion } from "../resort";
+import { getResortsByRegionAsync } from "../resort";
 import { calculateScores } from "./scorer";
 import { generateExplanations } from "./explainer";
 import type {
@@ -89,17 +89,14 @@ function computeWeightedScore(
 
 /**
  * Get personalized resort recommendations based on user preferences.
- * Runs entirely client-side for offline support.
+ * Fetches resorts from cloud and scores them client-side.
  */
 export async function getRecommendations(
   preferences: Preferences,
   limit: number = 5,
 ): Promise<RecommendationResult[]> {
-  // Simulate async for future API compatibility
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  // 1. Filter by region
-  const candidates = getResortsByRegion(preferences.regions);
+  // 1. Fetch and filter by region (async)
+  const candidates = await getResortsByRegionAsync(preferences.regions);
 
   // 2. Normalize preferences
   const normalizedPrefs = normalizePreferences(preferences);

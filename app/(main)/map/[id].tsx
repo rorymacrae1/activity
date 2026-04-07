@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
+import Head from "expo-router/head";
 import {
   View,
   Text,
@@ -6,6 +8,7 @@ import {
   Pressable,
   Image,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
@@ -14,11 +17,12 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
-import { getResortById } from "@services/resort";
+import { getResortByIdAsync } from "@services/resort";
 import { useContent } from "@hooks/useContent";
 import { colors } from "@theme/colors";
 import { typography } from "@theme/typography";
 import { spacing } from "@theme/spacing";
+import type { Resort } from "@/types/resort";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -27,8 +31,19 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
  */
 export default function MapScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const resort = getResortById(id);
+  const [resort, setResort] = useState<Resort | null>(null);
+  const [loading, setLoading] = useState(true);
   const content = useContent();
+
+  useEffect(() => {
+    async function loadResort() {
+      setLoading(true);
+      const data = await getResortByIdAsync(id);
+      setResort(data ?? null);
+      setLoading(false);
+    }
+    loadResort();
+  }, [id]);
 
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
@@ -93,9 +108,24 @@ export default function MapScreen() {
     ],
   }));
 
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.errorContainer}>
+          <ActivityIndicator size="large" color={colors.primary[500]} />
+          <Text style={styles.errorText}>Loading map...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   if (!resort) {
     return (
       <SafeAreaView style={styles.container}>
+        <Head>
+          <title>Map Not Found | PisteWise</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Head>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{content.map.notFound}</Text>
         </View>
@@ -105,12 +135,18 @@ export default function MapScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Head>
+        <title>{resort.name} Piste Map | PisteWise</title>
+        <meta name="robots" content="noindex" />
+      </Head>
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={() => router.back()}>
           <Text style={styles.backIcon}>←</Text>
         </Pressable>
-        <Text style={styles.title}>{resort.name} {content.map.title}</Text>
+        <Text style={styles.title}>
+          {resort.name} {content.map.title}
+        </Text>
         <View style={styles.placeholder} />
       </View>
 
@@ -141,19 +177,28 @@ export default function MapScreen() {
         <View style={styles.legendItems}>
           <View style={styles.legendItem}>
             <View
-              style={[styles.legendColor, { backgroundColor: colors.terrain.beginner }]}
+              style={[
+                styles.legendColor,
+                { backgroundColor: colors.terrain.beginner },
+              ]}
             />
             <Text style={styles.legendText}>{content.map.beginner}</Text>
           </View>
           <View style={styles.legendItem}>
             <View
-              style={[styles.legendColor, { backgroundColor: colors.terrain.intermediate }]}
+              style={[
+                styles.legendColor,
+                { backgroundColor: colors.terrain.intermediate },
+              ]}
             />
             <Text style={styles.legendText}>{content.map.intermediate}</Text>
           </View>
           <View style={styles.legendItem}>
             <View
-              style={[styles.legendColor, { backgroundColor: colors.terrain.advanced }]}
+              style={[
+                styles.legendColor,
+                { backgroundColor: colors.terrain.advanced },
+              ]}
             />
             <Text style={styles.legendText}>{content.map.advanced}</Text>
           </View>
@@ -161,9 +206,7 @@ export default function MapScreen() {
       </View>
 
       {/* Instructions */}
-      <Text style={styles.instructions}>
-        {content.map.instructions}
-      </Text>
+      <Text style={styles.instructions}>{content.map.instructions}</Text>
     </SafeAreaView>
   );
 }

@@ -1,4 +1,4 @@
-# GitHub Copilot Instructions for PeakWise
+# GitHub Copilot Instructions for PisteWise
 
 ## Project Overview
 
@@ -11,28 +11,33 @@ PeakWise is an **offline-first React Native (Expo) mobile app** that recommends 
 ## Coding Standards
 
 ### Language & Formatting
+
 - **TypeScript** for all source files. Strict mode enabled.
 - **2 spaces** for indentation. Prettier formatting.
 - No `console.log` — remove before committing.
 
 ### Naming
+
 - Variables/functions: `camelCase`
 - Components/classes/types/interfaces: `PascalCase`
 - Constants: `UPPER_SNAKE_CASE`
 - File names: `PascalCase` for components, `camelCase` for utilities/hooks/services
 
 ### Imports
+
 - Use `@/` absolute imports (maps to `src/`).
 - Group: external libraries → internal `@/` imports → relative imports.
 - No barrel re-exports that create circular dependencies.
 
 ### Components
+
 - Functional components with hooks only. No class components.
 - Define prop types as TypeScript `interface`, destructure at the top.
 - Keep components small and focused. Extract logic to hooks or services.
 - All styles in `StyleSheet.create()` at the bottom of the file.
 
 ### Styling & Theming
+
 - Use tokens from `src/theme/` for all colors, spacing, and typography.
   - `colors` from `@/theme/colors`
   - `spacing` from `@/theme/spacing`
@@ -41,36 +46,43 @@ PeakWise is an **offline-first React Native (Expo) mobile app** that recommends 
 - No CSS, SCSS, or BEM — this is React Native.
 
 ### Accessibility (React Native)
+
 - Use `accessibilityLabel`, `accessibilityRole`, and `accessibilityHint` on interactive elements.
 - Ensure sufficient color contrast (4.5:1 minimum).
 - All `Pressable` elements must have a meaningful `accessibilityLabel`.
 
 ### State Management
+
 - Global state in Zustand stores (`src/stores/`).
 - Persistence via MMKV on native, localStorage on web (via `src/lib/storage.ts` / `storage.native.ts`).
 - Keep store slices focused — one store per domain.
 
 ### Data & Services
+
 - Resort data lives in `src/data/resorts.ts` (bundled, offline).
 - Recommendation engine lives in `src/services/recommendation/`.
 - No network calls in MVP — app is fully offline.
 
 ### Error Handling
+
 - Handle errors gracefully with user-facing fallback UI.
 - Use null/undefined checks before accessing nested data.
 - Services should not throw to UI — return null/empty or handle internally.
 
 ### Testing
+
 - Write unit tests for all pure functions in `src/services/` and `src/stores/`.
 - Target: **>80% coverage** on service and store files.
 - Use **Jest** with `@/` alias support.
 - Test files: `src/**/__tests__/*.test.ts(x)`.
 
 ### Documentation
+
 - Add JSDoc comments for all exported functions and components.
 - Update `README.md` when adding new features, screens, or data.
 
 ### General Principles
+
 - KISS, DRY, YAGNI, Single Responsibility.
 - Prefer explicit over implicit.
 - Prefer duplication over wrong abstraction.
@@ -135,6 +147,7 @@ src/
 ## Copilot Review Instructions
 
 When reviewing code in this repo:
+
 - Enforce theme token usage — flag any raw hex colors or pixel values outside `src/theme/`.
 - Flag any import of `react-native-mmkv` outside of `storage.native.ts` — it must never be bundled for web.
 - Flag any network fetch/axios calls — the app is offline-first; data is local only.
