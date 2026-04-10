@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  Alert,
 } from "react-native";
 import Head from "expo-router/head";
 import { router, Link } from "expo-router";
@@ -17,6 +16,7 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { Card } from "@components/ui/Card";
 import { ScreenContainer } from "@components/ui/ScreenContainer";
+import { useToast } from "@components/ui/Toast";
 import { useAuthStore } from "@stores/auth";
 import { useLayout } from "@hooks/useLayout";
 
@@ -34,6 +34,7 @@ export default function SignUpScreen() {
 
   const { signUp, signInWithGoogle, signInWithApple } = useAuthStore();
   const { hPadding } = useLayout();
+  const { showToast } = useToast();
 
   const validateForm = (): string | null => {
     if (!email.trim()) return "Please enter your email.";
@@ -46,12 +47,12 @@ export default function SignUpScreen() {
   const handleSignUp = async () => {
     const validationError = validateForm();
     if (validationError) {
-      Alert.alert("Invalid input", validationError);
+      showToast({ type: "error", message: validationError });
       return;
     }
 
     setIsLoading(true);
-    const { error } = await signUp(
+    const { error, session } = await signUp(
       email.trim(),
       password,
       displayName.trim() || undefined,
@@ -59,13 +60,23 @@ export default function SignUpScreen() {
     setIsLoading(false);
 
     if (error) {
-      Alert.alert("Sign up failed", error.message);
+      showToast({ type: "error", message: error.message });
+    } else if (session) {
+      // User is signed in immediately (email confirmation disabled)
+      showToast({
+        type: "success",
+        message: "Account created successfully! Welcome to PisteWise.",
+        duration: 4000,
+      });
+      router.replace("/(main)");
     } else {
-      Alert.alert(
-        "Check your email",
-        "We've sent you a confirmation link. Please verify your email to complete registration.",
-        [{ text: "OK", onPress: () => router.replace("/(auth)/sign-in") }],
-      );
+      // Email confirmation required
+      showToast({
+        type: "info",
+        message: "Check your email to confirm your account.",
+        duration: 5000,
+      });
+      router.replace("/(auth)/sign-in");
     }
   };
 
@@ -75,8 +86,13 @@ export default function SignUpScreen() {
     setIsLoading(false);
 
     if (error) {
-      Alert.alert("Google sign up failed", error.message);
+      showToast({ type: "error", message: error.message });
     } else {
+      showToast({
+        type: "success",
+        message: "Account created successfully! Welcome to PisteWise.",
+        duration: 4000,
+      });
       router.replace("/(main)");
     }
   };
@@ -87,8 +103,13 @@ export default function SignUpScreen() {
     setIsLoading(false);
 
     if (error) {
-      Alert.alert("Apple sign up failed", error.message);
+      showToast({ type: "error", message: error.message });
     } else {
+      showToast({
+        type: "success",
+        message: "Account created successfully! Welcome to PisteWise.",
+        duration: 4000,
+      });
       router.replace("/(main)");
     }
   };

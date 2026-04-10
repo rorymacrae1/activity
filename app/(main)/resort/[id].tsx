@@ -4,7 +4,7 @@ import Head from "expo-router/head";
 import { View, StyleSheet, ScrollView, Pressable, Image } from "react-native";
 import { getResortSchema, getResortBreadcrumbs } from "@/utils/schema";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getResortByIdAsync } from "@services/resort";
+import { getResortByIdAsync, getSimilarResorts } from "@services/resort";
 import { useFavoritesStore } from "@stores/favorites";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
@@ -12,16 +12,27 @@ import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { Badge } from "@components/ui/Badge";
-import { Card } from "@components/ui/Card";
 import { EmptyState } from "@components/ui/EmptyState";
 import { LoadingState } from "@components/ui/LoadingState";
-import { TerrainChart } from "@components/resort/TerrainChart";
-import { ResortInfoGrid } from "@components/resort/ResortInfoGrid";
+import { OverviewCarousel } from "@components/resort/OverviewCarousel";
+import {
+  ReviewsSection,
+  AccommodationSection,
+  TransportSection,
+} from "@components/resort/PlaceholderSections";
+import { SimilarResortsCarousel } from "@components/resort/SimilarResortsCarousel";
 import type { Resort } from "@/types/resort";
 
+// Default resort image fallback
+const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg");
+
 export default function ResortDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, siblingIds: siblingIdsParam } = useLocalSearchParams<{
+    id: string;
+    siblingIds?: string;
+  }>();
   const [resort, setResort] = useState<Resort | null>(null);
+  const [similarResorts, setSimilarResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
   const { heroHeight, hPadding, isTablet } = useLayout();
@@ -32,10 +43,27 @@ export default function ResortDetailScreen() {
       setLoading(true);
       const data = await getResortByIdAsync(id);
       setResort(data ?? null);
+
+      // Load similar resorts: use passed IDs if available, otherwise compute
+      if (data) {
+        if (siblingIdsParam) {
+          // Use IDs passed from results page
+          const ids = siblingIdsParam.split(",").filter(Boolean);
+          const siblings = await Promise.all(
+            ids.slice(0, 5).map((sibId) => getResortByIdAsync(sibId)),
+          );
+          setSimilarResorts(siblings.filter((r): r is Resort => r !== null));
+        } else {
+          // Compute similar resorts based on attributes
+          const similar = await getSimilarResorts(id, 5);
+          setSimilarResorts(similar);
+        }
+      }
+
       setLoading(false);
     }
     loadResort();
-  }, [id]);
+  }, [id, siblingIdsParam]);
 
   if (loading) {
     return (
@@ -101,6 +129,32 @@ export default function ResortDetailScreen() {
           {JSON.stringify(getResortBreadcrumbs(resort))}
         </script>
       </Head>
+
+      {/* Fixed Navigation Bar */}
+      <View style={styles.navBar}>
+        <Pressable
+          style={styles.navButton}
+          onPress={() => router.back()}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
+        >
+          <Text style={styles.navButtonText}>←</Text>
+        </Pressable>
+        <Text style={styles.navTitle} numberOfLines={1}>
+          {resort.name}
+        </Text>
+        <Pressable
+          style={styles.navButton}
+          onPress={handleToggleFavorite}
+          accessibilityRole="button"
+          accessibilityLabel={
+            isSaved ? content.resort.unsave : content.resort.save
+          }
+        >
+          <Text style={styles.navButtonText}>{isSaved ? "❤️" : "🤍"}</Text>
+        </Pressable>
+      </View>
+
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -108,31 +162,15 @@ export default function ResortDetailScreen() {
         {/* Full-bleed hero */}
         <View style={[styles.heroContainer, { height: heroHeight }]}>
           <Image
-            source={{ uri: resort.assets.heroImage }}
+            source={
+              resort.assets.heroImage
+                ? { uri: resort.assets.heroImage }
+                : DEFAULT_RESORT_IMAGE
+            }
             style={styles.heroImage}
             resizeMode="cover"
             accessibilityLabel={`${resort.name} ski resort`}
           />
-          <View style={styles.heroOverlay}>
-            <Pressable
-              style={styles.iconButton}
-              onPress={() => router.back()}
-              accessibilityRole="button"
-              accessibilityLabel="Go back"
-            >
-              <Text style={styles.iconButtonText}>←</Text>
-            </Pressable>
-            <Pressable
-              style={styles.iconButton}
-              onPress={handleToggleFavorite}
-              accessibilityRole="button"
-              accessibilityLabel={
-                isSaved ? content.resort.unsave : content.resort.save
-              }
-            >
-              <Text style={styles.iconButtonText}>{isSaved ? "❤️" : "🤍"}</Text>
-            </Pressable>
-          </View>
         </View>
 
         {/* Content */}
@@ -166,47 +204,21 @@ export default function ResortDetailScreen() {
                 </View>
               ))}
             </View>
+          </View>
 
-            {/* ── At-a-Glance Info Grid ── */}
-            <SectionBlock title={content.resort.infoTitle}>
-              <ResortInfoGrid resort={resort} />
-            </SectionBlock>
+          {/* Overview Carousel - full width */}
+          <OverviewCarousel resort={resort} />
 
-            {/* Terrain breakdown */}
-            <SectionBlock title={content.resort.terrainTitle}>
-              <TerrainChart terrain={resort.terrain} />
-            </SectionBlock>
+          {/* Remaining content with padding */}
+          <View style={[styles.content, { paddingHorizontal: hPadding }]}>
+            {/* Reviews Section */}
+            <ReviewsSection resort={resort} />
 
-            {/* Overview */}
-            <SectionBlock title={content.resort.overviewTitle}>
-              <Text
-                variant="body"
-                color={colors.text.secondary}
-                style={styles.description}
-              >
-                {resort.content.description}
-              </Text>
-            </SectionBlock>
+            {/* Accommodation Section */}
+            <AccommodationSection resort={resort} />
 
-            {/* Costs */}
-            <SectionBlock title={content.resort.costsTitle}>
-              <Card elevation="subtle">
-                <CostRow
-                  label={content.resort.dayPass}
-                  value={`€${resort.attributes.liftPassDayCost}`}
-                />
-                <View style={styles.divider} />
-                <CostRow
-                  label={content.resort.sixDayPass}
-                  value={`€${resort.attributes.liftPassSixDayCost}`}
-                />
-                <View style={styles.divider} />
-                <CostRow
-                  label={content.resort.avgDaily}
-                  value={`~€${resort.attributes.averageDailyCost}`}
-                />
-              </Card>
-            </SectionBlock>
+            {/* Transport Section */}
+            <TransportSection resort={resort} />
 
             {/* Map CTA */}
             <Button
@@ -216,41 +228,21 @@ export default function ResortDetailScreen() {
               style={styles.mapButton}
             />
           </View>
+
+          {/* Similar Resorts Carousel - full width */}
+          {similarResorts.length > 0 && (
+            <SimilarResortsCarousel
+              resorts={similarResorts}
+              heading="Compare Against Similar Resorts"
+              subheading="See how your other options stack up"
+            />
+          )}
+
+          {/* Bottom spacer */}
+          <View style={styles.bottomSpacer} />
         </View>
       </ScrollView>
     </SafeAreaView>
-  );
-}
-
-// ─── Sub-components ────────────────────────────────────────────────────────────
-
-function SectionBlock({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <View style={styles.section}>
-      <Text variant="h3" style={styles.sectionTitle}>
-        {title}
-      </Text>
-      {children}
-    </View>
-  );
-}
-
-function CostRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.costRow}>
-      <Text variant="body" color={colors.text.secondary}>
-        {label}
-      </Text>
-      <Text variant="body" style={styles.costValue}>
-        {value}
-      </Text>
-    </View>
   );
 }
 
@@ -260,6 +252,35 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background.primary,
+  },
+  navBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.surface.divider,
+  },
+  navButton: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.full,
+    backgroundColor: colors.surface.secondary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  navButtonText: {
+    fontSize: 18,
+  },
+  navTitle: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.text.primary,
+    marginHorizontal: spacing.sm,
   },
   tabletCenter: {
     maxWidth: 680,
@@ -277,33 +298,12 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: colors.background.secondary,
   },
-  heroOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: spacing.md,
-  },
-  iconButton: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.full,
-    backgroundColor: colors.background.overlay,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconButtonText: {
-    color: colors.text.inverse,
-    fontSize: 20,
-  },
   centeredContent: {
     flex: 1,
   },
   content: {
     paddingTop: spacing.lg,
-    paddingBottom: spacing.xxxl,
+    paddingBottom: spacing.lg,
   },
   header: {
     marginBottom: spacing.md,
@@ -333,28 +333,10 @@ const styles = StyleSheet.create({
   highlightText: {
     fontWeight: "600",
   },
-  section: {
-    marginBottom: spacing.lg,
-  },
-  sectionTitle: {
-    marginBottom: spacing.sm,
-  },
-  description: {
-    lineHeight: 24,
-  },
-  costRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: spacing.sm,
-  },
-  costValue: {
-    fontWeight: "600",
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.surface.divider,
-  },
   mapButton: {
     marginTop: spacing.md,
+  },
+  bottomSpacer: {
+    height: spacing.xxxl,
   },
 });

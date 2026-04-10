@@ -6,6 +6,9 @@ import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius } from "@theme";
 import type { RecommendationResult } from "@/types/recommendation";
 
+// Default resort image fallback
+const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg");
+
 interface ResortCardProps {
   result: RecommendationResult;
   rank?: number;
@@ -39,7 +42,11 @@ export function ResortCard({
       {/* Hero image with gradient overlay */}
       <View style={[styles.imageContainer, { height: cardImageHeight }]}>
         <Image
-          source={{ uri: resort.assets.heroImage }}
+          source={
+            resort.assets.heroImage
+              ? { uri: resort.assets.heroImage }
+              : DEFAULT_RESORT_IMAGE
+          }
           style={styles.image}
           resizeMode="cover"
         />

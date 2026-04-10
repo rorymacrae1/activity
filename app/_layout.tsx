@@ -3,9 +3,11 @@ import { Stack } from "expo-router";
 import Head from "expo-router/head";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StyleSheet, View, Platform, Image } from "react-native";
 import { useFonts } from "expo-font";
 import { ErrorBoundary } from "@components/ui/ErrorBoundary";
+import { ToastProvider } from "@components/ui/Toast";
 import { maxContentWidth } from "@theme/layout";
 import { colors, fontAssets } from "@theme";
 import { useAuthStore } from "@stores/auth";
@@ -42,49 +44,56 @@ export default function RootLayout() {
   return (
     <Head.Provider>
       <ErrorBoundary>
-        <GestureHandlerRootView style={styles.container}>
-          <Head>
-            <title>PisteWise | Find Your Perfect Ski Resort</title>
-            <meta
-              name="description"
-              content="Discover your ideal ski resort based on your skill level, budget, and preferences. Personalised recommendations for skiers and snowboarders."
-            />
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1"
-            />
-            <meta name="theme-color" content="#1E2A38" />
-            <meta charSet="utf-8" />
-            <meta httpEquiv="content-language" content="en" />
-            <meta property="og:site_name" content="PisteWise" />
-            <meta property="og:type" content="website" />
-            <meta name="twitter:card" content="summary_large_image" />
-          </Head>
-          <StatusBar style="light" />
-          {/* App shell with max-width on web */}
-          <View style={[styles.appShell, isWeb && styles.appShellWeb]}>
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: colors.canvas.default },
-              }}
-            >
-              <Stack.Screen name="index" />
-              <Stack.Screen
-                name="(onboarding)"
-                options={{ gestureEnabled: false }}
-              />
-              <Stack.Screen name="(main)" options={{ gestureEnabled: false }} />
-              <Stack.Screen
-                name="(auth)"
-                options={{
-                  presentation: "modal",
-                  animation: "slide_from_bottom",
-                }}
-              />
-            </Stack>
-          </View>
-        </GestureHandlerRootView>
+        <SafeAreaProvider>
+          <GestureHandlerRootView style={styles.container}>
+            <ToastProvider>
+              <Head>
+                <title>PisteWise | Find Your Perfect Ski Resort</title>
+                <meta
+                  name="description"
+                  content="Discover your ideal ski resort based on your skill level, budget, and preferences. Personalised recommendations for skiers and snowboarders."
+                />
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1"
+                />
+                <meta name="theme-color" content="#1E2A38" />
+                <meta charSet="utf-8" />
+                <meta httpEquiv="content-language" content="en" />
+                <meta property="og:site_name" content="PisteWise" />
+                <meta property="og:type" content="website" />
+                <meta name="twitter:card" content="summary_large_image" />
+              </Head>
+              <StatusBar style="light" />
+              {/* App shell with max-width on web */}
+              <View style={[styles.appShell, isWeb && styles.appShellWeb]}>
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    contentStyle: { backgroundColor: colors.canvas.default },
+                  }}
+                >
+                  <Stack.Screen name="index" />
+                  <Stack.Screen
+                    name="(onboarding)"
+                    options={{ gestureEnabled: false }}
+                  />
+                  <Stack.Screen
+                    name="(main)"
+                    options={{ gestureEnabled: false }}
+                  />
+                  <Stack.Screen
+                    name="(auth)"
+                    options={{
+                      presentation: "modal",
+                      animation: "slide_from_bottom",
+                    }}
+                  />
+                </Stack>
+              </View>
+            </ToastProvider>
+          </GestureHandlerRootView>
+        </SafeAreaProvider>
       </ErrorBoundary>
     </Head.Provider>
   );

@@ -23,48 +23,64 @@ This is NOT a generic maps or discovery app. PeakWise uses a transparent, rule-b
 
 ---
 
-## 🧩 MVP Scope
+## 🧩 Current Features
 
-### Phase 1 Features
+### ✅ Implemented
 
-#### 1. Onboarding / Preference Quiz
-- Skill level (beginner/intermediate/advanced)
-- Budget range
-- Preferred region (Europe first)
-- Preferences: quiet vs lively, family vs nightlife, snow reliability importance
+#### 1. Onboarding Quiz
+- Trip type (solo/couple/family/friends)
+- Group skill levels (beginner/intermediate/advanced)
+- Budget range (budget/mid/premium/luxury)
+- Region selection (interactive map)
+- Atmosphere preferences (crowd level, family vs nightlife, snow importance)
 
 #### 2. Recommendation Engine
-- Return top 3–5 resorts
-- Show match score (e.g. 92% match)
-- Explain WHY each resort is recommended
+- Returns top matches ranked by score
+- Shows match percentage (e.g. 92% match)
+- Explains WHY each resort is recommended
+- Decision flow visualisation
 
-#### 3. Resort Detail Page
-- Overview
-- Difficulty breakdown
-- Key stats
-- Static piste map
+#### 3. Results Experience
+- Large hero card for #1 pick
+- Swipeable "why it fits" reason carousel
+- Horizontal carousel for runner-up resorts
+- Tap to view resort details
 
-#### 4. Basic Navigation (Lite)
-- Simple map view of resort
-- Highlight beginner/intermediate/advanced areas
+#### 4. Resort Detail Page
+- Fixed navigation bar with back/favorite
+- Hero image with resort highlights
+- Overview carousel (terrain, snow, budget, altitude, vibe)
+- Reviews placeholder section
+- Accommodation placeholder section
+- Transport info (airport, transfer time)
+- Compare against similar resorts carousel
+- Zoomable piste map
 
-### Out of Scope for MVP
-- Real-time tracking
-- Social features
-- Booking system
-- Complex map routing
-- AI/ML (rule-based only)
+#### 5. User Accounts (Supabase Auth)
+- Email/password sign up and sign in
+- Google and Apple social login
+- Cloud sync for preferences and favorites
+- Row Level Security for user data
+
+#### 6. Favorites
+- Save/unsave resorts
+- Synced across devices when logged in
+- Offline support with merge on reconnect
+
+### 🔜 Coming Soon
+- Real-time reviews from TripAdvisor/Google
+- Accommodation search integration
+- Live weather and snow conditions
 
 ---
 
-## 🏗 Architecture
+## � Architecture
 
-### Offline-First Design
+### Hybrid Offline-First Design
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │                        MOBILE APP                            │
-│                     (No server required!)                    │
 │                                                              │
 │  ┌──────────────┐   ┌──────────────┐   ┌────────────────┐   │
 │  │  Onboarding  │──▶│ Preferences  │──▶│ Recommendation │   │
@@ -75,9 +91,21 @@ This is NOT a generic maps or discovery app. PeakWise uses a transparent, rule-b
 │  ┌──────────────────────────────────────────────────────┐   │
 │  │                    LOCAL DATA LAYER                   │   │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌──────────────┐  │   │
-│  │  │ resorts.json│  │ MMKV Store  │  │ Cached Maps  │  │   │
+│  │  │ resorts.ts  │  │ MMKV Store  │  │ Cached Maps  │  │   │
 │  │  │ (bundled)   │  │ (prefs/user)│  │ (file system)│  │   │
 │  │  └─────────────┘  └─────────────┘  └──────────────┘  │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                             │                                │
+│                             │ (when online)                  │
+│                             ▼                                │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                 SUPABASE BACKEND                      │   │
+│  │  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  │   │
+│  │  │ auth.users  │  │   profiles   │  │   resorts   │  │   │
+│  │  └─────────────┘  └──────────────┘  └─────────────┘  │   │
+│  │  ┌────────────────────┐  ┌────────────────────────┐  │   │
+│  │  │ user_preferences   │  │    user_favorites      │  │   │
+│  │  └────────────────────┘  └────────────────────────┘  │   │
 │  └──────────────────────────────────────────────────────┘   │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -86,12 +114,12 @@ This is NOT a generic maps or discovery app. PeakWise uses a transparent, rule-b
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Local DB | MMKV + JSON | Simple for 30-50 resorts, fast reads |
+| Primary DB | Supabase (PostgreSQL) | 51 resorts, auth, sync |
+| Local Cache | MMKV | Fast reads, offline support |
 | Image Cache | expo-image | Built-in caching |
-| Map Storage | expo-file-system | Offline piste maps |
 | State | Zustand + persist | Minimal boilerplate |
-| Backend | None for MVP | Ship faster, zero hosting |
-| Auth | Anonymous (local UUID) | Accounts added post-MVP |
+| Auth | Supabase Auth | Email/password, Google, Apple |
+| Sync | Bi-directional merge | Works offline, syncs when online |
 
 ---
 
@@ -254,153 +282,143 @@ interface Preferences {
 
 ## 📱 Screen Flow
 
+### Onboarding Quiz Flow
 ```
-Welcome → Skill → Budget → Region → Vibes → Results
-                                              ↓
-                                         Resort Detail → Map View
-                                              ↓
-                                           Favorites
+Welcome → Trip Type → Skill → Budget → Region → Vibes → Results
+                                                          ↓
+                                                    Decision Flow
+```
+
+### Main App Flow
+```
+Results → Resort Detail → Map View
+   ↓           ↓              
+ Favorites  Compare Resorts
+   ↓              
+Profile → Auth (Sign In / Sign Up)
 ```
 
 ### Screens
 
-| Screen | Purpose | Key Components |
-|--------|---------|----------------|
-| Welcome | Value prop, start quiz | Hero, CTA |
-| Skill | Select ability | 3 tappable cards |
-| Budget | Select budget range | 4 options |
-| Region | Multi-select regions | Map + checkboxes |
-| Vibes | Set atmosphere | 2 sliders |
-| Results | Show recommendations | Ranked cards |
-| Resort Detail | Full resort info | All sections |
-| Map View | Piste map | Zoomable image |
-| Favorites | Saved resorts | List |
-| Profile | Settings, retake quiz | Options |
+| Screen | Route | Purpose | Key Components |
+|--------|-------|---------|----------------|
+| **Onboarding** ||||
+| Welcome | `(onboarding)/` | Value prop, start quiz | Hero illustration, CTA |
+| Trip Type | `(onboarding)/trip-type` | Select who you're travelling with | Solo/Couple/Family/Friends cards |
+| Skill | `(onboarding)/skill` | Select ability level | Beginner/Intermediate/Advanced cards |
+| Budget | `(onboarding)/budget` | Select budget range | 4 budget tier options |
+| Region | `(onboarding)/region` | Multi-select regions | Interactive map + region chips |
+| Vibes | `(onboarding)/vibes` | Set atmosphere preferences | Crowd & Family/Nightlife sliders |
+| Results | `(onboarding)/results` | Show top recommendations | TopPickHero, ReasonCarousel, SecondChoicesCarousel |
+| Decision Flow | `(onboarding)/decision-flow` | Visualise recommendation logic | Flow diagram with scores |
+| **Main App** ||||
+| Discover | `(main)/` | Browse all resorts | Search, filters, resort grid |
+| Resort Detail | `(main)/resort/[id]` | Full resort info | OverviewCarousel, Reviews, Accommodation, Transport, SimilarResortsCarousel |
+| Map View | `(main)/map/[id]` | Piste map | Zoomable image viewer |
+| Favorites | `(main)/favorites` | Saved resorts | Resort cards, empty state |
+| Profile | `(main)/profile` | Settings, sync, retake quiz | Account info, preferences summary |
+| **Authentication** ||||
+| Sign In | `(auth)/sign-in` | Login existing users | Email/password, Google, Apple |
+| Sign Up | `(auth)/sign-up` | Create new account | Email/password, terms |
 
 ---
+
+## 🏛 Architecture
 
 ## 📁 Project Structure
 
 ```
 /app                           # Expo Router screens
-├── _layout.tsx
-├── index.tsx
+├── _layout.tsx                # Root layout with auth init
+├── index.tsx                  # Entry point routing
 ├── (onboarding)/
+│   ├── _layout.tsx
 │   ├── index.tsx              # Welcome
-│   ├── skill.tsx
-│   ├── budget.tsx
-│   ├── region.tsx
-│   ├── vibes.tsx
-│   └── results.tsx
+│   ├── trip-type.tsx          # Who are you travelling with
+│   ├── skill.tsx              # Ability level
+│   ├── budget.tsx             # Budget range
+│   ├── region.tsx             # Region selection
+│   ├── vibes.tsx              # Atmosphere sliders
+│   ├── results.tsx            # Recommendations
+│   └── decision-flow.tsx      # How we chose your match
 ├── (main)/
 │   ├── _layout.tsx            # Tab navigator
-│   ├── index.tsx              # Results/Home
+│   ├── index.tsx              # Discover/Home
 │   ├── resort/[id].tsx        # Resort detail
 │   ├── map/[id].tsx           # Piste map
 │   ├── favorites.tsx
 │   └── profile.tsx
+└── (auth)/
+    ├── _layout.tsx
+    ├── sign-in.tsx
+    └── sign-up.tsx
 
 /src
 ├── components/
-│   ├── ui/                    # Design system
-│   ├── resort/                # Resort-specific
-│   ├── onboarding/            # Quiz components
-│   └── layout/                # Screen wrappers
+│   ├── ui/                    # Design system (Text, Button, Card, etc.)
+│   ├── resort/                # ResortCard, TerrainChart, OverviewCarousel, SimilarResortsCarousel
+│   ├── onboarding/            # QuizLayout, ProgressIndicator
+│   └── results/               # TopPickHero, ReasonCarousel, SecondChoicesCarousel
 ├── stores/
-│   ├── preferences.ts
-│   ├── favorites.ts
-│   └── app.ts
+│   ├── preferences.ts         # Quiz answers (Zustand + persist)
+│   ├── favorites.ts           # Saved resorts with cloud sync
+│   └── auth.ts                # Supabase auth state
 ├── services/
+│   ├── resort.ts              # Resort data access, getSimilarResorts
+│   ├── sync.ts                # Cloud sync for preferences/favorites
 │   └── recommendation/
-│       ├── engine.ts
-│       ├── scorer.ts
-│       └── explainer.ts
+│       ├── index.ts           # getRecommendations entry
+│       ├── scorer.ts          # Match scoring algorithm
+│       └── explainer.ts       # Human-readable reasons
 ├── data/
-│   └── resorts.json
+│   ├── resorts.ts             # Bundled resort data (fallback)
+│   └── index.ts
+├── lib/
+│   ├── supabase.ts            # Supabase client
+│   ├── storage.ts             # Web localStorage adapter
+│   └── storage.native.ts      # Native MMKV adapter
+├── hooks/
+│   ├── useLayout.ts           # Responsive layout
+│   └── useContent.ts          # i18n content
 ├── types/
 │   ├── resort.ts
-│   └── preferences.ts
-├── lib/
-│   ├── storage.ts
-│   └── constants.ts
+│   ├── preferences.ts
+│   ├── recommendation.ts
+│   └── supabase.ts            # Database types
 └── theme/
     ├── colors.ts
     ├── typography.ts
-    └── spacing.ts
+    ├── spacing.ts
+    └── index.ts
 
 /assets
 ├── images/
 │   ├── resorts/               # Hero images
-│   └── maps/                  # Piste maps
+│   └── default-resort.jpg     # Fallback image
 ├── fonts/
+│   └── Montserrat-*.ttf
 └── icon.png
 ```
 
 ---
 
-## 🗺 Resort Data (Europe MVP)
+## 🗺 Resort Data
 
-### Target: 30 Resorts
+### Current: 51 European Resorts (Supabase)
 
-**France (8)**
-- Val Thorens, Chamonix, Les Arcs, La Plagne
-- Méribel, Courchevel, Tignes, Alpe d'Huez
+**France** — Val Thorens, Chamonix, Les Arcs, La Plagne, Méribel, Courchevel, Tignes, Alpe d'Huez, Les Deux Alpes, Avoriaz, La Clusaz, Les Gets, Serre Chevalier
 
-**Austria (8)**
-- Lech-Zürs, St. Anton, Kitzbühel, Obergurgl
-- Sölden, Ischgl, Mayrhofen, Zell am See
+**Austria** — Lech-Zürs, St. Anton, Kitzbühel, Obergurgl, Sölden, Ischgl, Mayrhofen, Zell am See, Saalbach-Hinterglemm, Bad Gastein, Obertauern
 
-**Switzerland (6)**
-- Verbier, Zermatt, St. Moritz
-- Davos, Wengen, Saas-Fee
+**Switzerland** — Verbier, Zermatt, St. Moritz, Davos, Wengen, Saas-Fee, Grindelwald, Laax, Engelberg, Crans-Montana
 
-**Italy (5)**
-- Cortina, Val Gardena, Livigno
-- Cervinia, Courmayeur
+**Italy** — Cortina d'Ampezzo, Val Gardena, Livigno, Cervinia, Courmayeur, Madonna di Campiglio, Sestriere, Kronplatz
 
-**Andorra/Spain (3)**
-- Grandvalira, Baqueira Beret, Formigal
+**Andorra/Spain** — Grandvalira, Baqueira Beret, Formigal
+
+**Norway/Sweden** — Hemsedal, Trysil, Åre
 
 ---
-
-## 📅 Implementation Plan (6 Weeks)
-
-### Week 1: Foundation + Data Entry
-- [ ] Expo project setup
-- [ ] Folder structure + design system basics
-- [ ] Zustand stores
-- [ ] Research & enter 10 resorts (France/Austria)
-- [ ] Create `resorts.json` schema
-
-### Week 2: Data + Recommendation Engine
-- [ ] Enter remaining 20 resorts
-- [ ] Download/organize piste map images
-- [ ] Implement recommendation engine
-- [ ] Unit tests for scoring logic
-
-### Week 3: Onboarding Flow
-- [ ] Welcome screen
-- [ ] Skill, Budget, Region, Vibes screens
-- [ ] Progress indicator
-- [ ] Wire to Zustand → trigger recommendations
-
-### Week 4: Results + Resort Detail
-- [ ] Results screen with ranked cards
-- [ ] Match score + reasons display
-- [ ] Resort detail screen (all sections)
-- [ ] Save/unsave to favorites
-
-### Week 5: Maps + Offline
-- [ ] Piste map viewer (zoomable)
-- [ ] Image caching
-- [ ] Offline indicator
-- [ ] Tab navigation polish
-
-### Week 6: Polish + Ship
-- [ ] Loading/error/empty states
-- [ ] App icon + splash screen
-- [ ] TestFlight build
-- [ ] Play Store internal track
 
 ---
 
@@ -416,14 +434,14 @@ Welcome → Skill → Budget → Region → Vibes → Results
 
 ---
 
-## 🚀 Post-MVP Roadmap
+## 🚀 Future Roadmap
 
-1. **User Accounts** - Optional sync, your test account
-2. **More Resorts** - North America, Japan
-3. **Booking Links** - Affiliate integration
-4. **Weather/Snow Data** - Live conditions
-5. **Social Features** - Share trip plans
-6. **AI Upgrade** - Learn from user behavior
+1. **Reviews Integration** — Pull from TripAdvisor, Google
+2. **Accommodation Booking** — Integration with Booking.com
+3. **More Resorts** — North America, Japan, New Zealand
+4. **Weather/Snow Data** — Live conditions API
+5. **Social Features** — Share trip plans
+6. **AI Upgrade** — Learn from user behavior
 
 ---
 
@@ -431,14 +449,17 @@ Welcome → Skill → Budget → Region → Vibes → Results
 
 | Layer | Technology |
 |-------|------------|
-| Framework | React Native (Expo) |
-| Language | TypeScript |
-| Routing | Expo Router |
-| State | Zustand |
-| Storage | MMKV |
+| Framework | React Native (Expo SDK 54) |
+| Language | TypeScript (strict mode) |
+| Routing | Expo Router v4 |
+| State | Zustand + persist middleware |
+| Storage | MMKV (native) / localStorage (web) |
+| Backend | Supabase (PostgreSQL + Auth + RLS) |
 | Images | expo-image |
+| Animations | Reanimated + Gesture Handler |
 | Maps | Zoomable Image (react-native-gesture-handler) |
 | Testing | Jest |
+| Fonts | Montserrat (custom loaded) |
 
 ---
 
@@ -448,7 +469,7 @@ Welcome → Skill → Budget → Region → Vibes → Results
 # Install dependencies
 npm install
 
-# Start development
+# Start development (select platform)
 npm start
 
 # Run on iOS
@@ -457,8 +478,26 @@ npm run ios
 # Run on Android
 npm run android
 
+# Run on Web
+npm run web
+
 # Run tests
 npm test
+
+# TypeScript check
+npx tsc --noEmit
+
+# Lint
+npm run lint
+```
+
+### Environment Variables
+
+Create `.env.local` with your Supabase credentials:
+
+```
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 ---

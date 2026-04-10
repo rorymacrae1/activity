@@ -70,6 +70,7 @@ export interface Database {
           email: string | null;
           display_name: string | null;
           avatar_url: string | null;
+          home_airport: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -78,6 +79,7 @@ export interface Database {
           email?: string | null;
           display_name?: string | null;
           avatar_url?: string | null;
+          home_airport?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -86,8 +88,38 @@ export interface Database {
           email?: string | null;
           display_name?: string | null;
           avatar_url?: string | null;
+          home_airport?: string | null;
           created_at?: string;
           updated_at?: string;
+        };
+      };
+      visited_resorts: {
+        Row: {
+          id: string;
+          user_id: string;
+          resort_id: string;
+          visited_at: string | null;
+          notes: string | null;
+          rating: number | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          resort_id: string;
+          visited_at?: string | null;
+          notes?: string | null;
+          rating?: number | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          resort_id?: string;
+          visited_at?: string | null;
+          notes?: string | null;
+          rating?: number | null;
+          created_at?: string;
         };
       };
       user_preferences: {
@@ -171,3 +203,5 @@ export type UserPreferences =
   Database["public"]["Tables"]["user_preferences"]["Row"];
 export type UserFavorite =
   Database["public"]["Tables"]["user_favorites"]["Row"];
+export type VisitedResort =
+  Database["public"]["Tables"]["visited_resorts"]["Row"];

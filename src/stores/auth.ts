@@ -17,7 +17,7 @@ interface AuthState {
     email: string,
     password: string,
     displayName?: string,
-  ) => Promise<{ error: AuthError | null }>;
+  ) => Promise<{ error: AuthError | null; session: Session | null }>;
   signIn: (
     email: string,
     password: string,
@@ -26,7 +26,9 @@ interface AuthState {
   signInWithApple: () => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   updateProfile: (
-    updates: Partial<Pick<Profile, "display_name" | "avatar_url">>,
+    updates: Partial<
+      Pick<Profile, "display_name" | "avatar_url" | "home_airport">
+    >,
   ) => Promise<{ error: Error | null }>;
   refreshProfile: () => Promise<void>;
 }
@@ -80,7 +82,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
    * Sign up with email and password.
    */
   signUp: async (email, password, displayName) => {
-    if (!supabase) return { error: new AuthError("Supabase not configured") };
+    if (!supabase)
+      return { error: new AuthError("Supabase not configured"), session: null };
 
     set({ isLoading: true });
 
@@ -98,7 +101,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ user: data.user, session: data.session });
     }
 
-    return { error };
+    return { error, session: data?.session ?? null };
   },
 
   /**

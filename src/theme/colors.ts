@@ -259,6 +259,9 @@ export const colors = {
     fair: primitive.amber[500], // 40-59%
     poor: primitive.signal[500], // 0-39%
   },
+
+  // === Utility ===
+  transparent: "transparent",
 } as const;
 
 export type Colors = typeof colors;

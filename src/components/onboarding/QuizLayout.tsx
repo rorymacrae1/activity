@@ -8,6 +8,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius, shadows } from "@theme";
+import { NavBar } from "@components/ui/NavBar";
 
 /**
  * A curated ski-slope background image used for the quiz on tablet/web.
@@ -58,6 +59,7 @@ export function QuizLayout({
     // ─── Mobile: plain white screen ───────────────────────────────────────────
     return (
       <SafeAreaView style={styles.mobileSafe}>
+        <NavBar />
         <View style={styles.mobileContent}>
           <View style={styles.mobileBody}>{children}</View>
           {footer && <View style={styles.mobileFooter}>{footer}</View>}
@@ -77,6 +79,7 @@ export function QuizLayout({
       <View style={styles.scrim} />
 
       <SafeAreaView style={styles.tabletSafe}>
+        <NavBar transparent />
         <View style={styles.tabletCenter}>
           {/* Fixed-size glass card */}
           <View style={styles.card}>

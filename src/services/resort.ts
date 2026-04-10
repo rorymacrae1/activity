@@ -97,7 +97,7 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       ].filter(Boolean),
     },
     assets: {
-      heroImage: `https://source.unsplash.com/800x600/?ski,${encodeURIComponent(row.name)}`,
+      heroImage: "", // Use local default image fallback
       pisteMap: "",
     },
     season: {
@@ -340,4 +340,75 @@ export async function getResortCountsByCountry(): Promise<
  */
 export async function preloadResorts(): Promise<void> {
   await fetchCloudResorts();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Similar resorts logic
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Compute similarity score between two resorts.
+ * Higher score = more similar.
+ */
+function computeSimilarity(target: Resort, candidate: Resort): number {
+  let score = 0;
+
+  // Geographic proximity
+  if (target.country === candidate.country) score += 30;
+  if (target.region === candidate.region) score += 20;
+
+  // Price band similarity (within €50 daily cost)
+  const priceDiff = Math.abs(
+    target.attributes.averageDailyCost - candidate.attributes.averageDailyCost,
+  );
+  if (priceDiff < 30) score += 25;
+  else if (priceDiff < 50) score += 15;
+  else if (priceDiff < 80) score += 5;
+
+  // Size similarity (within 50km of pistes)
+  const sizeDiff = Math.abs(target.stats.totalKm - candidate.stats.totalKm);
+  if (sizeDiff < 30) score += 15;
+  else if (sizeDiff < 60) score += 10;
+  else if (sizeDiff < 100) score += 5;
+
+  // Terrain profile similarity (advanced % within 15 points)
+  const terrainDiff = Math.abs(
+    target.terrain.advanced - candidate.terrain.advanced,
+  );
+  if (terrainDiff < 10) score += 15;
+  else if (terrainDiff < 20) score += 10;
+  else if (terrainDiff < 30) score += 5;
+
+  // Snow reliability similarity
+  const snowDiff = Math.abs(
+    target.attributes.snowReliability - candidate.attributes.snowReliability,
+  );
+  if (snowDiff <= 1) score += 10;
+  else if (snowDiff <= 2) score += 5;
+
+  return score;
+}
+
+/**
+ * Get resorts similar to a given resort.
+ * Uses geographic, price, size, terrain, and snow reliability factors.
+ */
+export async function getSimilarResorts(
+  resortId: string,
+  limit = 5,
+): Promise<Resort[]> {
+  const target = await getResortByIdAsync(resortId);
+  if (!target) return [];
+
+  const allResorts = await getAllResortsAsync();
+
+  return allResorts
+    .filter((r) => r.id !== resortId)
+    .map((r) => ({
+      resort: r,
+      score: computeSimilarity(target, r),
+    }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((r) => r.resort);
 }

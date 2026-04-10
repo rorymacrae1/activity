@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  Alert,
 } from "react-native";
 import Head from "expo-router/head";
 import { router, Link } from "expo-router";
@@ -17,6 +16,7 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { Card } from "@components/ui/Card";
 import { ScreenContainer } from "@components/ui/ScreenContainer";
+import { useToast } from "@components/ui/Toast";
 import { useAuthStore } from "@stores/auth";
 import { useLayout } from "@hooks/useLayout";
 
@@ -32,10 +32,14 @@ export default function SignInScreen() {
 
   const { signIn, signInWithGoogle, signInWithApple } = useAuthStore();
   const { hPadding } = useLayout();
+  const { showToast } = useToast();
 
   const handleSignIn = async () => {
     if (!email.trim() || !password.trim()) {
-      Alert.alert("Missing fields", "Please enter both email and password.");
+      showToast({
+        type: "error",
+        message: "Please enter both email and password.",
+      });
       return;
     }
 
@@ -44,9 +48,14 @@ export default function SignInScreen() {
     setIsLoading(false);
 
     if (error) {
-      Alert.alert("Sign in failed", error.message);
+      showToast({ type: "error", message: error.message });
     } else {
       // Navigate to main app
+      showToast({
+        type: "success",
+        message: "Welcome back!",
+        duration: 3000,
+      });
       router.replace("/(main)");
     }
   };
@@ -57,8 +66,13 @@ export default function SignInScreen() {
     setIsLoading(false);
 
     if (error) {
-      Alert.alert("Google sign in failed", error.message);
+      showToast({ type: "error", message: error.message });
     } else {
+      showToast({
+        type: "success",
+        message: "Welcome back!",
+        duration: 3000,
+      });
       router.replace("/(main)");
     }
   };
@@ -69,8 +83,13 @@ export default function SignInScreen() {
     setIsLoading(false);
 
     if (error) {
-      Alert.alert("Apple sign in failed", error.message);
+      showToast({ type: "error", message: error.message });
     } else {
+      showToast({
+        type: "success",
+        message: "Welcome back!",
+        duration: 3000,
+      });
       router.replace("/(main)");
     }
   };

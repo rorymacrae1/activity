@@ -1,0 +1,246 @@
+/**
+ * OverviewCarousel - Horizontal swipeable overview cards for resort details
+ * Consolidates key stats into digestible, swipeable cards
+ */
+
+import React, { useRef, useState } from "react";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from "react-native";
+import { Text } from "@/components/ui";
+import { colors } from "@/theme/colors";
+import { spacing } from "@/theme/spacing";
+import { radius } from "@/theme/radius";
+import { typography } from "@/theme/typography";
+import type { Resort } from "@/types/resort";
+
+const CARD_WIDTH = 200;
+const CARD_MARGIN = spacing.sm;
+
+interface OverviewCarouselProps {
+  /** Resort data */
+  resort: Resort;
+}
+
+interface OverviewCardProps {
+  icon: string;
+  title: string;
+  value: string;
+  subtitle?: string;
+  color?: string;
+}
+
+/**
+ * Individual overview card
+ */
+function OverviewCard({
+  icon,
+  title,
+  value,
+  subtitle,
+  color = colors.brand.primary,
+}: OverviewCardProps) {
+  return (
+    <View style={styles.card}>
+      <View style={[styles.iconContainer, { backgroundColor: color + "20" }]}>
+        <Text style={styles.icon}>{icon}</Text>
+      </View>
+      <Text style={styles.cardTitle}>{title}</Text>
+      <Text style={styles.cardValue}>{value}</Text>
+      {subtitle && <Text style={styles.cardSubtitle}>{subtitle}</Text>}
+    </View>
+  );
+}
+
+/**
+ * Get terrain level description
+ */
+function getTerrainLevel(terrain: Resort["terrain"]): string {
+  if (terrain.advanced >= 40) return "Expert-friendly";
+  if (terrain.intermediate >= 50) return "All-rounder";
+  if (terrain.beginner >= 40) return "Beginner-friendly";
+  return "Mixed terrain";
+}
+
+/**
+ * Get price level description
+ */
+function getPriceLevel(dailyCost: number): { label: string; euros: string } {
+  if (dailyCost < 120) return { label: "Budget", euros: "€" };
+  if (dailyCost < 180) return { label: "Mid-range", euros: "€€" };
+  if (dailyCost < 250) return { label: "Premium", euros: "€€€" };
+  return { label: "Luxury", euros: "€€€€" };
+}
+
+/**
+ * Get vibe description
+ */
+function getVibeDescription(resort: Resort): string {
+  if (resort.attributes.nightlifeScore >= 4) return "Lively après-ski";
+  if (resort.attributes.familyScore >= 4) return "Family-focused";
+  if (resort.attributes.crowdLevel <= 2) return "Peaceful & quiet";
+  return "Relaxed atmosphere";
+}
+
+/**
+ * OverviewCarousel component
+ */
+export function OverviewCarousel({ resort }: OverviewCarouselProps) {
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const priceInfo = getPriceLevel(resort.attributes.averageDailyCost);
+  const terrainLevel = getTerrainLevel(resort.terrain);
+  const vibeDesc = getVibeDescription(resort);
+
+  const cards: OverviewCardProps[] = [
+    {
+      icon: "⛷️",
+      title: "Terrain",
+      value: `${resort.stats.totalKm}km`,
+      subtitle: terrainLevel,
+      color: colors.brand.primary,
+    },
+    {
+      icon: "❄️",
+      title: "Snow Reliability",
+      value: `${resort.attributes.snowReliability}/5`,
+      subtitle:
+        resort.attributes.snowReliability >= 4 ? "Very reliable" : "Seasonal",
+      color: colors.sentiment.info,
+    },
+    {
+      icon: "💰",
+      title: "Budget",
+      value: priceInfo.euros,
+      subtitle: `~€${resort.attributes.averageDailyCost}/day`,
+      color: colors.match.good,
+    },
+    {
+      icon: "🏔️",
+      title: "Altitude",
+      value: `${resort.location.peakAltitude}m`,
+      subtitle: `Village: ${resort.location.villageAltitude}m`,
+      color: colors.brand.primaryStrong,
+    },
+    {
+      icon: "✨",
+      title: "Vibe",
+      value: resort.attributes.townStyle,
+      subtitle: vibeDesc,
+      color: colors.brand.accent,
+    },
+  ];
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offsetX / (CARD_WIDTH + CARD_MARGIN));
+    setActiveIndex(Math.max(0, Math.min(index, cards.length - 1)));
+  };
+
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        decelerationRate="fast"
+        snapToInterval={CARD_WIDTH + CARD_MARGIN}
+        snapToAlignment="start"
+        contentContainerStyle={styles.scrollContent}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        accessibilityRole="adjustable"
+        accessibilityLabel="Resort overview carousel"
+      >
+        {cards.map((card, index) => (
+          <OverviewCard key={index} {...card} />
+        ))}
+      </ScrollView>
+
+      {/* Pagination dots */}
+      <View style={styles.pagination}>
+        {cards.map((_, index) => (
+          <View
+            key={index}
+            style={[styles.dot, index === activeIndex && styles.dotActive]}
+          />
+        ))}
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    marginVertical: spacing.md,
+  },
+  scrollContent: {
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.sm,
+  },
+  card: {
+    width: CARD_WIDTH,
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    marginRight: CARD_MARGIN,
+    shadowColor: colors.ink.rich,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+  },
+  iconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.md,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.sm,
+  },
+  icon: {
+    fontSize: 22,
+  },
+  cardTitle: {
+    ...typography.labelSmall,
+    color: colors.text.tertiary,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: spacing.xxs,
+  },
+  cardValue: {
+    ...typography.h3,
+    color: colors.text.primary,
+  },
+  cardSubtitle: {
+    ...typography.bodySmall,
+    color: colors.text.secondary,
+    marginTop: spacing.xxs,
+  },
+  pagination: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: spacing.sm,
+    gap: spacing.xs,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.border.default,
+  },
+  dotActive: {
+    backgroundColor: colors.brand.primary,
+    width: 20,
+  },
+});
+
+export default OverviewCarousel;
