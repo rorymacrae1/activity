@@ -36,13 +36,9 @@
       "title": "Wer geht auf die Piste?",
       "subtitle": "Alles Zutreffende auswählen",
       "options": {
-        "firstTimer": {
-          "title": "Erstes Mal",
-          "description": "Noch nie Ski gefahren — hier für die Stimmung"
-        },
         "beginner": {
-          "title": "Grün & Blau",
-          "description": "Lernt die Grundlagen, sanfte Pisten"
+          "title": "Grüne Pisten",
+          "description": "Anfänger — lernt die Grundlagen"
         },
         "intermediate": {
           "title": "Blauer Cruiser",
@@ -53,7 +49,7 @@
           "description": "Meistert Rote, probiert Schwarze"
         },
         "advanced": {
-          "title": "Allround",
+          "title": "Schwarze Pisten",
           "description": "Schwarze, Tiefschnee, Powder — her damit"
         }
       },

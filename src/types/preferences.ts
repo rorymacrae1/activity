@@ -1,5 +1,4 @@
 export type SkillLevel =
-  | "firstTimer"
   | "beginner"
   | "intermediate"
   | "red"
@@ -24,7 +23,7 @@ export interface Preferences {
  * Normalized preferences for scoring algorithm (0-1 scale).
  */
 export interface NormalizedPreferences {
-  minSkill: number; // 0=firstTimer, 0.25=beginner, 0.5=intermediate, 0.75=red, 1=advanced
+  minSkill: number; // 0=beginner, 0.33=intermediate, 0.67=red, 1=advanced
   maxSkill: number; // highest ability in group
   tripType: TripType | null;
   budgetLevel: number; // 0=budget, 0.33=mid, 0.67=premium, 1=luxury

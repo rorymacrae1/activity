@@ -16,10 +16,9 @@ import type {
  */
 function normalizePreferences(prefs: Preferences): NormalizedPreferences {
   const skillMap: Record<SkillLevel, number> = {
-    firstTimer: 0,
-    beginner: 0.25,
-    intermediate: 0.5,
-    red: 0.75,
+    beginner: 0,
+    intermediate: 0.33,
+    red: 0.67,
     advanced: 1,
   };
 

@@ -13,7 +13,6 @@ import type { SkillLevel } from "@/types/preferences";
 
 /** Piste marker colors matching real European ski signage */
 const PISTE_COLORS: Record<SkillLevel, string> = {
-  firstTimer: colors.terrain.firstTimer,
   beginner: colors.terrain.beginner,
   intermediate: colors.terrain.intermediate,
   red: colors.terrain.red,
@@ -51,7 +50,6 @@ export default function SkillScreen() {
   const content = useContent();
 
   const OPTIONS: SkillLevel[] = [
-    "firstTimer",
     "beginner",
     "intermediate",
     "red",

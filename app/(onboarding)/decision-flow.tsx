@@ -101,7 +101,6 @@ function SectionDivider({ label }: { label: string }) {
  * Skill level labels
  */
 const SKILL_LABELS: Record<SkillLevel, string> = {
-  firstTimer: "First Timer",
   beginner: "Beginner",
   intermediate: "Intermediate",
   red: "Red Runs",
@@ -115,7 +114,6 @@ function getSkillDisplay(abilities: SkillLevel[]): string {
   if (abilities.length === 0) return "Any";
   // Show highest ability level
   const order: SkillLevel[] = [
-    "firstTimer",
     "beginner",
     "intermediate",
     "red",

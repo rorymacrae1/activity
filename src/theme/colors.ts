@@ -244,7 +244,6 @@ export const colors = {
 
   // === Terrain (piste colours) — authentic ski markers ===
   terrain: {
-    firstTimer: primitive.piste.pink,
     beginner: primitive.piste.green,
     intermediate: primitive.piste.blue,
     red: primitive.piste.red,
