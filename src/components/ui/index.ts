@@ -11,6 +11,7 @@ export { LoadingState } from "./LoadingState";
 export { ScreenContainer } from "./ScreenContainer";
 export { NavHeader } from "./NavHeader";
 export { NavBar } from "./NavBar";
+export { Icon, IconCircle, type IconName } from "./Icon";
 export {
   ToastProvider,
   useToast,

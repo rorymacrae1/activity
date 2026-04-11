@@ -9,6 +9,7 @@ import { router } from "expo-router";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Icon } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
@@ -40,7 +41,14 @@ export function ProfileCompletionCard({
     <Pressable onPress={handlePress} accessibilityRole="button">
       <Card elevation="elevated" style={styles.card}>
         <View style={styles.header}>
-          <Text style={styles.emoji}>✨</Text>
+          <View style={styles.headerIcon}>
+            <Icon
+              name="sparkles"
+              size={28}
+              color={colors.brand.primary}
+              strokeWidth={1.5}
+            />
+          </View>
           <View style={styles.headerText}>
             <Text variant="h3" style={styles.title}>
               Let's Personalise Your Experience
@@ -70,7 +78,12 @@ export function ProfileCompletionCard({
         <View style={styles.missingItems}>
           {missing.visitedResorts && (
             <View style={styles.missingItem}>
-              <Text style={styles.missingIcon}>🏔️</Text>
+              <Icon
+                name="mountain"
+                size={16}
+                color={colors.text.secondary}
+                strokeWidth={1.5}
+              />
               <Text variant="caption" color={colors.text.secondary}>
                 Add resorts you've visited
               </Text>
@@ -78,7 +91,12 @@ export function ProfileCompletionCard({
           )}
           {missing.homeAirport && (
             <View style={styles.missingItem}>
-              <Text style={styles.missingIcon}>✈️</Text>
+              <Icon
+                name="plane"
+                size={16}
+                color={colors.text.secondary}
+                strokeWidth={1.5}
+              />
               <Text variant="caption" color={colors.text.secondary}>
                 Set your home airport
               </Text>
@@ -86,7 +104,12 @@ export function ProfileCompletionCard({
           )}
           {missing.favorites && (
             <View style={styles.missingItem}>
-              <Text style={styles.missingIcon}>❤️</Text>
+              <Icon
+                name="heart"
+                size={16}
+                color={colors.text.secondary}
+                strokeWidth={1.5}
+              />
               <Text variant="caption" color={colors.text.secondary}>
                 Save resorts you love
               </Text>
@@ -115,8 +138,13 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     marginBottom: spacing.lg,
   },
-  emoji: {
-    fontSize: 32,
+  headerIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: radius.md,
+    backgroundColor: colors.brand.primarySubtle,
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerText: {
     flex: 1,
@@ -152,11 +180,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.sm,
     paddingVertical: spacing.xs,
-  },
-  missingIcon: {
-    fontSize: 16,
-    width: 24,
-    textAlign: "center",
   },
   button: {
     marginTop: spacing.xs,

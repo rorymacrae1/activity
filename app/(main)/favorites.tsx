@@ -60,7 +60,7 @@ export default function FavoritesScreen() {
       </Head>
       {favoriteResorts.length === 0 ? (
         <EmptyState
-          icon="🔖"
+          icon="bookmark"
           title={content.favorites.emptyTitle}
           message={content.favorites.emptyMessage}
           action={{

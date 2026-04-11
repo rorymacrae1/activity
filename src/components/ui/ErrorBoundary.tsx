@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import type { ErrorInfo, ReactNode } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
+import { AlertTriangle } from "lucide-react-native";
 import { colors } from "@theme/colors";
 import { typography } from "@theme/typography";
 import { spacing } from "@theme/spacing";
@@ -51,7 +52,13 @@ export class ErrorBoundary extends Component<
 
       return (
         <View style={styles.container}>
-          <Text style={styles.emoji}>⚠️</Text>
+          <View style={styles.iconContainer}>
+            <AlertTriangle
+              size={48}
+              color={colors.sentiment.warning}
+              strokeWidth={1.5}
+            />
+          </View>
           <Text style={styles.title}>Something went wrong</Text>
           <Text style={styles.message}>
             We're sorry, but something unexpected happened. Please try again.
@@ -80,8 +87,7 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     backgroundColor: colors.background.primary,
   },
-  emoji: {
-    fontSize: 64,
+  iconContainer: {
     marginBottom: spacing.lg,
   },
   title: {

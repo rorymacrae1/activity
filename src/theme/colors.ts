@@ -260,6 +260,24 @@ export const colors = {
     poor: primitive.signal[500], // 0-39%
   },
 
+  // === On Dark (colors for use on dark backgrounds) ===
+  onDark: {
+    text: {
+      primary: "rgba(255, 255, 255, 1)",
+      secondary: "rgba(255, 255, 255, 0.9)",
+      tertiary: "rgba(255, 255, 255, 0.7)",
+      muted: "rgba(255, 255, 255, 0.6)",
+    },
+    surface: {
+      subtle: "rgba(255, 255, 255, 0.1)",
+      light: "rgba(255, 255, 255, 0.15)",
+    },
+    border: {
+      subtle: "rgba(255, 255, 255, 0.1)",
+      light: "rgba(255, 255, 255, 0.15)",
+    },
+  },
+
   // === Utility ===
   transparent: "transparent",
 } as const;

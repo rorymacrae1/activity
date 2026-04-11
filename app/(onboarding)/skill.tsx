@@ -1,4 +1,4 @@
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
@@ -102,7 +102,15 @@ export default function SkillScreen() {
             </Text>
           </View>
 
-          <View style={[styles.options, isTablet && styles.optionsTablet]}>
+          <ScrollView
+            style={styles.optionsScroll}
+            contentContainerStyle={[
+              styles.options,
+              isTablet && styles.optionsTablet,
+            ]}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
             {OPTIONS.map((level) => {
               const optContent = content.onboarding.skill.options[level];
               const active = groupAbilities.includes(level);
@@ -141,7 +149,7 @@ export default function SkillScreen() {
                 </Pressable>
               );
             })}
-          </View>
+          </ScrollView>
         </View>
       </AnimatedQuizContent>
     </QuizLayout>
@@ -151,7 +159,8 @@ export default function SkillScreen() {
 const styles = StyleSheet.create({
   inner: { flex: 1 },
   header: { marginBottom: spacing.lg, gap: spacing.xs },
-  options: { flex: 1, gap: spacing.sm, justifyContent: "center" },
+  optionsScroll: { flex: 1 },
+  options: { gap: spacing.sm, paddingBottom: spacing.sm },
   optionsTablet: {
     flexDirection: "row",
     flexWrap: "wrap",

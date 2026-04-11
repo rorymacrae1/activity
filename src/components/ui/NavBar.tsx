@@ -8,6 +8,7 @@ import { router } from "expo-router";
 import { useAuthStore, useProfile, useIsAuthenticated } from "@stores/auth";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "./Text";
+import { Icon } from "./Icon";
 
 interface NavBarProps {
   /** Whether to use transparent background (for overlay on images) */
@@ -28,7 +29,12 @@ export function NavBar({ transparent = false }: NavBarProps) {
   return (
     <View style={[styles.navBar, transparent && styles.transparent]}>
       <View style={styles.logoContainer}>
-        <Text style={styles.logo}>⛷️</Text>
+        <Icon
+          name="mountain"
+          size={24}
+          color={colors.brand.primary}
+          strokeWidth={2}
+        />
       </View>
 
       <View style={styles.navRight}>
@@ -85,9 +91,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.surface.primary,
-  },
-  logo: {
-    fontSize: 20,
   },
   navRight: {
     flexDirection: "row",

@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,13 +15,13 @@ import {
   type ProfileCompletionStatus,
 } from "@services/profile";
 import { useLayout } from "@hooks/useLayout";
-import { colors, spacing, radius } from "@theme";
-import { Text } from "@components/ui/Text";
+import { colors, spacing } from "@theme";
 import { LoadingState } from "@components/ui/LoadingState";
-import { Card } from "@components/ui/Card";
 import { NavBar } from "@components/ui/NavBar";
 import {
-  ProfileCompletionCard,
+  WelcomeHero,
+  QuickActions,
+  FavoritesPreview,
   FavoritesBasedRecommendations,
 } from "@components/home";
 
@@ -36,11 +36,16 @@ export default function PersonalizedHomeScreen() {
     useState<ProfileCompletionStatus | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Get first name from profile or email
-  const firstName =
+  // Get first name from profile or email - clean up formatting
+  const rawName =
     profile?.display_name?.split(" ")[0] ??
     user?.email?.split("@")[0] ??
     "there";
+  // Capitalize and remove underscores for friendly display
+  const firstName = rawName
+    .replace(/_/g, " ")
+    .split(" ")[0]
+    .replace(/^\w/, (c) => c.toUpperCase());
 
   // Load profile completion status
   useEffect(() => {
@@ -49,12 +54,15 @@ export default function PersonalizedHomeScreen() {
         setLoading(false);
         return;
       }
-      const status = await getProfileCompletionStatus(
-        user.id,
-        favoriteIds.length,
-      );
-      setCompletionStatus(status);
-      setLoading(false);
+      try {
+        const status = await getProfileCompletionStatus(
+          user.id,
+          favoriteIds.length,
+        );
+        setCompletionStatus(status);
+      } finally {
+        setLoading(false);
+      }
     }
     loadStatus();
   }, [user, favoriteIds.length]);
@@ -102,61 +110,28 @@ export default function PersonalizedHomeScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Welcome Message */}
-        <View style={styles.welcomeSection}>
-          <Text variant="h1" style={styles.welcomeText}>
-            Welcome{"\n"}
-            {firstName}
-          </Text>
-        </View>
+        {/* Welcome Hero with stats */}
+        <WelcomeHero
+          firstName={firstName}
+          favoritesCount={favoriteIds.length}
+          profileComplete={completionStatus?.isComplete ?? false}
+        />
 
-        {/* Dashboard Section */}
-        <View style={styles.dashboardSection}>
-          <Text variant="h2" style={styles.sectionTitle}>
-            Dashboard
-          </Text>
+        {/* Quick Actions */}
+        <QuickActions showCompleteProfile={showCompletionCard ?? false} />
 
-          {/* Profile Completion Card - show if incomplete */}
-          {showCompletionCard && completionStatus && (
-            <ProfileCompletionCard
-              completionPercentage={completionStatus.completionPercentage}
-              missing={{
-                homeAirport: !completionStatus.hasHomeAirport,
-                visitedResorts: !completionStatus.hasVisitedResorts,
-                favorites: !completionStatus.hasFavorites,
-              }}
+        {/* Favorites Preview */}
+        <FavoritesPreview favoriteIds={favoriteIds} />
+
+        {/* Personalized Recommendations - show if has favorites */}
+        {topFavoriteId && (
+          <View style={styles.recommendationsSection}>
+            <FavoritesBasedRecommendations
+              baseResortId={topFavoriteId}
+              heading="Resorts You'll Love"
             />
-          )}
-
-          {/* Favorites-based recommendations - show if has favorites */}
-          {topFavoriteId && (
-            <FavoritesBasedRecommendations baseResortId={topFavoriteId} />
-          )}
-
-          {/* Empty state if no favorites and profile is complete */}
-          {!topFavoriteId && completionStatus?.isComplete && (
-            <Card elevation="subtle" style={styles.emptyCard}>
-              <Text style={styles.emptyEmoji}>❤️</Text>
-              <Text variant="h3" style={styles.emptyTitle}>
-                No Favorites Yet
-              </Text>
-              <Text
-                variant="body"
-                color={colors.text.secondary}
-                style={styles.emptyText}
-              >
-                Save resorts you love to get personalized recommendations here.
-              </Text>
-              <Pressable
-                style={styles.browseButton}
-                onPress={() => router.push("/(onboarding)/results")}
-                accessibilityRole="button"
-              >
-                <Text style={styles.browseButtonText}>Browse Resorts</Text>
-              </Pressable>
-            </Card>
-          )}
-        </View>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -165,50 +140,16 @@ export default function PersonalizedHomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surface.primary,
+    backgroundColor: colors.canvas.default,
   },
   scrollView: {
     flex: 1,
   },
   content: {
+    paddingTop: spacing.lg,
     paddingBottom: spacing.xxxl,
   },
-  welcomeSection: {
-    paddingVertical: spacing.lg,
-  },
-  welcomeText: {
-    fontSize: 32,
-    lineHeight: 40,
-  },
-  dashboardSection: {
-    gap: spacing.lg,
-  },
-  sectionTitle: {
-    marginBottom: spacing.xs,
-  },
-  emptyCard: {
-    padding: spacing.xl,
-    alignItems: "center",
-  },
-  emptyEmoji: {
-    fontSize: 48,
-    marginBottom: spacing.md,
-  },
-  emptyTitle: {
-    marginBottom: spacing.sm,
-  },
-  emptyText: {
-    textAlign: "center",
-    marginBottom: spacing.lg,
-  },
-  browseButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.md,
-  },
-  browseButtonText: {
-    color: colors.text.inverse,
-    fontWeight: "600",
+  recommendationsSection: {
+    marginTop: spacing.md,
   },
 });

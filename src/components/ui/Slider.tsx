@@ -18,7 +18,7 @@ interface SliderProps {
   accessibilityHint?: string;
 }
 
-const THUMB_SIZE = 28;
+const THUMB_SIZE = 24;
 
 /**
  * Custom slider component for value selection.

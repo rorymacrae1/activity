@@ -19,6 +19,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { getResortByIdAsync } from "@services/resort";
 import { useContent } from "@hooks/useContent";
+import { MapPin } from "lucide-react-native";
 import { colors } from "@theme/colors";
 import { typography } from "@theme/typography";
 import { spacing } from "@theme/spacing";
@@ -165,7 +166,7 @@ export default function MapScreen() {
           </GestureDetector>
         ) : (
           <View style={styles.noMapContainer}>
-            <Text style={styles.noMapEmoji}>🗺️</Text>
+            <MapPin size={48} color={colors.text.tertiary} strokeWidth={1.5} />
             <Text style={styles.noMapText}>{content.map.noMap}</Text>
           </View>
         )}
@@ -270,9 +271,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: spacing.md,
-  },
-  noMapEmoji: {
-    fontSize: 48,
   },
   noMapText: {
     ...typography.body,

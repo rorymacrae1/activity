@@ -1,9 +1,10 @@
 /**
  * ResortSearchInput
- * Searchable input for selecting resorts from the database
+ * Searchable input for selecting resorts from the database.
+ * Uses fuzzy matching and falls back to an async fetch if the cache is cold.
  */
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -13,10 +14,12 @@ import {
   Keyboard,
 } from "react-native";
 import { Text } from "@/components/ui/Text";
-import { getAllResorts } from "@/services/resort";
+import { getAllResorts, getAllResortsAsync } from "@/services/resort";
+import { fuzzyScoreMulti } from "@/lib/fuzzyMatch";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
+import { shadows } from "@/theme/shadows";
 import type { Resort } from "@/types/resort";
 
 interface ResortSearchInputProps {
@@ -39,8 +42,14 @@ export function ResortSearchInput({
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Resort[]>([]);
   const [showResults, setShowResults] = useState(false);
+  const [allResorts, setAllResorts] = useState<Resort[]>(() => getAllResorts());
 
-  const allResorts = getAllResorts();
+  // Warm the cache on mount if it is empty
+  useEffect(() => {
+    if (allResorts.length === 0) {
+      getAllResortsAsync().then((resorts) => setAllResorts(resorts));
+    }
+  }, [allResorts.length]);
 
   const handleSearch = useCallback(
     (text: string) => {
@@ -51,16 +60,16 @@ export function ResortSearchInput({
         return;
       }
 
-      const searchTerm = text.toLowerCase();
-      const filtered = allResorts
-        .filter(
-          (r) =>
-            !excludeIds.includes(r.id) &&
-            (r.name.toLowerCase().includes(searchTerm) ||
-              r.country.toLowerCase().includes(searchTerm) ||
-              r.region.toLowerCase().includes(searchTerm)),
-        )
-        .slice(0, 5);
+      const scored = allResorts
+        .filter((r) => !excludeIds.includes(r.id))
+        .map((r) => ({
+          resort: r,
+          score: fuzzyScoreMulti(text, [r.name, r.country, r.region]),
+        }))
+        .filter((item) => item.score > 0);
+
+      scored.sort((a, b) => b.score - a.score);
+      const filtered = scored.slice(0, 6).map((item) => item.resort);
 
       setResults(filtered);
       setShowResults(filtered.length > 0);
@@ -109,8 +118,9 @@ export function ResortSearchInput({
                 </Text>
               </Pressable>
             )}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
             keyboardShouldPersistTaps="handled"
-            scrollEnabled={false}
+            nestedScrollEnabled
           />
         </View>
       )}
@@ -138,22 +148,18 @@ const styles = StyleSheet.create({
     top: 52,
     left: 0,
     right: 0,
+    zIndex: 999,
+    overflow: "hidden",
     backgroundColor: colors.surface.primary,
     borderWidth: 1,
     borderColor: colors.border.default,
     borderRadius: radius.md,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
+    ...shadows.raised,
     maxHeight: 250,
   },
   resultItem: {
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.surface.divider,
   },
   resultItemPressed: {
     backgroundColor: colors.surface.secondary,
@@ -167,5 +173,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.text.secondary,
     marginTop: 2,
+  },
+  separator: {
+    height: 1,
+    backgroundColor: colors.surface.divider,
   },
 });

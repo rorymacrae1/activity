@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   View,
+  ScrollView,
   StyleSheet,
   Pressable,
   Platform,
@@ -246,8 +247,15 @@ export default function RegionScreen() {
         }
       >
         <AnimatedQuizContent animation="parallax">
-          <View
-            style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
+          <ScrollView
+            style={styles.inner}
+            contentContainerStyle={[
+              styles.innerContent,
+              { paddingHorizontal: isTablet ? 0 : hPadding },
+            ]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            bounces={false}
           >
             <ProgressIndicator current={4} total={5} showLabel />
 
@@ -298,7 +306,7 @@ export default function RegionScreen() {
                 />
               ))}
             </View>
-          </View>
+          </ScrollView>
         </AnimatedQuizContent>
       </QuizLayout>
     </>
@@ -308,6 +316,9 @@ export default function RegionScreen() {
 const styles = StyleSheet.create({
   inner: {
     flex: 1,
+  },
+  innerContent: {
+    paddingBottom: spacing.sm,
   },
   loadingContainer: {
     justifyContent: "center",

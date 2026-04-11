@@ -1,4 +1,10 @@
-import { View, StyleSheet, Platform, Pressable } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Platform,
+  Pressable,
+} from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import Animated, {
@@ -72,10 +78,10 @@ function PersonIcon({
 function GroupVisual({ type, active }: { type: TripType; active: boolean }) {
   const color = active ? colors.brand.primary : colors.ink.muted;
   const configs: Record<TripType, { count: number; sizes: number[] }> = {
-    solo: { count: 1, sizes: [32] },
-    couple: { count: 2, sizes: [28, 28] },
-    family: { count: 4, sizes: [26, 26, 18, 18] }, // Adults + kids
-    friends: { count: 4, sizes: [24, 24, 24, 24] },
+    solo: { count: 1, sizes: [24] },
+    couple: { count: 2, sizes: [22, 22] },
+    family: { count: 4, sizes: [20, 20, 14, 14] }, // Adults + kids
+    friends: { count: 4, sizes: [18, 18, 18, 18] },
   };
 
   const { sizes } = configs[type];
@@ -95,8 +101,8 @@ const groupStyles = StyleSheet.create({
     alignItems: "flex-end",
     justifyContent: "center",
     gap: 4,
-    height: 40,
-    marginBottom: spacing.sm,
+    height: 30,
+    marginBottom: spacing.xs,
   },
 });
 
@@ -223,7 +229,15 @@ export default function TripTypeScreen() {
             </Text>
           </View>
 
-          <View style={[styles.options, isTablet && styles.optionsTablet]}>
+          <ScrollView
+            style={styles.optionsScroll}
+            contentContainerStyle={[
+              styles.options,
+              isTablet && styles.optionsTablet,
+            ]}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
             {OPTIONS.map((value) => {
               const optContent = content.onboarding.tripType.options[value];
               return (
@@ -238,7 +252,7 @@ export default function TripTypeScreen() {
                 />
               );
             })}
-          </View>
+          </ScrollView>
         </View>
       </AnimatedQuizContent>
     </QuizLayout>
@@ -248,10 +262,10 @@ export default function TripTypeScreen() {
 const styles = StyleSheet.create({
   inner: { flex: 1 },
   header: { marginBottom: spacing.xl, gap: spacing.xs },
+  optionsScroll: { flex: 1 },
   options: {
-    flex: 1,
-    gap: spacing.md,
-    justifyContent: "center",
+    gap: spacing.sm,
+    paddingBottom: spacing.sm,
   },
   optionsTablet: {
     flexDirection: "row",
@@ -261,8 +275,8 @@ const styles = StyleSheet.create({
   },
   option: {
     backgroundColor: colors.surface.primary,
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
     borderRadius: radius.xl,
     borderWidth: 2,
     borderColor: colors.border.subtle,

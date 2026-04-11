@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Text } from "@/components/ui";
+import { Icon } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
@@ -99,8 +100,24 @@ function SimilarResortCard({
 
         {/* Quick stats */}
         <View style={styles.statsRow}>
-          <Text style={styles.stat}>⛷️ {resort.stats.totalKm}km</Text>
-          <Text style={styles.stat}>💰 {formatPriceLevel(priceLevel)}</Text>
+          <View style={styles.statItem}>
+            <Icon
+              name="mountain"
+              size={12}
+              color={colors.text.secondary}
+              strokeWidth={2}
+            />
+            <Text style={styles.stat}>{resort.stats.totalKm}km</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Icon
+              name="wallet"
+              size={12}
+              color={colors.text.secondary}
+              strokeWidth={2}
+            />
+            <Text style={styles.stat}>{formatPriceLevel(priceLevel)}</Text>
+          </View>
         </View>
       </View>
     </Pressable>
@@ -264,6 +281,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: spacing.sm,
     marginTop: spacing.xs,
+  },
+  statItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   stat: {
     ...typography.bodySmall,

@@ -12,6 +12,7 @@ import {
   NativeScrollEvent,
 } from "react-native";
 import { Text } from "@/components/ui";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
@@ -27,7 +28,7 @@ interface OverviewCarouselProps {
 }
 
 interface OverviewCardProps {
-  icon: string;
+  icon: IconName;
   title: string;
   value: string;
   subtitle?: string;
@@ -47,7 +48,7 @@ function OverviewCard({
   return (
     <View style={styles.card}>
       <View style={[styles.iconContainer, { backgroundColor: color + "20" }]}>
-        <Text style={styles.icon}>{icon}</Text>
+        <Icon name={icon} size={22} color={color} strokeWidth={1.5} />
       </View>
       <Text style={styles.cardTitle}>{title}</Text>
       <Text style={styles.cardValue}>{value}</Text>
@@ -99,14 +100,14 @@ export function OverviewCarousel({ resort }: OverviewCarouselProps) {
 
   const cards: OverviewCardProps[] = [
     {
-      icon: "⛷️",
+      icon: "mountain",
       title: "Terrain",
       value: `${resort.stats.totalKm}km`,
       subtitle: terrainLevel,
       color: colors.brand.primary,
     },
     {
-      icon: "❄️",
+      icon: "snowflake",
       title: "Snow Reliability",
       value: `${resort.attributes.snowReliability}/5`,
       subtitle:
@@ -114,21 +115,21 @@ export function OverviewCarousel({ resort }: OverviewCarouselProps) {
       color: colors.sentiment.info,
     },
     {
-      icon: "💰",
+      icon: "wallet",
       title: "Budget",
       value: priceInfo.euros,
       subtitle: `~€${resort.attributes.averageDailyCost}/day`,
       color: colors.match.good,
     },
     {
-      icon: "🏔️",
+      icon: "trending-up",
       title: "Altitude",
       value: `${resort.location.peakAltitude}m`,
       subtitle: `Village: ${resort.location.villageAltitude}m`,
       color: colors.brand.primaryStrong,
     },
     {
-      icon: "✨",
+      icon: "sparkles",
       title: "Vibe",
       value: resort.attributes.townStyle,
       subtitle: vibeDesc,
@@ -204,9 +205,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.sm,
-  },
-  icon: {
-    fontSize: 22,
   },
   cardTitle: {
     ...typography.labelSmall,

@@ -1,11 +1,13 @@
 import { View, StyleSheet } from "react-native";
 import { Text } from "./Text";
 import { Button } from "./Button";
+import { Icon, type IconName } from "./Icon";
 import { spacing } from "@theme";
+import { colors } from "@theme/colors";
 
 interface EmptyStateProps {
-  /** Large decorative icon (emoji) */
-  icon: string;
+  /** Icon name from the Icon registry */
+  icon: IconName;
   /** Primary message */
   title: string;
   /** Supporting message */
@@ -24,7 +26,7 @@ interface EmptyStateProps {
  *
  * @example
  * <EmptyState
- *   icon="🔖"
+ *   icon="bookmark"
  *   title="No saved resorts yet"
  *   message="Resorts you save will appear here for easy access."
  *   action={{ label: "Explore resorts", onPress: () => router.push("/(main)") }}
@@ -33,7 +35,14 @@ interface EmptyStateProps {
 export function EmptyState({ icon, title, message, action }: EmptyStateProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.icon}>{icon}</Text>
+      <View style={styles.iconContainer}>
+        <Icon
+          name={icon}
+          size={48}
+          color={colors.text.tertiary}
+          strokeWidth={1.25}
+        />
+      </View>
       <Text variant="h2" align="center" color="rich" style={styles.title}>
         {title}
       </Text>
@@ -61,8 +70,7 @@ const styles = StyleSheet.create({
     padding: spacing["3xl"],
     gap: spacing.md,
   },
-  icon: {
-    fontSize: 64,
+  iconContainer: {
     marginBottom: spacing.lg,
   },
   title: {

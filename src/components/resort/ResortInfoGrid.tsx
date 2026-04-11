@@ -1,6 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { Text } from "@components/ui/Text";
 import { Badge } from "@components/ui/Badge";
+import { Icon, type IconName } from "@components/ui/Icon";
 import { useContent } from "@hooks/useContent";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius } from "@theme";
@@ -67,9 +68,19 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
         ? content.infoGrid.expert
         : content.infoGrid.intermediate;
 
-  const cells = [
+  const cells: Array<{
+    icon: IconName;
+    label: string;
+    primary?: string | null;
+    sub?: string | null;
+    badge?: {
+      label: string;
+      variant: "success" | "brand" | "warning" | "error";
+    };
+    activities?: string[];
+  }> = [
     {
-      icon: "❄️",
+      icon: "snowflake",
       label: content.infoGrid.snowSureness,
       primary: snowLabel(attributes.snowReliability),
       sub: `${attributes.snowReliability}/5 rating`,
@@ -79,7 +90,7 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
       } as const,
     },
     {
-      icon: "⛷️",
+      icon: "mountain",
       label: content.infoGrid.slopeDistance,
       primary: `${stats.totalKm} km`,
       sub:
@@ -88,13 +99,13 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
         content.infoGrid.lifts.replace("{lifts}", String(stats.lifts)),
     },
     {
-      icon: "🎿",
+      icon: "activity",
       label: content.infoGrid.slopeDifficulty,
       primary: dominantTerrain,
       sub: `${terrain.beginner}% green · ${terrain.intermediate}% blue · ${terrain.advanced}% black`,
     },
     {
-      icon: "✈️",
+      icon: "plane",
       label: content.infoGrid.transferTime,
       primary: transferLabel,
       sub: content.infoGrid.from.replace(
@@ -103,7 +114,7 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
       ),
     },
     {
-      icon: "🏘️",
+      icon: "map-pin",
       label: content.infoGrid.townStyle,
       primary: attributes.townStyle,
       sub:
@@ -114,7 +125,7 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
             : content.infoGrid.crowdModerate,
     },
     {
-      icon: "👨‍👩‍👧",
+      icon: "users-round",
       label: content.infoGrid.familyFriendly,
       primary: familyLabel(attributes.familyScore),
       sub: `${attributes.familyScore}/5 family score`,
@@ -124,7 +135,7 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
       } as const,
     },
     {
-      icon: "🍻",
+      icon: "wine",
       label: content.infoGrid.barsLabel,
       primary: content.infoGrid.barsCount.replace(
         "{count}",
@@ -138,7 +149,7 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
             : content.infoGrid.nightlifeLow,
     },
     {
-      icon: "🏔️",
+      icon: "compass",
       label: content.infoGrid.otherActivities,
       primary: null,
       sub: null,
@@ -154,7 +165,12 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
           style={[styles.cell, isTablet && styles.cellTablet]}
         >
           <View style={styles.cellHeader}>
-            <Text style={styles.cellIcon}>{cell.icon}</Text>
+            <Icon
+              name={cell.icon}
+              size={18}
+              color={colors.brand.primary}
+              strokeWidth={1.5}
+            />
             <Text
               variant="captionMedium"
               color={colors.text.tertiary}
@@ -229,9 +245,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.xs,
     marginBottom: spacing.xxs,
-  },
-  cellIcon: {
-    fontSize: 14,
   },
   cellLabel: {
     letterSpacing: 0.4,

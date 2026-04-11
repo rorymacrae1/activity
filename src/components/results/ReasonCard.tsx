@@ -6,6 +6,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text } from "@/components/ui";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
@@ -17,7 +18,7 @@ import { typography } from "@/theme/typography";
 const ATTRIBUTE_CONFIG: Record<
   string,
   {
-    icon: string;
+    icon: IconName;
     label: string;
     description: string;
     goodMessage: string;
@@ -25,35 +26,35 @@ const ATTRIBUTE_CONFIG: Record<
   }
 > = {
   skill: {
-    icon: "⛷️",
+    icon: "mountain",
     label: "Skill Match",
     description: "Terrain difficulty alignment",
     goodMessage: "Good terrain variety for your level",
     excellentMessage: "Perfect terrain for your ability",
   },
   budget: {
-    icon: "💰",
+    icon: "wallet",
     label: "Budget Fit",
     description: "Price range compatibility",
     goodMessage: "Reasonable value for money",
     excellentMessage: "Excellent value within your budget",
   },
   vibe: {
-    icon: "✨",
+    icon: "sparkles",
     label: "Vibe Match",
     description: "Atmosphere alignment",
     goodMessage: "Matches your preferred atmosphere",
     excellentMessage: "Perfect atmosphere for your style",
   },
   activity: {
-    icon: "🎿",
+    icon: "activity",
     label: "Activities",
     description: "Available experiences",
     goodMessage: "Good activity options available",
     excellentMessage: "Excellent range of activities",
   },
   snow: {
-    icon: "❄️",
+    icon: "snowflake",
     label: "Snow Quality",
     description: "Reliability and conditions",
     goodMessage: "Reliable snow conditions",
@@ -113,7 +114,12 @@ export function ReasonCard({ attribute, score, width = 260 }: ReasonCardProps) {
       {/* Icon and Label */}
       <View style={styles.header}>
         <View style={styles.iconContainer}>
-          <Text style={styles.icon}>{config.icon}</Text>
+          <Icon
+            name={config.icon}
+            size={20}
+            color={colors.brand.primary}
+            strokeWidth={1.5}
+          />
         </View>
         <View style={styles.labelContainer}>
           <Text style={styles.label}>{config.label}</Text>
@@ -172,9 +178,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: spacing.sm,
-  },
-  icon: {
-    fontSize: 20,
   },
   labelContainer: {
     flex: 1,

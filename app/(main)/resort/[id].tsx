@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import Head from "expo-router/head";
 import { View, StyleSheet, ScrollView, Pressable, Image } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSequence,
+  withSpring,
+} from "react-native-reanimated";
+import { Heart } from "lucide-react-native";
 import { getResortSchema, getResortBreadcrumbs } from "@/utils/schema";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getResortByIdAsync, getSimilarResorts } from "@services/resort";
@@ -37,6 +44,12 @@ export default function ResortDetailScreen() {
   const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
   const { heroHeight, hPadding, isTablet } = useLayout();
   const content = useContent();
+
+  // Animation hook — must be unconditional (Rules of Hooks)
+  const heartScale = useSharedValue(1);
+  const heartAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: heartScale.value }],
+  }));
 
   useEffect(() => {
     async function loadResort() {
@@ -81,7 +94,7 @@ export default function ResortDetailScreen() {
           <meta name="robots" content="noindex, nofollow" />
         </Head>
         <EmptyState
-          icon="🏔️"
+          icon="mountain"
           title={content.resort.notFoundTitle}
           message={content.resort.notFoundMessage}
           action={{
@@ -94,8 +107,14 @@ export default function ResortDetailScreen() {
   }
 
   const isSaved = isFavorite(resort.id);
-  const handleToggleFavorite = () =>
+
+  const handleToggleFavorite = () => {
+    heartScale.value = withSequence(
+      withSpring(1.4, { damping: 6, stiffness: 400 }),
+      withSpring(1, { damping: 10, stiffness: 300 }),
+    );
     isSaved ? removeFavorite(resort.id) : addFavorite(resort.id);
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -151,7 +170,14 @@ export default function ResortDetailScreen() {
             isSaved ? content.resort.unsave : content.resort.save
           }
         >
-          <Text style={styles.navButtonText}>{isSaved ? "❤️" : "🤍"}</Text>
+          <Animated.View style={heartAnimatedStyle}>
+            <Heart
+              size={20}
+              strokeWidth={1.75}
+              color={isSaved ? colors.brand.accent : colors.ink.muted}
+              fill={isSaved ? colors.brand.accent : "none"}
+            />
+          </Animated.View>
         </Pressable>
       </View>
 

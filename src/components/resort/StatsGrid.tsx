@@ -1,5 +1,6 @@
 import { View, StyleSheet } from "react-native";
 import { Text } from "@components/ui/Text";
+import { Icon, type IconName } from "@components/ui/Icon";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, typography } from "@theme";
 import type { Resort } from "@/types/resort";
@@ -8,11 +9,21 @@ interface StatsGridProps {
   resort: Resort;
 }
 
-const STATS = (resort: Resort) => [
-  { label: "Piste Length", value: `${resort.stats.totalKm}km`, icon: "⛷️" },
-  { label: "Runs",         value: resort.stats.totalRuns.toString(),    icon: "🎿" },
-  { label: "Lifts",        value: resort.stats.lifts.toString(),        icon: "🚡" },
-  { label: "Peak",         value: `${resort.location.peakAltitude}m`,  icon: "🏔️" },
+const STATS = (
+  resort: Resort,
+): { label: string; value: string; icon: IconName }[] => [
+  {
+    label: "Piste Length",
+    value: `${resort.stats.totalKm}km`,
+    icon: "mountain",
+  },
+  { label: "Runs", value: resort.stats.totalRuns.toString(), icon: "gauge" },
+  { label: "Lifts", value: resort.stats.lifts.toString(), icon: "trending-up" },
+  {
+    label: "Peak",
+    value: `${resort.location.peakAltitude}m`,
+    icon: "trending-up",
+  },
 ];
 
 /**
@@ -30,7 +41,12 @@ export function StatsGrid({ resort }: StatsGridProps) {
           key={stat.label}
           style={[styles.statBox, isTablet && styles.statBoxTablet]}
         >
-          <Text style={styles.icon}>{stat.icon}</Text>
+          <Icon
+            name={stat.icon}
+            size={22}
+            color={colors.brand.primary}
+            strokeWidth={1.5}
+          />
           <Text style={[typography.stat, { color: colors.text.primary }]}>
             {stat.value}
           </Text>
@@ -64,7 +80,6 @@ const styles = StyleSheet.create({
     width: undefined,
   },
   icon: {
-    fontSize: 24,
     marginBottom: spacing.xs,
   },
 });

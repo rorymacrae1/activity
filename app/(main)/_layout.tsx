@@ -1,9 +1,10 @@
 import { Tabs } from "expo-router";
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import { colors } from "@theme/colors";
 
 interface TabIconProps {
-  emoji: string;
+  icon: IconName;
   label: string;
   focused: boolean;
 }
@@ -11,31 +12,20 @@ interface TabIconProps {
 /**
  * Accessible tab icon component.
  */
-function TabIcon({ emoji, label, focused }: TabIconProps) {
+function TabIcon({ icon, label, focused }: TabIconProps) {
   return (
     <View accessibilityLabel={label} accessibilityRole="image">
-      <Text
-        style={[styles.tabEmoji, focused ? styles.focused : styles.unfocused]}
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-      >
-        {emoji}
-      </Text>
+      <Icon
+        name={icon}
+        size={22}
+        color={focused ? colors.primary : colors.text.tertiary}
+        strokeWidth={focused ? 2 : 1.5}
+      />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  tabEmoji: {
-    fontSize: 20,
-  },
-  focused: {
-    opacity: 1,
-  },
-  unfocused: {
-    opacity: 0.5,
-  },
-});
+const styles = StyleSheet.create({});
 
 /**
  * Main app layout with bottom tab navigation.
@@ -56,10 +46,20 @@ export default function MainLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          title: "Home",
+          tabBarAccessibilityLabel: "Home tab",
+          tabBarIcon: ({ focused }) => (
+            <TabIcon icon="home" label="Home" focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="discover"
+        options={{
           title: "Discover",
           tabBarAccessibilityLabel: "Discover resorts tab",
           tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="🏔️" label="Discover" focused={focused} />
+            <TabIcon icon="search" label="Discover" focused={focused} />
           ),
         }}
       />
@@ -69,7 +69,7 @@ export default function MainLayout() {
           title: "Saved",
           tabBarAccessibilityLabel: "Saved resorts tab",
           tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="❤️" label="Saved" focused={focused} />
+            <TabIcon icon="heart" label="Saved" focused={focused} />
           ),
         }}
       />
@@ -79,7 +79,7 @@ export default function MainLayout() {
           title: "Profile",
           tabBarAccessibilityLabel: "Profile and settings tab",
           tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="👤" label="Profile" focused={focused} />
+            <TabIcon icon="user" label="Profile" focused={focused} />
           ),
         }}
       />

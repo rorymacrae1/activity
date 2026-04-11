@@ -135,12 +135,31 @@ async function fetchCloudResorts(): Promise<Resort[] | null> {
   if (!supabase || !isSupabaseConfigured) {
     return cachedResorts;
   }
+  const client = supabase;
+
+  // Return cached data if it's still fresh
+  if (cachedResorts && Date.now() - cacheTimestamp < CACHE_TTL_MS) {
+    return cachedResorts;
+  }
+
+  // Use Promise.race for a reliable cross-environment timeout.
+  // Wrap builder in a native Promise first — Hermes (React Native JS engine)
+  // does not reliably adopt custom thenables in Promise.race.
+  type FetchResult = { data: unknown[] | null; error: { message: string } | null };
+  const fetchPromise = new Promise<FetchResult>((resolve, reject) => {
+    (client
+      .from("resort")
+      .select("*")
+      .order("name") as unknown as PromiseLike<FetchResult>
+    ).then(resolve, reject);
+  });
+
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error("Resort fetch timed out")), 8000),
+  );
 
   try {
-    const { data, error } = await supabase
-      .from("resort") // Note: singular table name
-      .select("*")
-      .order("name");
+    const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
     if (error) {
       console.warn("Failed to fetch resorts from Supabase:", error.message);
@@ -312,9 +331,24 @@ export async function getResortCountsByCountry(): Promise<
   if (!supabase || !isSupabaseConfigured) {
     return {};
   }
+  const client = supabase;
+
+  // Wrap builder in a native Promise first — Hermes does not reliably adopt
+  // custom thenables in Promise.race.
+  type CountryResult = { data: { country: string }[] | null; error: { message: string } | null };
+  const fetchPromise = new Promise<CountryResult>((resolve, reject) => {
+    (client
+      .from("resort")
+      .select("country") as unknown as PromiseLike<CountryResult>
+    ).then(resolve, reject);
+  });
+
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new Error("Resort counts fetch timed out")), 8000),
+  );
 
   try {
-    const { data, error } = await supabase.from("resort").select("country");
+    const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
     if (error || !data) {
       console.warn("Failed to fetch resort counts:", error?.message);

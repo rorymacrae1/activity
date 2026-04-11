@@ -32,6 +32,7 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, spacing, radius, shadows } from "@theme";
 import { Text } from "./Text";
+import { Icon, type IconName } from "./Icon";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -74,11 +75,11 @@ export function useToast(): ToastContextValue {
 // Toast Icons
 // ─────────────────────────────────────────────────────────────────────────────
 
-const TOAST_ICONS: Record<ToastType, string> = {
-  success: "✓",
-  error: "✕",
-  info: "ℹ",
-  warning: "⚠",
+const TOAST_ICONS: Record<ToastType, IconName> = {
+  success: "check",
+  error: "x",
+  info: "info",
+  warning: "alert-triangle",
 };
 
 const TOAST_COLORS: Record<
@@ -179,7 +180,12 @@ function Toast({ config, onHide }: ToastProps) {
             { backgroundColor: colorScheme.border },
           ]}
         >
-          <Text style={styles.icon}>{TOAST_ICONS[config.type]}</Text>
+          <Icon
+            name={TOAST_ICONS[config.type]}
+            size={16}
+            color="#fff"
+            strokeWidth={2.5}
+          />
         </View>
         <Text style={styles.message} numberOfLines={2}>
           {config.message}
@@ -266,11 +272,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: spacing.sm,
-  },
-  icon: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.text.inverse,
   },
   message: {
     flex: 1,

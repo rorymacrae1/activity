@@ -3,15 +3,8 @@
  * Allows users to set their home airport and add visited resorts
  */
 
-import { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  Pressable,
-  Alert,
-} from "react-native";
+import { useState, useEffect, useRef } from "react";
+import { View, StyleSheet, ScrollView, Pressable, Alert } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,10 +21,13 @@ import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
-import { Card } from "@components/ui/Card";
+import { Icon } from "@components/ui/Icon";
 import { LoadingState } from "@components/ui/LoadingState";
 import { ResortSearchInput } from "@components/home/ResortSearchInput";
+import { AirportSearchInput } from "@components/home/AirportSearchInput";
+import { AIRPORTS } from "@/data/airports";
 import type { Resort } from "@/types/resort";
+import type { Airport } from "@/data/airports";
 
 interface VisitedResortItem {
   resortId: string;
@@ -43,9 +39,10 @@ export default function CompleteProfileScreen() {
   const { hPadding } = useLayout();
 
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [homeAirportValue, setHomeAirportValue] = useState("");
+  const [selectedAirport, setSelectedAirport] = useState<Airport | null>(null);
   const [visitedResorts, setVisitedResorts] = useState<VisitedResortItem[]>([]);
+  const [justAddedId, setJustAddedId] = useState<string | null>(null);
+  const justAddedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load existing data
   useEffect(() => {
@@ -57,7 +54,11 @@ export default function CompleteProfileScreen() {
         getVisitedResorts(user.id),
       ]);
 
-      setHomeAirportValue(airport ?? "");
+      // Reconstruct Airport object from saved IATA code
+      if (airport) {
+        const found = AIRPORTS.find((a) => a.iata === airport);
+        setSelectedAirport(found ?? null);
+      }
 
       // Load resort details for visited resorts
       const visitedWithDetails = await Promise.all(
@@ -78,6 +79,11 @@ export default function CompleteProfileScreen() {
 
     // Optimistic update
     setVisitedResorts((prev) => [...prev, { resortId: resort.id, resort }]);
+
+    // Briefly highlight the new row
+    setJustAddedId(resort.id);
+    if (justAddedTimer.current) clearTimeout(justAddedTimer.current);
+    justAddedTimer.current = setTimeout(() => setJustAddedId(null), 1500);
 
     const { error } = await addVisitedResort(user.id, resort.id);
     if (error) {
@@ -103,23 +109,17 @@ export default function CompleteProfileScreen() {
     }
   };
 
-  const handleSaveAirport = async () => {
-    if (!user || !homeAirportValue.trim()) return;
+  const handleSelectAirport = async (airport: Airport) => {
+    setSelectedAirport(airport);
+    if (!user) return;
 
-    setSaving(true);
-    const { error } = await setHomeAirport(user.id, homeAirportValue.trim());
-    setSaving(false);
-
+    const { error } = await setHomeAirport(user.id, airport.iata);
     if (error) {
       Alert.alert("Error", "Could not save airport. Please try again.");
     }
   };
 
   const handleDone = () => {
-    // Save airport if changed
-    if (homeAirportValue.trim()) {
-      handleSaveAirport();
-    }
     router.back();
   };
 
@@ -165,9 +165,16 @@ export default function CompleteProfileScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {/* Resort History Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, styles.sectionResort]}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionEmoji}>🏔️</Text>
+            <View style={styles.sectionIconContainer}>
+              <Icon
+                name="mountain"
+                size={24}
+                color={colors.brand.primary}
+                strokeWidth={1.5}
+              />
+            </View>
             <View>
               <Text variant="h3">Resort History</Text>
               <Text variant="body" color={colors.text.secondary}>
@@ -182,18 +189,32 @@ export default function CompleteProfileScreen() {
             excludeIds={visitedResortIds}
           />
 
-          {/* List of visited resorts */}
+          {/* Visited resort chips */}
           {visitedResorts.length > 0 && (
             <View style={styles.visitedList}>
               {visitedResorts.map(({ resortId, resort }) => (
-                <View key={resortId} style={styles.visitedItem}>
+                <View
+                  key={resortId}
+                  style={[
+                    styles.visitedItem,
+                    justAddedId === resortId && styles.visitedItemHighlight,
+                  ]}
+                >
+                  <View style={styles.visitedIconWrap}>
+                    <Icon
+                      name="mountain"
+                      size={16}
+                      color={colors.brand.primary}
+                      strokeWidth={1.5}
+                    />
+                  </View>
                   <View style={styles.visitedInfo}>
                     <Text style={styles.visitedName}>
                       {resort?.name ?? resortId}
                     </Text>
                     {resort && (
-                      <Text variant="caption" color={colors.text.secondary}>
-                        {resort.region}, {resort.country}
+                      <Text style={styles.visitedLocation}>
+                        {resort.region} · {resort.country}
                       </Text>
                     )}
                   </View>
@@ -202,8 +223,14 @@ export default function CompleteProfileScreen() {
                     onPress={() => handleRemoveVisitedResort(resortId)}
                     accessibilityRole="button"
                     accessibilityLabel={`Remove ${resort?.name ?? resortId}`}
+                    hitSlop={8}
                   >
-                    <Text style={styles.removeIcon}>✕</Text>
+                    <Icon
+                      name="x"
+                      size={14}
+                      color={colors.text.secondary}
+                      strokeWidth={2}
+                    />
                   </Pressable>
                 </View>
               ))}
@@ -212,9 +239,16 @@ export default function CompleteProfileScreen() {
         </View>
 
         {/* Home Airport Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, styles.sectionAirport]}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionEmoji}>✈️</Text>
+            <View style={styles.sectionIconContainer}>
+              <Icon
+                name="plane"
+                size={24}
+                color={colors.brand.primary}
+                strokeWidth={1.5}
+              />
+            </View>
             <View>
               <Text variant="h3">Home Airport</Text>
               <Text variant="body" color={colors.text.secondary}>
@@ -223,13 +257,10 @@ export default function CompleteProfileScreen() {
             </View>
           </View>
 
-          <TextInput
-            style={styles.airportInput}
-            value={homeAirportValue}
-            onChangeText={setHomeAirportValue}
-            placeholder="e.g. Edinburgh Airport"
-            placeholderTextColor={colors.text.tertiary}
-            onBlur={handleSaveAirport}
+          <AirportSearchInput
+            onSelect={handleSelectAirport}
+            selectedAirport={selectedAirport}
+            placeholder="Search for your home airport..."
           />
         </View>
 
@@ -238,7 +269,6 @@ export default function CompleteProfileScreen() {
           label="Done"
           onPress={handleDone}
           fullWidth
-          loading={saving}
           style={styles.doneButton}
         />
       </ScrollView>
@@ -284,6 +314,13 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: spacing.xl,
+    zIndex: 1,
+  },
+  sectionResort: {
+    zIndex: 2,
+  },
+  sectionAirport: {
+    zIndex: 1,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -291,52 +328,65 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     marginBottom: spacing.md,
   },
-  sectionEmoji: {
-    fontSize: 28,
-    marginTop: -2,
+  sectionIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.md,
+    backgroundColor: colors.brand.primarySubtle,
+    alignItems: "center",
+    justifyContent: "center",
   },
   visitedList: {
-    marginTop: spacing.md,
-    gap: spacing.sm,
+    marginTop: spacing.sm,
+    gap: spacing.xs,
   },
   visitedItem: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
     backgroundColor: colors.surface.secondary,
+    borderWidth: 1,
+    borderColor: colors.border.default,
     paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingLeft: spacing.sm,
+    paddingRight: spacing.sm,
     borderRadius: radius.md,
+    gap: spacing.sm,
+  },
+  visitedItemHighlight: {
+    backgroundColor: colors.brand.primarySubtle,
+    borderColor: colors.brand.primary,
+  },
+  visitedIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: radius.sm,
+    backgroundColor: colors.surface.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
   },
   visitedInfo: {
     flex: 1,
   },
   visitedName: {
-    fontSize: 16,
-    fontWeight: "500",
+    fontSize: 15,
+    fontWeight: "600",
     color: colors.text.primary,
+    lineHeight: 20,
+  },
+  visitedLocation: {
+    fontSize: 12,
+    color: colors.text.secondary,
+    marginTop: 1,
   },
   removeButton: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
     borderRadius: radius.full,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.surface.tertiary,
-  },
-  removeIcon: {
-    fontSize: 14,
-    color: colors.text.secondary,
-  },
-  airportInput: {
-    height: 48,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    fontSize: 16,
-    color: colors.text.primary,
-    backgroundColor: colors.surface.primary,
+    flexShrink: 0,
   },
   doneButton: {
     marginTop: spacing.lg,

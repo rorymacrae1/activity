@@ -8,17 +8,18 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 import { Text } from "./Text";
+import { Icon, type IconName } from "./Icon";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius, shadows } from "@theme";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /** Features that are coming soon — shown in dropdown */
-const COMING_SOON = [
-  { id: "weather", label: "Live Weather", icon: "🌨️" },
-  { id: "social", label: "Trip Planning", icon: "👥" },
-  { id: "deals", label: "Lift Pass Deals", icon: "🎫" },
-  { id: "reviews", label: "Community Reviews", icon: "⭐" },
+const COMING_SOON: { id: string; label: string; icon: IconName }[] = [
+  { id: "weather", label: "Live Weather", icon: "cloud-snow" },
+  { id: "social", label: "Trip Planning", icon: "users" },
+  { id: "deals", label: "Lift Pass Deals", icon: "ticket" },
+  { id: "reviews", label: "Community Reviews", icon: "star" },
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -94,7 +95,12 @@ function ComingSoonButton() {
       <Animated.View style={[comingSoonStyles.dropdown, dropdownStyle]}>
         {COMING_SOON.map((feature) => (
           <View key={feature.id} style={comingSoonStyles.feature}>
-            <Text style={comingSoonStyles.featureIcon}>{feature.icon}</Text>
+            <Icon
+              name={feature.icon}
+              size={16}
+              color={colors.ink.muted}
+              strokeWidth={1.5}
+            />
             <Text style={comingSoonStyles.featureLabel}>{feature.label}</Text>
           </View>
         ))}
@@ -159,9 +165,6 @@ const comingSoonStyles = StyleSheet.create({
     gap: spacing.sm,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.xs,
-  },
-  featureIcon: {
-    fontSize: 16,
   },
   featureLabel: {
     fontSize: 14,

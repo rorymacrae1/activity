@@ -22,6 +22,8 @@ import { Button } from "@components/ui/Button";
 import { LoadingState } from "@components/ui/LoadingState";
 import { EmptyState } from "@components/ui/EmptyState";
 import { ScreenContainer } from "@components/ui/ScreenContainer";
+import { NavBar } from "@components/ui/NavBar";
+import { Search } from "lucide-react-native";
 import {
   TopPickHero,
   ReasonCarousel,
@@ -41,10 +43,17 @@ export default function ResultsScreen() {
     const setHasCompletedOnboarding =
       usePreferencesStore.getState().setHasCompletedOnboarding;
 
-    getRecommendations(preferences)
+    // Safety deadline: if the entire recommendation pipeline hangs for any
+    // reason (network, service worker, extension interference), force-resolve
+    // to empty so the spinner never spins forever.
+    const deadline = new Promise<RecommendationResult[]>((resolve) =>
+      setTimeout(() => resolve([]), 12000),
+    );
+
+    Promise.race([getRecommendations(preferences), deadline])
       .then((r) => {
         setResults(r);
-        setHasCompletedOnboarding(true);
+        if (r.length > 0) setHasCompletedOnboarding(true);
       })
       .catch(() => setResults([]))
       .finally(() => setLoading(false));
@@ -53,6 +62,7 @@ export default function ResultsScreen() {
   if (loading) {
     return (
       <ScreenContainer>
+        <NavBar />
         <LoadingState message={content.onboarding.results.loading} />
       </ScreenContainer>
     );
@@ -62,6 +72,7 @@ export default function ResultsScreen() {
   if (results.length === 0) {
     return (
       <ScreenContainer>
+        <NavBar />
         <Head>
           <title>Your Top Ski Matches | PisteWise</title>
           <meta
@@ -71,7 +82,7 @@ export default function ResultsScreen() {
           <meta name="robots" content="noindex, nofollow" />
         </Head>
         <EmptyState
-          icon="🤔"
+          icon="search"
           title={content.onboarding.results.emptyTitle}
           message={content.onboarding.results.emptyMessage}
           action={{
@@ -112,6 +123,7 @@ export default function ResultsScreen() {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
+      <NavBar />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -161,7 +173,7 @@ export default function ResultsScreen() {
           accessibilityLabel="Want to know how this was chosen? Tap to see the decision flow visualization"
         >
           <View style={styles.decisionFlowIcon}>
-            <Text style={styles.decisionFlowEmoji}>🔍</Text>
+            <Search size={22} color={colors.brand.primary} strokeWidth={1.5} />
           </View>
           <View style={styles.decisionFlowContent}>
             <Text style={styles.decisionFlowTitle}>
@@ -174,6 +186,17 @@ export default function ResultsScreen() {
           <Text style={styles.decisionFlowArrow}>→</Text>
         </Pressable>
       </ScrollView>
+
+      {/* Sticky footer — enter the main app */}
+      <View style={styles.stickyFooter}>
+        <Button
+          label="Explore Resorts →"
+          onPress={() => router.replace("/(main)")}
+          fullWidth
+          size="prominent"
+          accessibilityLabel="Go to the main app to explore resorts"
+        />
+      </View>
     </ScreenContainer>
   );
 }
@@ -222,9 +245,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: spacing.md,
   },
-  decisionFlowEmoji: {
-    fontSize: 24,
-  },
   decisionFlowContent: {
     flex: 1,
   },
@@ -242,5 +262,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: colors.brand.primary,
     marginLeft: spacing.sm,
+  },
+  stickyFooter: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.lg,
+    backgroundColor: colors.background.primary,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.subtle,
   },
 });

@@ -7,6 +7,7 @@ import React from "react";
 import { View, StyleSheet, Pressable, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { Text } from "@/components/ui";
+import { Icon } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
@@ -45,11 +46,11 @@ function formatPriceLevel(level: number): string {
 }
 
 /**
- * Get medal emoji for top 3 ranks
+ * Get rank badge color for top positions
  */
-function getRankBadge(rank: number): string | null {
-  if (rank === 2) return "🥈";
-  if (rank === 3) return "🥉";
+function getRankColor(rank: number): string | null {
+  if (rank === 2) return "#94A3B8"; // silver
+  if (rank === 3) return "#C4793A"; // bronze
   return null;
 }
 
@@ -74,7 +75,7 @@ export function RunnerUpCard({
   const router = useRouter();
   const { resort, matchScore } = result;
 
-  const rankBadge = getRankBadge(rank);
+  const rankColor = getRankColor(rank);
   const scoreColor = getScoreColor(matchScore);
   const priceLevel = getPriceLevel(resort.attributes.averageDailyCost);
 
@@ -109,9 +110,9 @@ export function RunnerUpCard({
         <Image source={imageSource} style={styles.image} resizeMode="cover" />
 
         {/* Rank Badge */}
-        {rankBadge && (
-          <View style={styles.rankBadge}>
-            <Text style={styles.rankEmoji}>{rankBadge}</Text>
+        {rankColor && (
+          <View style={[styles.rankBadge, { backgroundColor: rankColor }]}>
+            <Icon name="star" size={14} color="#fff" strokeWidth={2} />
           </View>
         )}
 
@@ -132,8 +133,24 @@ export function RunnerUpCard({
 
         {/* Quick Stats */}
         <View style={styles.statsRow}>
-          <Text style={styles.stat}>⛷️ {resort.stats.totalKm}km</Text>
-          <Text style={styles.stat}>💰 {formatPriceLevel(priceLevel)}</Text>
+          <View style={styles.statItem}>
+            <Icon
+              name="mountain"
+              size={12}
+              color={colors.text.secondary}
+              strokeWidth={2}
+            />
+            <Text style={styles.stat}>{resort.stats.totalKm}km</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Icon
+              name="wallet"
+              size={12}
+              color={colors.text.secondary}
+              strokeWidth={2}
+            />
+            <Text style={styles.stat}>{formatPriceLevel(priceLevel)}</Text>
+          </View>
         </View>
       </View>
     </Pressable>
@@ -170,10 +187,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: spacing.xs,
     left: spacing.xs,
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
     borderRadius: radius.full,
-    backgroundColor: colors.surface.primary,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: colors.ink.rich,
@@ -181,9 +197,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 2,
-  },
-  rankEmoji: {
-    fontSize: 16,
   },
   scoreBadge: {
     position: "absolute",
@@ -215,6 +228,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: spacing.sm,
     marginTop: spacing.xs,
+  },
+  statItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   stat: {
     ...typography.bodySmall,

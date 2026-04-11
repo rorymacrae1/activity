@@ -6,6 +6,7 @@
 import React from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { Text } from "@/components/ui";
+import { Icon } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
@@ -29,7 +30,12 @@ export function ReviewsSection({ resort }: ReviewsSectionProps) {
       <Text style={styles.sectionTitle}>Recent Reviews</Text>
       <View style={styles.placeholderCard}>
         <View style={styles.placeholderIcon}>
-          <Text style={styles.placeholderEmoji}>⭐</Text>
+          <Icon
+            name="star"
+            size={24}
+            color={colors.sentiment.warning}
+            strokeWidth={1.5}
+          />
         </View>
         <View style={styles.placeholderContent}>
           <Text style={styles.placeholderTitle}>Reviews coming soon</Text>
@@ -90,7 +96,12 @@ export function AccommodationSection({ resort }: AccommodationSectionProps) {
       <Text style={styles.sectionTitle}>Where Can I Stay?</Text>
       <View style={styles.placeholderCard}>
         <View style={styles.placeholderIcon}>
-          <Text style={styles.placeholderEmoji}>🏨</Text>
+          <Icon
+            name="hotel"
+            size={24}
+            color={colors.brand.primary}
+            strokeWidth={1.5}
+          />
         </View>
         <View style={styles.placeholderContent}>
           <Text style={styles.placeholderTitle}>
@@ -108,7 +119,12 @@ export function AccommodationSection({ resort }: AccommodationSectionProps) {
           accessibilityRole="button"
           accessibilityLabel="Search hotels"
         >
-          <Text style={styles.quickLinkIcon}>🏨</Text>
+          <Icon
+            name="hotel"
+            size={20}
+            color={colors.text.secondary}
+            strokeWidth={1.5}
+          />
           <Text style={styles.quickLinkText}>Hotels</Text>
         </Pressable>
         <Pressable
@@ -116,7 +132,12 @@ export function AccommodationSection({ resort }: AccommodationSectionProps) {
           accessibilityRole="button"
           accessibilityLabel="Search chalets"
         >
-          <Text style={styles.quickLinkIcon}>🏔️</Text>
+          <Icon
+            name="mountain"
+            size={20}
+            color={colors.text.secondary}
+            strokeWidth={1.5}
+          />
           <Text style={styles.quickLinkText}>Chalets</Text>
         </Pressable>
         <Pressable
@@ -124,7 +145,12 @@ export function AccommodationSection({ resort }: AccommodationSectionProps) {
           accessibilityRole="button"
           accessibilityLabel="Search apartments"
         >
-          <Text style={styles.quickLinkIcon}>🏠</Text>
+          <Icon
+            name="home"
+            size={20}
+            color={colors.text.secondary}
+            strokeWidth={1.5}
+          />
           <Text style={styles.quickLinkText}>Apartments</Text>
         </Pressable>
       </View>
@@ -161,7 +187,12 @@ export function TransportSection({ resort }: TransportSectionProps) {
         {/* Nearest Airport */}
         <View style={styles.transportOption}>
           <View style={styles.transportIcon}>
-            <Text style={styles.transportEmoji}>✈️</Text>
+            <Icon
+              name="plane"
+              size={20}
+              color={colors.brand.primary}
+              strokeWidth={1.5}
+            />
           </View>
           <View style={styles.transportContent}>
             <Text style={styles.transportLabel}>Nearest Airport</Text>
@@ -175,7 +206,12 @@ export function TransportSection({ resort }: TransportSectionProps) {
         {/* Drive time placeholder */}
         <View style={styles.transportOption}>
           <View style={styles.transportIcon}>
-            <Text style={styles.transportEmoji}>🚗</Text>
+            <Icon
+              name="car"
+              size={20}
+              color={colors.brand.primary}
+              strokeWidth={1.5}
+            />
           </View>
           <View style={styles.transportContent}>
             <Text style={styles.transportLabel}>By Car</Text>
@@ -191,7 +227,12 @@ export function TransportSection({ resort }: TransportSectionProps) {
         {/* Train placeholder */}
         <View style={styles.transportOption}>
           <View style={styles.transportIcon}>
-            <Text style={styles.transportEmoji}>🚆</Text>
+            <Icon
+              name="train"
+              size={20}
+              color={colors.brand.primary}
+              strokeWidth={1.5}
+            />
           </View>
           <View style={styles.transportContent}>
             <Text style={styles.transportLabel}>By Train</Text>
@@ -239,9 +280,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: spacing.md,
-  },
-  placeholderEmoji: {
-    fontSize: 24,
   },
   placeholderContent: {
     flex: 1,
@@ -314,10 +352,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: colors.border.subtle,
-  },
-  quickLinkIcon: {
-    fontSize: 24,
-    marginBottom: spacing.xs,
+    gap: spacing.xs,
   },
   quickLinkText: {
     ...typography.labelSmall,
@@ -343,9 +378,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: spacing.md,
-  },
-  transportEmoji: {
-    fontSize: 20,
   },
   transportContent: {
     flex: 1,

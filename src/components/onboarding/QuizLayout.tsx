@@ -57,13 +57,14 @@ export function QuizLayout({
 
   if (!isTablet) {
     // ─── Mobile: plain white screen ───────────────────────────────────────────
+    // NavBar + mobileBody(flex:1) + mobileFooter as direct SafeAreaView children.
+    // Avoids an intermediate flex:1 wrapper whose height Yoga can miscalculate,
+    // which causes the footer to visually overlap the last scrollable item.
     return (
       <SafeAreaView style={styles.mobileSafe}>
         <NavBar />
-        <View style={styles.mobileContent}>
-          <View style={styles.mobileBody}>{children}</View>
-          {footer && <View style={styles.mobileFooter}>{footer}</View>}
-        </View>
+        <View style={styles.mobileBody}>{children}</View>
+        {footer && <View style={styles.mobileFooter}>{footer}</View>}
       </SafeAreaView>
     );
   }
@@ -106,10 +107,8 @@ const styles = StyleSheet.create({
   // ── Mobile ──────────────────────────────────────────────────────────────────
   mobileSafe: {
     flex: 1,
+    flexDirection: "column",
     backgroundColor: colors.background.primary,
-  },
-  mobileContent: {
-    flex: 1,
   },
   mobileBody: {
     flex: 1,
@@ -118,6 +117,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.lg,
     paddingTop: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border.subtle,
     backgroundColor: colors.background.primary,
   },
 

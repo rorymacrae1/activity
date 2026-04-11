@@ -9,6 +9,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "@components/ui/Text";
 import { Badge } from "@components/ui/Badge";
+import { Icon } from "@components/ui/Icon";
 import { colors, spacing, radius } from "@theme";
 import type { RecommendationResult } from "@/types/recommendation";
 
@@ -60,7 +61,7 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
 
         {/* Top Pick badge */}
         <View style={styles.topBadge} pointerEvents="none">
-          <Text style={styles.topBadgeEmoji}>🏆</Text>
+          <Icon name="star" size={14} color="#F59E0B" strokeWidth={2} />
           <Text style={styles.topBadgeText}>Your Perfect Match</Text>
         </View>
 
@@ -170,9 +171,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     borderRadius: radius.full,
     gap: spacing.xs,
-  },
-  topBadgeEmoji: {
-    fontSize: 16,
   },
   topBadgeText: {
     fontSize: 13,
