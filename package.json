@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "test": "jest",
     "generate:sitemap": "node scripts/generate-sitemap.js",
-    "build:web": "npm run generate:sitemap && expo export --platform web"
+    "build:web": "npm run generate:sitemap && expo export --platform web",
+    "deploy:vercel": "vercel --prod",
+    "deploy:netlify": "netlify deploy --prod"
   },
   "dependencies": {
     "@expo-google-fonts/montserrat": "^0.4.2",

@@ -5,13 +5,32 @@ const path = require("path");
 const BASE_URL = "https://peakwise.app";
 const TODAY = new Date().toISOString().split("T")[0];
 
-// Extract resort IDs from TypeScript source using regex
-const resortsSource = fs.readFileSync(
-  path.join(__dirname, "../src/data/resorts.ts"),
-  "utf8"
-);
-const idMatches = resortsSource.matchAll(/^\s+id:\s+"([^"]+)"/gm);
-const resortIds = Array.from(idMatches, (m) => m[1]);
+// Extract resort IDs from CSV (fallback to empty array if file doesn't exist)
+let resortIds = [];
+try {
+  const csvPath = path.join(__dirname, "../public/ski-resorts.csv");
+  if (fs.existsSync(csvPath)) {
+    const csvContent = fs.readFileSync(csvPath, "utf8");
+    const lines = csvContent.split("\n").slice(1); // Skip header
+    resortIds = lines
+      .filter((line) => line.trim())
+      .map((line) => {
+        // Extract name (2nd column) and convert to URL-friendly slug
+        const match = line.match(/^\d+,([^,]+)/);
+        if (match) {
+          return match[1]
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "");
+        }
+        return null;
+      })
+      .filter(Boolean);
+  }
+} catch (err) {
+  console.warn("Could not load resort IDs from CSV, skipping resort URLs");
+  console.warn(err.message);
+}
 
 const staticPages = [
   { url: "/", priority: "1.0", changefreq: "weekly" },
