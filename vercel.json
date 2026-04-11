@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install",
+  "installCommand": "npm install --userconfig .npmrc --no-fund --no-audit",
   "buildCommand": "npm run build:web",
   "outputDirectory": "dist",
   "rewrites": [
