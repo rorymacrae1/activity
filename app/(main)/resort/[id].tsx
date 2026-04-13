@@ -1,18 +1,25 @@
 import { useEffect, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import Head from "expo-router/head";
-import { View, StyleSheet, ScrollView, Pressable, Image } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSequence,
   withSpring,
 } from "react-native-reanimated";
-import { Heart } from "lucide-react-native";
+import { Heart, CheckCircle } from "lucide-react-native";
 import { getResortSchema, getResortBreadcrumbs } from "@/utils/schema";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getResortByIdAsync, getSimilarResorts } from "@services/resort";
 import { useFavoritesStore } from "@stores/favorites";
+import { useAuthStore } from "@stores/auth";
+import {
+  addVisitedResort,
+  removeVisitedResort,
+  hasVisitedResort,
+} from "@services/profile";
+import { ResortImage } from "@components/ui/ResortImage";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
 import { colors, spacing, radius } from "@theme";
@@ -30,9 +37,6 @@ import {
 import { SimilarResortsCarousel } from "@components/resort/SimilarResortsCarousel";
 import type { Resort } from "@/types/resort";
 
-// Default resort image fallback
-const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg");
-
 export default function ResortDetailScreen() {
   const { id, siblingIds: siblingIdsParam } = useLocalSearchParams<{
     id: string;
@@ -41,7 +45,9 @@ export default function ResortDetailScreen() {
   const [resort, setResort] = useState<Resort | null>(null);
   const [similarResorts, setSimilarResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isVisited, setIsVisited] = useState(false);
   const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
+  const { user } = useAuthStore();
   const { heroHeight, hPadding, isTablet } = useLayout();
   const content = useContent();
 
@@ -56,6 +62,12 @@ export default function ResortDetailScreen() {
       setLoading(true);
       const data = await getResortByIdAsync(id);
       setResort(data ?? null);
+
+      // Load visited status if logged in
+      if (data && user) {
+        const visited = await hasVisitedResort(user.id, id);
+        setIsVisited(visited);
+      }
 
       // Load similar resorts: use passed IDs if available, otherwise compute
       if (data) {
@@ -116,6 +128,23 @@ export default function ResortDetailScreen() {
     isSaved ? removeFavorite(resort.id) : addFavorite(resort.id);
   };
 
+  const handleToggleVisited = async () => {
+    if (!user) {
+      router.push("/(auth)/sign-in");
+      return;
+    }
+    const next = !isVisited;
+    setIsVisited(next);
+    if (next) {
+      const { error } = await addVisitedResort(user.id, resort.id);
+      if (error) setIsVisited(false);
+    } else {
+      const { error } = await removeVisitedResort(user.id, resort.id);
+      if (error) setIsVisited(true);
+    }
+  };
+
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <Head>
@@ -162,23 +191,38 @@ export default function ResortDetailScreen() {
         <Text style={styles.navTitle} numberOfLines={1}>
           {resort.name}
         </Text>
-        <Pressable
-          style={styles.navButton}
-          onPress={handleToggleFavorite}
-          accessibilityRole="button"
-          accessibilityLabel={
-            isSaved ? content.resort.unsave : content.resort.save
-          }
-        >
-          <Animated.View style={heartAnimatedStyle}>
-            <Heart
+        <View style={styles.navActions}>
+          <Pressable
+            style={styles.navButton}
+            onPress={handleToggleVisited}
+            accessibilityRole="button"
+            accessibilityLabel={isVisited ? "Remove from visited" : "Mark as visited"}
+          >
+            <CheckCircle
               size={20}
               strokeWidth={1.75}
-              color={isSaved ? colors.brand.accent : colors.ink.muted}
-              fill={isSaved ? colors.brand.accent : "none"}
+              color={isVisited ? colors.sentiment.success : colors.ink.muted}
+              fill={isVisited ? colors.sentiment.success : "none"}
             />
-          </Animated.View>
-        </Pressable>
+          </Pressable>
+          <Pressable
+            style={styles.navButton}
+            onPress={handleToggleFavorite}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isSaved ? content.resort.unsave : content.resort.save
+            }
+          >
+            <Animated.View style={heartAnimatedStyle}>
+              <Heart
+                size={20}
+                strokeWidth={1.75}
+                color={isSaved ? colors.brand.accent : colors.ink.muted}
+                fill={isSaved ? colors.brand.accent : "none"}
+              />
+            </Animated.View>
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView
@@ -187,14 +231,9 @@ export default function ResortDetailScreen() {
       >
         {/* Full-bleed hero */}
         <View style={[styles.heroContainer, { height: heroHeight }]}>
-          <Image
-            source={
-              resort.assets.heroImage
-                ? { uri: resort.assets.heroImage }
-                : DEFAULT_RESORT_IMAGE
-            }
+          <ResortImage
+            uri={resort.assets.heroImage}
             style={styles.heroImage}
-            resizeMode="cover"
             accessibilityLabel={`${resort.name} ski resort`}
           />
         </View>
@@ -296,6 +335,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.secondary,
     alignItems: "center",
     justifyContent: "center",
+  },
+  navActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
   },
   navButtonText: {
     fontSize: 18,

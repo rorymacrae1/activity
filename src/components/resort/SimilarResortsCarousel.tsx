@@ -9,21 +9,18 @@ import {
   ScrollView,
   StyleSheet,
   Pressable,
-  Image,
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Text } from "@/components/ui";
 import { Icon } from "@/components/ui/Icon";
+import { ResortImage } from "@/components/ui/ResortImage";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { typography } from "@/theme/typography";
 import type { Resort } from "@/types/resort";
-
-// Default resort image fallback
-const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg");
 
 const CARD_WIDTH = 180;
 const CARD_MARGIN = spacing.sm;
@@ -65,10 +62,6 @@ function SimilarResortCard({
     router.push(`/(main)/resort/${resort.id}`);
   };
 
-  const imageSource = resort.assets.heroImage
-    ? { uri: resort.assets.heroImage }
-    : DEFAULT_RESORT_IMAGE;
-
   return (
     <Pressable
       style={({ pressed }) => [
@@ -82,7 +75,11 @@ function SimilarResortCard({
     >
       {/* Image */}
       <View style={styles.imageContainer}>
-        <Image source={imageSource} style={styles.image} resizeMode="cover" />
+        <ResortImage
+          uri={resort.assets.heroImage}
+          style={styles.image}
+          accessibilityLabel={`${resort.name} ski resort`}
+        />
         {/* Country badge */}
         <View style={styles.countryBadge}>
           <Text style={styles.countryText}>{resort.country}</Text>

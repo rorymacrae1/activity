@@ -23,6 +23,7 @@ import {
   QuickActions,
   FavoritesPreview,
   FavoritesBasedRecommendations,
+  ProfileCompletionCard,
 } from "@components/home";
 
 export default function PersonalizedHomeScreen() {
@@ -119,6 +120,18 @@ export default function PersonalizedHomeScreen() {
 
         {/* Quick Actions */}
         <QuickActions showCompleteProfile={showCompletionCard ?? false} />
+
+        {/* Profile completion nudge */}
+        {showCompletionCard && completionStatus && (
+          <ProfileCompletionCard
+            completionPercentage={completionStatus.completionPercentage}
+            missing={{
+              homeAirport: !completionStatus.hasHomeAirport,
+              visitedResorts: !completionStatus.hasVisitedResorts,
+              favorites: !completionStatus.hasFavorites,
+            }}
+          />
+        )}
 
         {/* Favorites Preview */}
         <FavoritesPreview favoriteIds={favoriteIds} />

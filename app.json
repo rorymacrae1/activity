@@ -39,7 +39,8 @@
       "expo-font"
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "bundleSplitting": true
     }
   }
 }

@@ -32,31 +32,31 @@ The CTA navigates to `/(onboarding)/decision-flow` but that screen is empty/unim
 
 ## Tier 2 — User Experience Fundamentals
 
-### 2.1 Resort images are all the same fallback
+### ✅ 2.1 Resort images are all the same fallback
 **Files:** `src/services/resort.ts` L50–52, `app/(main)/resort/[id].tsx` L33  
 Every resort shows the default hero image because `heroImage` and `pisteMap` are empty strings. This kills first impressions. Fix options:
 - Populate the Supabase `resorts` table with real image URLs (can batch from resort official sites or Unsplash with proper attribution)
 - As a quick win: map resort IDs to a curated set of 30 vetted Unsplash ski images in local data
 
-### 2.2 "Visited Resorts" is a ghost feature
+### ✅ 2.2 "Visited Resorts" is a ghost feature
 **Files:** `src/services/profile.ts` L71–117, `src/stores/auth.ts`  
 The entire data layer for tracking visited resorts exists — Supabase table, RLS policies, service methods — but there is zero UI for it. The "Stamps" or "I've been here" mechanic could be a genuine differentiator vs. Google/TripAdvisor. Add it to the resort detail page as a simple toggle button.
 
-### 2.3 Sync failures are completely silent
+### ✅ 2.3 Sync failures are completely silent
 **Files:** `src/stores/favorites.ts` L34–35, `src/stores/preferences.ts` L107–153  
 Cloud sync errors are swallowed with `console.warn()`. Users have no idea if their favorites saved or not. Add:
 - A `syncStatus` field to both stores (`'idle' | 'syncing' | 'error'`)  
 - A small toast/banner on error (the Toast component already exists in `src/components/ui/Toast.tsx`)
 
-### 2.4 Complete Profile screen is orphaned
+### ✅ 2.4 Complete Profile screen is orphaned
 **File:** `app/(main)/complete-profile.tsx`  
 This screen exists in the router but is never navigated to. The `ProfileCompletionCard` in the home screen teases it. Either wire up the navigation from that card, or delete the screen and remove the card.
 
-### 2.5 Home airport is collected but never used
+### ✅ 2.5 Home airport is collected but never used
 **File:** `src/services/profile.ts` `setHomeAirport()` / `src/data/airports.ts`  
 You have 4,000+ airports in the data and a full service layer for storing the user's home airport. The natural next step is to surface "Flight time from [your airport]" on resort cards and in the sorting options on Discover. This would be a strong differentiator — no other ski recommendation app does this well.
 
-### 2.6 Refine recommendations without retaking the full quiz
+### ✅ 2.6 Refine recommendations without retaking the full quiz
 Currently if a user's top result isn't right, they must retake the entire 5-step quiz. Add:
 - A "Tweak" sheet on the results screen with quick-edit sliders for budget and vibes
 - This uses the existing `NormalizedPreferences` structure — it's just a different entry point into the same scoring
@@ -65,14 +65,14 @@ Currently if a user's top result isn't right, they must retake the entire 5-step
 
 ## Tier 3 — Performance
 
-### 3.1 Web bundle is too large (4.6 MB uncompressed)
+### ✅ 3.1 Web bundle is too large (4.6 MB uncompressed)
 **Files:** `dist/` build output, `metro.config.js`  
 Reanimated + Gesture Handler ship in full on web but most animations could be handled with CSS transitions instead. To cut bundle size:
 - Audit which animations truly need Reanimated on web (likely only the parallax quiz scroll)
 - Use `Platform.select()` to lazy-load heavy animation code on web
 - Enable Metro tree-shaking for web builds (Expo 54 supports it under `experiments.bundleSplitting`)
 
-### 3.2 Images are unoptimized
+### ✅ 3.2 Images are unoptimized
 **File:** `app/(main)/resort/[id].tsx` — uses `expo-image` which is good, but:
 - No `contentFit="cover"` with explicit `width`/`height` on all instances (causes layout shifts)
 - No `placeholder` blur hash — users see blank rectangles while images load
@@ -80,14 +80,14 @@ Reanimated + Gesture Handler ship in full on web but most animations could be ha
 
 Expo Image supports all three. Add them globally via a wrapper `<ResortImage>` component.
 
-### 3.3 Discover screen list could be smarter
+### ✅ 3.3 Discover screen list could be smarter
 **File:** `app/(main)/discover.tsx`  
 FlatList is used correctly, but:
 - `getItemLayout` is not set — causes FlatList to measure every item on scroll
 - List re-renders when sort/filter chip changes re-run the full filter across all resorts
 - Add `useMemo` on the filtered/sorted resort list keyed on the filter state
 
-### 3.4 Font loading blocks the splash screen longer than needed
+### ✅ 3.4 Font loading blocks the splash screen longer than needed
 **File:** `app/_layout.tsx` L30  
 All 18 Montserrat weight variants are loaded eagerly. On web this is ~6 MB of fonts. Load only the weights you actually use (400, 500, 600, 700) — that cuts font loading by ~56%.
 

@@ -15,6 +15,7 @@ interface FavoritesState {
 
   // Sync state
   isSyncing: boolean;
+  syncError: string | null;
   lastSyncedAt: string | null;
   _userId: string | null; // Track logged-in user for auto-sync
 
@@ -40,6 +41,7 @@ export const useFavoritesStore = create<FavoritesState>()(
     (set, get) => ({
       favoriteIds: [],
       isSyncing: false,
+      syncError: null,
       lastSyncedAt: null,
       _userId: null,
 
@@ -51,7 +53,9 @@ export const useFavoritesStore = create<FavoritesState>()(
 
         // Sync to cloud if logged in
         if (_userId) {
-          addCloudFavorite(_userId, resortId).catch(console.warn);
+          addCloudFavorite(_userId, resortId).catch((e: Error) =>
+            set({ syncError: e?.message ?? "Failed to sync favorite" }),
+          );
         }
       },
 
@@ -63,7 +67,9 @@ export const useFavoritesStore = create<FavoritesState>()(
 
         // Sync to cloud if logged in
         if (_userId) {
-          removeCloudFavorite(_userId, resortId).catch(console.warn);
+          removeCloudFavorite(_userId, resortId).catch((e: Error) =>
+            set({ syncError: e?.message ?? "Failed to sync favorite" }),
+          );
         }
       },
 
@@ -78,31 +84,37 @@ export const useFavoritesStore = create<FavoritesState>()(
       setUserId: (userId) => set({ _userId: userId }),
 
       syncFromCloud: async (userId) => {
-        set({ isSyncing: true });
+        set({ isSyncing: true, syncError: null });
         try {
           const cloudFavorites = await fetchCloudFavorites(userId);
           if (cloudFavorites) {
             set({ favoriteIds: cloudFavorites });
           }
           set({ lastSyncedAt: new Date().toISOString() });
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : "Failed to sync favorites";
+          set({ syncError: msg });
         } finally {
           set({ isSyncing: false });
         }
       },
 
       syncToCloud: async (userId) => {
-        set({ isSyncing: true });
+        set({ isSyncing: true, syncError: null });
         try {
           const { favoriteIds } = get();
           await syncAllFavoritesToCloud(userId, favoriteIds);
           set({ lastSyncedAt: new Date().toISOString() });
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : "Failed to sync favorites";
+          set({ syncError: msg });
         } finally {
           set({ isSyncing: false });
         }
       },
 
       mergeWithCloud: async (userId) => {
-        set({ isSyncing: true });
+        set({ isSyncing: true, syncError: null });
         try {
           const { favoriteIds: localFavorites } = get();
           const cloudFavorites = await fetchCloudFavorites(userId);
@@ -117,6 +129,9 @@ export const useFavoritesStore = create<FavoritesState>()(
           }
 
           set({ lastSyncedAt: new Date().toISOString(), _userId: userId });
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : "Failed to sync favorites";
+          set({ syncError: msg });
         } finally {
           set({ isSyncing: false });
         }

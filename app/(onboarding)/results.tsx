@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet, Pressable } from "react-native";
+import { View, ScrollView, StyleSheet, Pressable, Modal } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
@@ -23,7 +23,8 @@ import { LoadingState } from "@components/ui/LoadingState";
 import { EmptyState } from "@components/ui/EmptyState";
 import { ScreenContainer } from "@components/ui/ScreenContainer";
 import { NavBar } from "@components/ui/NavBar";
-import { Search } from "lucide-react-native";
+import { Slider } from "@components/ui/Slider";
+import { Search, SlidersHorizontal } from "lucide-react-native";
 import {
   TopPickHero,
   ReasonCarousel,
@@ -36,8 +37,22 @@ export default function ResultsScreen() {
   const [loading, setLoading] = useState(true);
   const [timedOut, setTimedOut] = useState(false);
   const [loadingPhase, setLoadingPhase] = useState(0);
+  const [tweakVisible, setTweakVisible] = useState(false);
   const { hPadding } = useLayout();
   const content = useContent();
+
+  const {
+    crowdPreference,
+    snowImportance,
+    familyVsNightlife,
+    setCrowdPreference,
+    setSnowImportance,
+    setFamilyVsNightlife,
+  } = usePreferencesStore();
+
+  const [draftCrowd, setDraftCrowd] = useState(crowdPreference);
+  const [draftSnow, setDraftSnow] = useState(snowImportance);
+  const [draftFamily, setDraftFamily] = useState(familyVsNightlife);
 
   const LOADING_PHASES = [
     content.onboarding.results.loading,
@@ -72,8 +87,25 @@ export default function ResultsScreen() {
       .finally(() => setLoading(false));
   };
 
+  /** Apply tweaked preferences and re-run. */
+  const handleApplyTweak = () => {
+    setCrowdPreference(draftCrowd);
+    setSnowImportance(draftSnow);
+    setFamilyVsNightlife(draftFamily);
+    setTweakVisible(false);
+    runRecommendations();
+  };
+
+  const handleOpenTweak = () => {
+    setDraftCrowd(crowdPreference);
+    setDraftSnow(snowImportance);
+    setDraftFamily(familyVsNightlife);
+    setTweakVisible(true);
+  };
+
   useEffect(() => {
     runRecommendations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Advance loading phase messages over time
@@ -183,12 +215,23 @@ export default function ResultsScreen() {
               {content.onboarding.results.subtitle}
             </Text>
           </View>
-          <Button
-            label={content.onboarding.results.retake}
-            variant="ghost"
-            size="compact"
-            onPress={() => router.replace("/(onboarding)")}
-          />
+          <View style={styles.headerActions}>
+            <Pressable
+              style={styles.tweakButton}
+              onPress={handleOpenTweak}
+              accessibilityRole="button"
+              accessibilityLabel="Tweak your preferences"
+            >
+              <SlidersHorizontal size={16} color={colors.brand.primary} strokeWidth={2} />
+              <Text style={styles.tweakButtonLabel}>Tweak</Text>
+            </Pressable>
+            <Button
+              label={content.onboarding.results.retake}
+              variant="ghost"
+              size="compact"
+              onPress={() => router.replace("/(onboarding)")}
+            />
+          </View>
         </View>
 
         {/* Top Pick Hero */}
@@ -252,6 +295,107 @@ export default function ResultsScreen() {
           accessibilityLabel="Go to the main app to explore resorts"
         />
       </View>
+
+      {/* Tweak preferences modal */}
+      <Modal
+        visible={tweakVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setTweakVisible(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setTweakVisible(false)}
+          accessibilityRole="button"
+          accessibilityLabel="Close tweak panel"
+        />
+        <View style={styles.modalSheet}>
+          <View style={styles.modalHandle} />
+          <Text variant="h2" style={styles.modalTitle}>
+            Tweak Your Results
+          </Text>
+          <Text variant="body" color={colors.text.secondary} style={styles.modalSubtitle}>
+            Adjust and we'll re-rank the resorts instantly.
+          </Text>
+
+          <View style={styles.sliderGroup}>
+            <View style={styles.sliderLabel}>
+              <Text style={styles.sliderLabelText}>Crowd tolerance</Text>
+              <Text style={styles.sliderValue}>
+                {draftCrowd === 1 ? "Quiet" : draftCrowd === 5 ? "Lively" : draftCrowd}
+              </Text>
+            </View>
+            <Slider
+              value={draftCrowd}
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              onValueChange={setDraftCrowd}
+              accessibilityLabel="Crowd tolerance slider"
+            />
+            <View style={styles.sliderEndLabels}>
+              <Text style={styles.sliderEndLabel}>Quiet slopes</Text>
+              <Text style={styles.sliderEndLabel}>Buzzing resort</Text>
+            </View>
+          </View>
+
+          <View style={styles.sliderGroup}>
+            <View style={styles.sliderLabel}>
+              <Text style={styles.sliderLabelText}>Snow importance</Text>
+              <Text style={styles.sliderValue}>
+                {draftSnow === 1 ? "Low" : draftSnow === 5 ? "Critical" : draftSnow}
+              </Text>
+            </View>
+            <Slider
+              value={draftSnow}
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              onValueChange={setDraftSnow}
+              accessibilityLabel="Snow importance slider"
+            />
+            <View style={styles.sliderEndLabels}>
+              <Text style={styles.sliderEndLabel}>Not fussed</Text>
+              <Text style={styles.sliderEndLabel}>Snow guaranteed</Text>
+            </View>
+          </View>
+
+          <View style={styles.sliderGroup}>
+            <View style={styles.sliderLabel}>
+              <Text style={styles.sliderLabelText}>Atmosphere</Text>
+              <Text style={styles.sliderValue}>
+                {draftFamily <= 2 ? "Family" : draftFamily >= 4 ? "Nightlife" : "Balanced"}
+              </Text>
+            </View>
+            <Slider
+              value={draftFamily}
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              onValueChange={setDraftFamily}
+              accessibilityLabel="Atmosphere preference slider"
+            />
+            <View style={styles.sliderEndLabels}>
+              <Text style={styles.sliderEndLabel}>Family-friendly</Text>
+              <Text style={styles.sliderEndLabel}>Après-ski scene</Text>
+            </View>
+          </View>
+
+          <View style={styles.modalActions}>
+            <Button
+              label="Cancel"
+              variant="ghost"
+              onPress={() => setTweakVisible(false)}
+              style={styles.modalCancel}
+            />
+            <Button
+              label="Apply & Re-rank"
+              onPress={handleApplyTweak}
+              style={styles.modalApply}
+            />
+          </View>
+        </View>
+      </Modal>
     </ScreenContainer>
   );
 }
@@ -274,6 +418,27 @@ const styles = StyleSheet.create({
   headerContent: {
     flex: 1,
     gap: spacing.xxs,
+  },
+  headerActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  tweakButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xxs,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.md,
+    backgroundColor: colors.brand.primarySubtle,
+    borderWidth: 1,
+    borderColor: colors.brand.primary + "40",
+  },
+  tweakButtonLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.brand.primary,
   },
   topPickSection: {
     paddingHorizontal: spacing.lg,
@@ -325,5 +490,71 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     borderTopWidth: 1,
     borderTopColor: colors.border.subtle,
+  },
+  // ── Tweak modal ────────────────────────────────────────────────────────────
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+  },
+  modalSheet: {
+    backgroundColor: colors.background.primary,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xxxl,
+  },
+  modalHandle: {
+    alignSelf: "center",
+    width: 40,
+    height: 4,
+    borderRadius: radius.full,
+    backgroundColor: colors.border.default,
+    marginBottom: spacing.lg,
+  },
+  modalTitle: {
+    marginBottom: spacing.xxs,
+  },
+  modalSubtitle: {
+    marginBottom: spacing.xl,
+  },
+  sliderGroup: {
+    marginBottom: spacing.xl,
+  },
+  sliderLabel: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.sm,
+  },
+  sliderLabelText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.text.primary,
+  },
+  sliderValue: {
+    fontSize: 13,
+    color: colors.brand.primary,
+    fontWeight: "600",
+  },
+  sliderEndLabels: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: spacing.xs,
+  },
+  sliderEndLabel: {
+    fontSize: 11,
+    color: colors.text.tertiary,
+  },
+  modalActions: {
+    flexDirection: "row",
+    gap: spacing.sm,
+    marginTop: spacing.md,
+  },
+  modalCancel: {
+    flex: 1,
+  },
+  modalApply: {
+    flex: 2,
   },
 });

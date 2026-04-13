@@ -8,6 +8,7 @@ import { StyleSheet, View, Platform, Image } from "react-native";
 import { useFonts } from "expo-font";
 import { ErrorBoundary } from "@components/ui/ErrorBoundary";
 import { ToastProvider } from "@components/ui/Toast";
+import { SyncErrorObserver } from "@components/ui/SyncErrorObserver";
 import { maxContentWidth } from "@theme/layout";
 import { colors, fontAssets } from "@theme";
 import { useAuthStore } from "@stores/auth";
@@ -47,6 +48,7 @@ export default function RootLayout() {
         <SafeAreaProvider>
           <GestureHandlerRootView style={styles.container}>
             <ToastProvider>
+              <SyncErrorObserver />
               <Head>
                 <title>PisteWise | Find Your Perfect Ski Resort</title>
                 <meta

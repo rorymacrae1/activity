@@ -3,18 +3,17 @@
  */
 
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Pressable, Image } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { router } from "expo-router";
 import { Text } from "@/components/ui/Text";
 import { Icon } from "@/components/ui/Icon";
+import { ResortImage } from "@/components/ui/ResortImage";
 import { getResortByIdAsync } from "@/services/resort";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { shadows } from "@/theme/shadows";
 import type { Resort } from "@/types/resort";
-
-const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg");
 
 interface FavoritesPreviewProps {
   favoriteIds: string[];
@@ -115,14 +114,10 @@ export function FavoritesPreview({
             accessibilityRole="button"
             accessibilityLabel={`${resort.name}, ${resort.country}`}
           >
-            <Image
-              source={
-                resort.assets.heroImage
-                  ? { uri: resort.assets.heroImage }
-                  : DEFAULT_RESORT_IMAGE
-              }
+            <ResortImage
+              uri={resort.assets.heroImage}
               style={styles.resortImage}
-              resizeMode="cover"
+              accessibilityLabel={`${resort.name} ski resort`}
             />
             <View style={styles.resortInfo}>
               <Text style={styles.resortName} numberOfLines={1}>

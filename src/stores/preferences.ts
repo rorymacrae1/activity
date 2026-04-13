@@ -31,6 +31,7 @@ interface PreferencesState {
 
   // Sync state
   isSyncing: boolean;
+  syncError: string | null;
   lastSyncedAt: string | null;
 
   // Actions
@@ -64,6 +65,7 @@ const initialState = {
   snowImportance: 3,
   language: "en" as Language,
   isSyncing: false,
+  syncError: null as string | null,
   lastSyncedAt: null as string | null,
 };
 
@@ -150,7 +152,7 @@ export const usePreferencesStore = create<PreferencesState>()(
       },
 
       syncFromCloud: async (userId) => {
-        set({ isSyncing: true });
+        set({ isSyncing: true, syncError: null });
         try {
           const cloudPrefs = await fetchCloudPreferences(userId);
           if (cloudPrefs) {
@@ -161,17 +163,23 @@ export const usePreferencesStore = create<PreferencesState>()(
             }
           }
           set({ lastSyncedAt: new Date().toISOString() });
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : "Failed to sync preferences";
+          set({ syncError: msg });
         } finally {
           set({ isSyncing: false });
         }
       },
 
       syncToCloud: async (userId) => {
-        set({ isSyncing: true });
+        set({ isSyncing: true, syncError: null });
         try {
           const prefs = get().getLocalPreferences();
           await saveCloudPreferences(userId, prefs);
           set({ lastSyncedAt: new Date().toISOString() });
+        } catch (e: unknown) {
+          const msg = e instanceof Error ? e.message : "Failed to sync preferences";
+          set({ syncError: msg });
         } finally {
           set({ isSyncing: false });
         }

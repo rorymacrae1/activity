@@ -1,13 +1,12 @@
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Card } from "@components/ui/Card";
 import { Text } from "@components/ui/Text";
+import { ResortImage } from "@components/ui/ResortImage";
 import { useLayout } from "@hooks/useLayout";
+import { useProfile } from "@stores/auth";
 import { colors, spacing, radius } from "@theme";
 import type { RecommendationResult } from "@/types/recommendation";
-
-// Default resort image fallback
-const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg");
 
 interface ResortCardProps {
   result: RecommendationResult;
@@ -28,6 +27,11 @@ export function ResortCard({
 }: ResortCardProps) {
   const { resort, matchScore, matchReasons } = result;
   const { cardImageHeight } = useLayout();
+  const profile = useProfile();
+  const homeAirport = profile?.home_airport ?? null;
+  const nearestAirport = resort.attributes.nearestAirport;
+  const transferMins = resort.attributes.transferTimeMinutes;
+  const isOwnAirport = homeAirport === nearestAirport;
 
   const isTopPick = rank === 1;
 
@@ -41,14 +45,9 @@ export function ResortCard({
     >
       {/* Hero image with gradient overlay */}
       <View style={[styles.imageContainer, { height: cardImageHeight }]}>
-        <Image
-          source={
-            resort.assets.heroImage
-              ? { uri: resort.assets.heroImage }
-              : DEFAULT_RESORT_IMAGE
-          }
+        <ResortImage
+          uri={resort.assets.heroImage}
           style={styles.image}
-          resizeMode="cover"
         />
         {/* Bottom gradient for depth */}
         <LinearGradient
@@ -105,6 +104,21 @@ export function ResortCard({
             <Text style={styles.statLabel}>/day</Text>
           </View>
         </View>
+
+        {/* Airport row — shows nearest ski airport and transfer time */}
+        {nearestAirport ? (
+          <View style={styles.airportRow}>
+            <Text style={styles.airportText}>
+              {homeAirport
+                ? `✈ ${homeAirport} → ${nearestAirport}`
+                : `✈ ${nearestAirport}`}
+            </Text>
+            <Text style={styles.airportSub}>
+              {isOwnAirport ? "your airport · " : ""}
+              {transferMins}min transfer
+            </Text>
+          </View>
+        ) : null}
 
         {/* Match reasons - elegant checkmarks */}
         {showMatchScore && matchReasons.length > 0 ? (
@@ -241,6 +255,22 @@ const styles = StyleSheet.create({
     height: 14,
     backgroundColor: colors.border.subtle,
     marginHorizontal: spacing.sm,
+  },
+  airportRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: spacing.xxs,
+    marginTop: spacing.xs,
+  },
+  airportText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.ink.normal,
+  },
+  airportSub: {
+    fontSize: 11,
+    color: colors.ink.muted,
   },
   reasons: {
     marginTop: spacing.xs,

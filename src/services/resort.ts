@@ -1,5 +1,7 @@
 import { supabase, isSupabaseConfigured } from "@lib/supabase";
 import type { Resort, TerrainDistribution } from "@/types/resort";
+import { getResortHeroImage } from "@/data/resortImages";
+import { getResortNearestAirport } from "@/data/resortNearestAirports";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Supabase resort table schema (from existing database)
@@ -75,8 +77,8 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       nightlifeScore: row.style === "modern" ? 4 : 3,
       snowReliability: row.snow_sure_score,
       liftModernity: row.style === "modern" ? 4 : 3,
-      nearestAirport: "Geneva", // Placeholder
-      transferTimeMinutes: 90,
+      nearestAirport: getResortNearestAirport(row.name).iata,
+      transferTimeMinutes: getResortNearestAirport(row.name).transferTimeMinutes,
       townStyle: row.car_free_town
         ? "Purpose-built"
         : row.style === "modern"
@@ -97,7 +99,7 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       ].filter(Boolean),
     },
     assets: {
-      heroImage: "", // Use local default image fallback
+      heroImage: getResortHeroImage(row.name),
       pisteMap: "",
     },
     season: {

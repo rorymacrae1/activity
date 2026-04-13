@@ -4,18 +4,16 @@
  */
 
 import React from "react";
-import { View, StyleSheet, Pressable, Image } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { Text } from "@/components/ui";
 import { Icon } from "@/components/ui/Icon";
+import { ResortImage } from "@/components/ui/ResortImage";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { typography } from "@/theme/typography";
 import type { RecommendationResult } from "@/types/recommendation";
-
-// Default resort image fallback
-const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg");
 
 interface RunnerUpCardProps {
   /** Recommendation result with resort and scores */
@@ -89,11 +87,6 @@ export function RunnerUpCard({
     });
   };
 
-  // Use local default image as fallback
-  const imageSource = resort.assets.heroImage
-    ? { uri: resort.assets.heroImage }
-    : DEFAULT_RESORT_IMAGE;
-
   return (
     <Pressable
       style={({ pressed }) => [
@@ -107,7 +100,11 @@ export function RunnerUpCard({
     >
       {/* Image Container */}
       <View style={styles.imageContainer}>
-        <Image source={imageSource} style={styles.image} resizeMode="cover" />
+        <ResortImage
+          uri={resort.assets.heroImage}
+          style={styles.image}
+          accessibilityLabel={`${resort.name} ski resort`}
+        />
 
         {/* Rank Badge */}
         {rankColor && (

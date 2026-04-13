@@ -145,6 +145,12 @@ function ResortRow({ resort, isFavorite }: ResortRowProps) {
   );
 }
 
+// Row height: paddingVertical (12*2=24) + name (20) + location (18) + stats (20) + gaps (~8) = 90
+// Separator: 1px
+const ROW_HEIGHT = 90;
+const SEPARATOR_HEIGHT = 1;
+const ITEM_HEIGHT = ROW_HEIGHT + SEPARATOR_HEIGHT;
+
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 
 export default function DiscoverScreen() {
@@ -217,6 +223,15 @@ export default function DiscoverScreen() {
   );
 
   const keyExtractor = useCallback((item: Resort) => item.id, []);
+
+  const getItemLayout = useCallback(
+    (_: ArrayLike<Resort> | null | undefined, index: number) => ({
+      length: ROW_HEIGHT,
+      offset: ITEM_HEIGHT * index,
+      index,
+    }),
+    [],
+  );
 
   const ItemSeparator = useCallback(
     () => <View style={styles.separator} />,
@@ -393,6 +408,7 @@ export default function DiscoverScreen() {
             data={results}
             renderItem={renderRow}
             keyExtractor={keyExtractor}
+            getItemLayout={getItemLayout}
             ItemSeparatorComponent={ItemSeparator}
             style={styles.flex}
             contentContainerStyle={[
@@ -402,6 +418,9 @@ export default function DiscoverScreen() {
             showsVerticalScrollIndicator={false}
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps="handled"
+            removeClippedSubviews={Platform.OS !== "web"}
+            maxToRenderPerBatch={15}
+            windowSize={10}
           />
         )}
       </KeyboardAvoidingView>
