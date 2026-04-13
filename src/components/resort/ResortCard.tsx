@@ -45,10 +45,7 @@ export function ResortCard({
     >
       {/* Hero image with gradient overlay */}
       <View style={[styles.imageContainer, { height: cardImageHeight }]}>
-        <ResortImage
-          uri={resort.assets.heroImage}
-          style={styles.image}
-        />
+        <ResortImage uri={resort.assets.heroImage} style={styles.image} />
         {/* Bottom gradient for depth */}
         <LinearGradient
           colors={["transparent", "rgba(0,0,0,0.4)"]}

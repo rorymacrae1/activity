@@ -144,7 +144,6 @@ export default function ResortDetailScreen() {
     }
   };
 
-
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <Head>
@@ -196,7 +195,9 @@ export default function ResortDetailScreen() {
             style={styles.navButton}
             onPress={handleToggleVisited}
             accessibilityRole="button"
-            accessibilityLabel={isVisited ? "Remove from visited" : "Mark as visited"}
+            accessibilityLabel={
+              isVisited ? "Remove from visited" : "Mark as visited"
+            }
           >
             <CheckCircle
               size={20}

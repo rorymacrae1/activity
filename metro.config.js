@@ -40,7 +40,8 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   // On web, redirect Reanimated's native bindings to a no-op
   if (
     platform === "web" &&
-    moduleName === "react-native-reanimated/src/reanimated2/NativeReanimated/NativeReanimated"
+    moduleName ===
+      "react-native-reanimated/src/reanimated2/NativeReanimated/NativeReanimated"
   ) {
     return context.resolveRequest(context, moduleName, platform);
   }

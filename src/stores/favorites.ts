@@ -92,7 +92,8 @@ export const useFavoritesStore = create<FavoritesState>()(
           }
           set({ lastSyncedAt: new Date().toISOString() });
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "Failed to sync favorites";
+          const msg =
+            e instanceof Error ? e.message : "Failed to sync favorites";
           set({ syncError: msg });
         } finally {
           set({ isSyncing: false });
@@ -106,7 +107,8 @@ export const useFavoritesStore = create<FavoritesState>()(
           await syncAllFavoritesToCloud(userId, favoriteIds);
           set({ lastSyncedAt: new Date().toISOString() });
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "Failed to sync favorites";
+          const msg =
+            e instanceof Error ? e.message : "Failed to sync favorites";
           set({ syncError: msg });
         } finally {
           set({ isSyncing: false });
@@ -130,7 +132,8 @@ export const useFavoritesStore = create<FavoritesState>()(
 
           set({ lastSyncedAt: new Date().toISOString(), _userId: userId });
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "Failed to sync favorites";
+          const msg =
+            e instanceof Error ? e.message : "Failed to sync favorites";
           set({ syncError: msg });
         } finally {
           set({ isSyncing: false });

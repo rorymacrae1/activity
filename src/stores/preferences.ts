@@ -164,7 +164,8 @@ export const usePreferencesStore = create<PreferencesState>()(
           }
           set({ lastSyncedAt: new Date().toISOString() });
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "Failed to sync preferences";
+          const msg =
+            e instanceof Error ? e.message : "Failed to sync preferences";
           set({ syncError: msg });
         } finally {
           set({ isSyncing: false });
@@ -178,7 +179,8 @@ export const usePreferencesStore = create<PreferencesState>()(
           await saveCloudPreferences(userId, prefs);
           set({ lastSyncedAt: new Date().toISOString() });
         } catch (e: unknown) {
-          const msg = e instanceof Error ? e.message : "Failed to sync preferences";
+          const msg =
+            e instanceof Error ? e.message : "Failed to sync preferences";
           set({ syncError: msg });
         } finally {
           set({ isSyncing: false });

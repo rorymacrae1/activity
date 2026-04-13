@@ -49,11 +49,7 @@ export function ResortImage({
 }: ResortImageProps) {
   return (
     <Image
-      source={
-        uri
-          ? [{ uri }, DEFAULT_RESORT_IMAGE]
-          : DEFAULT_RESORT_IMAGE
-      }
+      source={uri ? [{ uri }, DEFAULT_RESORT_IMAGE] : DEFAULT_RESORT_IMAGE}
       placeholder={{ blurhash: ALPINE_BLURHASH }}
       contentFit={contentFit}
       transition={200}

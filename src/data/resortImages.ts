@@ -20,7 +20,7 @@ const SKI_PHOTO_POOL: string[] = [
   "1512302048498-2e562b11e1be", // High-altitude mountain panorama
   "1505739818593-0c37a42cd3b1", // Blue-sky ski horizon
   "1484821582019-ea4ad8cf866a", // Sunset over snowy peaks
-  "1554188248-986adbb73be4",   // Ski boots & powder snow
+  "1554188248-986adbb73be4", // Ski boots & powder snow
   "1586276387815-9b3c8f31c5b6", // Gondola over white valley
 ];
 
@@ -30,7 +30,7 @@ const SKI_PHOTO_POOL: string[] = [
 function hashName(name: string): number {
   let h = 0;
   for (let i = 0; i < name.length; i++) {
-    h = ((h * 31) + name.charCodeAt(i)) >>> 0;
+    h = (h * 31 + name.charCodeAt(i)) >>> 0;
   }
   return h;
 }

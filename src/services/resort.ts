@@ -78,7 +78,8 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       snowReliability: row.snow_sure_score,
       liftModernity: row.style === "modern" ? 4 : 3,
       nearestAirport: getResortNearestAirport(row.name).iata,
-      transferTimeMinutes: getResortNearestAirport(row.name).transferTimeMinutes,
+      transferTimeMinutes: getResortNearestAirport(row.name)
+        .transferTimeMinutes,
       townStyle: row.car_free_town
         ? "Purpose-built"
         : row.style === "modern"
@@ -147,12 +148,16 @@ async function fetchCloudResorts(): Promise<Resort[] | null> {
   // Use Promise.race for a reliable cross-environment timeout.
   // Wrap builder in a native Promise first — Hermes (React Native JS engine)
   // does not reliably adopt custom thenables in Promise.race.
-  type FetchResult = { data: unknown[] | null; error: { message: string } | null };
+  type FetchResult = {
+    data: unknown[] | null;
+    error: { message: string } | null;
+  };
   const fetchPromise = new Promise<FetchResult>((resolve, reject) => {
-    (client
-      .from("resort")
-      .select("*")
-      .order("name") as unknown as PromiseLike<FetchResult>
+    (
+      client
+        .from("resort")
+        .select("*")
+        .order("name") as unknown as PromiseLike<FetchResult>
     ).then(resolve, reject);
   });
 
@@ -337,11 +342,15 @@ export async function getResortCountsByCountry(): Promise<
 
   // Wrap builder in a native Promise first — Hermes does not reliably adopt
   // custom thenables in Promise.race.
-  type CountryResult = { data: { country: string }[] | null; error: { message: string } | null };
+  type CountryResult = {
+    data: { country: string }[] | null;
+    error: { message: string } | null;
+  };
   const fetchPromise = new Promise<CountryResult>((resolve, reject) => {
-    (client
-      .from("resort")
-      .select("country") as unknown as PromiseLike<CountryResult>
+    (
+      client
+        .from("resort")
+        .select("country") as unknown as PromiseLike<CountryResult>
     ).then(resolve, reject);
   });
 

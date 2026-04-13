@@ -222,7 +222,11 @@ export default function ResultsScreen() {
               accessibilityRole="button"
               accessibilityLabel="Tweak your preferences"
             >
-              <SlidersHorizontal size={16} color={colors.brand.primary} strokeWidth={2} />
+              <SlidersHorizontal
+                size={16}
+                color={colors.brand.primary}
+                strokeWidth={2}
+              />
               <Text style={styles.tweakButtonLabel}>Tweak</Text>
             </Pressable>
             <Button
@@ -314,7 +318,11 @@ export default function ResultsScreen() {
           <Text variant="h2" style={styles.modalTitle}>
             Tweak Your Results
           </Text>
-          <Text variant="body" color={colors.text.secondary} style={styles.modalSubtitle}>
+          <Text
+            variant="body"
+            color={colors.text.secondary}
+            style={styles.modalSubtitle}
+          >
             Adjust and we'll re-rank the resorts instantly.
           </Text>
 
@@ -322,7 +330,11 @@ export default function ResultsScreen() {
             <View style={styles.sliderLabel}>
               <Text style={styles.sliderLabelText}>Crowd tolerance</Text>
               <Text style={styles.sliderValue}>
-                {draftCrowd === 1 ? "Quiet" : draftCrowd === 5 ? "Lively" : draftCrowd}
+                {draftCrowd === 1
+                  ? "Quiet"
+                  : draftCrowd === 5
+                    ? "Lively"
+                    : draftCrowd}
               </Text>
             </View>
             <Slider
@@ -343,7 +355,11 @@ export default function ResultsScreen() {
             <View style={styles.sliderLabel}>
               <Text style={styles.sliderLabelText}>Snow importance</Text>
               <Text style={styles.sliderValue}>
-                {draftSnow === 1 ? "Low" : draftSnow === 5 ? "Critical" : draftSnow}
+                {draftSnow === 1
+                  ? "Low"
+                  : draftSnow === 5
+                    ? "Critical"
+                    : draftSnow}
               </Text>
             </View>
             <Slider
@@ -364,7 +380,11 @@ export default function ResultsScreen() {
             <View style={styles.sliderLabel}>
               <Text style={styles.sliderLabelText}>Atmosphere</Text>
               <Text style={styles.sliderValue}>
-                {draftFamily <= 2 ? "Family" : draftFamily >= 4 ? "Nightlife" : "Balanced"}
+                {draftFamily <= 2
+                  ? "Family"
+                  : draftFamily >= 4
+                    ? "Nightlife"
+                    : "Balanced"}
               </Text>
             </View>
             <Slider
