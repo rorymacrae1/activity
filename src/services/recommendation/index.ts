@@ -1,7 +1,6 @@
 import { getResortsByRegionAsync } from "../resort";
 import { calculateScores } from "./scorer";
 import { generateExplanations } from "./explainer";
-import { useDismissedStore } from "@stores/dismissed";
 import type {
   SkillLevel,
   Preferences,
@@ -112,12 +111,12 @@ function seasonalMultiplier(seasonEnd: string): number {
 export async function getRecommendations(
   preferences: Preferences,
   limit: number = 5,
+  dismissedIds: string[] = [],
 ): Promise<RecommendationResult[]> {
   // 1. Fetch and filter by region (async)
   const allCandidates = await getResortsByRegionAsync(preferences.regions);
 
   // 2. Exclude resorts the user has dismissed this session
-  const dismissedIds = useDismissedStore.getState().dismissedIds;
   const candidates = dismissedIds.length
     ? allCandidates.filter((r) => !dismissedIds.includes(r.id))
     : allCandidates;

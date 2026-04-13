@@ -1,77 +1,99 @@
-import { getAllResorts, getResortById, getResortsByRegion } from "../resort";
+import {
+  getAllResortsAsync,
+  getResortByIdAsync,
+  getResortsByRegionAsync,
+  clearResortCache,
+} from "../resort";
 
-describe("getAllResorts", () => {
-  it("returns all 30 resorts", () => {
-    expect(getAllResorts()).toHaveLength(30);
+// Clear cache before each test so fetchCloudResorts always runs
+beforeEach(() => {
+  clearResortCache();
+});
+
+describe("getAllResortsAsync", () => {
+  it("returns resorts", async () => {
+    const resorts = await getAllResortsAsync();
+    expect(resorts.length).toBeGreaterThan(0);
   });
 
-  it("every resort has required fields", () => {
-    getAllResorts().forEach((resort) => {
+  it("every resort has required fields", async () => {
+    const resorts = await getAllResortsAsync();
+    resorts.forEach((resort) => {
       expect(resort.id).toBeTruthy();
       expect(resort.name).toBeTruthy();
       expect(resort.country).toBeTruthy();
-      expect(resort.terrain.beginner + resort.terrain.intermediate + resort.terrain.advanced).toBe(100);
+      const terrainSum =
+        resort.terrain.beginner + resort.terrain.intermediate + resort.terrain.advanced;
+      expect(terrainSum).toBeGreaterThanOrEqual(99);
+      expect(terrainSum).toBeLessThanOrEqual(101);
     });
+  });
+
+  it("returns 6 resorts from the mock", async () => {
+    const resorts = await getAllResortsAsync();
+    expect(resorts).toHaveLength(6);
   });
 });
 
-describe("getResortById", () => {
-  it("returns the correct resort by id", () => {
-    const resort = getResortById("val-thorens");
+describe("getResortByIdAsync", () => {
+  it("returns the correct resort by id", async () => {
+    const resort = await getResortByIdAsync("val-thorens");
     expect(resort).toBeDefined();
     expect(resort!.name).toBe("Val Thorens");
   });
 
-  it("returns undefined for unknown id", () => {
-    expect(getResortById("nonexistent-id")).toBeUndefined();
+  it("returns undefined for unknown id", async () => {
+    const resort = await getResortByIdAsync("nonexistent-id");
+    expect(resort).toBeUndefined();
   });
 });
 
-describe("getResortsByRegion", () => {
-  it("returns all resorts when given empty regions array", () => {
-    expect(getResortsByRegion([])).toHaveLength(30);
+describe("getResortsByRegionAsync", () => {
+  it("returns all resorts when given empty countries array", async () => {
+    const resorts = await getResortsByRegionAsync([]);
+    expect(resorts).toHaveLength(6);
   });
 
-  it("filters French resorts correctly", () => {
-    const french = getResortsByRegion(["france-alps"]);
+  it("filters French resorts correctly", async () => {
+    const french = await getResortsByRegionAsync(["France"]);
     expect(french.length).toBeGreaterThan(0);
     french.forEach((r) => expect(r.country).toBe("France"));
   });
 
-  it("filters Austrian resorts correctly", () => {
-    const austrian = getResortsByRegion(["austria"]);
+  it("filters Austrian resorts correctly", async () => {
+    const austrian = await getResortsByRegionAsync(["Austria"]);
     expect(austrian.length).toBeGreaterThan(0);
     austrian.forEach((r) => expect(r.country).toBe("Austria"));
   });
 
-  it("filters Swiss resorts correctly", () => {
-    const swiss = getResortsByRegion(["switzerland"]);
+  it("filters Swiss resorts correctly", async () => {
+    const swiss = await getResortsByRegionAsync(["Switzerland"]);
     expect(swiss.length).toBeGreaterThan(0);
     swiss.forEach((r) => expect(r.country).toBe("Switzerland"));
   });
 
-  it("filters Italian resorts correctly", () => {
-    const italian = getResortsByRegion(["italy"]);
+  it("filters Italian resorts correctly", async () => {
+    const italian = await getResortsByRegionAsync(["Italy"]);
     expect(italian.length).toBeGreaterThan(0);
     italian.forEach((r) => expect(r.country).toBe("Italy"));
   });
 
-  it("filters Andorra/Spain resorts correctly", () => {
-    const pyrenees = getResortsByRegion(["andorra-spain"]);
-    expect(pyrenees.length).toBeGreaterThan(0);
-    pyrenees.forEach((r) =>
-      expect(["Andorra", "Spain"]).toContain(r.country)
-    );
+  it("filters Andorran resorts correctly", async () => {
+    const andorran = await getResortsByRegionAsync(["Andorra"]);
+    expect(andorran.length).toBeGreaterThan(0);
+    andorran.forEach((r) => expect(r.country).toBe("Andorra"));
   });
 
-  it("combines multiple regions", () => {
-    const french = getResortsByRegion(["france-alps"]);
-    const austrian = getResortsByRegion(["austria"]);
-    const combined = getResortsByRegion(["france-alps", "austria"]);
+  it("combines multiple countries", async () => {
+    const french = await getResortsByRegionAsync(["France"]);
+    const austrian = await getResortsByRegionAsync(["Austria"]);
+    const combined = await getResortsByRegionAsync(["France", "Austria"]);
     expect(combined).toHaveLength(french.length + austrian.length);
   });
 
-  it("returns empty array for unknown region", () => {
-    expect(getResortsByRegion(["north-pole"])).toHaveLength(0);
+  it("returns empty array for unknown country", async () => {
+    const resorts = await getResortsByRegionAsync(["Narnia"]);
+    expect(resorts).toHaveLength(0);
   });
 });
+

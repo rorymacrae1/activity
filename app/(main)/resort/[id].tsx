@@ -92,7 +92,7 @@ export default function ResortDetailScreen() {
       setLoading(false);
     }
     loadResort();
-  }, [id, siblingIdsParam]);
+  }, [id, siblingIdsParam, user]);
 
   if (loading) {
     return (

@@ -39,16 +39,25 @@ interface SupabaseResortRow {
  * Maps between database schema and app's expected format.
  */
 function supabaseRowToResort(row: SupabaseResortRow): Resort {
-  // Calculate terrain percentages from run counts
+  // Calculate terrain percentages from run counts.
+  // Assign beginner and advanced first; intermediate absorbs rounding remainder.
   const totalRuns = row.blue_runs + row.red_runs + row.black_runs;
   const terrainDistribution: TerrainDistribution =
     totalRuns > 0
-      ? {
-          beginner: Math.round((row.blue_runs / totalRuns) * 100),
-          intermediate: Math.round((row.red_runs / totalRuns) * 100),
-          advanced: Math.round((row.black_runs / totalRuns) * 100),
-        }
+      ? (() => {
+          const beginner = Math.round((row.blue_runs / totalRuns) * 100);
+          const advanced = Math.round((row.black_runs / totalRuns) * 100);
+          return { beginner, intermediate: 100 - beginner - advanced, advanced };
+        })()
       : { beginner: 33, intermediate: 34, advanced: 33 };
+
+  // Resolve airport once to avoid two identical lookups per row
+  const airport = getResortNearestAirport(row.name);
+
+  // Current ski season: Dec (prev year) → Jun (current year).
+  // After June, advance to the next season so resorts never appear closed.
+  const now = new Date();
+  const seasonYear = now.getMonth() >= 6 ? now.getFullYear() + 1 : now.getFullYear();
 
   return {
     id: row.id,
@@ -78,9 +87,8 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       nightlifeScore: row.style === "modern" ? 4 : 3,
       snowReliability: row.snow_sure_score,
       liftModernity: row.style === "modern" ? 4 : 3,
-      nearestAirport: getResortNearestAirport(row.name).iata,
-      transferTimeMinutes: getResortNearestAirport(row.name)
-        .transferTimeMinutes,
+      nearestAirport: airport.iata,
+      transferTimeMinutes: airport.transferTimeMinutes,
       townStyle: row.car_free_town
         ? "Purpose-built"
         : row.style === "modern"
@@ -107,8 +115,8 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       pisteMap: "",
     },
     season: {
-      start: "2024-12-01",
-      end: "2025-04-15",
+      start: `${seasonYear - 1}-12-01`,
+      end: `${seasonYear}-06-30`,
     },
   };
 }
@@ -172,6 +180,7 @@ async function fetchCloudResorts(): Promise<Resort[] | null> {
     const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.warn("Failed to fetch resorts from Supabase:", error.message);
       return null;
     }
@@ -184,6 +193,7 @@ async function fetchCloudResorts(): Promise<Resort[] | null> {
     cacheTimestamp = Date.now();
     return cachedResorts;
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.warn("Error fetching cloud resorts:", err);
     return null;
   }
@@ -284,18 +294,31 @@ export function getResortsByRegion(regionIds: string[]): Resort[] {
 
 /**
  * Get resorts filtered by country (async, fetches from cloud).
- * @param countries - Array of country names as stored in Supabase (e.g., ["France", "Austria"])
+ * Accepts either region IDs (e.g. "france-alps") or country names (e.g. "France").
+ * @param regionOrCountries - Array of region IDs or country names
  */
 export async function getResortsByRegionAsync(
-  countries: string[],
+  regionOrCountries: string[],
 ): Promise<Resort[]> {
   const allResorts = await getAllResortsAsync();
 
-  // If no countries selected, return all
-  if (countries.length === 0) return allResorts;
+  // If no regions selected, return all
+  if (regionOrCountries.length === 0) return allResorts;
 
-  // Filter by country directly (countries array now contains DB country names)
-  return allResorts.filter((resort) => countries.includes(resort.country));
+  const regionMap: Record<string, string[]> = {
+    "france-alps": ["France"],
+    austria: ["Austria"],
+    switzerland: ["Switzerland"],
+    italy: ["Italy"],
+    "andorra-spain": ["Andorra", "Spain"],
+  };
+
+  // Support region IDs (e.g. "france-alps") or bare country names (e.g. "France")
+  const allowedCountries = regionOrCountries.flatMap(
+    (id) => regionMap[id] ?? [id],
+  );
+
+  return allResorts.filter((resort) => allowedCountries.includes(resort.country));
 }
 
 /**
@@ -365,6 +388,7 @@ export async function getResortCountsByCountry(): Promise<
     const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
 
     if (error || !data) {
+      // eslint-disable-next-line no-console
       console.warn("Failed to fetch resort counts:", error?.message);
       return {};
     }
@@ -377,6 +401,7 @@ export async function getResortCountsByCountry(): Promise<
 
     return counts;
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.warn("Error fetching resort counts:", err);
     return {};
   }

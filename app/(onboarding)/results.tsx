@@ -14,6 +14,7 @@ import Head from "expo-router/head";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { getRecommendations } from "@services/recommendation";
+import { useDismissedStore } from "@stores/dismissed";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
 import { colors, spacing, radius } from "@theme";
@@ -68,6 +69,7 @@ export default function ResultsScreen() {
     setLoadingPhase(0);
 
     const preferences = usePreferencesStore.getState().getPreferencesInput();
+    const dismissedIds = useDismissedStore.getState().dismissedIds;
     const setHasCompletedOnboarding =
       usePreferencesStore.getState().setHasCompletedOnboarding;
 
@@ -75,7 +77,7 @@ export default function ResultsScreen() {
       setTimeout(() => reject(new Error("timeout")), 12000),
     );
 
-    Promise.race([getRecommendations(preferences), deadline])
+    Promise.race([getRecommendations(preferences, 5, dismissedIds), deadline])
       .then((r) => {
         setResults(r);
         if (r.length > 0) setHasCompletedOnboarding(true);

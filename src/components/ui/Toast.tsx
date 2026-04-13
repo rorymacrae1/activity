@@ -122,6 +122,15 @@ function Toast({ config, onHide }: ToastProps) {
   const translateY = useSharedValue(-100);
   const opacity = useSharedValue(0);
 
+  const hideWithAnimation = useCallback(() => {
+    translateY.value = withTiming(-100, { duration: 200 });
+    opacity.value = withTiming(0, { duration: 200 }, () => {
+      runOnJS(onHide)();
+    });
+    // translateY and opacity are Reanimated SharedValues (stable refs) — not reactive
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onHide]);
+
   useEffect(() => {
     if (config) {
       // Slide in
@@ -135,14 +144,9 @@ function Toast({ config, onHide }: ToastProps) {
 
       return () => clearTimeout(timeout);
     }
-  }, [config]);
-
-  const hideWithAnimation = useCallback(() => {
-    translateY.value = withTiming(-100, { duration: 200 });
-    opacity.value = withTiming(0, { duration: 200 }, () => {
-      runOnJS(onHide)();
-    });
-  }, [onHide]);
+    // translateY and opacity are Reanimated SharedValues (stable refs) — not reactive
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config, hideWithAnimation]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: translateY.value }],

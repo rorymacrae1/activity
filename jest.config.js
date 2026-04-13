@@ -21,6 +21,7 @@ module.exports = {
   },
   moduleNameMapper: {
     "^@/lib/storage(\\.native)?$": "<rootDir>/src/__mocks__/lib/storage.ts",
+    "^@lib/supabase$": "<rootDir>/src/__mocks__/lib/supabase.ts",
     "^react-native-mmkv$": "<rootDir>/src/__mocks__/react-native-mmkv.ts",
     "^@theme$": "<rootDir>/src/theme/index.ts",
     "^@theme/(.*)$": "<rootDir>/src/theme/$1",

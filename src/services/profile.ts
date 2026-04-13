@@ -63,6 +63,7 @@ export async function getVisitedResorts(
     .order("visited_at", { ascending: false });
 
   if (error) {
+    // eslint-disable-next-line no-console
     console.warn("Failed to fetch visited resorts:", error.message);
     return [];
   }

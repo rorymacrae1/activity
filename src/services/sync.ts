@@ -38,6 +38,7 @@ export async function fetchCloudPreferences(
     .single();
 
   if (error) {
+    // eslint-disable-next-line no-console
     console.warn("Failed to fetch cloud preferences:", error.message);
     return null;
   }
@@ -113,6 +114,7 @@ export async function fetchCloudFavorites(
     .eq("user_id", userId);
 
   if (error) {
+    // eslint-disable-next-line no-console
     console.warn("Failed to fetch cloud favorites:", error.message);
     return null;
   }

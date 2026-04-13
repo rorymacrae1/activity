@@ -40,6 +40,8 @@ function CrossfadeContent({
   const progress = useSharedValue(0);
 
   useFocusEffect(
+    // progress is a Reanimated SharedValue (stable ref) — not reactive
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useCallback(() => {
       progress.value = 0;
       progress.value = withDelay(
@@ -73,6 +75,8 @@ function StaggeredContent({ children, delay = 0 }: StaggeredProps) {
   const progress = useSharedValue(0);
 
   useFocusEffect(
+    // progress is a Reanimated SharedValue (stable ref) — not reactive
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useCallback(() => {
       progress.value = 0;
       progress.value = withDelay(
@@ -112,6 +116,8 @@ export function StaggeredItem({
   const progress = useSharedValue(0);
 
   useFocusEffect(
+    // progress is a Reanimated SharedValue (stable ref) — not reactive
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useCallback(() => {
       progress.value = 0;
       progress.value = withDelay(
@@ -145,6 +151,8 @@ function SoftScaleContent({
   const progress = useSharedValue(0);
 
   useFocusEffect(
+    // progress is a Reanimated SharedValue (stable ref) — not reactive
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useCallback(() => {
       progress.value = 0;
       progress.value = withDelay(
@@ -179,6 +187,8 @@ function ParallaxContent({
   const progress = useSharedValue(0);
 
   useFocusEffect(
+    // progress is a Reanimated SharedValue (stable ref) — not reactive
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useCallback(() => {
       progress.value = 0;
       progress.value = withDelay(
