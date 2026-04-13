@@ -17,39 +17,54 @@ export function generateExplanations(
 ): string[] {
   const reasons: string[] = [];
 
-  // Templates for each attribute
+  // Templates for each attribute — all reference real resort data
   const templates: Record<
     keyof AttributeScores,
     (r: Resort) => ReasonTemplate
   > = {
-    skill: () => ({
-      excellent: "Perfect terrain mix for your skill level",
-      good: "Good variety of runs for you",
-    }),
+    skill: (r) => {
+      const km = r.stats.totalKm;
+      const dominant =
+        prefs.maxSkill >= 0.67
+          ? `${r.terrain.advanced}% black runs`
+          : prefs.maxSkill >= 0.33
+            ? `${r.terrain.intermediate}% reds`
+            : `${r.terrain.beginner}% beginner terrain`;
+      return {
+        excellent: `${km}km of pistes, ${dominant} — perfect for your level`,
+        good: `${km}km across ${r.stats.totalRuns} runs suits your group`,
+      };
+    },
     budget: (r) => ({
-      excellent: `Fits your budget at ~€${r.attributes.averageDailyCost}/day`,
-      good: "Reasonable value for money",
+      excellent: `Great value at ~€${r.attributes.averageDailyCost}/day (lift pass €${r.attributes.liftPassDayCost})`,
+      good: `Fits your budget at ~€${r.attributes.averageDailyCost}/day`,
     }),
-    vibe: (r) => ({
-      excellent:
-        r.attributes.crowdLevel <= 2
-          ? "Peaceful slopes you're looking for"
-          : "Vibrant atmosphere you'll love",
-      good: "Good crowd levels",
-    }),
-    activity: (_r) => ({
-      excellent:
-        prefs.familyNightlife < 0.5
-          ? "Excellent for families"
-          : "Great après-ski scene",
-      good:
-        prefs.familyNightlife < 0.5
-          ? "Family-friendly options"
-          : "Decent nightlife",
-    }),
+    vibe: (r) => {
+      const crowd = r.attributes.crowdLevel;
+      const isQuiet = crowd <= 2;
+      return {
+        excellent: isQuiet
+          ? `Quiet slopes — crowd level just ${crowd}/5`
+          : `Buzzing resort — crowd level ${crowd}/5`,
+        good: isQuiet
+          ? `Relatively uncrowded (${crowd}/5)`
+          : `Good atmosphere (crowd level ${crowd}/5)`,
+      };
+    },
+    activity: (r) => {
+      const family = prefs.familyNightlife < 0.5;
+      return {
+        excellent: family
+          ? `Excellent for families — family score ${r.attributes.familyScore}/5`
+          : `Great après-ski — nightlife score ${r.attributes.nightlifeScore}/5`,
+        good: family
+          ? `Family-friendly (${r.attributes.familyScore}/5)`
+          : `Decent nightlife scene (${r.attributes.nightlifeScore}/5)`,
+      };
+    },
     snow: (r) => ({
-      excellent: `Excellent snow reliability (${r.attributes.snowReliability}/5)`,
-      good: "Reliable snow conditions",
+      excellent: `Excellent snow reliability (${r.attributes.snowReliability}/5) — pistes up to ${r.location.peakAltitude}m`,
+      good: `Reliable snow (${r.attributes.snowReliability}/5) at ${r.location.peakAltitude}m peak`,
     }),
   };
 

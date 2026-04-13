@@ -8,17 +8,19 @@ import Animated, {
   withSequence,
   withSpring,
 } from "react-native-reanimated";
-import { Heart, CheckCircle } from "lucide-react-native";
+import { Heart, CheckCircle, XCircle } from "lucide-react-native";
 import { getResortSchema, getResortBreadcrumbs } from "@/utils/schema";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getResortByIdAsync, getSimilarResorts } from "@services/resort";
 import { useFavoritesStore } from "@stores/favorites";
 import { useAuthStore } from "@stores/auth";
+import { useDismissedStore } from "@stores/dismissed";
 import {
   addVisitedResort,
   removeVisitedResort,
   hasVisitedResort,
 } from "@services/profile";
+import { useToast } from "@components/ui/Toast";
 import { ResortImage } from "@components/ui/ResortImage";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
@@ -48,6 +50,8 @@ export default function ResortDetailScreen() {
   const [isVisited, setIsVisited] = useState(false);
   const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
   const { user } = useAuthStore();
+  const { dismiss } = useDismissedStore();
+  const { showToast } = useToast();
   const { heroHeight, hPadding, isTablet } = useLayout();
   const content = useContent();
 
@@ -144,6 +148,12 @@ export default function ResortDetailScreen() {
     }
   };
 
+  const handleDismiss = () => {
+    dismiss(resort.id);
+    showToast({ type: "info", message: "Removed from recommendations" });
+    router.back();
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <Head>
@@ -191,6 +201,14 @@ export default function ResortDetailScreen() {
           {resort.name}
         </Text>
         <View style={styles.navActions}>
+          <Pressable
+            style={styles.navButton}
+            onPress={handleDismiss}
+            accessibilityRole="button"
+            accessibilityLabel="Not for me — remove from recommendations"
+          >
+            <XCircle size={20} strokeWidth={1.75} color={colors.ink.muted} />
+          </Pressable>
           <Pressable
             style={styles.navButton}
             onPress={handleToggleVisited}

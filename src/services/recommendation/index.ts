@@ -1,6 +1,7 @@
 import { getResortsByRegionAsync } from "../resort";
 import { calculateScores } from "./scorer";
 import { generateExplanations } from "./explainer";
+import { useDismissedStore } from "@stores/dismissed";
 import type {
   SkillLevel,
   Preferences,
@@ -87,6 +88,24 @@ function computeWeightedScore(
 }
 
 /**
+ * Compute a seasonal penalty multiplier based on how close the resort is to closing.
+ * - Closed (past end date): 0.3
+ * - Within 14 days of closing: 0.6
+ * - Within 28 days of closing: 0.8
+ * - Otherwise: 1.0
+ */
+function seasonalMultiplier(seasonEnd: string): number {
+  const now = Date.now();
+  const endMs = new Date(seasonEnd).getTime();
+  const daysUntilClose = (endMs - now) / 86_400_000;
+
+  if (daysUntilClose < 0) return 0.3;
+  if (daysUntilClose < 14) return 0.6;
+  if (daysUntilClose < 28) return 0.8;
+  return 1.0;
+}
+
+/**
  * Get personalized resort recommendations based on user preferences.
  * Fetches resorts from cloud and scores them client-side.
  */
@@ -95,15 +114,24 @@ export async function getRecommendations(
   limit: number = 5,
 ): Promise<RecommendationResult[]> {
   // 1. Fetch and filter by region (async)
-  const candidates = await getResortsByRegionAsync(preferences.regions);
+  const allCandidates = await getResortsByRegionAsync(preferences.regions);
 
-  // 2. Normalize preferences
+  // 2. Exclude resorts the user has dismissed this session
+  const dismissedIds = useDismissedStore.getState().dismissedIds;
+  const candidates = dismissedIds.length
+    ? allCandidates.filter((r) => !dismissedIds.includes(r.id))
+    : allCandidates;
+
+  // 3. Normalize preferences
   const normalizedPrefs = normalizePreferences(preferences);
 
-  // 3. Score each resort
+  // 4. Score each resort
   const scored: RecommendationResult[] = candidates.map((resort) => {
     const attributeScores = calculateScores(resort, normalizedPrefs);
-    const matchScore = computeWeightedScore(attributeScores, normalizedPrefs);
+    const rawScore = computeWeightedScore(attributeScores, normalizedPrefs);
+    const matchScore = Math.round(
+      rawScore * seasonalMultiplier(resort.season.end),
+    );
     const matchReasons = generateExplanations(
       resort,
       attributeScores,
@@ -118,6 +146,6 @@ export async function getRecommendations(
     };
   });
 
-  // 4. Sort by match score (descending) and return top N
+  // 5. Sort by match score (descending) and return top N
   return scored.sort((a, b) => b.matchScore - a.matchScore).slice(0, limit);
 }

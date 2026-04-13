@@ -6,12 +6,15 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StyleSheet, View, Platform, Image } from "react-native";
 import { useFonts } from "expo-font";
+import * as Localization from "expo-localization";
 import { ErrorBoundary } from "@components/ui/ErrorBoundary";
 import { ToastProvider } from "@components/ui/Toast";
 import { SyncErrorObserver } from "@components/ui/SyncErrorObserver";
 import { maxContentWidth } from "@theme/layout";
 import { colors, fontAssets } from "@theme";
 import { useAuthStore } from "@stores/auth";
+import { usePreferencesStore } from "@stores/preferences";
+import type { Language } from "@/content";
 
 // Yeti loading GIF
 const LOADING_YETI = require("../assets/LoadingYeti.gif");
@@ -24,6 +27,10 @@ const LOADING_YETI = require("../assets/LoadingYeti.gif");
 export default function RootLayout() {
   const isWeb = Platform.OS === "web";
   const initializeAuth = useAuthStore((state) => state.initialize);
+  const hasCompletedOnboarding = usePreferencesStore(
+    (s) => s.hasCompletedOnboarding,
+  );
+  const setLanguage = usePreferencesStore((s) => s.setLanguage);
 
   // Load Montserrat fonts
   const [fontsLoaded] = useFonts(fontAssets);
@@ -32,6 +39,15 @@ export default function RootLayout() {
   useEffect(() => {
     initializeAuth();
   }, [initializeAuth]);
+
+  // Auto-detect device locale on first launch (before onboarding is completed)
+  useEffect(() => {
+    if (hasCompletedOnboarding) return;
+    const supported: Language[] = ["en", "fr", "de"];
+    const deviceLang = Localization.getLocales()[0]?.languageCode ?? "en";
+    const matched = supported.find((l) => deviceLang.startsWith(l)) ?? "en";
+    setLanguage(matched);
+  }, [hasCompletedOnboarding, setLanguage]);
 
   // Show loading state while fonts are loading
   if (!fontsLoaded) {

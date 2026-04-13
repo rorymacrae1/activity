@@ -181,10 +181,16 @@ export default function RegionScreen() {
         .sort((a, b) => b.resorts - a.resorts); // Sort by resort count descending
 
       setAvailableCountries(countries);
+
+      // Auto-select all countries on first load so new users start with "Anywhere in Europe"
+      if (regions.length === 0) {
+        setRegions(countries.map((c) => c.id));
+      }
+
       setLoading(false);
     }
     loadCountries();
-  }, [content]);
+  }, [content]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const allSelected =
     availableCountries.length > 0 &&

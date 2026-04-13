@@ -31,6 +31,7 @@ interface SupabaseResortRow {
   embedding: unknown;
   last_updated: string;
   created_at: string;
+  hero_image: string | null;
 }
 
 /**
@@ -100,7 +101,9 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       ].filter(Boolean),
     },
     assets: {
-      heroImage: getResortHeroImage(row.name),
+      heroImage: row.hero_image
+        ? `${row.hero_image.split("?")[0]}?w=1200&q=80&auto=format&fit=crop`
+        : getResortHeroImage(row.name),
       pisteMap: "",
     },
     season: {

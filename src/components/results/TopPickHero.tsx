@@ -1,20 +1,11 @@
-import {
-  View,
-  StyleSheet,
-  Image,
-  Dimensions,
-  ImageSourcePropType,
-  Pressable,
-} from "react-native";
+import { View, StyleSheet, Dimensions, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "@components/ui/Text";
 import { Badge } from "@components/ui/Badge";
 import { Icon } from "@components/ui/Icon";
+import { ResortImage } from "@components/ui/ResortImage";
 import { colors, spacing, radius } from "@theme";
 import type { RecommendationResult } from "@/types/recommendation";
-
-// Default resort image fallback
-const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg");
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -36,14 +27,9 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
     <View style={styles.container}>
       {/* Hero image with gradient overlays */}
       <View style={styles.imageContainer}>
-        <Image
-          source={
-            resort.assets.heroImage
-              ? { uri: resort.assets.heroImage }
-              : DEFAULT_RESORT_IMAGE
-          }
+        <ResortImage
+          uri={resort.assets.heroImage}
           style={styles.image}
-          resizeMode="cover"
           accessibilityLabel={`${resort.name} ski resort`}
         />
         {/* Top gradient for text legibility */}

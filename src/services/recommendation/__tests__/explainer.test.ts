@@ -22,9 +22,9 @@ const makeResort = (attrs: Partial<Resort["attributes"]> = {}): Resort => ({
     liftModernity: 4,
     nearestAirport: "Geneva (GVA)",
     transferTimeMinutes: 120,
-      townStyle: "Traditional village",
-      barCount: 20,
-      otherActivities: ["Ice skating", "Snowshoeing"],
+    townStyle: "Traditional village",
+    barCount: 20,
+    otherActivities: ["Ice skating", "Snowshoeing"],
   },
   content: { description: "A test resort.", highlights: [] },
   assets: { heroImage: "", pisteMap: "" },
@@ -102,7 +102,7 @@ describe("generateExplanations", () => {
       snow: 50,
     };
     const reasons = generateExplanations(resort, scores, basePrefs);
-    expect(reasons.some((r) => r.toLowerCase().includes("peaceful"))).toBe(true);
+    expect(reasons.some((r) => r.toLowerCase().includes("quiet"))).toBe(true);
   });
 
   it("mentions snow reliability when snow score is high", () => {
