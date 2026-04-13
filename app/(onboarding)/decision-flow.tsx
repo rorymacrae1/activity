@@ -5,7 +5,7 @@
 
 import React from "react";
 import { View, ScrollView, StyleSheet, Pressable } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Button } from "@/components/ui";
 import { colors } from "@/theme/colors";
@@ -146,6 +146,11 @@ function getBudgetDisplay(level: BudgetLevel | null): string {
 
 export default function DecisionFlowScreen() {
   const router = useRouter();
+  const { scores, matchScore, resortName } = useLocalSearchParams<{
+    scores: string;
+    matchScore: string;
+    resortName: string;
+  }>();
 
   // Read individual preference values from store
   const groupAbilities = usePreferencesStore((s) => s.groupAbilities);
@@ -154,14 +159,23 @@ export default function DecisionFlowScreen() {
   const crowdPreference = usePreferencesStore((s) => s.crowdPreference);
   const familyVsNightlife = usePreferencesStore((s) => s.familyVsNightlife);
 
-  // Mock attribute scores for visualization (in real app, pass via params)
-  const mockScores: AttributeScores = {
-    skill: 92,
-    budget: 85,
-    vibe: 78,
-    activity: 88,
-    snow: 95,
-  };
+  const attributeScores: AttributeScores =
+    scores
+      ? (JSON.parse(scores) as AttributeScores)
+      : { skill: 0, budget: 0, vibe: 0, activity: 0, snow: 0 };
+
+  const finalMatchScore = matchScore
+    ? Math.round(Number(matchScore))
+    : Math.round(
+        (attributeScores.skill +
+          attributeScores.budget +
+          attributeScores.vibe +
+          attributeScores.activity +
+          attributeScores.snow) /
+          5,
+      );
+
+  const displayResortName = resortName ?? "Your Top Match";
 
   const handleBack = () => {
     router.back();
@@ -257,19 +271,19 @@ export default function DecisionFlowScreen() {
             <FlowNode
               icon="⛷️"
               label="Skill"
-              score={mockScores.skill}
+              score={attributeScores.skill}
               highlighted
             />
             <FlowNode
               icon="💰"
               label="Budget"
-              score={mockScores.budget}
+              score={attributeScores.budget}
               highlighted
             />
             <FlowNode
               icon="✨"
               label="Vibe"
-              score={mockScores.vibe}
+              score={attributeScores.vibe}
               highlighted
             />
           </View>
@@ -278,13 +292,13 @@ export default function DecisionFlowScreen() {
             <FlowNode
               icon="🎿"
               label="Activity"
-              score={mockScores.activity}
+              score={attributeScores.activity}
               highlighted
             />
             <FlowNode
               icon="❄️"
               label="Snow"
-              score={mockScores.snow}
+              score={attributeScores.snow}
               highlighted
             />
           </View>
@@ -299,19 +313,11 @@ export default function DecisionFlowScreen() {
           <View style={styles.resultBadge}>
             <Text style={styles.resultBadgeText}>🏆</Text>
           </View>
-          <Text style={styles.resultTitle}>Your Perfect Match</Text>
+          <Text style={styles.resultTitle}>{displayResortName}</Text>
           <Text style={styles.resultScore}>
-            Overall Score:{" "}
+            Overall Match:{" "}
             <Text style={styles.resultScoreValue}>
-              {Math.round(
-                (mockScores.skill +
-                  mockScores.budget +
-                  mockScores.vibe +
-                  mockScores.activity +
-                  mockScores.snow) /
-                  5,
-              )}
-              %
+              {finalMatchScore}%
             </Text>
           </Text>
         </View>

@@ -25,6 +25,7 @@ interface AuthState {
   signInWithGoogle: () => Promise<{ error: AuthError | null }>;
   signInWithApple: () => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
   updateProfile: (
     updates: Partial<
       Pick<Profile, "display_name" | "avatar_url" | "home_airport">
@@ -193,6 +194,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (data) {
       set({ profile: data as Profile });
     }
+  },
+
+  /**
+   * Send a password reset email.
+   */
+  resetPassword: async (email) => {
+    if (!supabase) return { error: new AuthError("Supabase not configured") };
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "peakwise://auth/reset-password",
+    });
+
+    return { error };
   },
 
   /**

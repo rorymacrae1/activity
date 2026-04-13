@@ -34,20 +34,30 @@ import type { RecommendationResult } from "@/types/recommendation";
 export default function ResultsScreen() {
   const [results, setResults] = useState<RecommendationResult[]>([]);
   const [loading, setLoading] = useState(true);
+  const [timedOut, setTimedOut] = useState(false);
+  const [loadingPhase, setLoadingPhase] = useState(0);
   const { hPadding } = useLayout();
   const content = useContent();
 
-  useEffect(() => {
-    // Get preferences snapshot once on mount (not as a reactive selector)
+  const LOADING_PHASES = [
+    content.onboarding.results.loading,
+    "Scoring resorts against your preferences…",
+    "Almost there, finding your best matches…",
+    "Taking a little longer than usual…",
+  ];
+
+  const runRecommendations = () => {
+    setLoading(true);
+    setTimedOut(false);
+    setResults([]);
+    setLoadingPhase(0);
+
     const preferences = usePreferencesStore.getState().getPreferencesInput();
     const setHasCompletedOnboarding =
       usePreferencesStore.getState().setHasCompletedOnboarding;
 
-    // Safety deadline: if the entire recommendation pipeline hangs for any
-    // reason (network, service worker, extension interference), force-resolve
-    // to empty so the spinner never spins forever.
-    const deadline = new Promise<RecommendationResult[]>((resolve) =>
-      setTimeout(() => resolve([]), 12000),
+    const deadline = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("timeout")), 12000),
     );
 
     Promise.race([getRecommendations(preferences), deadline])
@@ -55,20 +65,56 @@ export default function ResultsScreen() {
         setResults(r);
         if (r.length > 0) setHasCompletedOnboarding(true);
       })
-      .catch(() => setResults([]))
+      .catch((err: Error) => {
+        if (err?.message === "timeout") setTimedOut(true);
+        setResults([]);
+      })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    runRecommendations();
   }, []);
+
+  // Advance loading phase messages over time
+  useEffect(() => {
+    if (!loading) return;
+    const timers = [
+      setTimeout(() => setLoadingPhase(1), 3000),
+      setTimeout(() => setLoadingPhase(2), 7000),
+      setTimeout(() => setLoadingPhase(3), 10000),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, [loading]);
 
   if (loading) {
     return (
       <ScreenContainer>
         <NavBar />
-        <LoadingState message={content.onboarding.results.loading} />
+        <LoadingState message={LOADING_PHASES[loadingPhase]} />
       </ScreenContainer>
     );
   }
 
-  // Empty state
+  // Timeout or error state
+  if (timedOut) {
+    return (
+      <ScreenContainer>
+        <NavBar />
+        <EmptyState
+          icon="search"
+          title="Taking too long"
+          message="We couldn't reach the resort data in time. Check your connection and try again."
+          action={{
+            label: "Try Again",
+            onPress: runRecommendations,
+          }}
+        />
+      </ScreenContainer>
+    );
+  }
+
+  // Empty state — no matches
   if (results.length === 0) {
     return (
       <ScreenContainer>
@@ -168,7 +214,16 @@ export default function ResultsScreen() {
         {/* Decision Flow CTA */}
         <Pressable
           style={styles.decisionFlowCta}
-          onPress={() => router.push("/(onboarding)/decision-flow")}
+          onPress={() =>
+            router.push({
+              pathname: "/(onboarding)/decision-flow",
+              params: {
+                scores: JSON.stringify(topPick.attributeScores),
+                matchScore: String(topPick.matchScore),
+                resortName: topPick.resort.name,
+              },
+            })
+          }
           accessibilityRole="button"
           accessibilityLabel="Want to know how this was chosen? Tap to see the decision flow visualization"
         >

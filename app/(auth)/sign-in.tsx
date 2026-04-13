@@ -147,9 +147,18 @@ export default function SignInScreen() {
             </View>
 
             <View style={styles.inputGroup}>
-              <Text variant="label" style={styles.inputLabel}>
-                Password
-              </Text>
+              <View style={styles.passwordLabelRow}>
+                <Text variant="label" style={styles.inputLabel}>
+                  Password
+                </Text>
+                <Link href="/(auth)/forgot-password" asChild>
+                  <Pressable accessibilityRole="link">
+                    <Text variant="bodySmall" color={colors.primary}>
+                      Forgot password?
+                    </Text>
+                  </Pressable>
+                </Link>
+              </View>
               <View style={styles.passwordContainer}>
                 <TextInput
                   style={[styles.input, styles.passwordInput]}
@@ -276,6 +285,12 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   inputLabel: {
+    marginLeft: spacing.xs,
+  },
+  passwordLabelRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginLeft: spacing.xs,
   },
   input: {
