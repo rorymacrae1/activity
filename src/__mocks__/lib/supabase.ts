@@ -216,7 +216,8 @@ function makeBuilder(rows: MockResortRow[]) {
       return builder;
     },
     not: (_col: string, _op: string, _val: unknown) => builder,
-    single: () => Promise.resolve({ data: builder._rows[0] ?? null, error: null }),
+    single: () =>
+      Promise.resolve({ data: builder._rows[0] ?? null, error: null }),
     then: (resolve: (v: { data: MockResortRow[]; error: null }) => void) =>
       resolve({ data: builder._rows, error: null }),
   };

@@ -23,7 +23,9 @@ describe("getAllResortsAsync", () => {
       expect(resort.name).toBeTruthy();
       expect(resort.country).toBeTruthy();
       const terrainSum =
-        resort.terrain.beginner + resort.terrain.intermediate + resort.terrain.advanced;
+        resort.terrain.beginner +
+        resort.terrain.intermediate +
+        resort.terrain.advanced;
       expect(terrainSum).toBeGreaterThanOrEqual(99);
       expect(terrainSum).toBeLessThanOrEqual(101);
     });
@@ -96,4 +98,3 @@ describe("getResortsByRegionAsync", () => {
     expect(resorts).toHaveLength(0);
   });
 });
-

@@ -47,7 +47,11 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       ? (() => {
           const beginner = Math.round((row.blue_runs / totalRuns) * 100);
           const advanced = Math.round((row.black_runs / totalRuns) * 100);
-          return { beginner, intermediate: 100 - beginner - advanced, advanced };
+          return {
+            beginner,
+            intermediate: 100 - beginner - advanced,
+            advanced,
+          };
         })()
       : { beginner: 33, intermediate: 34, advanced: 33 };
 
@@ -57,7 +61,8 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
   // Current ski season: Dec (prev year) → Jun (current year).
   // After June, advance to the next season so resorts never appear closed.
   const now = new Date();
-  const seasonYear = now.getMonth() >= 6 ? now.getFullYear() + 1 : now.getFullYear();
+  const seasonYear =
+    now.getMonth() >= 6 ? now.getFullYear() + 1 : now.getFullYear();
 
   return {
     id: row.id,
@@ -318,7 +323,9 @@ export async function getResortsByRegionAsync(
     (id) => regionMap[id] ?? [id],
   );
 
-  return allResorts.filter((resort) => allowedCountries.includes(resort.country));
+  return allResorts.filter((resort) =>
+    allowedCountries.includes(resort.country),
+  );
 }
 
 /**
