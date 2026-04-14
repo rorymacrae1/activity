@@ -38,6 +38,7 @@ import {
 } from "@components/resort/PlaceholderSections";
 import { MatchBreakdownSection } from "@components/resort/MatchBreakdownSection";
 import { SimilarResortsCarousel } from "@components/resort/SimilarResortsCarousel";
+import { LocationMapSection } from "@components/resort/LocationMapSection";
 import { usePreferencesStore } from "@stores/preferences";
 import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
@@ -337,6 +338,9 @@ export default function ResortDetailScreen() {
 
             {/* Transport Section */}
             <TransportSection resort={resort} />
+
+            {/* Location map with nearby accommodations and ski shops */}
+            <LocationMapSection resort={resort} />
 
             {/* Map CTA */}
             <Button

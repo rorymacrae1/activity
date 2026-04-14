@@ -97,6 +97,43 @@ interface WeatherMonthRow {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// PostGIS EWKB decoder
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Decode a PostGIS EWKB hex string (geography Point, SRID 4326) into
+ * { lat, lng }. Returns null if the string is missing or unparseable.
+ *
+ * EWKB layout (little-endian Point with SRID):
+ *   byte 0    : byte-order flag (01 = LE)
+ *   bytes 1-4 : geometry type  (0x20000001 = Point + SRID flag)
+ *   bytes 5-8 : SRID           (0x10E6 = 4326)
+ *   bytes 9-16: X coordinate   (longitude, IEEE-754 double)
+ *   bytes 17-24: Y coordinate  (latitude,  IEEE-754 double)
+ */
+function parseWKBPoint(
+  hex: string | null,
+): { lat: number; lng: number } | null {
+  if (!hex || hex.length < 42) return null;
+  try {
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < bytes.length; i++) {
+      bytes[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+    }
+    const view = new DataView(bytes.buffer);
+    const isLE = bytes[0] === 1;
+    const geomType = isLE ? view.getUint32(1, true) : view.getUint32(1, false);
+    const hasEWKB = (geomType & 0x20000000) !== 0;
+    const offset = hasEWKB ? 9 : 5;
+    const lng = view.getFloat64(offset, isLE);
+    const lat = view.getFloat64(offset + 8, isLE);
+    return { lat, lng };
+  } catch {
+    return null;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Supabase resort table schema (from existing database)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -105,7 +142,7 @@ interface SupabaseResortRow {
   name: string;
   country: string;
   region: string | null;
-  location: string | null; // PostGIS geography
+  location: string | null; // PostGIS EWKB hex — decoded via parseWKBPoint()
   altitude_base_m: number | null;
   altitude_top_m: number | null;
   car_free_town: boolean | null;
@@ -367,8 +404,8 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
     region,
     subRegion: undefined,
     location: {
-      lat: 0, // PostGIS geography — requires ST_AsGeoJSON decoding
-      lng: 0,
+      lat: parseWKBPoint(row.location)?.lat ?? 0,
+      lng: parseWKBPoint(row.location)?.lng ?? 0,
       villageAltitude: row.altitude_base_m ?? row.min_altitude_m ?? 0,
       peakAltitude: row.altitude_top_m ?? row.max_altitude_m ?? 0,
     },

@@ -9,3 +9,4 @@ export {
   TransportSection,
 } from "./PlaceholderSections";
 export { SimilarResortsCarousel } from "./SimilarResortsCarousel";
+export { LocationMapSection } from "./LocationMapSection";
