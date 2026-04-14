@@ -34,14 +34,20 @@ function getSupabaseMock() {
 }
 
 // Chain helpers
-function setupSelectChain(data: unknown, error: { message: string } | null = null) {
+function setupSelectChain(
+  data: unknown,
+  error: { message: string } | null = null,
+) {
   mockSingle.mockResolvedValue({ data, error });
   mockEq.mockReturnValue({ single: mockSingle, then: undefined });
   mockSelect.mockReturnValue({ eq: mockEq });
   getSupabaseMock().from.mockReturnValue({ select: mockSelect });
 }
 
-function setupSelectArrayChain(data: unknown[], error: { message: string } | null = null) {
+function setupSelectArrayChain(
+  data: unknown[],
+  error: { message: string } | null = null,
+) {
   const eqResult = error
     ? Promise.resolve({ data: null, error })
     : Promise.resolve({ data, error: null });

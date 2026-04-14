@@ -197,10 +197,12 @@ describe("useAuthStore", () => {
         event: string,
         session: typeof MOCK_SESSION | null,
       ) => void;
-      mockOnAuthStateChange.mockImplementation((cb: typeof capturedCallback) => {
-        capturedCallback = cb;
-        return { data: { subscription: { unsubscribe: jest.fn() } } };
-      });
+      mockOnAuthStateChange.mockImplementation(
+        (cb: typeof capturedCallback) => {
+          capturedCallback = cb;
+          return { data: { subscription: { unsubscribe: jest.fn() } } };
+        },
+      );
 
       await act(() => useAuthStore.getState().initialize());
 
@@ -223,10 +225,12 @@ describe("useAuthStore", () => {
         event: string,
         session: typeof MOCK_SESSION | null,
       ) => void;
-      mockOnAuthStateChange.mockImplementation((cb: typeof capturedCallback) => {
-        capturedCallback = cb;
-        return { data: { subscription: { unsubscribe: jest.fn() } } };
-      });
+      mockOnAuthStateChange.mockImplementation(
+        (cb: typeof capturedCallback) => {
+          capturedCallback = cb;
+          return { data: { subscription: { unsubscribe: jest.fn() } } };
+        },
+      );
 
       // Start signed in
       mockGetSession.mockResolvedValue({
@@ -616,9 +620,7 @@ describe("useAuthStore (supabase not configured)", () => {
 
     let result: { error: AuthError | null; session: unknown };
     await act(async () => {
-      result = await useAuthStore
-        .getState()
-        .signUp("test@example.com", "pass");
+      result = await useAuthStore.getState().signUp("test@example.com", "pass");
     });
 
     expect(result!.error).toBeInstanceOf(AuthError);
@@ -634,9 +636,7 @@ describe("useAuthStore (supabase not configured)", () => {
 
     let result: { error: AuthError | null };
     await act(async () => {
-      result = await useAuthStore
-        .getState()
-        .signIn("test@example.com", "pass");
+      result = await useAuthStore.getState().signIn("test@example.com", "pass");
     });
 
     expect(result!.error).toBeInstanceOf(AuthError);
@@ -663,9 +663,7 @@ describe("useAuthStore (supabase not configured)", () => {
 
     let result: { error: AuthError | null };
     await act(async () => {
-      result = await useAuthStore
-        .getState()
-        .resetPassword("test@example.com");
+      result = await useAuthStore.getState().resetPassword("test@example.com");
     });
 
     expect(result!.error).toBeInstanceOf(AuthError);

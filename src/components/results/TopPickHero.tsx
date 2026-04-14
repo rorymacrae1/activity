@@ -47,7 +47,12 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
 
         {/* Top Pick badge */}
         <View style={styles.topBadge} pointerEvents="none">
-          <Icon name="star" size={14} color={colors.rank.gold} strokeWidth={2} />
+          <Icon
+            name="star"
+            size={14}
+            color={colors.rank.gold}
+            strokeWidth={2}
+          />
           <Text style={styles.topBadgeText}>Your Perfect Match</Text>
         </View>
 

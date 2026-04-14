@@ -33,8 +33,7 @@ export const interpolate = (
   outputRange: number[],
 ) => {
   if (inputRange.length < 2 || outputRange.length < 2) return outputRange[0];
-  const ratio =
-    (value - inputRange[0]!) / (inputRange[1]! - inputRange[0]!);
+  const ratio = (value - inputRange[0]!) / (inputRange[1]! - inputRange[0]!);
   return outputRange[0]! + ratio * (outputRange[1]! - outputRange[0]!);
 };
 export const Easing = {
@@ -50,7 +49,10 @@ export const runOnUI = (fn: (...args: unknown[]) => void) => fn;
 export const cancelAnimation = () => {};
 export const FadeIn = { duration: () => FadeIn };
 export const FadeOut = { duration: () => FadeOut };
-export const FadeInDown = { duration: () => FadeInDown, delay: () => FadeInDown };
+export const FadeInDown = {
+  duration: () => FadeInDown,
+  delay: () => FadeInDown,
+};
 export const SlideInRight = { duration: () => SlideInRight };
 export const SlideOutLeft = { duration: () => SlideOutLeft };
 export const Layout = { duration: () => Layout };

@@ -71,7 +71,9 @@ const makeResort = (overrides: Partial<Resort> = {}): Resort => ({
   ...overrides,
 });
 
-const makeResult = (overrides?: Partial<RecommendationResult>): RecommendationResult => ({
+const makeResult = (
+  overrides?: Partial<RecommendationResult>,
+): RecommendationResult => ({
   resort: makeResort(),
   matchScore: 85,
   matchReasons: ["Great snow", "Good value"],
@@ -131,7 +133,11 @@ describe("ResortCard", () => {
 
   it("hides match score when showMatchScore is false", () => {
     render(
-      <ResortCard result={makeResult()} onPress={jest.fn()} showMatchScore={false} />,
+      <ResortCard
+        result={makeResult()}
+        onPress={jest.fn()}
+        showMatchScore={false}
+      />,
     );
     expect(screen.queryByText("85")).toBeNull();
     expect(screen.queryByText("%")).toBeNull();

@@ -60,15 +60,17 @@ export function AirportSearchInput({
   const results = useMemo(() => {
     if (query.length < 2 || airports.length === 0) return [];
 
-    const scored = airports.map((airport) => ({
-      airport,
-      score: fuzzyScoreMulti(query, [
-        airport.iata,
-        airport.name,
-        airport.city,
-        airport.country,
-      ]),
-    })).filter((item) => item.score > 0);
+    const scored = airports
+      .map((airport) => ({
+        airport,
+        score: fuzzyScoreMulti(query, [
+          airport.iata,
+          airport.name,
+          airport.city,
+          airport.country,
+        ]),
+      }))
+      .filter((item) => item.score > 0);
 
     scored.sort((a, b) => b.score - a.score);
     return scored.slice(0, 8).map((item) => item.airport);

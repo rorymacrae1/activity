@@ -519,7 +519,10 @@ async function fetchCloudResorts(): Promise<Resort[] | null> {
     return cachedResorts;
   } catch (e: unknown) {
     // eslint-disable-next-line no-console
-    console.warn("Error fetching cloud resorts:", e instanceof Error ? e.message : e);
+    console.warn(
+      "Error fetching cloud resorts:",
+      e instanceof Error ? e.message : e,
+    );
     return null;
   }
 }
@@ -574,7 +577,10 @@ export async function getAllResortsAsync(): Promise<Resort[]> {
   if (cachedResorts) return cachedResorts;
 
   // Cold start: no cache and fetch failed — retry with backoff
-  const retry = await fetchWithRetry(fetchCloudResorts, { retries: 2, backoff: 1000 });
+  const retry = await fetchWithRetry(fetchCloudResorts, {
+    retries: 2,
+    backoff: 1000,
+  });
   return retry ?? [];
 }
 
@@ -741,7 +747,10 @@ export async function getResortCountsByCountry(): Promise<
     return counts;
   } catch (e: unknown) {
     // eslint-disable-next-line no-console
-    console.warn("Error fetching resort counts:", e instanceof Error ? e.message : e);
+    console.warn(
+      "Error fetching resort counts:",
+      e instanceof Error ? e.message : e,
+    );
     return {};
   }
 }

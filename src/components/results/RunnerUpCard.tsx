@@ -109,7 +109,12 @@ export function RunnerUpCard({
         {/* Rank Badge */}
         {rankColor && (
           <View style={[styles.rankBadge, { backgroundColor: rankColor }]}>
-            <Icon name="star" size={14} color={colors.ink.inverse} strokeWidth={2} />
+            <Icon
+              name="star"
+              size={14}
+              color={colors.ink.inverse}
+              strokeWidth={2}
+            />
           </View>
         )}
 

@@ -75,9 +75,7 @@ module.exports = {
           "<rootDir>/src/__mocks__/react-native-reanimated.ts",
       },
       transformIgnorePatterns: sharedTransformIgnore,
-      setupFiles: [
-        "<rootDir>/node_modules/react-native/jest/setup.js",
-      ],
+      setupFiles: ["<rootDir>/node_modules/react-native/jest/setup.js"],
     },
   ],
   collectCoverageFrom: [

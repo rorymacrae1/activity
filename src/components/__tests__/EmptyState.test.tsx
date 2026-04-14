@@ -16,13 +16,7 @@ jest.mock("@components/ui/Icon", () => ({
 
 // Mock Button — avoids Reanimated dependency
 jest.mock("@components/ui/Button", () => ({
-  Button: ({
-    label,
-    onPress,
-  }: {
-    label: string;
-    onPress: () => void;
-  }) => {
+  Button: ({ label, onPress }: { label: string; onPress: () => void }) => {
     const { Pressable, Text } = require("react-native");
     return (
       <Pressable onPress={onPress} accessibilityLabel={label}>
@@ -91,11 +85,7 @@ describe("EmptyState", () => {
 
   it("does not render button when no action provided", () => {
     render(
-      <EmptyState
-        icon="bookmark"
-        title="Empty"
-        message="Nothing to show."
-      />,
+      <EmptyState icon="bookmark" title="Empty" message="Nothing to show." />,
     );
 
     expect(screen.queryByText("Reset filters")).toBeNull();
