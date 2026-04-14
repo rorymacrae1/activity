@@ -1,6 +1,7 @@
 import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
 import type { AttributeScores } from "@/types/recommendation";
+import { SCORE_THRESHOLDS } from "@/constants/scoring";
 
 interface ReasonTemplate {
   excellent: string;
@@ -78,9 +79,9 @@ export function generateExplanations(
 
     const template = templates[attr](resort);
 
-    if (score >= 80) {
+    if (score >= SCORE_THRESHOLDS.excellent) {
       reasons.push(template.excellent);
-    } else if (score >= 65 && reasons.length < 2) {
+    } else if (score >= SCORE_THRESHOLDS.good && reasons.length < 2) {
       reasons.push(template.good);
     }
   }

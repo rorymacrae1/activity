@@ -13,6 +13,7 @@
 
 import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
+import { SCORE_THRESHOLDS } from "@/constants/scoring";
 import { calculateScores } from "@services/recommendation/scorer";
 import { colors } from "@/theme/colors";
 
@@ -136,16 +137,16 @@ export function computePlotPoints(
  * Colour tier for a match score.
  */
 export function scoreColor(score: number): string {
-  if (score >= 80) return colors.match.excellent;
-  if (score >= 60) return colors.match.good;
-  if (score >= 40) return colors.match.fair;
+  if (score >= SCORE_THRESHOLDS.excellent) return colors.match.excellent;
+  if (score >= SCORE_THRESHOLDS.good) return colors.match.good;
+  if (score >= SCORE_THRESHOLDS.fair) return colors.match.fair;
   return colors.match.poor;
 }
 
 /** Accessible label for a score tier */
 export function scoreTierLabel(score: number): string {
-  if (score >= 80) return "Excellent match";
-  if (score >= 60) return "Good match";
-  if (score >= 40) return "Fair match";
+  if (score >= SCORE_THRESHOLDS.excellent) return "Excellent match";
+  if (score >= SCORE_THRESHOLDS.good) return "Good match";
+  if (score >= SCORE_THRESHOLDS.fair) return "Fair match";
   return "Poor match";
 }

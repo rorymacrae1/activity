@@ -10,6 +10,7 @@ import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
 import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
 import type { SkillLevel } from "@/types/preferences";
+import { SKILL_LEVELS } from "@/constants/options";
 
 /** Piste marker colors matching real European ski signage */
 const PISTE_COLORS: Record<SkillLevel, string> = {
@@ -49,12 +50,7 @@ export default function SkillScreen() {
   const { isTablet, hPadding } = useLayout();
   const content = useContent();
 
-  const OPTIONS: SkillLevel[] = [
-    "beginner",
-    "intermediate",
-    "red",
-    "advanced",
-  ];
+  const OPTIONS = SKILL_LEVELS;
 
   const toggle = (level: SkillLevel) => {
     if (groupAbilities.includes(level)) {

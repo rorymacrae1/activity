@@ -13,6 +13,8 @@ import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { typography } from "@/theme/typography";
 import { usePreferencesStore } from "@/stores/preferences";
+import { useContent } from "@/hooks/useContent";
+import { SKILL_LEVELS } from "@/constants/options";
 import type { AttributeScores } from "@/types/recommendation";
 import type { SkillLevel, BudgetLevel } from "@/types/preferences";
 
@@ -99,53 +101,17 @@ function SectionDivider({ label }: { label: string }) {
 
 /**
  * Skill level labels
+ * (defined inside component via content — see DecisionFlowScreen)
  */
-const SKILL_LABELS: Record<SkillLevel, string> = {
-  beginner: "Beginner",
-  intermediate: "Intermediate",
-  red: "Red Runs",
-  advanced: "Advanced",
-};
-
-/**
- * Get skill level display text
- */
-function getSkillDisplay(abilities: SkillLevel[]): string {
-  if (abilities.length === 0) return "Any";
-  // Show highest ability level
-  const order: SkillLevel[] = [
-    "beginner",
-    "intermediate",
-    "red",
-    "advanced",
-  ];
-  const highest = abilities.reduce(
-    (max, curr) => (order.indexOf(curr) > order.indexOf(max) ? curr : max),
-    abilities[0],
-  );
-  return SKILL_LABELS[highest] || "Any";
-}
 
 /**
  * Budget level labels
+ * (defined inside component via content — see DecisionFlowScreen)
  */
-const BUDGET_LABELS: Record<BudgetLevel, string> = {
-  budget: "Budget",
-  mid: "Mid-range",
-  premium: "Premium",
-  luxury: "Luxury",
-};
-
-/**
- * Get budget display text
- */
-function getBudgetDisplay(level: BudgetLevel | null): string {
-  if (level === null) return "Any";
-  return BUDGET_LABELS[level] || "Any";
-}
 
 export default function DecisionFlowScreen() {
   const router = useRouter();
+  const content = useContent();
   const { scores, matchScore, resortName } = useLocalSearchParams<{
     scores: string;
     matchScore: string;
@@ -159,10 +125,38 @@ export default function DecisionFlowScreen() {
   const crowdPreference = usePreferencesStore((s) => s.crowdPreference);
   const familyVsNightlife = usePreferencesStore((s) => s.familyVsNightlife);
 
-  const attributeScores: AttributeScores =
-    scores
-      ? (JSON.parse(scores) as AttributeScores)
-      : { skill: 0, budget: 0, vibe: 0, activity: 0, snow: 0 };
+  // Labels derived from i18n content — not hardcoded English
+  const skillLabels: Record<SkillLevel, string> = {
+    beginner: content.onboarding.skill.options.beginner.title,
+    intermediate: content.onboarding.skill.options.intermediate.title,
+    red: content.onboarding.skill.options.red.title,
+    advanced: content.onboarding.skill.options.advanced.title,
+  };
+  const budgetLabels: Record<BudgetLevel, string> = {
+    budget: content.onboarding.budget.options.budget.title,
+    mid: content.onboarding.budget.options.mid.title,
+    premium: content.onboarding.budget.options.premium.title,
+    luxury: content.onboarding.budget.options.luxury.title,
+  };
+
+  const getSkillDisplay = (abilities: SkillLevel[]): string => {
+    if (abilities.length === 0) return "Any";
+    const highest = abilities.reduce(
+      (max, curr) =>
+        SKILL_LEVELS.indexOf(curr) > SKILL_LEVELS.indexOf(max) ? curr : max,
+      abilities[0]!,
+    );
+    return skillLabels[highest] ?? "Any";
+  };
+
+  const getBudgetDisplay = (level: BudgetLevel | null): string => {
+    if (level === null) return "Any";
+    return budgetLabels[level] ?? "Any";
+  };
+
+  const attributeScores: AttributeScores = scores
+    ? (JSON.parse(scores) as AttributeScores)
+    : { skill: 0, budget: 0, vibe: 0, activity: 0, snow: 0 };
 
   const finalMatchScore = matchScore
     ? Math.round(Number(matchScore))
@@ -316,9 +310,7 @@ export default function DecisionFlowScreen() {
           <Text style={styles.resultTitle}>{displayResortName}</Text>
           <Text style={styles.resultScore}>
             Overall Match:{" "}
-            <Text style={styles.resultScoreValue}>
-              {finalMatchScore}%
-            </Text>
+            <Text style={styles.resultScoreValue}>{finalMatchScore}%</Text>
           </Text>
         </View>
 

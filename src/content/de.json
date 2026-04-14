@@ -124,6 +124,12 @@
     },
     "results": {
       "loading": "Suche nach deinen perfekten Skigebieten...",
+      "loadingPhases": [
+        "Suche nach deinen perfekten Skigebieten...",
+        "Skigebiete werden nach deinen Präferenzen bewertet…",
+        "Fast fertig, beste Treffer werden ermittelt…",
+        "Das dauert etwas länger als gewöhnlich…"
+      ],
       "title": "Deine Top-Treffer",
       "subtitle": "Basierend auf deinen Präferenzen",
       "emptyTitle": "Keine Treffer gefunden",

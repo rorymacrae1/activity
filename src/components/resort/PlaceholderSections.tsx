@@ -277,7 +277,6 @@ export function TransportSection({ resort }: TransportSectionProps) {
 
 const styles = StyleSheet.create({
   section: {
-    paddingHorizontal: spacing.lg,
     marginBottom: spacing.xl,
   },
   sectionTitle: {

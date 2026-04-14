@@ -126,6 +126,12 @@
     },
     "results": {
       "loading": "Finding your perfect resorts...",
+      "loadingPhases": [
+        "Finding your perfect resorts...",
+        "Scoring resorts against your preferences…",
+        "Almost there, finding your best matches…",
+        "Taking a little longer than usual…"
+      ],
       "title": "Your Top Matches",
       "subtitle": "Based on your preferences",
       "emptyTitle": "No matches found",

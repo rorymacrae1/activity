@@ -45,7 +45,7 @@ export function QuickActions({
       iconColor: colors.sentiment.warning,
       label: "Retake Quiz",
       sublabel: "Update your preferences",
-      route: "/(onboarding)/skill",
+      route: "/(onboarding)",
       accentColor: colors.sentiment.warningSubtle,
     },
   ];

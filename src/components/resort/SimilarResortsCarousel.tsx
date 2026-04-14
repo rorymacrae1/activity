@@ -48,7 +48,7 @@ function getPriceLevel(dailyCost: number): number {
  * Format price level to euro symbols
  */
 function formatPriceLevel(level: number): string {
-  return "€".repeat(Math.max(1, Math.min(level, 4)));
+  return "£".repeat(Math.max(1, Math.min(level, 4)));
 }
 
 function SimilarResortCard({

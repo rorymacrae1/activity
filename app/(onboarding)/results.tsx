@@ -31,6 +31,11 @@ import {
   ReasonCarousel,
   SecondChoicesCarousel,
 } from "@/components/results";
+import {
+  LOADING_PHASE_TIMES,
+  RECOMMENDATION_TIMEOUT_MS,
+  RECOMMENDATION_LIMIT,
+} from "@/constants/scoring";
 import type { RecommendationResult } from "@/types/recommendation";
 
 export default function ResultsScreen() {
@@ -55,12 +60,7 @@ export default function ResultsScreen() {
   const [draftSnow, setDraftSnow] = useState(snowImportance);
   const [draftFamily, setDraftFamily] = useState(familyVsNightlife);
 
-  const LOADING_PHASES = [
-    content.onboarding.results.loading,
-    "Scoring resorts against your preferences…",
-    "Almost there, finding your best matches…",
-    "Taking a little longer than usual…",
-  ];
+  const LOADING_PHASES = content.onboarding.results.loadingPhases;
 
   const runRecommendations = () => {
     setLoading(true);
@@ -74,10 +74,13 @@ export default function ResultsScreen() {
       usePreferencesStore.getState().setHasCompletedOnboarding;
 
     const deadline = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("timeout")), 12000),
+      setTimeout(() => reject(new Error("timeout")), RECOMMENDATION_TIMEOUT_MS),
     );
 
-    Promise.race([getRecommendations(preferences, 5, dismissedIds), deadline])
+    Promise.race([
+      getRecommendations(preferences, RECOMMENDATION_LIMIT, dismissedIds),
+      deadline,
+    ])
       .then((r) => {
         setResults(r);
         if (r.length > 0) setHasCompletedOnboarding(true);
@@ -113,11 +116,9 @@ export default function ResultsScreen() {
   // Advance loading phase messages over time
   useEffect(() => {
     if (!loading) return;
-    const timers = [
-      setTimeout(() => setLoadingPhase(1), 3000),
-      setTimeout(() => setLoadingPhase(2), 7000),
-      setTimeout(() => setLoadingPhase(3), 10000),
-    ];
+    const timers = LOADING_PHASE_TIMES.map((delay, i) =>
+      setTimeout(() => setLoadingPhase(i + 1), delay),
+    );
     return () => timers.forEach(clearTimeout);
   }, [loading]);
 

@@ -10,31 +10,28 @@ import type {
   RecommendationResult,
   AttributeScores,
 } from "@/types/recommendation";
+import {
+  SKILL_LEVEL_MAP,
+  BUDGET_LEVEL_MAP,
+  DEFAULT_ABILITY,
+} from "@/constants/options";
+import {
+  MS_PER_DAY,
+  SEASONAL_WINDOW,
+  SEASONAL_PENALTY,
+  RECOMMENDATION_LIMIT,
+} from "@/constants/scoring";
 
 /**
  * Normalize user preferences to 0-1 scale for scoring.
  */
 function normalizePreferences(prefs: Preferences): NormalizedPreferences {
-  const skillMap: Record<SkillLevel, number> = {
-    beginner: 0,
-    intermediate: 0.33,
-    red: 0.67,
-    advanced: 1,
-  };
-
-  const budgetMap: Record<string, number> = {
-    budget: 0,
-    mid: 0.33,
-    premium: 0.67,
-    luxury: 1,
-  };
-
   const abilities =
     prefs.groupAbilities.length > 0
       ? prefs.groupAbilities
-      : (["intermediate"] as SkillLevel[]);
+      : ([DEFAULT_ABILITY] as SkillLevel[]);
 
-  const skillValues = abilities.map((s) => skillMap[s]);
+  const skillValues = abilities.map((s) => SKILL_LEVEL_MAP[s]);
   const minSkill = Math.min(...skillValues);
   const maxSkill = Math.max(...skillValues);
 
@@ -42,7 +39,7 @@ function normalizePreferences(prefs: Preferences): NormalizedPreferences {
     minSkill,
     maxSkill,
     tripType: prefs.tripType,
-    budgetLevel: budgetMap[prefs.budgetLevel] ?? 0.5,
+    budgetLevel: BUDGET_LEVEL_MAP[prefs.budgetLevel] ?? 0.5,
     quietLively: (prefs.crowdPreference - 1) / 4,
     familyNightlife: (prefs.familyVsNightlife - 1) / 4,
     snowImportance: (prefs.snowImportance - 1) / 4,
@@ -88,20 +85,20 @@ function computeWeightedScore(
 
 /**
  * Compute a seasonal penalty multiplier based on how close the resort is to closing.
- * - Closed (past end date): 0.3
- * - Within 14 days of closing: 0.6
- * - Within 28 days of closing: 0.8
- * - Otherwise: 1.0
+ * - Closed (past end date): SEASONAL_PENALTY.closed
+ * - Within SEASONAL_WINDOW.warning days of closing: SEASONAL_PENALTY.warning
+ * - Within SEASONAL_WINDOW.caution days of closing: SEASONAL_PENALTY.caution
+ * - Otherwise: SEASONAL_PENALTY.open
  */
 function seasonalMultiplier(seasonEnd: string): number {
   const now = Date.now();
   const endMs = new Date(seasonEnd).getTime();
-  const daysUntilClose = (endMs - now) / 86_400_000;
+  const daysUntilClose = (endMs - now) / MS_PER_DAY;
 
-  if (daysUntilClose < 0) return 0.3;
-  if (daysUntilClose < 14) return 0.6;
-  if (daysUntilClose < 28) return 0.8;
-  return 1.0;
+  if (daysUntilClose < 0) return SEASONAL_PENALTY.closed;
+  if (daysUntilClose < SEASONAL_WINDOW.warning) return SEASONAL_PENALTY.warning;
+  if (daysUntilClose < SEASONAL_WINDOW.caution) return SEASONAL_PENALTY.caution;
+  return SEASONAL_PENALTY.open;
 }
 
 /**
@@ -110,7 +107,7 @@ function seasonalMultiplier(seasonEnd: string): number {
  */
 export async function getRecommendations(
   preferences: Preferences,
-  limit: number = 5,
+  limit: number = RECOMMENDATION_LIMIT,
   dismissedIds: string[] = [],
 ): Promise<RecommendationResult[]> {
   // 1. Fetch and filter by region (async)

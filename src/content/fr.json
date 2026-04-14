@@ -126,6 +126,12 @@
     },
     "results": {
       "loading": "Recherche de vos stations idéales...",
+      "loadingPhases": [
+        "Recherche de vos stations idéales...",
+        "Analyse de vos préférences en cours…",
+        "Presque terminé, recherche de vos meilleures correspondances…",
+        "Cela prend un peu plus de temps que d'habitude…"
+      ],
       "title": "Vos meilleures correspondances",
       "subtitle": "En fonction de vos préférences",
       "emptyTitle": "Aucun résultat trouvé",

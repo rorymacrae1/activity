@@ -41,6 +41,11 @@ import { SimilarResortsCarousel } from "@components/resort/SimilarResortsCarouse
 import { usePreferencesStore } from "@stores/preferences";
 import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
+import {
+  SKILL_LEVEL_MAP,
+  BUDGET_LEVEL_MAP,
+  DEFAULT_ABILITY,
+} from "@/constants/options";
 
 export default function ResortDetailScreen() {
   const { id, siblingIds: siblingIdsParam } = useLocalSearchParams<{
@@ -62,30 +67,19 @@ export default function ResortDetailScreen() {
   const groupAbilities = usePreferencesStore((s) => s.groupAbilities);
   const budgetLevel = usePreferencesStore((s) => s.budgetLevel);
   const regions = usePreferencesStore((s) => s.regions);
+  const tripType = usePreferencesStore((s) => s.tripType);
   const crowdPreference = usePreferencesStore((s) => s.crowdPreference);
   const familyVsNightlife = usePreferencesStore((s) => s.familyVsNightlife);
   const snowImportance = usePreferencesStore((s) => s.snowImportance);
 
-  const skillMap: Record<string, number> = {
-    beginner: 0,
-    intermediate: 0.33,
-    red: 0.67,
-    advanced: 1,
-  };
-  const budgetMap: Record<string, number> = {
-    budget: 0,
-    mid: 0.33,
-    premium: 0.67,
-    luxury: 1,
-  };
   const abilities =
-    groupAbilities.length > 0 ? groupAbilities : (["intermediate"] as const);
-  const skillValues = abilities.map((s) => skillMap[s] ?? 0.33);
+    groupAbilities.length > 0 ? groupAbilities : ([DEFAULT_ABILITY] as const);
+  const skillValues = abilities.map((s) => SKILL_LEVEL_MAP[s] ?? 0.33);
   const normalizedPrefs: NormalizedPreferences = {
     minSkill: Math.min(...skillValues),
     maxSkill: Math.max(...skillValues),
-    tripType: null,
-    budgetLevel: budgetMap[budgetLevel ?? "mid"] ?? 0.33,
+    tripType: tripType,
+    budgetLevel: BUDGET_LEVEL_MAP[budgetLevel ?? "mid"] ?? 0.33,
     quietLively: (crowdPreference - 1) / 4,
     familyNightlife: (familyVsNightlife - 1) / 4,
     snowImportance: (snowImportance - 1) / 4,
@@ -305,7 +299,7 @@ export default function ResortDetailScreen() {
                 </Text>
                 <Badge label={resort.country} variant="neutral" />
               </View>
-              <Text variant="body" color={colors.text.secondary}>
+              <Text variant="body" color={colors.ink.normal}>
                 {resort.region} • {resort.location.villageAltitude}m –{" "}
                 {resort.location.peakAltitude}m
               </Text>
@@ -317,7 +311,7 @@ export default function ResortDetailScreen() {
                 <View key={i} style={styles.highlightChip}>
                   <Text
                     variant="caption"
-                    color={colors.success}
+                    color={colors.sentiment.success}
                     style={styles.highlightText}
                   >
                     ✓ {h}
@@ -375,7 +369,7 @@ export default function ResortDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
   },
   navBar: {
     flexDirection: "row",
@@ -383,7 +377,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
     borderBottomWidth: 1,
     borderBottomColor: colors.surface.divider,
   },
@@ -408,7 +402,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginHorizontal: spacing.sm,
   },
   tabletCenter: {
@@ -425,7 +419,7 @@ const styles = StyleSheet.create({
   heroImage: {
     width: "100%",
     height: "100%",
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.canvas.subtle,
   },
   centeredContent: {
     flex: 1,
@@ -454,7 +448,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   highlightChip: {
-    backgroundColor: colors.successSubtle,
+    backgroundColor: colors.sentiment.successSubtle,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
     borderRadius: radius.sm,
