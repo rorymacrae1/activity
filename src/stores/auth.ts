@@ -64,7 +64,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ user: session.user, session });
       try {
         await get().refreshProfile();
-      } catch {
+      } catch (_e: unknown) {
         // profile fetch failing should not block auth initialization
       }
     }
@@ -76,7 +76,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (session?.user) {
         try {
           await get().refreshProfile();
-        } catch {
+        } catch (_e: unknown) {
           // silently ignore profile refresh errors
         }
       } else {

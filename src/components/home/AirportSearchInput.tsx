@@ -4,7 +4,7 @@
  * Calls onSelect with the chosen Airport (caller saves airport.iata).
  */
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -14,7 +14,6 @@ import {
   Keyboard,
 } from "react-native";
 import { Text } from "@/components/ui/Text";
-import { AIRPORTS } from "@/data/airports";
 import { fuzzyScoreMulti } from "@/lib/fuzzyMatch";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
@@ -45,6 +44,12 @@ export function AirportSearchInput({
   const [query, setQuery] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [airports, setAirports] = useState<Airport[]>([]);
+
+  // Lazy-load the 540KB airport dataset only when this component mounts
+  useEffect(() => {
+    import("@/data/airports").then((mod) => setAirports(mod.AIRPORTS));
+  }, []);
 
   const displayValue = isFocused
     ? query
@@ -53,9 +58,9 @@ export function AirportSearchInput({
       : query;
 
   const results = useMemo(() => {
-    if (query.length < 2) return [];
+    if (query.length < 2 || airports.length === 0) return [];
 
-    const scored = AIRPORTS.map((airport) => ({
+    const scored = airports.map((airport) => ({
       airport,
       score: fuzzyScoreMulti(query, [
         airport.iata,
@@ -67,7 +72,7 @@ export function AirportSearchInput({
 
     scored.sort((a, b) => b.score - a.score);
     return scored.slice(0, 8).map((item) => item.airport);
-  }, [query]);
+  }, [query, airports]);
 
   const handleFocus = useCallback(() => {
     setIsFocused(true);

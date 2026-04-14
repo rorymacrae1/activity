@@ -13,21 +13,21 @@ export const zustandStorage: StorageAdapter = {
   getItem: (name) => {
     try {
       return localStorage.getItem(name);
-    } catch {
+    } catch (_e: unknown) {
       return null;
     }
   },
   setItem: (name, value) => {
     try {
       localStorage.setItem(name, value);
-    } catch {
+    } catch (_e: unknown) {
       // ignore quota errors silently
     }
   },
   removeItem: (name) => {
     try {
       localStorage.removeItem(name);
-    } catch {
+    } catch (_e: unknown) {
       // ignore
     }
   },

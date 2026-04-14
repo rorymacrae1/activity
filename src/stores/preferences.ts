@@ -54,6 +54,27 @@ interface PreferencesState {
   setFromCloud: (prefs: LocalPreferences) => void;
 }
 
+// Valid values for rehydration validation
+const VALID_SKILL_LEVELS: ReadonlySet<string> = new Set([
+  "beginner",
+  "intermediate",
+  "red",
+  "advanced",
+]);
+const VALID_BUDGET_LEVELS: ReadonlySet<string> = new Set([
+  "budget",
+  "mid",
+  "premium",
+  "luxury",
+]);
+const VALID_TRIP_TYPES: ReadonlySet<string> = new Set([
+  "solo",
+  "couple",
+  "family",
+  "friends",
+]);
+const VALID_LANGUAGES: ReadonlySet<string> = new Set(["en", "de", "fr"]);
+
 const initialState = {
   hasCompletedOnboarding: false,
   tripType: null as TripType | null,
@@ -189,7 +210,36 @@ export const usePreferencesStore = create<PreferencesState>()(
     }),
     {
       name: "peakwise-preferences",
+      version: 1,
       storage: createJSONStorage(() => zustandStorage),
+      migrate: (persisted: unknown) => {
+        const state = persisted as Record<string, unknown>;
+        // Strip invalid skill levels (e.g. stale "FirstTimer")
+        if (Array.isArray(state.groupAbilities)) {
+          state.groupAbilities = state.groupAbilities.filter((v: unknown) =>
+            VALID_SKILL_LEVELS.has(v as string),
+          );
+        }
+        // Validate budget level
+        if (
+          state.budgetLevel !== null &&
+          !VALID_BUDGET_LEVELS.has(state.budgetLevel as string)
+        ) {
+          state.budgetLevel = null;
+        }
+        // Validate trip type
+        if (
+          state.tripType !== null &&
+          !VALID_TRIP_TYPES.has(state.tripType as string)
+        ) {
+          state.tripType = null;
+        }
+        // Validate language
+        if (!VALID_LANGUAGES.has(state.language as string)) {
+          state.language = "en";
+        }
+        return state as unknown as PreferencesState;
+      },
       partialize: (state) => ({
         // Only persist these fields (not sync state)
         hasCompletedOnboarding: state.hasCompletedOnboarding,

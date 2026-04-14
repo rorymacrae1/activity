@@ -136,6 +136,7 @@ export function FavoritesPreview({
             style={styles.moreItem}
             onPress={() => router.push("/(main)/favorites")}
             accessibilityRole="button"
+            accessibilityLabel={`${remainingCount} more ${remainingCount === 1 ? "resort" : "resorts"}, view all favorites`}
           >
             <Text style={styles.moreCount}>+{remainingCount}</Text>
             <Text style={styles.moreLabel}>

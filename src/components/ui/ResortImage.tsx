@@ -22,6 +22,7 @@ import { Image } from "expo-image";
 import type { ImageStyle } from "expo-image";
 import type { StyleProp } from "react-native";
 import { useState } from "react";
+import { colors } from "@/theme/colors";
 
 // Local fallback used when no URI is provided or the remote image fails.
 const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg");
@@ -67,6 +68,6 @@ export function ResortImage({
 
 const styles = StyleSheet.create({
   base: {
-    backgroundColor: "#1E2A38", // Alpine dark fallback before placeholder renders
+    backgroundColor: colors.canvas.inverse,
   },
 });

@@ -25,7 +25,6 @@ import { Icon } from "@components/ui/Icon";
 import { LoadingState } from "@components/ui/LoadingState";
 import { ResortSearchInput } from "@components/home/ResortSearchInput";
 import { AirportSearchInput } from "@components/home/AirportSearchInput";
-import { AIRPORTS } from "@/data/airports";
 import type { Resort } from "@/types/resort";
 import type { Airport } from "@/data/airports";
 
@@ -56,6 +55,7 @@ export default function CompleteProfileScreen() {
 
       // Reconstruct Airport object from saved IATA code
       if (airport) {
+        const { AIRPORTS } = await import("@/data/airports");
         const found = AIRPORTS.find((a) => a.iata === airport);
         setSelectedAirport(found ?? null);
       }

@@ -41,7 +41,7 @@ export function FavoritesBasedRecommendations({
         ]);
         setBaseResort(base ?? null);
         setSimilarResorts(similar);
-      } catch {
+      } catch (_e: unknown) {
         // Silently fail - will show empty state
       }
       setLoading(false);

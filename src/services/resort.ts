@@ -438,6 +438,29 @@ export function clearResortCache(): void {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Retry utility
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Retry an async function with exponential backoff.
+ * Returns null after all attempts are exhausted.
+ */
+async function fetchWithRetry<T>(
+  fn: () => Promise<T | null>,
+  { retries = 2, backoff = 1000 }: { retries?: number; backoff?: number } = {},
+): Promise<T | null> {
+  let lastResult: T | null = null;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    lastResult = await fn();
+    if (lastResult !== null) return lastResult;
+    if (attempt < retries) {
+      await new Promise((r) => setTimeout(r, backoff * 2 ** attempt));
+    }
+  }
+  return lastResult;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Cloud fetch functions
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -494,9 +517,9 @@ async function fetchCloudResorts(): Promise<Resort[] | null> {
     cachedResorts = (data as SupabaseResortRow[]).map(supabaseRowToResort);
     cacheTimestamp = Date.now();
     return cachedResorts;
-  } catch (err) {
+  } catch (e: unknown) {
     // eslint-disable-next-line no-console
-    console.warn("Error fetching cloud resorts:", err);
+    console.warn("Error fetching cloud resorts:", e instanceof Error ? e.message : e);
     return null;
   }
 }
@@ -529,7 +552,7 @@ async function fetchCloudResortById(id: string): Promise<Resort | null> {
     }
 
     return supabaseRowToResort(data as SupabaseResortRow);
-  } catch {
+  } catch (_e: unknown) {
     return null;
   }
 }
@@ -540,11 +563,19 @@ async function fetchCloudResortById(id: string): Promise<Resort | null> {
 
 /**
  * Get all resorts from Supabase.
- * Returns empty array if fetch fails.
+ * Retries with exponential backoff on cold-start failure (no cached data).
+ * Returns empty array only if all attempts fail.
  */
 export async function getAllResortsAsync(): Promise<Resort[]> {
   const cloudResorts = await fetchCloudResorts();
-  return cloudResorts ?? [];
+  if (cloudResorts) return cloudResorts;
+
+  // If cache already has data, return it (stale-while-revalidate)
+  if (cachedResorts) return cachedResorts;
+
+  // Cold start: no cache and fetch failed — retry with backoff
+  const retry = await fetchWithRetry(fetchCloudResorts, { retries: 2, backoff: 1000 });
+  return retry ?? [];
 }
 
 /**
@@ -657,7 +688,7 @@ export async function getResortsByIds(ids: string[]): Promise<Resort[]> {
     }
 
     return (data as SupabaseResortRow[]).map(supabaseRowToResort);
-  } catch {
+  } catch (_e: unknown) {
     return [];
   }
 }
@@ -708,9 +739,9 @@ export async function getResortCountsByCountry(): Promise<
     });
 
     return counts;
-  } catch (err) {
+  } catch (e: unknown) {
     // eslint-disable-next-line no-console
-    console.warn("Error fetching resort counts:", err);
+    console.warn("Error fetching resort counts:", e instanceof Error ? e.message : e);
     return {};
   }
 }

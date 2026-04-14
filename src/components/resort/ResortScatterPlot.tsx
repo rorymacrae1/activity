@@ -40,10 +40,10 @@ const DOT_RADIUS_SELECTED = 9;
 // ─── Legend ───────────────────────────────────────────────────────────────────
 
 const LEGEND = [
-  { label: "Excellent (≥80)", color: "#22c55e" },
-  { label: "Good (≥60)", color: "#3b82f6" },
-  { label: "Fair (≥40)", color: "#f59e0b" },
-  { label: "Poor (<40)", color: "#ef4444" },
+  { label: "Excellent (≥80)", color: colors.match.excellent },
+  { label: "Good (≥60)", color: colors.match.good },
+  { label: "Fair (≥40)", color: colors.match.fair },
+  { label: "Poor (<40)", color: colors.match.poor },
 ] as const;
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────

@@ -67,10 +67,20 @@ This is NOT a generic maps or discovery app. PeakWise uses a transparent, rule-b
 - Synced across devices when logged in
 - Offline support with merge on reconnect
 
+#### 7. Discover & Scatter Plot
+- Browse all 100 resorts with search and sort
+- Interactive 2D PCA scatter plot (Map view)
+- Dots colour-coded by match score tier
+- Adjustable preference controls (skill, budget, snow, vibe, scene)
+- Tap any dot for resort summary + navigation
+
+#### 8. Internationalisation
+- English, French, German content
+- Language selection in onboarding and profile
+
 ### 🔜 Coming Soon
-- Real-time reviews from TripAdvisor/Google
-- Accommodation search integration
-- Live weather and snow conditions
+
+See [FUTURE.md](FUTURE.md) for the full roadmap.
 
 ---
 
@@ -114,7 +124,7 @@ This is NOT a generic maps or discovery app. PeakWise uses a transparent, rule-b
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Primary DB | Supabase (PostgreSQL) | 51 resorts, auth, sync |
+| Primary DB | Supabase (PostgreSQL) | 100 resorts, auth, sync |
 | Local Cache | MMKV | Fast reads, offline support |
 | Image Cache | expo-image | Built-in caching |
 | State | Zustand + persist | Minimal boilerplate |
@@ -200,31 +210,27 @@ interface Resort {
   id: string;                    // URL-friendly slug
   name: string;
   country: string;
-  region: string;                // "Alps", "Pyrenees"
-  subRegion?: string;            // "Trois Vallées"
-  
+  region: string;
+  subRegion?: string;
+
   location: {
     lat: number;
     lng: number;
     villageAltitude: number;     // meters
     peakAltitude: number;
   };
-  
-  terrain: {
-    beginner: number;            // percentage (0-100)
-    intermediate: number;
-    advanced: number;
-  };
-  
+
+  terrain: TerrainDistribution;  // { beginner, intermediate, advanced } percentages
+
   stats: {
     totalRuns: number;
     totalKm: number;
     lifts: number;
     snowParks: number;
   };
-  
+
   attributes: {
-    averageDailyCost: number;    // EUR
+    averageDailyCost: number;    // GBP
     liftPassDayCost: number;
     liftPassSixDayCost: number;
     crowdLevel: number;          // 1-5
@@ -232,20 +238,27 @@ interface Resort {
     nightlifeScore: number;      // 1-5
     snowReliability: number;     // 1-5
     liftModernity: number;       // 1-5
-    nearestAirport: string;
+    nearestAirport: string;      // IATA code
     transferTimeMinutes: number;
+    // Extended (from joined tables)
+    hasSkiInOut?: boolean;
+    hasCatered?: boolean;
+    trainAccessible?: boolean;
+    eurostarDirect?: boolean;
+    trainJourneyHours?: number;
+    driveHoursFromLondon?: number;
   };
-  
+
   content: {
     description: string;
     highlights: string[];
   };
-  
+
   assets: {
-    heroImage: string;
+    heroImage: string;           // Unsplash URL
     pisteMap: string;
   };
-  
+
   season: {
     start: string;               // "2025-11-30"
     end: string;                 // "2026-04-20"
@@ -404,19 +417,20 @@ Profile → Auth (Sign In / Sign Up)
 
 ## 🗺 Resort Data
 
-### Current: 51 European Resorts (Supabase)
+### Current: 100 Ski Resorts (Supabase)
 
-**France** — Val Thorens, Chamonix, Les Arcs, La Plagne, Méribel, Courchevel, Tignes, Alpe d'Huez, Les Deux Alpes, Avoriaz, La Clusaz, Les Gets, Serre Chevalier
+Resort data is stored in `public.resort` (64 columns) with 7 joined tables:
+- `cost_data` — lift pass, rental, lunch prices by year
+- `slope_data` — kilometres by grade, lift counts, snow park features
+- `season_timing` — open/close dates, best/avoid weeks
+- `airport_link` — nearest airports with transfer times and flight info
+- `facility` — bars, restaurants, ski schools, activities
+- `accommodation` — hotels, chalets with pricing and features
+- `weather_month` — monthly temperature, snowfall, visibility
 
-**Austria** — Lech-Zürs, St. Anton, Kitzbühel, Obergurgl, Sölden, Ischgl, Mayrhofen, Zell am See, Saalbach-Hinterglemm, Bad Gastein, Obertauern
+All data is fetched via PostgREST joins in a single query. Row Level Security (RLS) is enabled on user-owned tables (`profiles`, `user_preferences`, `user_favorites`, `visited_resorts`) with policies scoped to `auth.uid()`.
 
-**Switzerland** — Verbier, Zermatt, St. Moritz, Davos, Wengen, Saas-Fee, Grindelwald, Laax, Engelberg, Crans-Montana
-
-**Italy** — Cortina d'Ampezzo, Val Gardena, Livigno, Cervinia, Courmayeur, Madonna di Campiglio, Sestriere, Kronplatz
-
-**Andorra/Spain** — Grandvalira, Baqueira Beret, Formigal
-
-**Norway/Sweden** — Hemsedal, Trysil, Åre
+**Countries covered:** France, Austria, Switzerland, Italy, Andorra, Spain, Norway, Sweden, Finland, Germany, Bulgaria, Slovenia, Scotland, Japan, USA, Canada, Argentina, Chile, New Zealand, Australia, and more.
 
 ---
 
@@ -436,12 +450,7 @@ Profile → Auth (Sign In / Sign Up)
 
 ## 🚀 Future Roadmap
 
-1. **Reviews Integration** — Pull from TripAdvisor, Google
-2. **Accommodation Booking** — Integration with Booking.com
-3. **More Resorts** — North America, Japan, New Zealand
-4. **Weather/Snow Data** — Live conditions API
-5. **Social Features** — Share trip plans
-6. **AI Upgrade** — Learn from user behavior
+See [FUTURE.md](FUTURE.md) for the full prioritised roadmap.
 
 ---
 
@@ -451,7 +460,7 @@ Profile → Auth (Sign In / Sign Up)
 |-------|------------|
 | Framework | React Native (Expo SDK 54) |
 | Language | TypeScript (strict mode) |
-| Routing | Expo Router v4 |
+| Routing | Expo Router v6 |
 | State | Zustand + persist middleware |
 | Storage | MMKV (native) / localStorage (web) |
 | Backend | Supabase (PostgreSQL + Auth + RLS) |

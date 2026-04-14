@@ -142,7 +142,20 @@ export const useFavoritesStore = create<FavoritesState>()(
     }),
     {
       name: "peakwise-favorites",
+      version: 1,
       storage: createJSONStorage(() => zustandStorage),
+      migrate: (persisted: unknown) => {
+        const state = persisted as Record<string, unknown>;
+        // Ensure favoriteIds is an array of strings
+        if (Array.isArray(state.favoriteIds)) {
+          state.favoriteIds = state.favoriteIds.filter(
+            (v: unknown) => typeof v === "string" && v.length > 0,
+          );
+        } else {
+          state.favoriteIds = [];
+        }
+        return state as unknown as FavoritesState;
+      },
       partialize: (state) => ({
         // Only persist favorites, not sync state
         favoriteIds: state.favoriteIds,

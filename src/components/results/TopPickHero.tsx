@@ -47,7 +47,7 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
 
         {/* Top Pick badge */}
         <View style={styles.topBadge} pointerEvents="none">
-          <Icon name="star" size={14} color="#F59E0B" strokeWidth={2} />
+          <Icon name="star" size={14} color={colors.rank.gold} strokeWidth={2} />
           <Text style={styles.topBadgeText}>Your Perfect Match</Text>
         </View>
 
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   matchScoreValue: {
     fontSize: 24,
     fontWeight: "700",
-    color: "#FFF",
+    color: colors.ink.inverse,
   },
   matchScorePercent: {
     fontSize: 14,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   resortName: {
     fontSize: 28,
     fontWeight: "700",
-    color: "#FFF",
+    color: colors.ink.inverse,
     marginBottom: spacing.xs,
   },
   location: {
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#FFF",
+    color: colors.ink.inverse,
   },
   statLabel: {
     fontSize: 11,

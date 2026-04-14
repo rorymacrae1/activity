@@ -53,7 +53,7 @@ export function WelcomeHero({
 
   return (
     <LinearGradient
-      colors={[colors.canvas.inverse, "#2C3E50"]}
+      colors={[colors.canvas.inverse, colors.cta.secondaryHover]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}

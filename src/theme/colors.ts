@@ -259,6 +259,13 @@ export const colors = {
     poor: primitive.signal[500], // 0-39%
   },
 
+  // === Rank (podium badges) ===
+  rank: {
+    gold: "#F59E0B", // amber-500
+    silver: "#94A3B8", // slate-400
+    bronze: "#C4793A", // warm bronze
+  },
+
   // === On Dark (colors for use on dark backgrounds) ===
   onDark: {
     text: {

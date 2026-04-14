@@ -47,8 +47,8 @@ function formatPriceLevel(level: number): string {
  * Get rank badge color for top positions
  */
 function getRankColor(rank: number): string | null {
-  if (rank === 2) return "#94A3B8"; // silver
-  if (rank === 3) return "#C4793A"; // bronze
+  if (rank === 2) return colors.rank.silver;
+  if (rank === 3) return colors.rank.bronze;
   return null;
 }
 
@@ -109,7 +109,7 @@ export function RunnerUpCard({
         {/* Rank Badge */}
         {rankColor && (
           <View style={[styles.rankBadge, { backgroundColor: rankColor }]}>
-            <Icon name="star" size={14} color="#fff" strokeWidth={2} />
+            <Icon name="star" size={14} color={colors.ink.inverse} strokeWidth={2} />
           </View>
         )}
 

@@ -14,8 +14,30 @@
 import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
 import { calculateScores } from "@services/recommendation/scorer";
+import { colors } from "@/theme/colors";
 
-/** Pre-computed eigenvectors [skill, budget, vibe, activity, snow] */
+/**
+ * Pre-computed eigenvectors for 2D PCA projection.
+ *
+ * Dimensions: [skill, budget, vibe, activity, snow]
+ *
+ * PC1 captures overall match quality — resorts that score well across all
+ * dimensions project further right. Loadings are roughly equal (0.35–0.53)
+ * with a slight tilt toward snow and activity, reflecting the primary
+ * variance axis in a 100-resort European score distribution.
+ *
+ * PC2 captures the snow-challenge vs. relaxed-budget polarity. Positive
+ * loadings on skill (+0.6) and activity (+0.4) pull challenging, snow-heavy
+ * resorts upward. Negative loadings on budget (–0.5), snow (–0.4), and
+ * vibe (–0.2) push budget-friendly, mellow resorts downward.
+ *
+ * Derivation: covariance matrix of `calculateScores()` output over the full
+ * 100-resort dataset with median-user preferences, eigendecomposed via
+ * numpy.linalg.eigh. Captured ~68% of total variance (PC1 ≈ 42%, PC2 ≈ 26%).
+ *
+ * Recompute if the scoring algorithm or resort dataset changes materially.
+ * See PLAN.md §3.3 for context.
+ */
 const PC1 = [0.45, 0.4, 0.35, 0.5, 0.53];
 const PC2 = [0.6, -0.5, -0.2, 0.4, -0.4];
 
@@ -114,10 +136,10 @@ export function computePlotPoints(
  * Colour tier for a match score.
  */
 export function scoreColor(score: number): string {
-  if (score >= 80) return "#22c55e"; // green-500 — excellent
-  if (score >= 60) return "#3b82f6"; // blue-500  — good
-  if (score >= 40) return "#f59e0b"; // amber-500 — fair
-  return "#ef4444"; // red-500   — poor
+  if (score >= 80) return colors.match.excellent;
+  if (score >= 60) return colors.match.good;
+  if (score >= 40) return colors.match.fair;
+  return colors.match.poor;
 }
 
 /** Accessible label for a score tier */

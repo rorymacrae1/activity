@@ -95,6 +95,8 @@ export function ResortSearchInput({
         placeholderTextColor={colors.text.tertiary}
         autoCapitalize="none"
         autoCorrect={false}
+        accessibilityLabel="Search resorts"
+        accessibilityRole="search"
         onFocus={() => query.length >= 2 && setShowResults(results.length > 0)}
         onBlur={() => setTimeout(() => setShowResults(false), 200)}
       />
@@ -111,6 +113,8 @@ export function ResortSearchInput({
                   pressed && styles.resultItemPressed,
                 ]}
                 onPress={() => handleSelect(item)}
+                accessibilityRole="button"
+                accessibilityLabel={`${item.name}, ${item.region}, ${item.country}`}
               >
                 <Text style={styles.resultName}>{item.name}</Text>
                 <Text style={styles.resultLocation}>
