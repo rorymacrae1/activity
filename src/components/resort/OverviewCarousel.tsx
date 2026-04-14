@@ -70,11 +70,11 @@ function getTerrainLevel(terrain: Resort["terrain"]): string {
 /**
  * Get price level description
  */
-function getPriceLevel(dailyCost: number): { label: string; euros: string } {
-  if (dailyCost < 120) return { label: "Budget", euros: "€" };
-  if (dailyCost < 180) return { label: "Mid-range", euros: "€€" };
-  if (dailyCost < 250) return { label: "Premium", euros: "€€€" };
-  return { label: "Luxury", euros: "€€€€" };
+function getPriceLevel(dailyCost: number): { label: string; pounds: string } {
+  if (dailyCost < 120) return { label: "Budget", pounds: "£" };
+  if (dailyCost < 180) return { label: "Mid-range", pounds: "££" };
+  if (dailyCost < 250) return { label: "Premium", pounds: "£££" };
+  return { label: "Luxury", pounds: "££££" };
 }
 
 /**
@@ -88,6 +88,28 @@ function getVibeDescription(resort: Resort): string {
 }
 
 /**
+ * Format an ISO date string to a short month label e.g. "Nov"
+ */
+function shortMonth(iso: string): string {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const month = parseInt(iso.split("-")[1], 10) - 1;
+  return months[month] ?? iso.slice(5, 7);
+}
+
+/**
  * OverviewCarousel component
  */
 export function OverviewCarousel({ resort }: OverviewCarouselProps) {
@@ -97,6 +119,15 @@ export function OverviewCarousel({ resort }: OverviewCarouselProps) {
   const priceInfo = getPriceLevel(resort.attributes.averageDailyCost);
   const terrainLevel = getTerrainLevel(resort.terrain);
   const vibeDesc = getVibeDescription(resort);
+  const seasonLabel = `${shortMonth(resort.season.start)} – ${shortMonth(resort.season.end)}`;
+  const transferHours = Math.floor(resort.attributes.transferTimeMinutes / 60);
+  const transferMins = resort.attributes.transferTimeMinutes % 60;
+  const transferLabel =
+    transferHours > 0
+      ? transferMins > 0
+        ? `${transferHours}h ${transferMins}m`
+        : `${transferHours}h`
+      : `${transferMins}m`;
 
   const cards: OverviewCardProps[] = [
     {
@@ -117,8 +148,8 @@ export function OverviewCarousel({ resort }: OverviewCarouselProps) {
     {
       icon: "wallet",
       title: "Budget",
-      value: priceInfo.euros,
-      subtitle: `~€${resort.attributes.averageDailyCost}/day`,
+      value: priceInfo.pounds,
+      subtitle: `~£${resort.attributes.averageDailyCost}/day`,
       color: colors.match.good,
     },
     {
@@ -134,6 +165,25 @@ export function OverviewCarousel({ resort }: OverviewCarouselProps) {
       value: resort.attributes.townStyle,
       subtitle: vibeDesc,
       color: colors.brand.accent,
+    },
+    {
+      icon: "calendar",
+      title: "Season",
+      value: seasonLabel,
+      subtitle:
+        resort.stats.lifts > 0
+          ? `${resort.stats.lifts} lifts`
+          : `${resort.stats.totalKm > 0 ? resort.stats.totalKm + "km" : "Seasonal resort"}`,
+      color: colors.sentiment.info,
+    },
+    {
+      icon: "plane",
+      title: "Transfer",
+      value: resort.attributes.nearestAirport
+        ? `${resort.attributes.nearestAirport} airport`
+        : "See transport",
+      subtitle: `~${transferLabel} from airport`,
+      color: colors.brand.primaryStrong,
     },
   ];
 

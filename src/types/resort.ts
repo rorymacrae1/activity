@@ -42,11 +42,28 @@ export interface ResortAttributes {
   nearestAirport: string;
   transferTimeMinutes: number;
   /** Style of the resort village */
-  townStyle: "Traditional village" | "Purpose-built" | "Lively town" | "Small hamlet" | "Modern resort";
+  townStyle:
+    | "Traditional village"
+    | "Purpose-built"
+    | "Lively town"
+    | "Small hamlet"
+    | "Modern resort";
   /** Approximate number of après-ski bars/clubs */
   barCount: number;
   /** Non-ski activities available at the resort */
   otherActivities: string[];
+  /** Whether ski-in/ski-out accommodation exists */
+  hasSkiInOut?: boolean;
+  /** Whether catered chalet accommodation exists */
+  hasCatered?: boolean;
+  /** Whether the resort is accessible by train */
+  trainAccessible?: boolean;
+  /** Whether the resort has a direct Eurostar connection */
+  eurostarDirect?: boolean;
+  /** Train journey time from London in hours */
+  trainJourneyHours?: number | null;
+  /** Driving time from London in hours */
+  driveHoursFromLondon?: number | null;
 }
 
 /**

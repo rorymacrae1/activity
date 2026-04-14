@@ -36,8 +36,11 @@ import {
   AccommodationSection,
   TransportSection,
 } from "@components/resort/PlaceholderSections";
+import { MatchBreakdownSection } from "@components/resort/MatchBreakdownSection";
 import { SimilarResortsCarousel } from "@components/resort/SimilarResortsCarousel";
+import { usePreferencesStore } from "@stores/preferences";
 import type { Resort } from "@/types/resort";
+import type { NormalizedPreferences } from "@/types/preferences";
 
 export default function ResortDetailScreen() {
   const { id, siblingIds: siblingIdsParam } = useLocalSearchParams<{
@@ -54,6 +57,40 @@ export default function ResortDetailScreen() {
   const { showToast } = useToast();
   const { heroHeight, hPadding, isTablet } = useLayout();
   const content = useContent();
+
+  // Compute NormalizedPreferences from store for the MatchBreakdownSection
+  const groupAbilities = usePreferencesStore((s) => s.groupAbilities);
+  const budgetLevel = usePreferencesStore((s) => s.budgetLevel);
+  const regions = usePreferencesStore((s) => s.regions);
+  const crowdPreference = usePreferencesStore((s) => s.crowdPreference);
+  const familyVsNightlife = usePreferencesStore((s) => s.familyVsNightlife);
+  const snowImportance = usePreferencesStore((s) => s.snowImportance);
+
+  const skillMap: Record<string, number> = {
+    beginner: 0,
+    intermediate: 0.33,
+    red: 0.67,
+    advanced: 1,
+  };
+  const budgetMap: Record<string, number> = {
+    budget: 0,
+    mid: 0.33,
+    premium: 0.67,
+    luxury: 1,
+  };
+  const abilities =
+    groupAbilities.length > 0 ? groupAbilities : (["intermediate"] as const);
+  const skillValues = abilities.map((s) => skillMap[s] ?? 0.33);
+  const normalizedPrefs: NormalizedPreferences = {
+    minSkill: Math.min(...skillValues),
+    maxSkill: Math.max(...skillValues),
+    tripType: null,
+    budgetLevel: budgetMap[budgetLevel ?? "mid"] ?? 0.33,
+    quietLively: (crowdPreference - 1) / 4,
+    familyNightlife: (familyVsNightlife - 1) / 4,
+    snowImportance: (snowImportance - 1) / 4,
+    regions,
+  };
 
   // Animation hook — must be unconditional (Rules of Hooks)
   const heartScale = useSharedValue(1);
@@ -295,7 +332,10 @@ export default function ResortDetailScreen() {
 
           {/* Remaining content with padding */}
           <View style={[styles.content, { paddingHorizontal: hPadding }]}>
-            {/* Reviews Section */}
+            {/* Why this resort — match breakdown with radar chart */}
+            <MatchBreakdownSection resort={resort} prefs={normalizedPrefs} />
+
+            {/* Activities & Après-Ski */}
             <ReviewsSection resort={resort} />
 
             {/* Accommodation Section */}

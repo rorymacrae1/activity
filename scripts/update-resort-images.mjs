@@ -192,12 +192,12 @@ async function main() {
       failed++;
     }
 
-    // Respect Unsplash rate limit: 50 req/hour on demo = 1 per 72s
-    // In practice the free tier allows ~50 req/hour which is fine for
-    // a one-shot batch of ~40 European resorts. We add a 1.5s delay to
-    // stay safely within limits.
+    // Respect Unsplash rate limit: 50 req/hour on the demo tier = 1 per 72s.
+    // At 100 resorts this takes ~2 hours. Upgrade to a production Unsplash app
+    // (5000 req/hour) to run in under 2 minutes.
+    // We use 75s between requests to stay safely within the 50 req/hour limit.
     if (toProcess.indexOf(resort) < toProcess.length - 1) {
-      await new Promise((r) => setTimeout(r, 1500));
+      await new Promise((r) => setTimeout(r, 75000));
     }
   }
 

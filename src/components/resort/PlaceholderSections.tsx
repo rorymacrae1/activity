@@ -1,10 +1,10 @@
 /**
- * PlaceholderSections - Future integration placeholders
- * Reviews, Accommodation, and Transport sections with coming soon UI
+ * Resort detail sections: Activities, Accommodation, Transport
+ * All three render real data from the Resort type.
  */
 
 import React from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Text } from "@/components/ui";
 import { Icon } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
@@ -14,7 +14,39 @@ import { typography } from "@/theme/typography";
 import type { Resort } from "@/types/resort";
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Reviews Section
+// Shared helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface InfoRowProps {
+  icon: React.ComponentProps<typeof Icon>["name"];
+  label: string;
+  value: string;
+  detail?: string;
+  iconColor?: string;
+}
+function InfoRow({
+  icon,
+  label,
+  value,
+  detail,
+  iconColor = colors.brand.primary,
+}: InfoRowProps) {
+  return (
+    <View style={styles.infoRow}>
+      <View style={[styles.infoIcon, { backgroundColor: iconColor + "18" }]}>
+        <Icon name={icon} size={20} color={iconColor} strokeWidth={1.5} />
+      </View>
+      <View style={styles.infoContent}>
+        <Text style={styles.infoLabel}>{label}</Text>
+        <Text style={styles.infoValue}>{value}</Text>
+        {detail ? <Text style={styles.infoDetail}>{detail}</Text> : null}
+      </View>
+    </View>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Activities Section (exported as ReviewsSection to maintain import compat)
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface ReviewsSectionProps {
@@ -22,59 +54,75 @@ interface ReviewsSectionProps {
 }
 
 /**
- * Placeholder for reviews integration (TripAdvisor, Google, etc.)
+ * Shows the resort's real activities, après-ski, and off-slope highlights.
  */
 export function ReviewsSection({ resort }: ReviewsSectionProps) {
+  const { otherActivities, barCount, nightlifeScore } = resort.attributes;
+
+  const nightlifeLabel =
+    nightlifeScore >= 5
+      ? "World-class après-ski"
+      : nightlifeScore >= 4
+        ? "Lively après-ski scene"
+        : nightlifeScore >= 3
+          ? "Good après-ski options"
+          : nightlifeScore >= 2
+            ? "Limited après-ski"
+            : "Quiet evenings";
+
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Recent Reviews</Text>
-      <View style={styles.placeholderCard}>
-        <View style={styles.placeholderIcon}>
+      <Text style={styles.sectionTitle}>Activities & Après-Ski</Text>
+
+      {/* Après-ski summary stats */}
+      <View style={styles.apresRow}>
+        <View style={styles.apresCard}>
+          <Icon
+            name="wine"
+            size={20}
+            color={colors.brand.accent}
+            strokeWidth={1.5}
+          />
+          <Text style={styles.apresValue}>{barCount}</Text>
+          <Text style={styles.apresLabel}>Après bars</Text>
+        </View>
+        <View style={styles.apresCard}>
           <Icon
             name="star"
-            size={24}
+            size={20}
             color={colors.sentiment.warning}
             strokeWidth={1.5}
           />
+          <Text style={styles.apresValue}>{nightlifeScore}/5</Text>
+          <Text style={styles.apresLabel}>Nightlife</Text>
         </View>
-        <View style={styles.placeholderContent}>
-          <Text style={styles.placeholderTitle}>Reviews coming soon</Text>
-          <Text style={styles.placeholderText}>
-            We're working on integrating reviews from trusted sources to help
-            you make the best choice.
+        <View style={[styles.apresCard, styles.apresCardWide]}>
+          <Text style={styles.apresSceneLabel}>{nightlifeLabel}</Text>
+        </View>
+      </View>
+
+      {/* Activities list */}
+      {otherActivities.length > 0 ? (
+        <View style={styles.activitiesList}>
+          {otherActivities.map((activity, i) => (
+            <View key={i} style={styles.activityChip}>
+              <Icon
+                name="check"
+                size={14}
+                color={colors.sentiment.success}
+                strokeWidth={2.5}
+              />
+              <Text style={styles.activityText}>{activity}</Text>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <View style={styles.noActivities}>
+          <Text style={styles.noActivitiesText}>
+            Skiing is the main focus at this resort.
           </Text>
         </View>
-      </View>
-      {/* Mock review preview */}
-      <View style={styles.mockReviews}>
-        <View style={styles.mockReview}>
-          <View style={styles.mockAvatar}>
-            <Text style={styles.mockAvatarText}>SK</Text>
-          </View>
-          <View style={styles.mockReviewContent}>
-            <View style={styles.mockStars}>
-              <Text style={styles.starText}>★★★★★</Text>
-            </View>
-            <Text style={styles.mockReviewText} numberOfLines={2}>
-              "Amazing resort with incredible views and great snow
-              conditions..."
-            </Text>
-          </View>
-        </View>
-        <View style={[styles.mockReview, styles.mockReviewFaded]}>
-          <View style={styles.mockAvatar}>
-            <Text style={styles.mockAvatarText}>JD</Text>
-          </View>
-          <View style={styles.mockReviewContent}>
-            <View style={styles.mockStars}>
-              <Text style={styles.starText}>★★★★☆</Text>
-            </View>
-            <Text style={styles.mockReviewText} numberOfLines={2}>
-              "Perfect for families, easy access from the airport..."
-            </Text>
-          </View>
-        </View>
-      </View>
+      )}
     </View>
   );
 }
@@ -88,72 +136,57 @@ interface AccommodationSectionProps {
 }
 
 /**
- * Placeholder for accommodation integration (Booking.com, etc.)
+ * Shows real accommodation features surfaced from the accommodation table.
  */
 export function AccommodationSection({ resort }: AccommodationSectionProps) {
+  const { attributes, name } = resort;
+  const { hasSkiInOut, hasCatered, familyScore } = attributes;
+  const hasKidsClub = (familyScore ?? 0) >= 4;
+
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Where Can I Stay?</Text>
-      <View style={styles.placeholderCard}>
-        <View style={styles.placeholderIcon}>
-          <Icon
-            name="hotel"
-            size={24}
-            color={colors.brand.primary}
-            strokeWidth={1.5}
-          />
-        </View>
-        <View style={styles.placeholderContent}>
-          <Text style={styles.placeholderTitle}>
-            Accommodation search coming soon
-          </Text>
-          <Text style={styles.placeholderText}>
-            Find hotels, chalets, and apartments near {resort.name}.
-          </Text>
-        </View>
+      <Text style={styles.sectionTitle}>Where to Stay</Text>
+      <View style={styles.infoStack}>
+        <InfoRow
+          icon={hasSkiInOut ? "mountain" : "map-pin"}
+          label="Ski-in / Ski-out"
+          value={hasSkiInOut ? "Available" : "Not available"}
+          detail={
+            hasSkiInOut
+              ? "Slope-side options confirmed"
+              : "Short transfer to slopes"
+          }
+          iconColor={hasSkiInOut ? colors.brand.primary : colors.text.tertiary}
+        />
+        <InfoRow
+          icon="home"
+          label={hasCatered ? "Catered chalets" : "Self-catered"}
+          value={hasCatered ? "Available" : "Main option"}
+          detail={
+            hasCatered
+              ? "Full-board chalet options"
+              : "Apartments & hotels available"
+          }
+          iconColor={hasCatered ? colors.brand.primary : colors.text.secondary}
+        />
+        <InfoRow
+          icon="users-round"
+          label="Kids club"
+          value={hasKidsClub ? "Available" : "Check locally"}
+          detail={
+            hasKidsClub
+              ? "Children's facilities on-site"
+              : "Standard resort facilities"
+          }
+          iconColor={
+            hasKidsClub ? colors.sentiment.success : colors.text.tertiary
+          }
+        />
       </View>
-      {/* Quick links */}
-      <View style={styles.quickLinks}>
-        <Pressable
-          style={styles.quickLink}
-          accessibilityRole="button"
-          accessibilityLabel="Search hotels"
-        >
-          <Icon
-            name="hotel"
-            size={20}
-            color={colors.text.secondary}
-            strokeWidth={1.5}
-          />
-          <Text style={styles.quickLinkText}>Hotels</Text>
-        </Pressable>
-        <Pressable
-          style={styles.quickLink}
-          accessibilityRole="button"
-          accessibilityLabel="Search chalets"
-        >
-          <Icon
-            name="mountain"
-            size={20}
-            color={colors.text.secondary}
-            strokeWidth={1.5}
-          />
-          <Text style={styles.quickLinkText}>Chalets</Text>
-        </Pressable>
-        <Pressable
-          style={styles.quickLink}
-          accessibilityRole="button"
-          accessibilityLabel="Search apartments"
-        >
-          <Icon
-            name="home"
-            size={20}
-            color={colors.text.secondary}
-            strokeWidth={1.5}
-          />
-          <Text style={styles.quickLinkText}>Apartments</Text>
-        </Pressable>
-      </View>
+      <Text style={styles.footerNote}>
+        Search accommodation for {name} on Booking.com, Ski Solutions, or
+        Inghams.
+      </Text>
     </View>
   );
 }
@@ -167,83 +200,72 @@ interface TransportSectionProps {
 }
 
 /**
- * Transport information section showing how to get to the resort
+ * Shows real transport options using airport, train, and drive data.
  */
 export function TransportSection({ resort }: TransportSectionProps) {
-  const { nearestAirport, transferTimeMinutes } = resort.attributes;
+  const {
+    nearestAirport,
+    transferTimeMinutes,
+    trainAccessible,
+    eurostarDirect,
+    trainJourneyHours,
+    driveHoursFromLondon,
+  } = resort.attributes;
+
   const transferHours = Math.floor(transferTimeMinutes / 60);
   const transferMins = transferTimeMinutes % 60;
   const transferDisplay =
     transferHours > 0
-      ? `${transferHours}h ${transferMins}m`
-      : `${transferMins}m`;
+      ? transferMins > 0
+        ? `${transferHours}h ${transferMins}m transfer`
+        : `${transferHours}h transfer`
+      : `${transferMins}m transfer`;
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>How Do I Get There?</Text>
-
-      {/* Transport options */}
-      <View style={styles.transportOptions}>
-        {/* Nearest Airport */}
-        <View style={styles.transportOption}>
-          <View style={styles.transportIcon}>
-            <Icon
-              name="plane"
-              size={20}
-              color={colors.brand.primary}
-              strokeWidth={1.5}
-            />
-          </View>
-          <View style={styles.transportContent}>
-            <Text style={styles.transportLabel}>Nearest Airport</Text>
-            <Text style={styles.transportValue}>{nearestAirport}</Text>
-            <Text style={styles.transportDetail}>
-              Transfer: ~{transferDisplay}
-            </Text>
-          </View>
-        </View>
-
-        {/* Drive time placeholder */}
-        <View style={styles.transportOption}>
-          <View style={styles.transportIcon}>
-            <Icon
-              name="car"
-              size={20}
-              color={colors.brand.primary}
-              strokeWidth={1.5}
-            />
-          </View>
-          <View style={styles.transportContent}>
-            <Text style={styles.transportLabel}>By Car</Text>
-            <Text style={styles.transportValue}>
-              {resort.region}, {resort.country}
-            </Text>
-            <Text style={styles.transportDetail}>
-              Scenic mountain route available
-            </Text>
-          </View>
-        </View>
-
-        {/* Train placeholder */}
-        <View style={styles.transportOption}>
-          <View style={styles.transportIcon}>
-            <Icon
-              name="train"
-              size={20}
-              color={colors.brand.primary}
-              strokeWidth={1.5}
-            />
-          </View>
-          <View style={styles.transportContent}>
-            <Text style={styles.transportLabel}>By Train</Text>
-            <Text style={styles.transportValue}>
-              Rail connections available
-            </Text>
-            <Text style={styles.transportDetail}>
-              Check local rail services
-            </Text>
-          </View>
-        </View>
+      <Text style={styles.sectionTitle}>Getting There</Text>
+      <View style={styles.infoStack}>
+        <InfoRow
+          icon="plane"
+          label="Fly"
+          value={nearestAirport}
+          detail={transferDisplay}
+          iconColor={colors.brand.primary}
+        />
+        {trainAccessible && (
+          <InfoRow
+            icon="train"
+            label="Train"
+            value={
+              eurostarDirect
+                ? "Eurostar direct"
+                : trainJourneyHours != null
+                  ? `~${trainJourneyHours}h from London`
+                  : "Rail connection available"
+            }
+            detail={
+              eurostarDirect
+                ? "Direct from London St Pancras"
+                : "Change required — check Trainline"
+            }
+            iconColor={colors.sentiment.success}
+          />
+        )}
+        <InfoRow
+          icon="car"
+          label="Drive"
+          value={
+            driveHoursFromLondon != null
+              ? `~${driveHoursFromLondon}h from London`
+              : `${resort.region}, ${resort.country}`
+          }
+          detail={
+            driveHoursFromLondon != null
+              ? "Via Channel Tunnel or ferry"
+              : "Check Google Maps for directions"
+          }
+          iconColor={colors.text.secondary}
+        />
       </View>
     </View>
   );
@@ -263,139 +285,118 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
     marginBottom: spacing.md,
   },
-  placeholderCard: {
-    flexDirection: "row",
-    backgroundColor: colors.surface.secondary,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-    borderStyle: "dashed",
-  },
-  placeholderIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: radius.md,
-    backgroundColor: colors.brand.primarySubtle,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: spacing.md,
-  },
-  placeholderContent: {
-    flex: 1,
-  },
-  placeholderTitle: {
-    ...typography.bodyMedium,
-    color: colors.text.primary,
-    marginBottom: spacing.xxs,
-  },
-  placeholderText: {
-    ...typography.bodySmall,
-    color: colors.text.secondary,
-  },
-  // Mock reviews
-  mockReviews: {
-    marginTop: spacing.md,
+  // ── Shared info rows ──
+  infoStack: {
     gap: spacing.sm,
   },
-  mockReview: {
-    flexDirection: "row",
-    backgroundColor: colors.surface.primary,
-    borderRadius: radius.md,
-    padding: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-  },
-  mockReviewFaded: {
-    opacity: 0.5,
-  },
-  mockAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.brand.primarySubtle,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: spacing.sm,
-  },
-  mockAvatarText: {
-    ...typography.labelSmall,
-    color: colors.brand.primary,
-    fontWeight: "600",
-  },
-  mockReviewContent: {
-    flex: 1,
-  },
-  mockStars: {
-    marginBottom: spacing.xxs,
-  },
-  starText: {
-    color: colors.match.fair,
-    fontSize: 12,
-  },
-  mockReviewText: {
-    ...typography.bodySmall,
-    color: colors.text.secondary,
-    fontStyle: "italic",
-  },
-  // Quick links
-  quickLinks: {
-    flexDirection: "row",
-    marginTop: spacing.md,
-    gap: spacing.sm,
-  },
-  quickLink: {
-    flex: 1,
-    backgroundColor: colors.surface.primary,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-    gap: spacing.xs,
-  },
-  quickLinkText: {
-    ...typography.labelSmall,
-    color: colors.text.primary,
-  },
-  // Transport options
-  transportOptions: {
-    gap: spacing.sm,
-  },
-  transportOption: {
+  infoRow: {
     flexDirection: "row",
     backgroundColor: colors.surface.primary,
     borderRadius: radius.lg,
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border.subtle,
+    alignItems: "flex-start",
   },
-  transportIcon: {
-    width: 44,
-    height: 44,
+  infoIcon: {
+    width: 40,
+    height: 40,
     borderRadius: radius.md,
-    backgroundColor: colors.surface.tertiary,
     alignItems: "center",
     justifyContent: "center",
     marginRight: spacing.md,
+    flexShrink: 0,
   },
-  transportContent: {
+  infoContent: {
     flex: 1,
   },
-  transportLabel: {
+  infoLabel: {
     ...typography.labelSmall,
     color: colors.text.tertiary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
+    marginBottom: 2,
   },
-  transportValue: {
+  infoValue: {
+    ...typography.bodyMedium,
+    color: colors.text.primary,
+    fontWeight: "600",
+  },
+  infoDetail: {
+    ...typography.bodySmall,
+    color: colors.text.secondary,
+    marginTop: 2,
+  },
+  // ── Activities ──
+  apresRow: {
+    flexDirection: "row",
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  apresCard: {
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.md,
+    padding: spacing.sm,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    minWidth: 76,
+    gap: 2,
+  },
+  apresCardWide: {
+    flex: 1,
+    alignItems: "flex-start",
+    paddingHorizontal: spacing.md,
+  },
+  apresValue: {
+    ...typography.bodyLarge,
+    color: colors.text.primary,
+    fontWeight: "700",
+  },
+  apresLabel: {
+    ...typography.caption,
+    color: colors.text.tertiary,
+  },
+  apresSceneLabel: {
     ...typography.bodyMedium,
     color: colors.text.primary,
     fontWeight: "500",
   },
-  transportDetail: {
+  activitiesList: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.xs,
+  },
+  activityChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.surface.primary,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    gap: spacing.xs,
+  },
+  activityText: {
+    ...typography.bodySmall,
+    color: colors.text.primary,
+  },
+  noActivities: {
+    backgroundColor: colors.surface.secondary,
+    borderRadius: radius.md,
+    padding: spacing.md,
+  },
+  noActivitiesText: {
     ...typography.bodySmall,
     color: colors.text.secondary,
-    marginTop: spacing.xxs,
+  },
+  // ── Accommodation ──
+  footerNote: {
+    ...typography.caption,
+    color: colors.text.tertiary,
+    marginTop: spacing.md,
+    fontStyle: "italic",
   },
 });

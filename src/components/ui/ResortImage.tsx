@@ -21,6 +21,7 @@ import { StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import type { ImageStyle } from "expo-image";
 import type { StyleProp } from "react-native";
+import { useState } from "react";
 
 // Local fallback used when no URI is provided or the remote image fails.
 const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg");
@@ -47,9 +48,11 @@ export function ResortImage({
   accessibilityLabel,
   contentFit = "cover",
 }: ResortImageProps) {
+  const [useFallback, setUseFallback] = useState(false);
+
   return (
     <Image
-      source={uri ? [{ uri }, DEFAULT_RESORT_IMAGE] : DEFAULT_RESORT_IMAGE}
+      source={uri && !useFallback ? { uri } : DEFAULT_RESORT_IMAGE}
       placeholder={{ blurhash: ALPINE_BLURHASH }}
       contentFit={contentFit}
       transition={200}
@@ -57,6 +60,7 @@ export function ResortImage({
       style={[styles.base, style]}
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="image"
+      onError={() => setUseFallback(true)}
     />
   );
 }

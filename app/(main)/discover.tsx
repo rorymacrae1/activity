@@ -24,35 +24,51 @@ import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAllResortsAsync } from "@services/resort";
 import { useFavoritesStore } from "@stores/favorites";
+import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Icon } from "@components/ui/Icon";
 import { LoadingState } from "@components/ui/LoadingState";
 import { EmptyState } from "@components/ui/EmptyState";
+import { ResortScatterPlot } from "@components/resort/ResortScatterPlot";
+import {
+  DiscoverControls,
+  type DiscoverPrefs,
+} from "@components/resort/DiscoverControls";
 import type { Resort } from "@/types/resort";
+import type { NormalizedPreferences } from "@/types/preferences";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 type SortKey = "az" | "km" | "snow";
-
-interface CountryFilter {
-  id: string;
-  label: string;
-  flag: string;
-}
+type ViewMode = "list" | "map";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const COUNTRY_FILTERS: CountryFilter[] = [
-  { id: "all", label: "All", flag: "🌍" },
-  { id: "France", label: "France", flag: "🇫🇷" },
-  { id: "Austria", label: "Austria", flag: "🇦🇹" },
-  { id: "Switzerland", label: "Switzerland", flag: "🇨🇭" },
-  { id: "Italy", label: "Italy", flag: "🇮🇹" },
-  { id: "Andorra", label: "Andorra", flag: "🇦🇩" },
-  { id: "Spain", label: "Spain", flag: "🇪🇸" },
-];
+const SKILL_MAP: Record<string, number> = {
+  beginner: 0,
+  intermediate: 0.33,
+  red: 0.67,
+  advanced: 1,
+};
+
+const BUDGET_MAP: Record<string, number> = {
+  budget: 0,
+  mid: 0.33,
+  premium: 0.67,
+  luxury: 1,
+};
+
+/** Neutral fallback preferences when user has not completed onboarding */
+const NEUTRAL_PREFS: DiscoverPrefs = {
+  minSkill: 0.33,
+  maxSkill: 0.33,
+  budgetLevel: 0.33,
+  quietLively: 0.5,
+  familyNightlife: 0.5,
+  snowImportance: 0.5,
+};
 
 const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: "az", label: "A – Z" },
@@ -101,7 +117,9 @@ function ResortRow({ resort, isFavorite }: ResortRowProps) {
           {isFavorite && <View style={styles.savedDot} />}
         </View>
         <Text style={styles.rowLocation} numberOfLines={1}>
-          {resort.country} · {resort.region}
+          {resort.region === resort.country
+            ? resort.country
+            : `${resort.country} · ${resort.region}`}
         </Text>
 
         {/* Stats chips */}
@@ -157,11 +175,62 @@ export default function DiscoverScreen() {
   const [allResorts, setAllResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
-  const [selectedCountry, setSelectedCountry] = useState<string>("all");
   const [sortKey, setSortKey] = useState<SortKey>("az");
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
   const { isFavorite } = useFavoritesStore();
   const { hPadding } = useLayout();
   const inputRef = useRef<TextInput>(null);
+
+  // Read stored prefs from onboarding quiz
+  const storedAbilities = usePreferencesStore((s) => s.groupAbilities);
+  const storedBudget = usePreferencesStore((s) => s.budgetLevel);
+  const storedCrowd = usePreferencesStore((s) => s.crowdPreference);
+  const storedFamily = usePreferencesStore((s) => s.familyVsNightlife);
+  const storedSnow = usePreferencesStore((s) => s.snowImportance);
+  const hasOnboarded = usePreferencesStore((s) => s.hasCompletedOnboarding);
+
+  // Derive initial scatter plot prefs from stored quiz answers (or neutral)
+  const storedDiscoverPrefs = useMemo<DiscoverPrefs>(() => {
+    if (!hasOnboarded) return NEUTRAL_PREFS;
+    const skillVals =
+      storedAbilities.length > 0
+        ? storedAbilities.map((s) => SKILL_MAP[s] ?? 0.33)
+        : [0.33];
+    return {
+      minSkill: Math.min(...skillVals),
+      maxSkill: Math.max(...skillVals),
+      budgetLevel: BUDGET_MAP[storedBudget ?? "mid"] ?? 0.33,
+      quietLively: (storedCrowd - 1) / 4,
+      familyNightlife: (storedFamily - 1) / 4,
+      snowImportance: (storedSnow - 1) / 4,
+    };
+  }, [
+    hasOnboarded,
+    storedAbilities,
+    storedBudget,
+    storedCrowd,
+    storedFamily,
+    storedSnow,
+  ]);
+
+  const [discoverPrefs, setDiscoverPrefs] =
+    useState<DiscoverPrefs>(NEUTRAL_PREFS);
+
+  // Sync control prefs when stored prefs load (only once after load)
+  useEffect(() => {
+    setDiscoverPrefs(storedDiscoverPrefs);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasOnboarded]);
+
+  // Build full NormalizedPreferences for the scatter plot
+  const normalizedPrefs = useMemo<NormalizedPreferences>(
+    () => ({
+      ...discoverPrefs,
+      tripType: null,
+      regions: [],
+    }),
+    [discoverPrefs],
+  );
 
   // Load all resorts on mount
   useEffect(() => {
@@ -175,10 +244,6 @@ export default function DiscoverScreen() {
     const q = query.trim().toLowerCase();
 
     let filtered = allResorts.filter((r) => {
-      // Country filter
-      if (selectedCountry !== "all" && r.country !== selectedCountry) {
-        return false;
-      }
       // Text search: name, country, region
       if (q) {
         return (
@@ -208,7 +273,7 @@ export default function DiscoverScreen() {
     }
 
     return filtered;
-  }, [allResorts, query, selectedCountry, sortKey]);
+  }, [allResorts, query, sortKey]);
 
   const handleClearQuery = useCallback(() => {
     setQuery("");
@@ -263,144 +328,172 @@ export default function DiscoverScreen() {
       >
         {/* ── Page header ── */}
         <View style={[styles.pageHeader, { paddingHorizontal: hPadding }]}>
-          <Text variant="h2" style={styles.pageTitle}>
-            Discover
-          </Text>
-          <Text variant="body" style={styles.pageSubtitle}>
-            {allResorts.length} European ski resorts
-          </Text>
-        </View>
+          <View style={styles.pageHeaderRow}>
+            <View style={styles.pageHeaderText}>
+              <Text variant="h2" style={styles.pageTitle}>
+                Discover
+              </Text>
+              <Text variant="body" style={styles.pageSubtitle}>
+                {allResorts.length} ski resorts
+              </Text>
+            </View>
 
-        {/* ── Search bar ── */}
-        <View style={[styles.searchContainer, { paddingHorizontal: hPadding }]}>
-          <View style={styles.searchBar}>
-            <Icon
-              name="search"
-              size={18}
-              color={colors.ink.muted}
-              strokeWidth={1.75}
-            />
-            <TextInput
-              ref={inputRef}
-              style={styles.searchInput}
-              placeholder="Search by name, country or region…"
-              placeholderTextColor={colors.ink.faint}
-              value={query}
-              onChangeText={setQuery}
-              returnKeyType="search"
-              clearButtonMode="never"
-              autoCorrect={false}
-              autoCapitalize="none"
-              accessibilityLabel="Search resorts"
-              accessibilityRole="search"
-            />
-            {query.length > 0 && (
+            {/* View toggle: List | Map */}
+            <View style={styles.viewToggle}>
               <Pressable
-                onPress={handleClearQuery}
-                hitSlop={8}
-                accessibilityLabel="Clear search"
+                style={[
+                  styles.viewToggleBtn,
+                  viewMode === "list" && styles.viewToggleBtnActive,
+                ]}
+                onPress={() => setViewMode("list")}
                 accessibilityRole="button"
+                accessibilityLabel="List view"
+                accessibilityState={{ selected: viewMode === "list" }}
               >
-                <View style={styles.clearButton}>
-                  <Icon
-                    name="x"
-                    size={14}
-                    color={colors.ink.muted}
-                    strokeWidth={2}
-                  />
-                </View>
+                <Icon
+                  name="list"
+                  size={15}
+                  color={
+                    viewMode === "list"
+                      ? colors.brand.primary
+                      : colors.ink.muted
+                  }
+                  strokeWidth={2}
+                />
               </Pressable>
-            )}
+              <Pressable
+                style={[
+                  styles.viewToggleBtn,
+                  viewMode === "map" && styles.viewToggleBtnActive,
+                ]}
+                onPress={() => setViewMode("map")}
+                accessibilityRole="button"
+                accessibilityLabel="Scatter plot view"
+                accessibilityState={{ selected: viewMode === "map" }}
+              >
+                <Icon
+                  name="grid"
+                  size={15}
+                  color={
+                    viewMode === "map" ? colors.brand.primary : colors.ink.muted
+                  }
+                  strokeWidth={2}
+                />
+              </Pressable>
+            </View>
           </View>
         </View>
 
-        {/* ── Country filter chips ── */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.filterScroll}
-          contentContainerStyle={[
-            styles.filterRow,
-            { paddingHorizontal: hPadding },
-          ]}
-        >
-          {COUNTRY_FILTERS.map((f) => {
-            const active = selectedCountry === f.id;
-            return (
-              <Pressable
-                key={f.id}
-                style={[styles.filterChip, active && styles.filterChipActive]}
-                onPress={() => setSelectedCountry(f.id)}
-                accessibilityRole="button"
-                accessibilityLabel={`Filter by ${f.label}`}
-                accessibilityState={{ selected: active }}
-              >
-                <Text
-                  style={[
-                    styles.filterChipText,
-                    active && styles.filterChipTextActive,
-                  ]}
-                >
-                  {f.flag} {f.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
-
-        {/* ── Sort options ── */}
-        <View style={[styles.sortRow, { paddingHorizontal: hPadding }]}>
-          <View style={styles.sortLeft}>
-            <Text style={styles.sortLabel}>Sort:</Text>
-            {SORT_OPTIONS.map((opt) => {
-              const active = sortKey === opt.key;
-              return (
-                <Pressable
-                  key={opt.key}
-                  style={[styles.sortChip, active && styles.sortChipActive]}
-                  onPress={() => setSortKey(opt.key)}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Sort by ${opt.label}`}
-                  accessibilityState={{ selected: active }}
-                >
-                  <Text
-                    style={[
-                      styles.sortChipText,
-                      active && styles.sortChipTextActive,
-                    ]}
+        {/* ── Search / chips / sort (list) OR preference controls (map) ── */}
+        {viewMode === "list" ? (
+          <>
+            {/* Search bar */}
+            <View
+              style={[styles.searchContainer, { paddingHorizontal: hPadding }]}
+            >
+              <View style={styles.searchBar}>
+                <Icon
+                  name="search"
+                  size={18}
+                  color={colors.ink.muted}
+                  strokeWidth={1.75}
+                />
+                <TextInput
+                  ref={inputRef}
+                  style={styles.searchInput}
+                  placeholder="Search by name, country or region…"
+                  placeholderTextColor={colors.ink.faint}
+                  value={query}
+                  onChangeText={setQuery}
+                  returnKeyType="search"
+                  clearButtonMode="never"
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                  accessibilityLabel="Search resorts"
+                  accessibilityRole="search"
+                />
+                {query.length > 0 && (
+                  <Pressable
+                    onPress={handleClearQuery}
+                    hitSlop={8}
+                    accessibilityLabel="Clear search"
+                    accessibilityRole="button"
                   >
-                    {opt.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+                    <View style={styles.clearButton}>
+                      <Icon
+                        name="x"
+                        size={14}
+                        color={colors.ink.muted}
+                        strokeWidth={2}
+                      />
+                    </View>
+                  </Pressable>
+                )}
+              </View>
+            </View>
 
-          {/* Results count */}
-          <Text style={styles.resultsCount}>
-            {results.length} resort{results.length !== 1 ? "s" : ""}
-          </Text>
-        </View>
+            {/* Sort row */}
+            <View style={[styles.sortRow, { paddingHorizontal: hPadding }]}>
+              <View style={styles.sortLeft}>
+                <Text style={styles.sortLabel}>Sort:</Text>
+                {SORT_OPTIONS.map((opt) => {
+                  const active = sortKey === opt.key;
+                  return (
+                    <Pressable
+                      key={opt.key}
+                      style={[styles.sortChip, active && styles.sortChipActive]}
+                      onPress={() => setSortKey(opt.key)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Sort by ${opt.label}`}
+                      accessibilityState={{ selected: active }}
+                    >
+                      <Text
+                        style={[
+                          styles.sortChipText,
+                          active && styles.sortChipTextActive,
+                        ]}
+                      >
+                        {opt.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+              <Text style={styles.resultsCount}>
+                {results.length} resort{results.length !== 1 ? "s" : ""}
+              </Text>
+            </View>
+          </>
+        ) : (
+          <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
+        )}
 
         {/* ── Divider ── */}
         <View style={styles.divider} />
 
-        {/* ── Results list ── */}
-        {results.length === 0 ? (
+        {/* ── Content: list or scatter plot ── */}
+        {viewMode === "map" ? (
+          <View
+            style={[
+              styles.flex,
+              styles.scatterWrapper,
+              { paddingHorizontal: hPadding },
+            ]}
+          >
+            <ResortScatterPlot resorts={allResorts} prefs={normalizedPrefs} />
+          </View>
+        ) : results.length === 0 ? (
           <EmptyState
             icon="search"
             title="No resorts found"
             message={
               query
-                ? `No resorts match "${query}". Try a different name or country.`
-                : "No resorts match your current filters."
+                ? `No resorts match "${query}". Try a different search.`
+                : "Start typing to search for resorts."
             }
             action={{
-              label: "Clear filters",
-              onPress: () => {
-                setQuery("");
-                setSelectedCountry("all");
-              },
+              label: "Clear search",
+              onPress: () => setQuery(""),
             }}
           />
         ) : (
@@ -443,6 +536,15 @@ const styles = StyleSheet.create({
   pageHeader: {
     paddingTop: spacing.lg,
     paddingBottom: spacing.sm,
+  },
+  pageHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.sm,
+  },
+  pageHeaderText: {
+    flex: 1,
     gap: spacing.xs,
   },
   pageTitle: {
@@ -451,6 +553,27 @@ const styles = StyleSheet.create({
   pageSubtitle: {
     color: colors.ink.muted,
     fontSize: 14,
+  },
+
+  // View toggle (List | Map)
+  viewToggle: {
+    flexDirection: "row",
+    backgroundColor: colors.canvas.muted,
+    borderRadius: radius.sm,
+    padding: 2,
+    gap: 1,
+  },
+  viewToggleBtn: {
+    padding: spacing.xs + 2,
+    borderRadius: radius.xs,
+  },
+  viewToggleBtnActive: {
+    backgroundColor: colors.surface.primary,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 1,
   },
 
   // Search
@@ -481,38 +604,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border.subtle,
     alignItems: "center",
     justifyContent: "center",
-  },
-
-  // Country filter chips
-  filterScroll: {
-    flexShrink: 0, // prevents height collapse on Android
-  },
-  filterRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    paddingBottom: spacing.sm,
-  },
-  filterChip: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-    backgroundColor: colors.surface.primary,
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-  },
-  filterChipActive: {
-    backgroundColor: colors.brand.primarySubtle,
-    borderColor: colors.brand.primary,
-  },
-  filterChipText: {
-    fontSize: 13,
-    color: colors.ink.normal,
-    fontWeight: "500",
-  },
-  filterChipTextActive: {
-    color: colors.brand.primaryStrong,
-    fontWeight: "600",
   },
 
   // Sort
@@ -570,6 +661,12 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: colors.border.subtle,
+  },
+
+  // Scatter plot
+  scatterWrapper: {
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.lg,
   },
 
   // Resort row

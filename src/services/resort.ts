@@ -4,6 +4,99 @@ import { getResortHeroImage } from "@/data/resortImages";
 import { getResortNearestAirport } from "@/data/resortNearestAirports";
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Supabase related table schemas (embedded via PostgREST joins)
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface CostDataRow {
+  lift_pass_daily_gbp: number | null;
+  lift_pass_weekly_gbp: number | null;
+  mountain_lunch_gbp: number | null;
+  beer_on_mountain_gbp: number | null;
+  ski_rental_daily_gbp: number | null;
+  ski_school_half_day_gbp: number | null;
+  overall_cost_index: number | null;
+  year: number;
+}
+
+interface SlopeDataRow {
+  total_km: number | null;
+  blue_km: number | null;
+  red_km: number | null;
+  black_km: number | null;
+  lifts_total: number | null;
+  gondolas: number | null;
+  chairlifts: number | null;
+  snow_park: boolean | null;
+  half_pipe: boolean | null;
+  mogul_field: boolean | null;
+  off_piste_guided: boolean | null;
+  snow_park_features: number | null;
+}
+
+interface SeasonTimingRow {
+  season_open: string | null;
+  season_close: string | null;
+  best_weeks: string | null;
+  avoid_weeks: string | null;
+  good_christmas: boolean | null;
+  good_late_season: boolean | null;
+  good_long_weekend: boolean | null;
+  school_hols_busy: string | null;
+}
+
+interface AirportLinkRow {
+  iata_code: string;
+  airport_name: string | null;
+  transfer_mins: number | null;
+  direct_flights_available: boolean | null;
+  shuttle_available: boolean | null;
+  uk_departure_airports: string | null;
+  flight_time_mins: number | null;
+  seasonal_only: boolean | null;
+}
+
+interface FacilityRow {
+  type: string | null;
+  name: string | null;
+  veggie_options: boolean | null;
+  vegan_options: boolean | null;
+  avg_price_gbp: number | null;
+  rating: number | null;
+  ski_to_door: boolean | null;
+  review_count: number | null;
+  english_speaking: boolean | null;
+  kids_lessons: boolean | null;
+  private_available: boolean | null;
+  instructor_notes: string | null;
+  whiteout_activity: boolean | null;
+  apres_ski: boolean | null;
+  nightlife_level: number | null;
+}
+
+interface AccommodationRow {
+  type: string | null;
+  name: string | null;
+  stars: number | null;
+  ski_in_out: boolean | null;
+  kids_club: boolean | null;
+  price_per_night_gbp: number | null;
+  min_nights: number | null;
+  catered: boolean | null;
+  booking_url: string | null;
+}
+
+interface WeatherMonthRow {
+  month: number;
+  avg_temp_c: number | null;
+  avg_wind_kph: number | null;
+  wind_chill_c: number | null;
+  avg_bluebird_days: number | null;
+  avg_snowfall_cm: number | null;
+  snow_depth_cm: number | null;
+  visibility_score: number | null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Supabase resort table schema (from existing database)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -11,27 +104,67 @@ interface SupabaseResortRow {
   id: string;
   name: string;
   country: string;
-  region: string;
-  location: string; // PostGIS geometry
-  altitude_base_m: number;
-  altitude_top_m: number;
-  car_free_town: boolean;
-  style: string;
-  snow_sure_score: number;
-  total_km_piste: number;
-  blue_runs: number;
-  red_runs: number;
-  black_runs: number;
-  beginner_area: boolean;
-  snow_park: boolean;
-  off_piste: boolean;
-  disability_access: boolean;
-  olympic_history: boolean;
+  region: string | null;
+  location: string | null; // PostGIS geography
+  altitude_base_m: number | null;
+  altitude_top_m: number | null;
+  car_free_town: boolean | null;
+  style: string | null;
+  snow_sure_score: number | null;
+  snow_sure_rating: number | null;
+  total_km_piste: number | null;
+  blue_runs: number | null;
+  red_runs: number | null;
+  black_runs: number | null;
+  beginner_area: boolean | null;
+  snow_park: boolean | null;
+  off_piste: boolean | null;
+  off_piste_score: number | null;
+  backcountry_access: boolean | null;
+  guide_required: boolean | null;
+  freeride_world_tour: boolean | null;
+  off_piste_areas: string | null;
+  disability_access: boolean | null;
+  wheelchair_accessible: boolean | null;
+  adaptive_ski_school: boolean | null;
+  accessibility_notes: string | null;
+  olympic_history: boolean | null;
   olympic_detail: string | null;
+  apres_ski_rating: number | null;
+  apres_ski_notes: string | null;
+  train_accessible: boolean | null;
+  eurostar_direct: boolean | null;
+  train_journey_hours: number | null;
+  train_route_summary: string | null;
+  drive_hours_from_london: number | null;
+  sustainability_score: number | null;
+  sustainability_notes: string | null;
+  heli_skiing_available: boolean | null;
+  heli_skiing_legal: string | null;
+  heli_skiing_cost_gbp: number | null;
+  night_skiing_available: boolean | null;
+  night_skiing_km: number | null;
+  night_skiing_days: string | null;
+  snowmaking_cannon_count: number | null;
+  snowmaking_coverage_pct: number | null;
+  snowmaking_reliability: number | null;
+  glacier_skiing: boolean | null;
+  min_altitude_m: number | null;
+  max_altitude_m: number | null;
+  webcam_url: string | null;
+  snow_report_url: string | null;
   embedding: unknown;
-  last_updated: string;
-  created_at: string;
+  last_updated: string | null;
+  created_at: string | null;
   hero_image: string | null;
+  // Embedded related tables (PostgREST join)
+  cost_data: CostDataRow[] | null;
+  slope_data: SlopeDataRow[] | null;
+  season_timing: SeasonTimingRow[] | null;
+  airport_link: AirportLinkRow[] | null;
+  facility: FacilityRow[] | null;
+  accommodation: AccommodationRow[] | null;
+  weather_month: WeatherMonthRow[] | null;
 }
 
 /**
@@ -41,12 +174,15 @@ interface SupabaseResortRow {
 function supabaseRowToResort(row: SupabaseResortRow): Resort {
   // Calculate terrain percentages from run counts.
   // Assign beginner and advanced first; intermediate absorbs rounding remainder.
-  const totalRuns = row.blue_runs + row.red_runs + row.black_runs;
+  const blueRuns = row.blue_runs ?? 0;
+  const redRuns = row.red_runs ?? 0;
+  const blackRuns = row.black_runs ?? 0;
+  const totalRuns = blueRuns + redRuns + blackRuns;
   const terrainDistribution: TerrainDistribution =
     totalRuns > 0
       ? (() => {
-          const beginner = Math.round((row.blue_runs / totalRuns) * 100);
-          const advanced = Math.round((row.black_runs / totalRuns) * 100);
+          const beginner = Math.round((blueRuns / totalRuns) * 100);
+          const advanced = Math.round((blackRuns / totalRuns) * 100);
           return {
             beginner,
             intermediate: 100 - beginner - advanced,
@@ -55,63 +191,222 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
         })()
       : { beginner: 33, intermediate: 34, advanced: 33 };
 
-  // Resolve airport once to avoid two identical lookups per row
-  const airport = getResortNearestAirport(row.name);
+  // ── Related table data (may be null if not yet populated) ─────────────────
 
-  // Current ski season: Dec (prev year) → Jun (current year).
-  // After June, advance to the next season so resorts never appear closed.
+  // cost_data: multiple rows per resort (one per year) — take the most recent
+  const cost =
+    [...(row.cost_data ?? [])].sort((a, b) => b.year - a.year)[0] ?? null;
+
+  // slope_data: unique per resort
+  const slopes = row.slope_data?.[0] ?? null;
+
+  // season_timing: unique per resort
+  const timing = row.season_timing?.[0] ?? null;
+
+  // airport_link: multiple rows — pick closest transfer time as primary airport
+  const primaryAirport =
+    [...(row.airport_link ?? [])].sort(
+      (a, b) => (a.transfer_mins ?? 999) - (b.transfer_mins ?? 999),
+    )[0] ?? null;
+
+  // Fall back to local lookup if DB has no airport data
+  const localAirport = getResortNearestAirport(row.name);
+  const airportIata = primaryAirport?.iata_code ?? localAirport.iata;
+  const airportTransferMins =
+    primaryAirport?.transfer_mins ?? localAirport.transferTimeMinutes;
+
+  // ── Season dates ────────────────────────────────────────────────────────────
+  // Prefer per-resort season_timing; fall back to dynamic current-season estimate.
   const now = new Date();
   const seasonYear =
     now.getMonth() >= 6 ? now.getFullYear() + 1 : now.getFullYear();
+  const seasonStart = timing?.season_open ?? `${seasonYear - 1}-12-01`;
+  const seasonEnd = timing?.season_close ?? `${seasonYear}-06-30`;
+
+  // ── Costs (stored in GBP) ───────────────────────────────────────────────────
+  const liftPassDayCost = cost?.lift_pass_daily_gbp ?? 60;
+  const liftPassSixDayCost = cost?.lift_pass_weekly_gbp ?? 300;
+  // Average daily: lift pass + lunch + half-day rental (own skis half the time)
+  const avgDailyCost = cost
+    ? Math.round(
+        (cost.lift_pass_daily_gbp ?? 60) +
+          (cost.mountain_lunch_gbp ?? 25) +
+          (cost.ski_rental_daily_gbp ?? 40) / 2,
+      )
+    : 150;
+
+  // ── Stats ───────────────────────────────────────────────────────────────────
+  const totalKm = slopes?.total_km ?? row.total_km_piste ?? 0;
+  const liftsTotal = slopes?.lifts_total ?? 0;
+  const snowParkCount =
+    ((slopes?.snow_park ?? row.snow_park) ? 1 : 0) +
+    (slopes?.half_pipe ? 1 : 0);
+
+  // ── Weather data ────────────────────────────────────────────────────────────
+  // Peak season = December (12) through March (3)
+  const PEAK_MONTHS = new Set([12, 1, 2, 3]);
+  const peakWeather = (row.weather_month ?? []).filter((w) =>
+    PEAK_MONTHS.has(w.month),
+  );
+  const avgPeakSnowfall = peakWeather.length
+    ? peakWeather.reduce((s, w) => s + (w.avg_snowfall_cm ?? 0), 0) /
+      peakWeather.length
+    : null;
+  const avgBluebirdDays = peakWeather.length
+    ? Math.round(
+        peakWeather.reduce((s, w) => s + (w.avg_bluebird_days ?? 0), 0) /
+          peakWeather.length,
+      )
+    : null;
+
+  // ── Snow reliability ────────────────────────────────────────────────────────
+  // Boost score by 1 if DB data confirms strong snowfall (>50cm avg peak month)
+  const baseSnowScore = row.snow_sure_rating ?? row.snow_sure_score ?? 3;
+  const snowfallBoost = avgPeakSnowfall != null && avgPeakSnowfall > 50 ? 1 : 0;
+  const snowReliability = Math.min(
+    5,
+    baseSnowScore + (row.glacier_skiing ? 1 : 0) + snowfallBoost,
+  ) as 1 | 2 | 3 | 4 | 5;
+
+  // ── Accommodation data ──────────────────────────────────────────────────────
+  const accommodations = row.accommodation ?? [];
+  const hasSkiInOut = accommodations.some((a) => a.ski_in_out);
+  const hasCateredChalet = accommodations.some((a) => a.catered);
+  const hasKidsClub = accommodations.some((a) => a.kids_club);
+
+  // ── Facility data ────────────────────────────────────────────────────────────
+  const facilities = row.facility ?? [];
+  const barCount = facilities.filter((f) => f.apres_ski).length || 5;
+  const hasKidsLessons = facilities.some((f) => f.kids_lessons);
+  const hasPrivateLessons = facilities.some((f) => f.private_available);
+  const facilityNightlifeLevels = facilities
+    .filter((f) => f.nightlife_level != null)
+    .map((f) => f.nightlife_level as number);
+  const avgFacilityNightlife = facilityNightlifeLevels.length
+    ? Math.round(
+        facilityNightlifeLevels.reduce((s, v) => s + v, 0) /
+          facilityNightlifeLevels.length,
+      )
+    : null;
+  const whiteoutActivities = facilities
+    .filter((f) => f.whiteout_activity && f.name)
+    .map((f) => f.name as string)
+    .slice(0, 3);
+
+  // ── Nightlife & family scores ───────────────────────────────────────────────
+  const nightlifeScore = (avgFacilityNightlife ?? row.apres_ski_rating ?? 3) as
+    | 1
+    | 2
+    | 3
+    | 4
+    | 5;
+  const familyPoints =
+    (row.beginner_area ? 2 : 0) +
+    (hasKidsLessons ? 2 : 0) +
+    (hasPrivateLessons ? 1 : 0) +
+    (hasKidsClub ? 1 : 0) +
+    (row.adaptive_ski_school ? 1 : 0) +
+    (row.wheelchair_accessible ? 1 : 0) +
+    (row.disability_access ? 1 : 0);
+  const familyScore = (Math.min(5, Math.max(1, familyPoints)) || 3) as
+    | 1
+    | 2
+    | 3
+    | 4
+    | 5;
+
+  // Crowd proxy — no direct column yet
+  const crowdLevel = 3 as 1 | 2 | 3 | 4 | 5;
+
+  // ── Activities ──────────────────────────────────────────────────────────────
+  const otherActivities: string[] = [];
+  if (row.off_piste || (row.off_piste_score ?? 0) >= 3)
+    otherActivities.push("Off-piste skiing");
+  if (row.backcountry_access || slopes?.off_piste_guided)
+    otherActivities.push("Backcountry access");
+  if (row.heli_skiing_available) otherActivities.push("Heli-skiing");
+  if (row.night_skiing_available) otherActivities.push("Night skiing");
+  if (row.glacier_skiing) otherActivities.push("Glacier skiing");
+  if (row.freeride_world_tour) otherActivities.push("Freeride World Tour stop");
+  if (slopes?.half_pipe) otherActivities.push("Half-pipe");
+  if (slopes?.mogul_field) otherActivities.push("Mogul field");
+  if (whiteoutActivities.length) otherActivities.push(...whiteoutActivities);
+  if (hasSkiInOut) otherActivities.push("Ski-in/ski-out accommodation");
+
+  // ── Highlights ──────────────────────────────────────────────────────────────
+  const highlights: string[] = [
+    totalKm ? `${totalKm}km of pistes` : "",
+    row.car_free_town ? "Car-free resort" : "",
+    slopes?.snow_park || row.snow_park ? "Snow park" : "",
+    row.glacier_skiing ? "Glacier skiing" : "",
+    row.night_skiing_available
+      ? `Night skiing (${row.night_skiing_km ?? "?"}km)`
+      : "",
+    row.train_accessible
+      ? row.eurostar_direct
+        ? "Eurostar direct"
+        : `Train accessible (${row.train_journey_hours ?? "?"}h)`
+      : "",
+    row.olympic_history
+      ? `Olympic history: ${row.olympic_detail || "Yes"}`
+      : "",
+    row.freeride_world_tour ? "Freeride World Tour stop" : "",
+    hasCateredChalet ? "Catered chalets available" : "",
+    avgBluebirdDays != null && avgBluebirdDays >= 10
+      ? `~${avgBluebirdDays} bluebird days/month`
+      : "",
+  ].filter(Boolean);
+
+  const style = row.style ?? "traditional";
+  const region = row.region ?? row.country;
 
   return {
     id: row.id,
     name: row.name,
     country: row.country,
-    region: row.region,
+    region,
     subRegion: undefined,
     location: {
-      lat: 0, // PostGIS geometry needs decoding - placeholder
+      lat: 0, // PostGIS geography — requires ST_AsGeoJSON decoding
       lng: 0,
-      villageAltitude: row.altitude_base_m,
-      peakAltitude: row.altitude_top_m,
+      villageAltitude: row.altitude_base_m ?? row.min_altitude_m ?? 0,
+      peakAltitude: row.altitude_top_m ?? row.max_altitude_m ?? 0,
     },
     terrain: terrainDistribution,
     stats: {
-      totalRuns: totalRuns,
-      totalKm: row.total_km_piste,
-      lifts: 0, // Not in current schema
-      snowParks: row.snow_park ? 1 : 0,
+      totalRuns,
+      totalKm,
+      lifts: liftsTotal,
+      snowParks: snowParkCount,
     },
     attributes: {
-      averageDailyCost: 150, // Default placeholder
-      liftPassDayCost: 60,
-      liftPassSixDayCost: 300,
-      crowdLevel: 3,
-      familyScore: row.beginner_area ? 4 : 3,
-      nightlifeScore: row.style === "modern" ? 4 : 3,
-      snowReliability: row.snow_sure_score,
-      liftModernity: row.style === "modern" ? 4 : 3,
-      nearestAirport: airport.iata,
-      transferTimeMinutes: airport.transferTimeMinutes,
+      averageDailyCost: avgDailyCost,
+      liftPassDayCost,
+      liftPassSixDayCost,
+      crowdLevel,
+      familyScore,
+      nightlifeScore,
+      snowReliability,
+      liftModernity: style === "modern" ? 4 : 3,
+      nearestAirport: airportIata,
+      transferTimeMinutes: airportTransferMins,
       townStyle: row.car_free_town
         ? "Purpose-built"
-        : row.style === "modern"
+        : style === "modern"
           ? "Modern resort"
           : "Traditional village",
-      barCount: 5,
-      otherActivities: row.off_piste ? ["Off-piste skiing"] : [],
+      barCount,
+      otherActivities,
+      hasSkiInOut,
+      hasCatered: hasCateredChalet,
+      trainAccessible: row.train_accessible ?? false,
+      eurostarDirect: row.eurostar_direct ?? false,
+      trainJourneyHours: row.train_journey_hours ?? null,
+      driveHoursFromLondon: row.drive_hours_from_london ?? null,
     },
     content: {
-      description: `${row.name} is a ${row.style} ski resort in ${row.region}, ${row.country}.`,
-      highlights: [
-        `${row.total_km_piste}km of pistes`,
-        row.car_free_town ? "Car-free resort" : "",
-        row.snow_park ? "Snow park" : "",
-        row.olympic_history
-          ? `Olympic history: ${row.olympic_detail || "Yes"}`
-          : "",
-      ].filter(Boolean),
+      description: `${row.name} is a ${style} ski resort in ${region}, ${row.country}.`,
+      highlights,
     },
     assets: {
       heroImage: row.hero_image
@@ -120,8 +415,8 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       pisteMap: "",
     },
     season: {
-      start: `${seasonYear - 1}-12-01`,
-      end: `${seasonYear}-06-30`,
+      start: seasonStart,
+      end: seasonEnd,
     },
   };
 }
@@ -172,7 +467,9 @@ async function fetchCloudResorts(): Promise<Resort[] | null> {
     (
       client
         .from("resort")
-        .select("*")
+        .select(
+          "*, cost_data(*), slope_data(*), season_timing(*), airport_link(*), facility(*), accommodation(*), weather_month(*)",
+        )
         .order("name") as unknown as PromiseLike<FetchResult>
     ).then(resolve, reject);
   });
@@ -221,7 +518,9 @@ async function fetchCloudResortById(id: string): Promise<Resort | null> {
   try {
     const { data, error } = await supabase
       .from("resort")
-      .select("*")
+      .select(
+        "*, cost_data(*), slope_data(*), season_timing(*), airport_link(*), facility(*), accommodation(*), weather_month(*)",
+      )
       .eq("id", id)
       .single();
 
@@ -348,7 +647,9 @@ export async function getResortsByIds(ids: string[]): Promise<Resort[]> {
   try {
     const { data, error } = await supabase
       .from("resort")
-      .select("*")
+      .select(
+        "*, cost_data(*), slope_data(*), season_timing(*), airport_link(*), facility(*), accommodation(*), weather_month(*)",
+      )
       .in("id", ids);
 
     if (error || !data) {
