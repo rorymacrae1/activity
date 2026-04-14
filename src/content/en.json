@@ -145,8 +145,8 @@
   "favorites": {
     "sectionTitle": "Saved Resorts",
     "emptyTitle": "No saved resorts yet",
-    "emptyMessage": "Tap the heart icon on any resort to save it here.",
-    "discover": "Discover Resorts"
+    "emptyMessage": "Open any resort and tap the heart to save it for later.",
+    "discover": "Browse resorts"
   },
   "profile": {
     "title": "Profile",

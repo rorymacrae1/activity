@@ -145,8 +145,8 @@
   "favorites": {
     "sectionTitle": "Stations sauvegardées",
     "emptyTitle": "Aucune station sauvegardée",
-    "emptyMessage": "Appuyez sur l'icône cœur d'une station pour la sauvegarder ici.",
-    "discover": "Découvrir des stations"
+    "emptyMessage": "Ouvrez une station et appuyez sur le cœur pour la sauvegarder.",
+    "discover": "Parcourir les stations"
   },
   "profile": {
     "title": "Profil",

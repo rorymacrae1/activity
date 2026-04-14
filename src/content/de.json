@@ -143,7 +143,7 @@
   "favorites": {
     "sectionTitle": "Gespeicherte Skigebiete",
     "emptyTitle": "Noch keine gespeicherten Skigebiete",
-    "emptyMessage": "Tippe auf das Herz-Symbol bei einem Skigebiet, um es hier zu speichern.",
+    "emptyMessage": "Öffne ein Skigebiet und tippe auf das Herz, um es zu speichern.",
     "discover": "Skigebiete entdecken"
   },
   "profile": {

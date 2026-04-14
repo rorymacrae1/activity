@@ -124,8 +124,20 @@ export default function ProfileScreen() {
   }
 
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+  // Filter to only valid SkillLevel values to guard against stale persisted data
+  const VALID_SKILLS = new Set(["beginner", "intermediate", "red", "advanced"]);
+  const validAbilities = groupAbilities.filter((s) => VALID_SKILLS.has(s));
+
+  const SKILL_LABELS: Record<string, string> = {
+    beginner: "Beginner",
+    intermediate: "Intermediate",
+    red: "Red runs",
+    advanced: "Advanced",
+  };
+
   const hasCompletedSetup =
-    groupAbilities.length > 0 && budgetLevel && regions.length > 0;
+    validAbilities.length > 0 && budgetLevel && regions.length > 0;
 
   return (
     <ScreenContainer>
@@ -182,7 +194,7 @@ export default function ProfileScreen() {
                 />
                 <Button
                   label="Sign Out"
-                  variant="danger"
+                  variant="secondary"
                   onPress={handleSignOut}
                   size="compact"
                 />
@@ -220,8 +232,10 @@ export default function ProfileScreen() {
             <PrefRow
               label={content.profile.skillLevel}
               value={
-                groupAbilities.length > 0
-                  ? groupAbilities.map(capitalize).join(", ")
+                validAbilities.length > 0
+                  ? validAbilities
+                      .map((s) => SKILL_LABELS[s] ?? capitalize(s))
+                      .join(", ")
                   : content.profile.notSet
               }
             />
@@ -229,19 +243,23 @@ export default function ProfileScreen() {
             <PrefRow
               label={content.profile.budget}
               value={
-                budgetLevel ? capitalize(budgetLevel) : content.profile.notSet
+                budgetLevel
+                  ? capitalize(budgetLevel) + " tier"
+                  : content.profile.notSet
               }
             />
             <View style={styles.divider} />
             <PrefRow
               label={content.profile.regions}
               value={
-                regions.length > 0
-                  ? content.profile.regionsCount.replace(
-                      "{count}",
-                      String(regions.length),
-                    )
-                  : content.profile.notSet
+                regions.length === 0
+                  ? content.profile.notSet
+                  : regions.length >= 30
+                    ? "All regions"
+                    : content.profile.regionsCount.replace(
+                        "{count}",
+                        String(regions.length),
+                      )
               }
             />
           </Card>
@@ -252,17 +270,22 @@ export default function ProfileScreen() {
           <SectionHeader title={content.profile.actionsSection} />
           <View style={styles.actions}>
             <Button
-              label={`🔄  ${content.profile.retakeQuiz}`}
+              label={content.profile.retakeQuiz}
               variant="secondary"
               onPress={handleRetakeQuiz}
               fullWidth
             />
-            <Button
-              label={`🗑️  ${content.profile.clearSaved.replace("{count}", String(favoriteIds.length))}`}
-              variant="danger"
-              onPress={handleClearFavorites}
-              fullWidth
-            />
+            {favoriteIds.length > 0 && (
+              <Button
+                label={content.profile.clearSaved.replace(
+                  "{count}",
+                  String(favoriteIds.length),
+                )}
+                variant="danger"
+                onPress={handleClearFavorites}
+                fullWidth
+              />
+            )}
           </View>
         </View>
 
