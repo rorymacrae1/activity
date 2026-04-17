@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "@components/ui/Text";
 import { Icon } from "@components/ui/Icon";
 import { ResortImage } from "@components/ui/ResortImage";
-import { colors, spacing, radius } from "@theme";
+import { colors, spacing, radius, typography } from "@theme";
 import type { RecommendationResult } from "@/types/recommendation";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
@@ -214,8 +214,7 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   resortName: {
-    fontSize: 28,
-    fontWeight: "700",
+    ...typography.h1,
     color: colors.ink.inverse,
     marginBottom: spacing.xs,
   },

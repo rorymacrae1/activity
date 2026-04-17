@@ -143,7 +143,7 @@ function RadarChart({ scores }: RadarChartProps) {
             y={y + 4}
             textAnchor="middle"
             fontSize={10}
-            fill={colors.text.secondary}
+            fill={colors.ink.normal}
             fontWeight="500"
           >
             {label}
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...typography.h3,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginBottom: spacing.md,
   },
   // ── Overall score ──
@@ -323,12 +323,12 @@ const styles = StyleSheet.create({
   },
   overallLabel: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
   overallCaption: {
     flex: 1,
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
   // ── Chart ──
   chartContainer: {
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
   pillLabel: {
     ...typography.caption,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
   pillScore: {
     borderRadius: radius.sm,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
   reasonsHeading: {
     ...typography.bodyMedium,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     fontWeight: "600",
     marginBottom: spacing.xs,
   },
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   reasonText: {
     flex: 1,
     ...typography.bodySmall,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   // ── Algorithm note ──
   algorithmNote: {
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
   },
   algorithmNoteText: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     lineHeight: 18,
   },
 });

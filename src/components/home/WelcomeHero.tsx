@@ -11,6 +11,7 @@ import { Icon, type IconName } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
+import { typography } from "@/theme/typography";
 
 interface WelcomeHeroProps {
   firstName: string;
@@ -143,15 +144,16 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   greeting: {
-    fontSize: 16,
-    fontWeight: "500",
+    ...typography.bodyMedium,
     color: colors.onDark.text.tertiary,
     marginBottom: spacing.xs,
   },
   name: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: colors.text.inverse,
+    fontSize: 34,
+    fontWeight: "700" as const,
+    lineHeight: 40,
+    letterSpacing: -1,
+    color: colors.ink.inverse,
     marginBottom: spacing.md,
   },
   seasonBadge: {
@@ -181,9 +183,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statValue: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: colors.text.inverse,
+    ...typography.h1,
+    color: colors.ink.inverse,
     marginBottom: spacing.xxs,
   },
   statLabel: {

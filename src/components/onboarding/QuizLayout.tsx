@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   mobileSafe: {
     flex: 1,
     flexDirection: "column",
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
   },
   mobileBody: {
     flex: 1,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border.subtle,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
   },
 
   // ── Tablet ──────────────────────────────────────────────────────────────────
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   card: {
     width: TABLET_CARD_WIDTH,
     height: TABLET_CARD_HEIGHT,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
     borderRadius: radius.xxl,
     ...shadows.xl,
     // Subtle top border for glass-like depth
@@ -165,6 +165,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
     borderTopWidth: 1,
     borderTopColor: colors.border.subtle,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
   },
 });

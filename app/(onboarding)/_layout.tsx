@@ -14,7 +14,7 @@ export default function OnboardingLayout() {
         gestureEnabled: true,
         gestureDirection: "horizontal",
         // Prevent white flash between screens
-        contentStyle: { backgroundColor: colors.background.primary },
+        contentStyle: { backgroundColor: colors.canvas.default },
         // Smooth animation timing
         animationDuration: 350,
       }}

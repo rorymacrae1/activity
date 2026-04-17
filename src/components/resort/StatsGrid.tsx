@@ -2,7 +2,7 @@ import { View, StyleSheet } from "react-native";
 import { Text } from "@components/ui/Text";
 import { Icon, type IconName } from "@components/ui/Icon";
 import { useLayout } from "@hooks/useLayout";
-import { colors, spacing, typography } from "@theme";
+import { colors, spacing, typography, radius } from "@theme";
 import type { Resort } from "@/types/resort";
 
 interface StatsGridProps {
@@ -47,10 +47,10 @@ export function StatsGrid({ resort }: StatsGridProps) {
             color={colors.brand.primary}
             strokeWidth={1.5}
           />
-          <Text style={[typography.stat, { color: colors.text.primary }]}>
+          <Text style={[typography.stat, { color: colors.ink.rich }]}>
             {stat.value}
           </Text>
-          <Text style={[typography.statLabel, { color: colors.text.tertiary }]}>
+          <Text style={[typography.statLabel, { color: colors.ink.muted }]}>
             {stat.label}
           </Text>
         </View>
@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
   },
   statBox: {
     width: "48%",
-    backgroundColor: colors.background.secondary,
-    borderRadius: 12,
+    backgroundColor: colors.canvas.subtle,
+    borderRadius: radius.md,
     padding: spacing.md,
     alignItems: "center",
   },
