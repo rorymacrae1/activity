@@ -33,7 +33,7 @@ export default function SignUpScreen() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { signUp, signInWithGoogle, signInWithApple } = useAuthStore();
-  const { hPadding } = useLayout();
+  const { hPadding, isDesktop } = useLayout();
   const { showToast } = useToast();
 
   const validateForm = (): string | null => {
@@ -128,12 +128,10 @@ export default function SignUpScreen() {
         style={styles.keyboardView}
       >
         <ScrollView
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingHorizontal: hPadding },
-          ]}
+          contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
+          <View style={isDesktop ? styles.desktopForm : { paddingHorizontal: hPadding }}>
           {/* Header */}
           <View style={styles.header}>
             <Text variant="h1">Create Account</Text>
@@ -300,6 +298,7 @@ export default function SignUpScreen() {
               Continue without an account
             </Text>
           </Pressable>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </ScreenContainer>
@@ -383,5 +382,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: spacing.lg,
     paddingVertical: spacing.sm,
+  },
+  desktopForm: {
+    maxWidth: 480,
+    alignSelf: "center",
+    width: "100%",
+    paddingHorizontal: spacing.xl,
   },
 });

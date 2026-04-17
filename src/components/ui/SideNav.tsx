@@ -4,7 +4,8 @@
  * Replaces the bottom tab bar on large screens.
  */
 
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { useState } from "react";
 import { usePathname, router } from "expo-router";
 import { useIsAuthenticated } from "@stores/auth";
 import { colors, spacing, radius } from "@theme";
@@ -33,7 +34,6 @@ export function SideNav() {
 
   const isActive = (item: NavItem) => {
     if (item.matchPrefix) return pathname.startsWith(item.matchPrefix);
-    // Home is active only at root
     return pathname === "/" || pathname === "";
   };
 
@@ -57,35 +57,7 @@ export function SideNav() {
         {NAV_ITEMS.map((item) => {
           const active = isActive(item);
           return (
-            <Pressable
-              key={item.href}
-              style={({ pressed }) => [
-                styles.navItem,
-                active && styles.navItemActive,
-                pressed && styles.navItemPressed,
-                webStyles.clickable,
-              ]}
-              onPress={() => router.push(item.href as Parameters<typeof router.push>[0])}
-              accessibilityRole="link"
-              accessibilityLabel={item.label}
-              accessibilityState={{ selected: active }}
-            >
-              <Icon
-                name={item.icon}
-                size={20}
-                color={active ? colors.brand.primary : colors.ink.muted}
-                strokeWidth={active ? 2 : 1.5}
-              />
-              <Text
-                style={[
-                  styles.navLabel,
-                  active ? styles.navLabelActive : styles.navLabelInactive,
-                ]}
-              >
-                {item.label}
-              </Text>
-              {active && <View style={styles.activeIndicator} />}
-            </Pressable>
+            <NavItemButton key={item.href} item={item} active={active} />
           );
         })}
       </View>
@@ -104,6 +76,43 @@ export function SideNav() {
         </View>
       )}
     </View>
+  );
+}
+
+function NavItemButton({ item, active }: { item: NavItem; active: boolean }) {
+  const [isFocused, setIsFocused] = useState(false);
+  return (
+    <Pressable
+      style={({ pressed }) => [
+        styles.navItem,
+        active && styles.navItemActive,
+        pressed && styles.navItemPressed,
+        webStyles.clickable,
+        isFocused && Platform.OS === "web" && webStyles.focusVisible,
+      ]}
+      onPress={() => router.push(item.href as Parameters<typeof router.push>[0])}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
+      accessibilityRole="link"
+      accessibilityLabel={item.label}
+      accessibilityState={{ selected: active }}
+    >
+      <Icon
+        name={item.icon}
+        size={20}
+        color={active ? colors.brand.primary : colors.ink.muted}
+        strokeWidth={active ? 2 : 1.5}
+      />
+      <Text
+        style={[
+          styles.navLabel,
+          active ? styles.navLabelActive : styles.navLabelInactive,
+        ]}
+      >
+        {item.label}
+      </Text>
+      {active && <View style={styles.activeIndicator} />}
+    </Pressable>
   );
 }
 

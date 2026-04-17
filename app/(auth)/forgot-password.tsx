@@ -28,7 +28,7 @@ export default function ForgotPasswordScreen() {
   const [sent, setSent] = useState(false);
 
   const { resetPassword } = useAuthStore();
-  const { hPadding } = useLayout();
+  const { hPadding, isDesktop } = useLayout();
   const { showToast } = useToast();
 
   const handleSubmit = async () => {
@@ -57,7 +57,7 @@ export default function ForgotPasswordScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <View style={[styles.scrollContent, { paddingHorizontal: hPadding }]}>
+        <View style={[isDesktop ? styles.desktopForm : styles.scrollContent, isDesktop ? {} : { paddingHorizontal: hPadding }]}>
           {/* Header */}
           <View style={styles.header}>
             <Text variant="h1">
@@ -129,7 +129,7 @@ export default function ForgotPasswordScreen() {
             <Link href="/(auth)/sign-in" asChild>
               <Text
                 variant="body"
-                color={colors.primary}
+                color={colors.brand.primary}
                 style={styles.linkText}
               >
                 Sign In
@@ -195,5 +195,13 @@ const styles = StyleSheet.create({
   },
   linkText: {
     fontFamily: fontFamily.medium,
+  },
+  desktopForm: {
+    maxWidth: 480,
+    alignSelf: "center",
+    width: "100%",
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.xxl,
   },
 });

@@ -7,6 +7,7 @@ import {
   type PressableProps,
   type ViewStyle,
 } from "react-native";
+import { useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -139,6 +140,7 @@ export function Button({
   const isDisabled = disabled || loading;
   const config = VARIANT_CONFIG[variant];
   const sizeConfig = SIZE_CONFIG[size];
+  const [isFocused, setIsFocused] = useState(false);
 
   // Animation
   const scale = useSharedValue(1);
@@ -176,6 +178,8 @@ export function Button({
       disabled={isDisabled}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ disabled: isDisabled, busy: loading }}
@@ -191,6 +195,7 @@ export function Button({
         fullWidth && styles.fullWidth,
         isDisabled && styles.disabled,
         Platform.OS === "web" && styles.webInteractive,
+        isFocused && Platform.OS === "web" && webStyles.focusVisible,
         animatedStyle,
         styleProp,
       ]}

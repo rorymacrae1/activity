@@ -7,6 +7,7 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
+import { useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -119,6 +120,7 @@ export function Card({
   const shadowStyle = shadows[ELEVATION_MAP[elevation]];
   const paddingValue = noPadding ? 0 : PADDING_MAP[padding];
   const scale = useSharedValue(1);
+  const [isFocused, setIsFocused] = useState(false);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -151,6 +153,8 @@ export function Card({
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
         style={[
@@ -158,6 +162,7 @@ export function Card({
           baseStyle,
           shadowStyle,
           Platform.OS === "web" && styles.webInteractive,
+          isFocused && Platform.OS === "web" && webStyles.focusVisible,
           animatedStyle,
           style,
         ]}

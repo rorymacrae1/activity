@@ -31,7 +31,7 @@ export default function SignInScreen() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { signIn, signInWithGoogle, signInWithApple } = useAuthStore();
-  const { hPadding } = useLayout();
+  const { hPadding, isDesktop } = useLayout();
   const { showToast } = useToast();
 
   const handleSignIn = async () => {
@@ -108,12 +108,10 @@ export default function SignInScreen() {
         style={styles.keyboardView}
       >
         <ScrollView
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingHorizontal: hPadding },
-          ]}
+          contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
+          <View style={isDesktop ? styles.desktopForm : { paddingHorizontal: hPadding }}>
           {/* Header */}
           <View style={styles.header}>
             <Text variant="h1">Welcome Back</Text>
@@ -256,6 +254,7 @@ export default function SignInScreen() {
               Continue without an account
             </Text>
           </Pressable>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </ScreenContainer>
@@ -345,5 +344,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: spacing.lg,
     paddingVertical: spacing.sm,
+  },
+  desktopForm: {
+    maxWidth: 480,
+    alignSelf: "center",
+    width: "100%",
+    paddingHorizontal: spacing.xl,
   },
 });
