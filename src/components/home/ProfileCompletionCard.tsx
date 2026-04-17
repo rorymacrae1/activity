@@ -4,7 +4,7 @@
  */
 
 import React from "react";
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
@@ -38,93 +38,91 @@ export function ProfileCompletionCard({
   };
 
   return (
-    <Pressable onPress={handlePress} accessibilityRole="button">
-      <Card elevation="elevated" style={styles.card}>
-        <View style={styles.header}>
-          <View style={styles.headerIcon}>
-            <Icon
-              name="sparkles"
-              size={28}
-              color={colors.brand.primary}
-              strokeWidth={1.5}
-            />
-          </View>
-          <View style={styles.headerText}>
-            <Text variant="h3" style={styles.title}>
-              Let's Personalise Your Experience
-            </Text>
-            <Text variant="body" color={colors.ink.normal}>
-              Help us find your perfect resorts
-            </Text>
-          </View>
+    <Card elevation="elevated" style={styles.card}>
+      <View style={styles.header}>
+        <View style={styles.headerIcon}>
+          <Icon
+            name="sparkles"
+            size={28}
+            color={colors.brand.primary}
+            strokeWidth={1.5}
+          />
         </View>
-
-        {/* Progress bar */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressTrack}>
-            <View
-              style={[
-                styles.progressFill,
-                { width: `${completionPercentage}%` },
-              ]}
-            />
-          </View>
-          <Text variant="caption" color={colors.ink.muted}>
-            {completionPercentage}% complete
+        <View style={styles.headerText}>
+          <Text variant="h3" style={styles.title}>
+            Let's Personalise Your Experience
+          </Text>
+          <Text variant="body" color={colors.ink.normal}>
+            Help us find your perfect resorts
           </Text>
         </View>
+      </View>
 
-        {/* Missing items */}
-        <View style={styles.missingItems}>
-          {missing.visitedResorts && (
-            <View style={styles.missingItem}>
-              <Icon
-                name="mountain"
-                size={16}
-                color={colors.ink.normal}
-                strokeWidth={1.5}
-              />
-              <Text variant="caption" color={colors.ink.normal}>
-                Add resorts you've visited
-              </Text>
-            </View>
-          )}
-          {missing.homeAirport && (
-            <View style={styles.missingItem}>
-              <Icon
-                name="plane"
-                size={16}
-                color={colors.ink.normal}
-                strokeWidth={1.5}
-              />
-              <Text variant="caption" color={colors.ink.normal}>
-                Set your home airport
-              </Text>
-            </View>
-          )}
-          {missing.favorites && (
-            <View style={styles.missingItem}>
-              <Icon
-                name="heart"
-                size={16}
-                color={colors.ink.normal}
-                strokeWidth={1.5}
-              />
-              <Text variant="caption" color={colors.ink.normal}>
-                Save resorts you love
-              </Text>
-            </View>
-          )}
+      {/* Progress bar */}
+      <View style={styles.progressContainer}>
+        <View style={styles.progressTrack}>
+          <View
+            style={[
+              styles.progressFill,
+              { width: `${completionPercentage}%` },
+            ]}
+          />
         </View>
+        <Text variant="caption" color={colors.ink.muted}>
+          {completionPercentage}% complete
+        </Text>
+      </View>
 
-        <Button
-          label="Complete Profile"
-          onPress={handlePress}
-          fullWidth
-          style={styles.button}
-        />
-      </Card>
-    </Pressable>
+      {/* Missing items */}
+      <View style={styles.missingItems}>
+        {missing.visitedResorts && (
+          <View style={styles.missingItem}>
+            <Icon
+              name="mountain"
+              size={16}
+              color={colors.ink.normal}
+              strokeWidth={1.5}
+            />
+            <Text variant="caption" color={colors.ink.normal}>
+              Add resorts you've visited
+            </Text>
+          </View>
+        )}
+        {missing.homeAirport && (
+          <View style={styles.missingItem}>
+            <Icon
+              name="plane"
+              size={16}
+              color={colors.ink.normal}
+              strokeWidth={1.5}
+            />
+            <Text variant="caption" color={colors.ink.normal}>
+              Set your home airport
+            </Text>
+          </View>
+        )}
+        {missing.favorites && (
+          <View style={styles.missingItem}>
+            <Icon
+              name="heart"
+              size={16}
+              color={colors.ink.normal}
+              strokeWidth={1.5}
+            />
+            <Text variant="caption" color={colors.ink.normal}>
+              Save resorts you love
+            </Text>
+          </View>
+        )}
+      </View>
+
+      <Button
+        label="Complete Profile"
+        onPress={handlePress}
+        fullWidth
+        style={styles.button}
+      />
+    </Card>
   );
 }
 
@@ -168,7 +166,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
-    backgroundColor: colors.primary,
+    backgroundColor: colors.brand.primary,
     borderRadius: radius.full,
   },
   missingItems: {

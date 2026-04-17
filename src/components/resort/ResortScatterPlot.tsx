@@ -8,7 +8,7 @@
  * Tap a dot to highlight it and reveal a summary panel at the bottom.
  */
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, Fragment } from "react";
 import type { LayoutChangeEvent } from "react-native";
 import { View, StyleSheet, Pressable, ScrollView } from "react-native";
 import Svg, { Circle, Line, Rect, Text as SvgText } from "react-native-svg";
@@ -320,11 +320,10 @@ export function ResortScatterPlot({
                         (p.score / 100) * (DOT_RADIUS_MAX - DOT_RADIUS_MIN),
                     );
                 return (
-                  <>
+                  <Fragment key={p.id}>
                     {/* Top-pick halo ring */}
                     {isTopPick && (
                       <Circle
-                        key={`${p.id}-halo`}
                         cx={cx}
                         cy={cy}
                         r={DOT_RADIUS_TOP_PICK + 5}
@@ -333,7 +332,6 @@ export function ResortScatterPlot({
                       />
                     )}
                     <Circle
-                      key={p.id}
                       cx={cx}
                       cy={cy}
                       r={r}
@@ -344,7 +342,7 @@ export function ResortScatterPlot({
                       onPress={() => handleDotPress(p.id)}
                       accessibilityLabel={`${p.name}, ${scoreTierLabel(p.score)}`}
                     />
-                  </>
+                  </Fragment>
                 );
               })}
 
