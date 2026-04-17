@@ -1,5 +1,5 @@
 import { supabase, isSupabaseConfigured } from "@lib/supabase";
-import type { Resort, TerrainDistribution } from "@/types/resort";
+import type { Resort, ResortAttributes, TerrainDistribution } from "@/types/resort";
 import { getResortHeroImage } from "@/data/resortImages";
 import { getResortNearestAirport } from "@/data/resortNearestAirports";
 
@@ -70,7 +70,14 @@ interface FacilityRow {
   instructor_notes: string | null;
   whiteout_activity: boolean | null;
   apres_ski: boolean | null;
-  nightlife_level: number | null;
+  /** Text value from DB: "high" | "medium" | "low" (or a numeric string). Numeric values accepted for backwards compatibility with test fixtures. */
+  nightlife_level: string | number | null;
+}
+
+/** AI-generated content for a resort (resort_content table). */
+interface ResortContentRow {
+  field_key: string;
+  plain_english_value: string | null;
 }
 
 interface AccommodationRow {
@@ -198,7 +205,14 @@ interface SupabaseResortRow {
   name: string;
   country: string;
   region: string | null;
-  location: string | null; // PostGIS EWKB hex — decoded via parseWKBPoint()
+  /** Direct numeric lat column (preferred over EWKB decoding). */
+  lat: number | null;
+  /** Direct numeric lng column (preferred over EWKB decoding). */
+  lng: number | null;
+  /** PostGIS geography point (EWKB hex) — fallback if lat/lng are null. */
+  location: string | null;
+  /** Continent classification stored in DB. */
+  continent: string | null;
   altitude_base_m: number | null;
   altitude_top_m: number | null;
   car_free_town: boolean | null;
@@ -258,6 +272,7 @@ interface SupabaseResortRow {
   facility: FacilityRow[] | null;
   accommodation: AccommodationRow[] | null;
   weather_month: WeatherMonthRow[] | null;
+  resort_content: ResortContentRow[] | null;
 }
 
 /**
@@ -351,8 +366,9 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
     (slopes?.half_pipe ? 1 : 0);
 
   // ── Weather data ────────────────────────────────────────────────────────────
-  // Determine hemisphere from latitude for correct peak month selection
-  const resortLat = parseWKBPoint(row.location)?.lat ?? 47; // default Northern
+  // Determine hemisphere from latitude for correct peak month selection.
+  // Prefer direct lat column; fall back to EWKB decode; default to Northern.
+  const resortLat = row.lat ?? parseWKBPoint(row.location)?.lat ?? 47;
   const isSouthernHemisphere = resortLat < 0;
   // Northern hemisphere peak: Dec–Mar; Southern hemisphere peak: Jun–Sep
   const PEAK_MONTHS = isSouthernHemisphere
@@ -392,9 +408,27 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
   const barCount = facilities.filter((f) => f.apres_ski).length || 5;
   const hasKidsLessons = facilities.some((f) => f.kids_lessons);
   const hasPrivateLessons = facilities.some((f) => f.private_available);
+
+  // nightlife_level is stored as text in DB ("high", "medium", "low" or numeric string).
+  // Test mocks may supply a number — handle both.
   const facilityNightlifeLevels = facilities
     .filter((f) => f.nightlife_level != null)
-    .map((f) => f.nightlife_level as number);
+    .map((f) => {
+      const raw = f.nightlife_level as string | number;
+      if (typeof raw === "number") return Math.round(Math.min(5, Math.max(1, raw)));
+      switch (raw.toLowerCase()) {
+        case "high": return 5;
+        case "medium-high": return 4;
+        case "medium": return 3;
+        case "low-medium": return 2;
+        case "low": return 1;
+        default: {
+          const n = Number(raw);
+          return Number.isNaN(n) ? null : Math.round(Math.min(5, Math.max(1, n)));
+        }
+      }
+    })
+    .filter((v): v is number => v !== null);
   const avgFacilityNightlife = facilityNightlifeLevels.length
     ? Math.round(
         facilityNightlifeLevels.reduce((s, v) => s + v, 0) /
@@ -428,8 +462,15 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
     | 4
     | 5;
 
-  // Crowd proxy — no direct column yet
-  const crowdLevel = 3 as 1 | 2 | 3 | 4 | 5;
+  // Crowd level: derived from après-ski activity, resort type, and size.
+  // High après-ski rating → popular → busier slopes.
+  // Car-free purpose-built resorts (e.g. Avoriaz, Flaine) are typically very busy.
+  // Large resorts (>200km) spread visitors across more terrain → slightly less crowded.
+  const crowdBase = row.apres_ski_rating ?? 3;
+  const crowdLevel = Math.min(
+    5,
+    Math.max(1, crowdBase + (row.car_free_town ? 1 : 0) - (totalKm > 200 ? 1 : 0)),
+  ) as 1 | 2 | 3 | 4 | 5;
 
   // ── Activities ──────────────────────────────────────────────────────────────
   const otherActivities: string[] = [];
@@ -473,16 +514,39 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
   const style = row.style ?? "traditional";
   const region = row.region ?? row.country;
 
+  // ── Content description ─────────────────────────────────────────────────────
+  // Prefer AI-generated description from resort_content table; fall back to template.
+  const aiDescription = (row.resort_content ?? []).find(
+    (c) => c.field_key === "description",
+  )?.plain_english_value;
+  const description =
+    aiDescription ??
+    `${row.name} is a ${style} ski resort in ${region}, ${row.country}.`;
+
+  // ── Town style ──────────────────────────────────────────────────────────────
+  // Map to all 5 enum values using available signals.
+  function deriveTownStyle(): ResortAttributes["townStyle"] {
+    if (row.car_free_town) return "Purpose-built";
+    if (style === "modern" && (row.altitude_base_m ?? 0) >= 1500)
+      return "Modern resort";
+    if ((row.apres_ski_rating ?? 0) >= 4) return "Lively town";
+    if (totalKm > 0 && totalKm < 50) return "Small hamlet";
+    return "Traditional village";
+  }
+
   return {
     id: row.id,
     name: row.name,
     country: row.country,
     region,
     subRegion: undefined,
-    continent: getContinent(row.country),
+    // Use DB continent column directly; fall back to CONTINENT_MAP derivation.
+    continent:
+      (row.continent as Resort["continent"]) ?? getContinent(row.country),
     location: {
-      lat: parseWKBPoint(row.location)?.lat ?? 0,
-      lng: parseWKBPoint(row.location)?.lng ?? 0,
+      // Prefer direct lat/lng columns; fall back to EWKB decode for legacy rows.
+      lat: row.lat ?? parseWKBPoint(row.location)?.lat ?? 0,
+      lng: row.lng ?? parseWKBPoint(row.location)?.lng ?? 0,
       villageAltitude: row.altitude_base_m ?? row.min_altitude_m ?? 0,
       peakAltitude: row.altitude_top_m ?? row.max_altitude_m ?? 0,
     },
@@ -504,11 +568,7 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       liftModernity: style === "modern" ? 4 : 3,
       nearestAirport: airportIata,
       transferTimeMinutes: airportTransferMins,
-      townStyle: row.car_free_town
-        ? "Purpose-built"
-        : style === "modern"
-          ? "Modern resort"
-          : "Traditional village",
+      townStyle: deriveTownStyle(),
       barCount,
       otherActivities,
       hasSkiInOut,
@@ -519,7 +579,7 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       driveHoursFromLondon: row.drive_hours_from_london ?? null,
     },
     content: {
-      description: `${row.name} is a ${style} ski resort in ${region}, ${row.country}.`,
+      description,
       highlights,
     },
     assets: {
@@ -603,7 +663,7 @@ async function fetchCloudResorts(): Promise<Resort[] | null> {
       client
         .from("resort")
         .select(
-          "*, cost_data(*), slope_data(*), season_timing(*), airport_link(*), facility(*), accommodation(*), weather_month(*)",
+          "*, cost_data(*), slope_data(*), season_timing(*), airport_link(*), facility(*), accommodation(*), weather_month(*), resort_content(*)",
         )
         .order("name") as unknown as PromiseLike<FetchResult>
     ).then(resolve, reject);
@@ -657,7 +717,7 @@ async function fetchCloudResortById(id: string): Promise<Resort | null> {
     const { data, error } = await supabase
       .from("resort")
       .select(
-        "*, cost_data(*), slope_data(*), season_timing(*), airport_link(*), facility(*), accommodation(*), weather_month(*)",
+        "*, cost_data(*), slope_data(*), season_timing(*), airport_link(*), facility(*), accommodation(*), weather_month(*), resort_content(*)",
       )
       .eq("id", id)
       .single();
