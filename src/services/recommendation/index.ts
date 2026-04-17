@@ -1,5 +1,5 @@
 import { getResortsByRegionAsync } from "../resort";
-import { calculateScores } from "./scorer";
+import { calculateScores, computeWeightedScore } from "./scorer";
 import { generateExplanations } from "./explainer";
 import type {
   SkillLevel,
@@ -8,7 +8,6 @@ import type {
 } from "@/types/preferences";
 import type {
   RecommendationResult,
-  AttributeScores,
 } from "@/types/recommendation";
 import {
   SKILL_LEVEL_MAP,
@@ -45,42 +44,6 @@ function normalizePreferences(prefs: Preferences): NormalizedPreferences {
     snowImportance: (prefs.snowImportance - 1) / 4,
     regions: prefs.regions,
   };
-}
-
-/**
- * Compute weighted final match score from attribute scores.
- */
-function computeWeightedScore(
-  scores: AttributeScores,
-  prefs: NormalizedPreferences,
-): number {
-  // Base weights (sum to 1.0)
-  const weights = {
-    skill: 0.3,
-    budget: 0.25,
-    vibe: 0.15,
-    activity: 0.15,
-    snow: 0.15,
-  };
-
-  // Adjust snow weight based on user's stated importance
-  const snowMultiplier = 0.5 + prefs.snowImportance * 0.5;
-  weights.snow *= snowMultiplier;
-
-  // Renormalize weights to sum to 1
-  const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
-  Object.keys(weights).forEach((key) => {
-    weights[key as keyof typeof weights] /= totalWeight;
-  });
-
-  // Weighted sum
-  return Math.round(
-    scores.skill * weights.skill +
-      scores.budget * weights.budget +
-      scores.vibe * weights.vibe +
-      scores.activity * weights.activity +
-      scores.snow * weights.snow,
-  );
 }
 
 /**

@@ -14,7 +14,7 @@
 import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
 import { SCORE_THRESHOLDS } from "@/constants/scoring";
-import { calculateScores } from "@services/recommendation/scorer";
+import { calculateScores, computeWeightedScore } from "@services/recommendation/scorer";
 import { colors } from "@/theme/colors";
 
 /**
@@ -109,17 +109,15 @@ export function computePlotPoints(
   const rangeY = maxY - minY || 1;
 
   return resorts.map((resort, i) => {
-    const raw = rawVectors[i]!;
     const scores = calculateScores(resort, prefs);
-    const overall = Math.round(
-      (raw[0]! + raw[1]! + raw[2]! + raw[3]! + raw[4]!) / 5,
-    );
+    // Use weighted score (consistent with recommendation engine) instead of simple average
+    const overall = computeWeightedScore(scores, prefs);
     return {
       id: resort.id,
       name: resort.name,
       country: resort.country,
       px: (projections[i]!.x - minX) / rangeX,
-      // Invert y so higher PC2 (snow/challenge) appears at top
+      // Invert y so higher PC2 (skill/challenge) appears at top
       py: 1 - (projections[i]!.y - minY) / rangeY,
       score: overall,
       scores: {

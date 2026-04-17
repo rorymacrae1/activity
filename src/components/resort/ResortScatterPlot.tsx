@@ -29,8 +29,10 @@ import { colors, spacing, radius } from "@theme";
 
 /** Fraction of canvas width/height reserved as padding on each side */
 const CANVAS_PADDING = 0.08;
-const DOT_RADIUS = 6;
-const DOT_RADIUS_SELECTED = 9;
+const DOT_RADIUS_MIN = 5;
+const DOT_RADIUS_MAX = 9;
+const DOT_RADIUS_SELECTED = 11;
+const DOT_RADIUS_TOP_PICK = 10;
 
 // ─── Legend ───────────────────────────────────────────────────────────────────
 
@@ -62,6 +64,12 @@ function mapToCanvas(
 interface ResortScatterPlotProps {
   resorts: Resort[];
   prefs: NormalizedPreferences;
+  /** Active search query — non-matching dots are muted */
+  query?: string;
+  /** IDs of resorts matching the current search filter */
+  filterIds?: Set<string>;
+  /** IDs of the user's top recommended resorts — highlighted with a ring */
+  topPickIds?: string[];
 }
 
 // ─── Panel ────────────────────────────────────────────────────────────────────
@@ -164,7 +172,13 @@ function SelectedPanel({ point, onClose }: PanelProps) {
  * 2D PCA scatter plot of all resorts coloured by match score.
  * Tap a dot to open the resort summary panel.
  */
-export function ResortScatterPlot({ resorts, prefs }: ResortScatterPlotProps) {
+export function ResortScatterPlot({
+  resorts,
+  prefs,
+  query,
+  filterIds,
+  topPickIds,
+}: ResortScatterPlotProps) {
   const [canvasWidth, setCanvasWidth] = useState(0);
   const [canvasHeight, setCanvasHeight] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -192,6 +206,13 @@ export function ResortScatterPlot({ resorts, prefs }: ResortScatterPlotProps) {
 
   const handleDeselect = useCallback(() => setSelectedId(null), []);
 
+  const topPickSet = useMemo(
+    () => new Set(topPickIds ?? []),
+    [topPickIds],
+  );
+
+  const hasFilter = !!query && (filterIds?.size ?? 0) > 0;
+
   return (
     <View style={styles.root}>
       {/* ── SVG Canvas ── */}
@@ -200,7 +221,7 @@ export function ResortScatterPlot({ resorts, prefs }: ResortScatterPlotProps) {
           <Svg
             width={canvasWidth}
             height={canvasHeight}
-            accessibilityLabel="Resort comparison scatter plot"
+            accessibilityLabel="Resort comparison scatter chart"
           >
             {/* Background */}
             <Rect
@@ -244,22 +265,22 @@ export function ResortScatterPlot({ resorts, prefs }: ResortScatterPlotProps) {
               );
             })}
 
-            {/* Axis labels */}
+            {/* Axis labels — corrected to reflect actual PC1/PC2 semantics */}
             <SvgText
               x={canvasWidth * CANVAS_PADDING}
               y={canvasHeight - 6}
               fontSize={9}
               fill={colors.ink.faint}
             >
-              ← Cost-efficient
+              ← Lower match
             </SvgText>
             <SvgText
-              x={canvasWidth * (1 - CANVAS_PADDING) - 60}
+              x={canvasWidth * (1 - CANVAS_PADDING) - 72}
               y={canvasHeight - 6}
               fontSize={9}
               fill={colors.ink.faint}
             >
-              Premium →
+              Better overall match →
             </SvgText>
             <SvgText
               x={4}
@@ -267,7 +288,15 @@ export function ResortScatterPlot({ resorts, prefs }: ResortScatterPlotProps) {
               fontSize={9}
               fill={colors.ink.faint}
             >
-              ↑ Snow/Challenge
+              ↑ Technical
+            </SvgText>
+            <SvgText
+              x={4}
+              y={canvasHeight * (1 - CANVAS_PADDING) - 4}
+              fontSize={9}
+              fill={colors.ink.faint}
+            >
+              ↓ Easy-going
             </SvgText>
 
             {/* Dots — unselected first so selected renders on top */}
@@ -281,19 +310,41 @@ export function ResortScatterPlot({ resorts, prefs }: ResortScatterPlotProps) {
                   canvasHeight,
                 );
                 const fill = scoreColor(p.score);
+                const isTopPick = topPickSet.has(p.id);
+                const isFiltered = hasFilter && !filterIds!.has(p.id);
+                // Dot radius scales with match score (5–9px); top picks are always largest
+                const r = isTopPick
+                  ? DOT_RADIUS_TOP_PICK
+                  : Math.round(
+                      DOT_RADIUS_MIN +
+                        (p.score / 100) * (DOT_RADIUS_MAX - DOT_RADIUS_MIN),
+                    );
                 return (
-                  <Circle
-                    key={p.id}
-                    cx={cx}
-                    cy={cy}
-                    r={DOT_RADIUS}
-                    fill={fill}
-                    fillOpacity={0.85}
-                    stroke={colors.surface.primary}
-                    strokeWidth={1.5}
-                    onPress={() => handleDotPress(p.id)}
-                    accessibilityLabel={`${p.name}, ${scoreTierLabel(p.score)}`}
-                  />
+                  <>
+                    {/* Top-pick halo ring */}
+                    {isTopPick && (
+                      <Circle
+                        key={`${p.id}-halo`}
+                        cx={cx}
+                        cy={cy}
+                        r={DOT_RADIUS_TOP_PICK + 5}
+                        fill={fill}
+                        fillOpacity={0.2}
+                      />
+                    )}
+                    <Circle
+                      key={p.id}
+                      cx={cx}
+                      cy={cy}
+                      r={r}
+                      fill={fill}
+                      fillOpacity={isFiltered ? 0.12 : 0.88}
+                      stroke={colors.surface.primary}
+                      strokeWidth={isTopPick ? 2 : 1.5}
+                      onPress={() => handleDotPress(p.id)}
+                      accessibilityLabel={`${p.name}, ${scoreTierLabel(p.score)}`}
+                    />
+                  </>
                 );
               })}
 

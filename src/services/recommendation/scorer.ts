@@ -143,3 +143,37 @@ export function calculateScores(
     snow: calculateSnowScore(resort),
   };
 }
+
+/**
+ * Compute weighted final match score from attribute scores.
+ * Snow weight scales with user's stated snow importance (0–1).
+ * All weights are renormalized to sum to 1.
+ */
+export function computeWeightedScore(
+  scores: AttributeScores,
+  prefs: NormalizedPreferences,
+): number {
+  const weights = {
+    skill: 0.3,
+    budget: 0.25,
+    vibe: 0.15,
+    activity: 0.15,
+    snow: 0.15,
+  };
+
+  // Scale snow weight by user preference importance
+  weights.snow *= 0.5 + prefs.snowImportance * 0.5;
+
+  const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
+  (Object.keys(weights) as (keyof typeof weights)[]).forEach((k) => {
+    weights[k] /= totalWeight;
+  });
+
+  return Math.round(
+    scores.skill * weights.skill +
+      scores.budget * weights.budget +
+      scores.vibe * weights.vibe +
+      scores.activity * weights.activity +
+      scores.snow * weights.snow,
+  );
+}

@@ -388,7 +388,7 @@ export default function DiscoverScreen() {
                 ]}
                 onPress={() => setViewMode("map")}
                 accessibilityRole="button"
-                accessibilityLabel="Scatter plot view"
+                accessibilityLabel="Chart view"
                 accessibilityState={{ selected: viewMode === "map" }}
               >
                 <Icon
@@ -399,6 +399,14 @@ export default function DiscoverScreen() {
                   }
                   strokeWidth={2}
                 />
+                <Text
+                  style={[
+                    styles.viewToggleLabel,
+                    viewMode === "map" && styles.viewToggleLabelActive,
+                  ]}
+                >
+                  Chart
+                </Text>
               </Pressable>
             </View>
           </View>
@@ -525,7 +533,12 @@ export default function DiscoverScreen() {
               { paddingHorizontal: hPadding },
             ]}
           >
-            <ResortScatterPlot resorts={allResorts} prefs={normalizedPrefs} />
+            <ResortScatterPlot
+              resorts={allResorts}
+              prefs={normalizedPrefs}
+              query={query}
+              filterIds={query ? new Set(results.map((r) => r.id)) : undefined}
+            />
           </View>
         ) : results.length === 0 ? (
           <EmptyState
@@ -609,6 +622,9 @@ const styles = StyleSheet.create({
     gap: 1,
   },
   viewToggleBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
     padding: spacing.xs + 2,
     borderRadius: radius.xs,
   },
@@ -619,6 +635,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 2,
     elevation: 1,
+  },
+  viewToggleLabel: {
+    ...typography.caption,
+    color: colors.ink.muted,
+  },
+  viewToggleLabelActive: {
+    color: colors.brand.primary,
   },
 
   // Search
