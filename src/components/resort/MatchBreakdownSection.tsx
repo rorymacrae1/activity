@@ -17,7 +17,7 @@ import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { typography } from "@/theme/typography";
 import { generateExplanations } from "@/services/recommendation/explainer";
-import { calculateScores } from "@/services/recommendation/scorer";
+import { calculateScores, computeWeightedScore } from "@/services/recommendation/scorer";
 import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
 import type { AttributeScores } from "@/types/recommendation";
@@ -219,10 +219,10 @@ export function MatchBreakdownSection({
     [resort, scores, prefs],
   );
 
-  const overallScore = useMemo(() => {
-    const vals = Object.values(scores);
-    return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
-  }, [scores]);
+  const overallScore = useMemo(
+    () => computeWeightedScore(scores, prefs),
+    [scores, prefs],
+  );
 
   return (
     <View style={styles.section}>

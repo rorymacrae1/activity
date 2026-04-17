@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import Head from "expo-router/head";
 import { View, StyleSheet, ScrollView, Pressable } from "react-native";
@@ -6,12 +6,16 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
+  useAnimatedScrollHandler,
   withSequence,
   withSpring,
+  interpolate,
+  Extrapolation,
 } from "react-native-reanimated";
 import Heart from "lucide-react-native/dist/cjs/icons/heart";
 import CheckCircle from "lucide-react-native/dist/cjs/icons/circle-check";
 import XCircle from "lucide-react-native/dist/cjs/icons/circle-x";
+import ChevronLeft from "lucide-react-native/dist/cjs/icons/chevron-left";
 import { getResortSchema, getResortBreadcrumbs } from "@/utils/schema";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getResortByIdAsync, getSimilarResorts } from "@services/resort";
@@ -25,6 +29,7 @@ import {
   hasVisitedResort,
 } from "@services/profile";
 import { useToast } from "@components/ui/Toast";
+import { Icon } from "@components/ui/Icon";
 import { ResortImage } from "@components/ui/ResortImage";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
@@ -95,10 +100,24 @@ export default function ResortDetailScreen() {
     regions,
   };
 
-  // Animation hook — must be unconditional (Rules of Hooks)
+  // Animation hooks — must be unconditional (Rules of Hooks)
   const heartScale = useSharedValue(1);
   const heartAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: heartScale.value }],
+  }));
+
+  // Scroll-reveal: nav title fades in after scrolling past the hero
+  const scrollY = useSharedValue(0);
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    scrollY.value = event.contentOffset.y;
+  });
+  const navTitleAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      scrollY.value,
+      [heroHeight - 80, heroHeight - 20],
+      [0, 1],
+      Extrapolation.CLAMP,
+    ),
   }));
 
   useEffect(() => {
@@ -258,11 +277,11 @@ export default function ResortDetailScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <Text style={styles.navButtonText}>←</Text>
+          <ChevronLeft size={20} strokeWidth={2} color={colors.ink.rich} />
         </Pressable>
-        <Text style={styles.navTitle} numberOfLines={1}>
+        <Animated.Text style={[styles.navTitle, navTitleAnimatedStyle]} numberOfLines={1}>
           {resort.name}
-        </Text>
+        </Animated.Text>
         <View style={styles.navActions}>
           <Pressable
             style={styles.navButton}
@@ -307,9 +326,11 @@ export default function ResortDetailScreen() {
         </View>
       </View>
 
-      <ScrollView
+      <Animated.ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
       >
         {/* Full-bleed hero with gradient overlay */}
         <View style={[styles.heroContainer, { height: heroHeight }]}>
@@ -351,12 +372,18 @@ export default function ResortDetailScreen() {
             <View style={styles.highlights}>
               {resort.content.highlights.slice(0, 3).map((h, i) => (
                 <View key={i} style={styles.highlightChip}>
+                  <Icon
+                    name="check"
+                    size={12}
+                    color={colors.sentiment.success}
+                    strokeWidth={2.5}
+                  />
                   <Text
                     variant="caption"
                     color={colors.sentiment.success}
                     style={styles.highlightText}
                   >
-                    ✓ {h}
+                    {h}
                   </Text>
                 </View>
               ))}
@@ -368,6 +395,17 @@ export default function ResortDetailScreen() {
 
           {/* Remaining content with padding */}
           <View style={[styles.content, { paddingHorizontal: hPadding }]}>
+            {/* Resort description — contextual prose */}
+            {resort.content.description ? (
+              <Text
+                variant="body"
+                color={colors.ink.normal}
+                style={styles.descriptionText}
+              >
+                {resort.content.description}
+              </Text>
+            ) : null}
+
             {/* Why this resort — match breakdown with radar chart */}
             <MatchBreakdownSection resort={resort} prefs={normalizedPrefs} />
 
@@ -404,7 +442,7 @@ export default function ResortDetailScreen() {
           {/* Bottom spacer */}
           <View style={styles.bottomSpacer} />
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }
@@ -439,14 +477,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.xs,
   },
-  navButtonText: {
-    fontSize: 18,
-  },
   navTitle: {
     flex: 1,
     textAlign: "center",
-    fontSize: 16,
-    fontWeight: "600",
+    ...typography.h4,
     color: colors.ink.rich,
     marginHorizontal: spacing.sm,
   },
@@ -471,7 +505,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 160,
+    height: 220,
   },
   heroOverlay: {
     position: "absolute",
@@ -518,13 +552,19 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   highlightChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
     backgroundColor: colors.sentiment.successSubtle,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
     borderRadius: radius.sm,
   },
   highlightText: {
-    fontWeight: "600",
+    fontWeight: "600" as const,
+  },
+  descriptionText: {
+    marginBottom: spacing.lg,
   },
   mapButton: {
     marginTop: spacing.md,
