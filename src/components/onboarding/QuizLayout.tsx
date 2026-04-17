@@ -1,5 +1,6 @@
 import { View, StyleSheet, ImageBackground, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius, shadows } from "@theme";
 import { NavBar } from "@components/ui/NavBar";
@@ -57,6 +58,14 @@ export function QuizLayout({
     return (
       <SafeAreaView style={styles.mobileSafe}>
         <NavBar />
+        {/* Brand accent line — gives mobile the same Alpine identity as the tablet layout */}
+        <LinearGradient
+          colors={[colors.brand.primary, colors.brand.primaryMuted, colors.brand.primary + "00"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.mobileAccentLine}
+          pointerEvents="none"
+        />
         <View style={styles.mobileBody}>{children}</View>
         {footer && <View style={styles.mobileFooter}>{footer}</View>}
       </SafeAreaView>
@@ -103,6 +112,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     backgroundColor: colors.canvas.default,
+  },
+  mobileAccentLine: {
+    height: 2,
   },
   mobileBody: {
     flex: 1,

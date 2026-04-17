@@ -22,7 +22,7 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
-import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
+import { AnimatedQuizContent, StaggeredItem } from "@components/onboarding/AnimatedQuizContent";
 import type { TripType } from "@/types/preferences";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -239,18 +239,19 @@ export default function TripTypeScreen() {
             showsVerticalScrollIndicator={false}
             bounces={false}
           >
-            {OPTIONS.map((value) => {
+            {OPTIONS.map((value, index) => {
               const optContent = content.onboarding.tripType.options[value];
               return (
-                <OptionCard
-                  key={value}
-                  value={value}
-                  title={optContent.title}
-                  description={optContent.description}
-                  active={tripType === value}
-                  onSelect={() => setTripType(value)}
-                  isTablet={isTablet}
-                />
+                <StaggeredItem key={value} index={index} baseDelay={80}>
+                  <OptionCard
+                    value={value}
+                    title={optContent.title}
+                    description={optContent.description}
+                    active={tripType === value}
+                    onSelect={() => setTripType(value)}
+                    isTablet={isTablet}
+                  />
+                </StaggeredItem>
               );
             })}
           </ScrollView>
