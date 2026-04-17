@@ -175,7 +175,7 @@ export default function DiscoverScreen() {
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [showRefine, setShowRefine] = useState(false);
   const { isFavorite } = useFavoritesStore();
-  const { hPadding } = useLayout();
+  const { hPadding, isDesktop } = useLayout();
   const inputRef = useRef<TextInput>(null);
 
   // Read stored prefs from onboarding quiz
@@ -341,95 +341,26 @@ export default function DiscoverScreen() {
         />
       </Head>
 
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={0}
-      >
-        {/* ── Page header ── */}
-        <View style={[styles.pageHeader, { paddingHorizontal: hPadding }]}>
-          <View style={styles.pageHeaderRow}>
-            <View style={styles.pageHeaderText}>
-              <Text variant="h2" style={styles.pageTitle}>
-                Discover
-              </Text>
-              <Text variant="body" style={styles.pageSubtitle}>
+      {isDesktop ? (
+        /* ── Desktop: side-by-side filter panel + results ── */
+        <View style={styles.desktopLayout}>
+          {/* Left panel: filters always expanded */}
+          <View style={styles.desktopSidebar}>
+            <View style={styles.desktopSidebarHeader}>
+              <Text variant="h2" style={styles.pageTitle}>Discover</Text>
+              <Text variant="bodySmall" style={styles.pageSubtitle}>
                 {allResorts.length} ski resorts
               </Text>
             </View>
 
-            {/* View toggle: List | Map */}
-            <View style={styles.viewToggle}>
-              <Pressable
-                style={[
-                  styles.viewToggleBtn,
-                  viewMode === "list" && styles.viewToggleBtnActive,
-                ]}
-                onPress={() => setViewMode("list")}
-                accessibilityRole="button"
-                accessibilityLabel="List view"
-                accessibilityState={{ selected: viewMode === "list" }}
-              >
-                <Icon
-                  name="list"
-                  size={15}
-                  color={
-                    viewMode === "list"
-                      ? colors.brand.primary
-                      : colors.ink.muted
-                  }
-                  strokeWidth={2}
-                />
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.viewToggleBtn,
-                  viewMode === "map" && styles.viewToggleBtnActive,
-                ]}
-                onPress={() => setViewMode("map")}
-                accessibilityRole="button"
-                accessibilityLabel="Chart view"
-                accessibilityState={{ selected: viewMode === "map" }}
-              >
-                <Icon
-                  name="grid"
-                  size={15}
-                  color={
-                    viewMode === "map" ? colors.brand.primary : colors.ink.muted
-                  }
-                  strokeWidth={2}
-                />
-                <Text
-                  style={[
-                    styles.viewToggleLabel,
-                    viewMode === "map" && styles.viewToggleLabelActive,
-                  ]}
-                >
-                  Chart
-                </Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-
-        {/* ── Search / chips / sort (list) OR preference controls (map) ── */}
-        {viewMode === "list" ? (
-          <>
             {/* Search bar */}
-            <View
-              style={[styles.searchContainer, { paddingHorizontal: hPadding }]}
-            >
+            <View style={styles.sidebarSearch}>
               <View style={styles.searchBar}>
-                <Icon
-                  name="search"
-                  size={18}
-                  color={colors.ink.muted}
-                  strokeWidth={1.75}
-                />
+                <Icon name="search" size={18} color={colors.ink.muted} strokeWidth={1.75} />
                 <TextInput
                   ref={inputRef}
                   style={styles.searchInput}
-                  placeholder="Search by name, country or region…"
+                  placeholder="Search resorts…"
                   placeholderTextColor={colors.ink.faint}
                   value={query}
                   onChangeText={setQuery}
@@ -441,29 +372,19 @@ export default function DiscoverScreen() {
                   accessibilityRole="search"
                 />
                 {query.length > 0 && (
-                  <Pressable
-                    onPress={handleClearQuery}
-                    hitSlop={8}
-                    accessibilityLabel="Clear search"
-                    accessibilityRole="button"
-                  >
+                  <Pressable onPress={handleClearQuery} hitSlop={8} accessibilityLabel="Clear search" accessibilityRole="button">
                     <View style={styles.clearButton}>
-                      <Icon
-                        name="x"
-                        size={14}
-                        color={colors.ink.muted}
-                        strokeWidth={2}
-                      />
+                      <Icon name="x" size={14} color={colors.ink.muted} strokeWidth={2} />
                     </View>
                   </Pressable>
                 )}
               </View>
             </View>
 
-            {/* Sort row */}
-            <View style={[styles.sortRow, { paddingHorizontal: hPadding }]}>
-              <View style={styles.sortLeft}>
-                <Text style={styles.sortLabel}>Sort:</Text>
+            {/* Sort */}
+            <View style={styles.sidebarSort}>
+              <Text style={styles.sortLabel}>Sort by</Text>
+              <View style={styles.sidebarSortChips}>
                 {SORT_OPTIONS.map((opt) => {
                   const active = sortKey === opt.key;
                   return (
@@ -472,109 +393,328 @@ export default function DiscoverScreen() {
                       style={[styles.sortChip, active && styles.sortChipActive]}
                       onPress={() => setSortKey(opt.key)}
                       accessibilityRole="button"
-                      accessibilityLabel={`Sort by ${opt.label}`}
                       accessibilityState={{ selected: active }}
                     >
-                      <Text
-                        style={[
-                          styles.sortChipText,
-                          active && styles.sortChipTextActive,
-                        ]}
-                      >
+                      <Text style={[styles.sortChipText, active && styles.sortChipTextActive]}>
                         {opt.label}
                       </Text>
                     </Pressable>
                   );
                 })}
               </View>
-              <View style={styles.sortRight}>
+            </View>
+
+            {/* Preference controls — always expanded on desktop */}
+            <View style={styles.sidebarControls}>
+              <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
+            </View>
+          </View>
+
+          {/* Right content panel */}
+          <View style={styles.desktopContent}>
+            {/* Header row: results count + view toggle */}
+            <View style={styles.desktopContentHeader}>
+              <Text style={styles.resultsCount}>
+                {results.length} resort{results.length !== 1 ? "s" : ""}
+              </Text>
+              <View style={styles.viewToggle}>
                 <Pressable
-                  style={[styles.refineChip, showRefine && styles.refineChipActive]}
-                  onPress={() => setShowRefine((v) => !v)}
+                  style={[styles.viewToggleBtn, viewMode === "list" && styles.viewToggleBtnActive]}
+                  onPress={() => setViewMode("list")}
                   accessibilityRole="button"
-                  accessibilityLabel="Toggle refine panel"
-                  accessibilityState={{ selected: showRefine }}
+                  accessibilityLabel="List view"
+                  accessibilityState={{ selected: viewMode === "list" }}
                 >
-                  <Icon
-                    name="sliders-horizontal"
-                    size={13}
-                    color={showRefine ? colors.ink.inverse : colors.ink.normal}
-                    strokeWidth={2}
-                  />
-                  <Text style={[styles.refineChipText, showRefine && styles.refineChipTextActive]}>
-                    Refine
-                  </Text>
+                  <Icon name="list" size={15} color={viewMode === "list" ? colors.brand.primary : colors.ink.muted} strokeWidth={2} />
                 </Pressable>
-                <Text style={styles.resultsCount}>
-                  {results.length} resort{results.length !== 1 ? "s" : ""}
-                </Text>
+                <Pressable
+                  style={[styles.viewToggleBtn, viewMode === "map" && styles.viewToggleBtnActive]}
+                  onPress={() => setViewMode("map")}
+                  accessibilityRole="button"
+                  accessibilityLabel="Chart view"
+                  accessibilityState={{ selected: viewMode === "map" }}
+                >
+                  <Icon name="grid" size={15} color={viewMode === "map" ? colors.brand.primary : colors.ink.muted} strokeWidth={2} />
+                  <Text style={[styles.viewToggleLabel, viewMode === "map" && styles.viewToggleLabelActive]}>Chart</Text>
+                </Pressable>
               </View>
             </View>
-            {/* Inline refine controls — shown when Refine is toggled */}
-            {showRefine ? (
+
+            <View style={styles.divider} />
+
+            {/* Content */}
+            {viewMode === "map" ? (
+              <View style={[styles.flex, styles.scatterWrapper]}>
+                <ResortScatterPlot
+                  resorts={allResorts}
+                  prefs={normalizedPrefs}
+                  query={query}
+                  filterIds={query ? new Set(results.map((r) => r.id)) : undefined}
+                />
+              </View>
+            ) : results.length === 0 ? (
+              <EmptyState
+                icon="search"
+                title="No resorts found"
+                message={query ? `No resorts match "${query}".` : "Start typing to search."}
+                action={{ label: "Clear search", onPress: () => setQuery("") }}
+              />
+            ) : (
+              <FlatList
+                data={results}
+                renderItem={renderRow}
+                keyExtractor={keyExtractor}
+                getItemLayout={getItemLayout}
+                ItemSeparatorComponent={ItemSeparator}
+                style={styles.flex}
+                contentContainerStyle={styles.listContent}
+                showsVerticalScrollIndicator={Platform.OS !== "web"}
+                keyboardDismissMode="on-drag"
+                keyboardShouldPersistTaps="handled"
+                removeClippedSubviews={Platform.OS !== "web"}
+                maxToRenderPerBatch={15}
+                windowSize={10}
+              />
+            )}
+          </View>
+        </View>
+      ) : (
+        /* ── Phone / Tablet: stacked layout ── */
+        <KeyboardAvoidingView
+          style={styles.flex}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={0}
+        >
+          {/* ── Page header ── */}
+          <View style={[styles.pageHeader, { paddingHorizontal: hPadding }]}>
+            <View style={styles.pageHeaderRow}>
+              <View style={styles.pageHeaderText}>
+                <Text variant="h2" style={styles.pageTitle}>
+                  Discover
+                </Text>
+                <Text variant="body" style={styles.pageSubtitle}>
+                  {allResorts.length} ski resorts
+                </Text>
+              </View>
+
+              {/* View toggle: List | Map */}
+              <View style={styles.viewToggle}>
+                <Pressable
+                  style={[
+                    styles.viewToggleBtn,
+                    viewMode === "list" && styles.viewToggleBtnActive,
+                  ]}
+                  onPress={() => setViewMode("list")}
+                  accessibilityRole="button"
+                  accessibilityLabel="List view"
+                  accessibilityState={{ selected: viewMode === "list" }}
+                >
+                  <Icon
+                    name="list"
+                    size={15}
+                    color={
+                      viewMode === "list"
+                        ? colors.brand.primary
+                        : colors.ink.muted
+                    }
+                    strokeWidth={2}
+                  />
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.viewToggleBtn,
+                    viewMode === "map" && styles.viewToggleBtnActive,
+                  ]}
+                  onPress={() => setViewMode("map")}
+                  accessibilityRole="button"
+                  accessibilityLabel="Chart view"
+                  accessibilityState={{ selected: viewMode === "map" }}
+                >
+                  <Icon
+                    name="grid"
+                    size={15}
+                    color={
+                      viewMode === "map" ? colors.brand.primary : colors.ink.muted
+                    }
+                    strokeWidth={2}
+                  />
+                  <Text
+                    style={[
+                      styles.viewToggleLabel,
+                      viewMode === "map" && styles.viewToggleLabelActive,
+                    ]}
+                  >
+                    Chart
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+
+          {/* ── Search / chips / sort (list) OR preference controls (map) ── */}
+          {viewMode === "list" ? (
+            <>
+              {/* Search bar */}
+              <View
+                style={[styles.searchContainer, { paddingHorizontal: hPadding }]}
+              >
+                <View style={styles.searchBar}>
+                  <Icon
+                    name="search"
+                    size={18}
+                    color={colors.ink.muted}
+                    strokeWidth={1.75}
+                  />
+                  <TextInput
+                    ref={inputRef}
+                    style={styles.searchInput}
+                    placeholder="Search by name, country or region…"
+                    placeholderTextColor={colors.ink.faint}
+                    value={query}
+                    onChangeText={setQuery}
+                    returnKeyType="search"
+                    clearButtonMode="never"
+                    autoCorrect={false}
+                    autoCapitalize="none"
+                    accessibilityLabel="Search resorts"
+                    accessibilityRole="search"
+                  />
+                  {query.length > 0 && (
+                    <Pressable
+                      onPress={handleClearQuery}
+                      hitSlop={8}
+                      accessibilityLabel="Clear search"
+                      accessibilityRole="button"
+                    >
+                      <View style={styles.clearButton}>
+                        <Icon
+                          name="x"
+                          size={14}
+                          color={colors.ink.muted}
+                          strokeWidth={2}
+                        />
+                      </View>
+                    </Pressable>
+                  )}
+                </View>
+              </View>
+
+              {/* Sort row */}
+              <View style={[styles.sortRow, { paddingHorizontal: hPadding }]}>
+                <View style={styles.sortLeft}>
+                  <Text style={styles.sortLabel}>Sort:</Text>
+                  {SORT_OPTIONS.map((opt) => {
+                    const active = sortKey === opt.key;
+                    return (
+                      <Pressable
+                        key={opt.key}
+                        style={[styles.sortChip, active && styles.sortChipActive]}
+                        onPress={() => setSortKey(opt.key)}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Sort by ${opt.label}`}
+                        accessibilityState={{ selected: active }}
+                      >
+                        <Text
+                          style={[
+                            styles.sortChipText,
+                            active && styles.sortChipTextActive,
+                          ]}
+                        >
+                          {opt.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+                <View style={styles.sortRight}>
+                  <Pressable
+                    style={[styles.refineChip, showRefine && styles.refineChipActive]}
+                    onPress={() => setShowRefine((v) => !v)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Toggle refine panel"
+                    accessibilityState={{ selected: showRefine }}
+                  >
+                    <Icon
+                      name="sliders-horizontal"
+                      size={13}
+                      color={showRefine ? colors.ink.inverse : colors.ink.normal}
+                      strokeWidth={2}
+                    />
+                    <Text style={[styles.refineChipText, showRefine && styles.refineChipTextActive]}>
+                      Refine
+                    </Text>
+                  </Pressable>
+                  <Text style={styles.resultsCount}>
+                    {results.length} resort{results.length !== 1 ? "s" : ""}
+                  </Text>
+                </View>
+              </View>
+              {/* Inline refine controls — shown when Refine is toggled */}
+              {showRefine ? (
+                <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
+              ) : null}
+            </>
+          ) : (
+            <View style={{ paddingHorizontal: hPadding }}>
               <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
-            ) : null}
-          </>
-        ) : (
-          <View style={{ paddingHorizontal: hPadding }}>
-            <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
-          </View>
-        )}
+            </View>
+          )}
 
-        {/* ── Divider ── */}
-        <View style={styles.divider} />
+          {/* ── Divider ── */}
+          <View style={styles.divider} />
 
-        {/* ── Content: list or scatter plot ── */}
-        {viewMode === "map" ? (
-          <View
-            style={[
-              styles.flex,
-              styles.scatterWrapper,
-              { paddingHorizontal: hPadding },
-            ]}
-          >
-            <ResortScatterPlot
-              resorts={allResorts}
-              prefs={normalizedPrefs}
-              query={query}
-              filterIds={query ? new Set(results.map((r) => r.id)) : undefined}
+          {/* ── Content: list or scatter plot ── */}
+          {viewMode === "map" ? (
+            <View
+              style={[
+                styles.flex,
+                styles.scatterWrapper,
+                { paddingHorizontal: hPadding },
+              ]}
+            >
+              <ResortScatterPlot
+                resorts={allResorts}
+                prefs={normalizedPrefs}
+                query={query}
+                filterIds={query ? new Set(results.map((r) => r.id)) : undefined}
+              />
+            </View>
+          ) : results.length === 0 ? (
+            <EmptyState
+              icon="search"
+              title="No resorts found"
+              message={
+                query
+                  ? `No resorts match "${query}". Try a different search.`
+                  : "Start typing to search for resorts."
+              }
+              action={{
+                label: "Clear search",
+                onPress: () => setQuery(""),
+              }}
             />
-          </View>
-        ) : results.length === 0 ? (
-          <EmptyState
-            icon="search"
-            title="No resorts found"
-            message={
-              query
-                ? `No resorts match "${query}". Try a different search.`
-                : "Start typing to search for resorts."
-            }
-            action={{
-              label: "Clear search",
-              onPress: () => setQuery(""),
-            }}
-          />
-        ) : (
-          <FlatList
-            data={results}
-            renderItem={renderRow}
-            keyExtractor={keyExtractor}
-            getItemLayout={getItemLayout}
-            ItemSeparatorComponent={ItemSeparator}
-            style={styles.flex}
-            contentContainerStyle={[
-              styles.listContent,
-              { paddingHorizontal: hPadding },
-            ]}
-            showsVerticalScrollIndicator={false}
-            keyboardDismissMode="on-drag"
-            keyboardShouldPersistTaps="handled"
-            removeClippedSubviews={Platform.OS !== "web"}
-            maxToRenderPerBatch={15}
-            windowSize={10}
-          />
-        )}
-      </KeyboardAvoidingView>
+          ) : (
+            <FlatList
+              data={results}
+              renderItem={renderRow}
+              keyExtractor={keyExtractor}
+              getItemLayout={getItemLayout}
+              ItemSeparatorComponent={ItemSeparator}
+              style={styles.flex}
+              contentContainerStyle={[
+                styles.listContent,
+                { paddingHorizontal: hPadding },
+              ]}
+              showsVerticalScrollIndicator={Platform.OS !== "web"}
+              keyboardDismissMode="on-drag"
+              keyboardShouldPersistTaps="handled"
+              removeClippedSubviews={Platform.OS !== "web"}
+              maxToRenderPerBatch={15}
+              windowSize={10}
+            />
+          )}
+        </KeyboardAvoidingView>
+      )}
     </SafeAreaView>
   );
 }
@@ -588,6 +728,52 @@ const styles = StyleSheet.create({
   },
   flex: {
     flex: 1,
+  },
+
+  // Desktop two-panel layout
+  desktopLayout: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  desktopSidebar: {
+    width: 300,
+    borderRightWidth: 1,
+    borderRightColor: colors.border.subtle,
+    backgroundColor: colors.canvas.subtle,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
+    overflowY: "auto" as any,
+  },
+  desktopSidebarHeader: {
+    marginBottom: spacing.lg,
+    gap: spacing.xs,
+  },
+  sidebarSearch: {
+    marginBottom: spacing.md,
+  },
+  sidebarSort: {
+    marginBottom: spacing.md,
+    gap: spacing.sm,
+  },
+  sidebarSortChips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.xs,
+  },
+  sidebarControls: {
+    flex: 1,
+  },
+  desktopContent: {
+    flex: 1,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
+  },
+  desktopContentHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: spacing.md,
   },
 
   // Page header

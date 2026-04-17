@@ -293,7 +293,7 @@ export default function RegionScreen() {
               // eslint-disable-next-line react-native/no-inline-styles
               { paddingHorizontal: isTablet ? 0 : hPadding },
             ]}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={Platform.OS !== "web"}
             keyboardShouldPersistTaps="handled"
             bounces={false}
           >

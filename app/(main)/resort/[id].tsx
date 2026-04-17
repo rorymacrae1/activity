@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import Head from "expo-router/head";
-import { View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
@@ -74,7 +74,7 @@ export default function ResortDetailScreen() {
   const { user } = useAuthStore();
   const { dismiss } = useDismissedStore();
   const { showToast } = useToast();
-  const { heroHeight, hPadding, isTablet } = useLayout();
+  const { heroHeight, hPadding, isTablet, isDesktop } = useLayout();
   const content = useContent();
 
   // Compute NormalizedPreferences from store for the MatchBreakdownSection
@@ -328,7 +328,7 @@ export default function ResortDetailScreen() {
 
       <Animated.ScrollView
         style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={Platform.OS !== "web"}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
       >
@@ -367,68 +367,79 @@ export default function ResortDetailScreen() {
 
         {/* Content */}
         <View style={[styles.centeredContent, isTablet && styles.tabletCenter]}>
-          <View style={[styles.content, { paddingHorizontal: hPadding }]}>
-            {/* Highlights — quick wins at a glance */}
-            <View style={styles.highlights}>
-              {resort.content.highlights.slice(0, 3).map((h, i) => (
-                <View key={i} style={styles.highlightChip}>
-                  <Icon
-                    name="check"
-                    size={12}
-                    color={colors.sentiment.success}
-                    strokeWidth={2.5}
-                  />
-                  <Text
-                    variant="caption"
-                    color={colors.sentiment.success}
-                    style={styles.highlightText}
-                  >
-                    {h}
-                  </Text>
+          {isDesktop ? (
+            /* Desktop 2-col: left info, right match breakdown */
+            <View style={styles.desktopRow}>
+              {/* Left column */}
+              <View style={styles.desktopLeft}>
+                <View style={[styles.content, { paddingHorizontal: hPadding }]}>
+                  <View style={styles.highlights}>
+                    {resort.content.highlights.slice(0, 3).map((h, i) => (
+                      <View key={i} style={styles.highlightChip}>
+                        <Icon name="check" size={12} color={colors.sentiment.success} strokeWidth={2.5} />
+                        <Text variant="caption" color={colors.sentiment.success} style={styles.highlightText}>{h}</Text>
+                      </View>
+                    ))}
+                  </View>
                 </View>
-              ))}
+                <OverviewCarousel resort={resort} />
+                <View style={[styles.content, { paddingHorizontal: hPadding }]}>
+                  {resort.content.description ? (
+                    <Text variant="body" color={colors.ink.normal} style={styles.descriptionText}>
+                      {resort.content.description}
+                    </Text>
+                  ) : null}
+                  <ReviewsSection resort={resort} />
+                  <AccommodationSection resort={resort} />
+                  <TransportSection resort={resort} />
+                  <LocationMapSection resort={resort} />
+                  <Button
+                    label={`🗺️  ${content.resort.viewMap}`}
+                    onPress={() => router.push(`/(main)/map/${resort.id}`)}
+                    fullWidth
+                    style={styles.mapButton}
+                  />
+                </View>
+              </View>
+              {/* Right column: match breakdown */}
+              <View style={[styles.desktopRight, { paddingHorizontal: hPadding }]}>
+                <MatchBreakdownSection resort={resort} prefs={normalizedPrefs} />
+              </View>
             </View>
-          </View>
-
-          {/* Overview Carousel - full width */}
-          <OverviewCarousel resort={resort} />
-
-          {/* Remaining content with padding */}
-          <View style={[styles.content, { paddingHorizontal: hPadding }]}>
-            {/* Resort description — contextual prose */}
-            {resort.content.description ? (
-              <Text
-                variant="body"
-                color={colors.ink.normal}
-                style={styles.descriptionText}
-              >
-                {resort.content.description}
-              </Text>
-            ) : null}
-
-            {/* Why this resort — match breakdown with radar chart */}
-            <MatchBreakdownSection resort={resort} prefs={normalizedPrefs} />
-
-            {/* Activities & Après-Ski */}
-            <ReviewsSection resort={resort} />
-
-            {/* Accommodation Section */}
-            <AccommodationSection resort={resort} />
-
-            {/* Transport Section */}
-            <TransportSection resort={resort} />
-
-            {/* Location map with nearby accommodations and ski shops */}
-            <LocationMapSection resort={resort} />
-
-            {/* Map CTA */}
-            <Button
-              label={`🗺️  ${content.resort.viewMap}`}
-              onPress={() => router.push(`/(main)/map/${resort.id}`)}
-              fullWidth
-              style={styles.mapButton}
-            />
-          </View>
+          ) : (
+            /* Phone / tablet: stacked layout */
+            <>
+              <View style={[styles.content, { paddingHorizontal: hPadding }]}>
+                <View style={styles.highlights}>
+                  {resort.content.highlights.slice(0, 3).map((h, i) => (
+                    <View key={i} style={styles.highlightChip}>
+                      <Icon name="check" size={12} color={colors.sentiment.success} strokeWidth={2.5} />
+                      <Text variant="caption" color={colors.sentiment.success} style={styles.highlightText}>{h}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+              <OverviewCarousel resort={resort} />
+              <View style={[styles.content, { paddingHorizontal: hPadding }]}>
+                {resort.content.description ? (
+                  <Text variant="body" color={colors.ink.normal} style={styles.descriptionText}>
+                    {resort.content.description}
+                  </Text>
+                ) : null}
+                <MatchBreakdownSection resort={resort} prefs={normalizedPrefs} />
+                <ReviewsSection resort={resort} />
+                <AccommodationSection resort={resort} />
+                <TransportSection resort={resort} />
+                <LocationMapSection resort={resort} />
+                <Button
+                  label={`🗺️  ${content.resort.viewMap}`}
+                  onPress={() => router.push(`/(main)/map/${resort.id}`)}
+                  fullWidth
+                  style={styles.mapButton}
+                />
+              </View>
+            </>
+          )}
 
           {/* Similar Resorts Carousel - full width */}
           {similarResorts.length > 0 && (
@@ -488,6 +499,21 @@ const styles = StyleSheet.create({
     maxWidth: 680,
     alignSelf: "center" as const,
     width: "100%",
+  },
+  desktopRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  desktopLeft: {
+    flex: 3,
+    minWidth: 0,
+  },
+  desktopRight: {
+    flex: 2,
+    paddingTop: spacing.lg,
+    borderLeftWidth: 1,
+    borderLeftColor: colors.border.subtle,
+    minWidth: 0,
   },
   scrollView: {
     flex: 1,

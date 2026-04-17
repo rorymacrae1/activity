@@ -1,6 +1,8 @@
 import { Tabs } from "expo-router";
 import { View, StyleSheet } from "react-native";
 import { Icon, type IconName } from "@/components/ui/Icon";
+import { SideNav } from "@/components/ui/SideNav";
+import { useLayout } from "@hooks/useLayout";
 import { colors } from "@theme/colors";
 
 interface TabIconProps {
@@ -27,22 +29,39 @@ function TabIcon({ icon, label, focused }: TabIconProps) {
 
 const _styles = StyleSheet.create({});
 
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    flexDirection: "row",
+  },
+  content: {
+    flex: 1,
+  },
+});
+
 /**
  * Main app layout with bottom tab navigation.
  */
 export default function MainLayout() {
+  const { showSideNav } = useLayout();
+
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.brand.primary,
-        tabBarInactiveTintColor: colors.ink.muted,
-        tabBarStyle: {
-          backgroundColor: colors.canvas.default,
-          borderTopColor: colors.border.default,
-        },
-      }}
-    >
+    <View style={styles.root}>
+      {showSideNav && <SideNav />}
+      <View style={styles.content}>
+        <Tabs
+          screenOptions={{
+            headerShown: false,
+            tabBarActiveTintColor: colors.brand.primary,
+            tabBarInactiveTintColor: colors.ink.muted,
+            tabBarStyle: showSideNav
+              ? { display: "none" }
+              : {
+                  backgroundColor: colors.canvas.default,
+                  borderTopColor: colors.border.default,
+                },
+          }}
+        >
       <Tabs.Screen
         name="index"
         options={{
@@ -103,5 +122,7 @@ export default function MainLayout() {
         }}
       />
     </Tabs>
+      </View>
+    </View>
   );
 }

@@ -205,7 +205,7 @@ export default function BudgetScreen() {
           <ScrollView
             style={styles.scrollArea}
             contentContainerStyle={[styles.grid, isTablet && styles.gridTablet]}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={Platform.OS !== "web"}
             bounces={false}
           >
             {OPTIONS.map((opt) => (

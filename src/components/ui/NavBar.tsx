@@ -3,10 +3,11 @@
  * Shows "Sign In" for guests, "Hi {firstName}" with avatar for authenticated users.
  */
 
-import { View, StyleSheet, Pressable } from "react-native";
+import { View, StyleSheet, Pressable, Platform } from "react-native";
 import { router } from "expo-router";
 import { useAuthStore, useProfile, useIsAuthenticated } from "@stores/auth";
 import { colors, spacing, radius } from "@theme";
+import { webStyles } from "@theme/interaction";
 import { Text } from "./Text";
 import { Icon } from "./Icon";
 
@@ -40,7 +41,7 @@ export function NavBar({ transparent = false }: NavBarProps) {
       <View style={styles.navRight}>
         {isAuthenticated ? (
           <Pressable
-            style={styles.userButton}
+            style={[styles.userButton, Platform.OS === "web" && webStyles.clickable]}
             onPress={() => router.push("/(main)/profile")}
             accessibilityRole="button"
             accessibilityLabel="Go to profile"
@@ -54,7 +55,7 @@ export function NavBar({ transparent = false }: NavBarProps) {
           </Pressable>
         ) : (
           <Pressable
-            style={styles.signInButton}
+            style={[styles.signInButton, Platform.OS === "web" && webStyles.clickable]}
             onPress={() => router.push("/(auth)/sign-in")}
             accessibilityRole="button"
             accessibilityLabel="Sign in or sign up"

@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Alert } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, Alert, Platform } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -161,7 +161,7 @@ export default function CompleteProfileScreen() {
           styles.content,
           { paddingHorizontal: hPadding },
         ]}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={Platform.OS !== "web"}
         keyboardShouldPersistTaps="handled"
       >
         {/* Resort History Section */}

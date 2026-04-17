@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Platform } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -31,7 +31,7 @@ export default function PersonalizedHomeScreen() {
   const profile = useProfile();
   const isAuthenticated = useIsAuthenticated();
   const { favoriteIds } = useFavoritesStore();
-  const { hPadding } = useLayout();
+  const { hPadding, isTablet, isDesktop } = useLayout();
 
   const [completionStatus, setCompletionStatus] =
     useState<ProfileCompletionStatus | null>(null);
@@ -112,28 +112,53 @@ export default function PersonalizedHomeScreen() {
           styles.content,
           { paddingHorizontal: hPadding },
         ]}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={Platform.OS !== "web"}
       >
-        {/* Welcome Hero with stats */}
+        {/* Welcome Hero with stats — full width always */}
         <WelcomeHero
           firstName={firstName}
           favoritesCount={favoriteIds.length}
           profileComplete={completionStatus?.isComplete ?? false}
         />
 
-        {/* Quick Actions */}
-        <QuickActions showCompleteProfile={showCompletionCard ?? false} />
+        {/* On tablet/desktop: 2-col grid for actions + completion */}
+        {isTablet ? (
+          <View style={styles.tabletRow}>
+            <View style={styles.tabletCol}>
+              <QuickActions showCompleteProfile={false} />
+            </View>
+            {showCompletionCard && completionStatus ? (
+              <View style={styles.tabletCol}>
+                <ProfileCompletionCard
+                  completionPercentage={completionStatus.completionPercentage}
+                  missing={{
+                    homeAirport: !completionStatus.hasHomeAirport,
+                    visitedResorts: !completionStatus.hasVisitedResorts,
+                    favorites: !completionStatus.hasFavorites,
+                  }}
+                />
+              </View>
+            ) : (
+              <View style={styles.tabletCol} />
+            )}
+          </View>
+        ) : (
+          <>
+            {/* Quick Actions */}
+            <QuickActions showCompleteProfile={showCompletionCard ?? false} />
 
-        {/* Profile completion nudge */}
-        {showCompletionCard && completionStatus && (
-          <ProfileCompletionCard
-            completionPercentage={completionStatus.completionPercentage}
-            missing={{
-              homeAirport: !completionStatus.hasHomeAirport,
-              visitedResorts: !completionStatus.hasVisitedResorts,
-              favorites: !completionStatus.hasFavorites,
-            }}
-          />
+            {/* Profile completion nudge */}
+            {showCompletionCard && completionStatus && (
+              <ProfileCompletionCard
+                completionPercentage={completionStatus.completionPercentage}
+                missing={{
+                  homeAirport: !completionStatus.hasHomeAirport,
+                  visitedResorts: !completionStatus.hasVisitedResorts,
+                  favorites: !completionStatus.hasFavorites,
+                }}
+              />
+            )}
+          </>
         )}
 
         {/* Favorites Preview */}
@@ -141,7 +166,7 @@ export default function PersonalizedHomeScreen() {
 
         {/* Personalized Recommendations - show if has favorites */}
         {topFavoriteId && (
-          <View style={styles.recommendationsSection}>
+          <View style={[styles.recommendationsSection, isDesktop && styles.recommendationsSectionDesktop]}>
             <FavoritesBasedRecommendations
               baseResortId={topFavoriteId}
               heading="Resorts You'll Love"
@@ -165,7 +190,18 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingBottom: spacing.xxxl,
   },
+  tabletRow: {
+    flexDirection: "row",
+    gap: spacing.lg,
+    marginTop: spacing.md,
+  },
+  tabletCol: {
+    flex: 1,
+  },
   recommendationsSection: {
     marginTop: spacing.md,
+  },
+  recommendationsSectionDesktop: {
+    marginTop: spacing.xl,
   },
 });

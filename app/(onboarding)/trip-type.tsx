@@ -236,7 +236,7 @@ export default function TripTypeScreen() {
               styles.options,
               isTablet && styles.optionsTablet,
             ]}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={Platform.OS !== "web"}
             bounces={false}
           >
             {OPTIONS.map((value, index) => {

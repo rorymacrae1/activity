@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, Platform } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { useFavoritesStore } from "@stores/favorites";
@@ -127,7 +127,7 @@ export default function FavoritesScreen() {
             styles.listContent,
             { paddingHorizontal: hPadding },
           ]}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={Platform.OS !== "web"}
         />
       )}
     </ScreenContainer>

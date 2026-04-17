@@ -1,4 +1,4 @@
-import { View, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView, Platform } from "react-native";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
@@ -102,7 +102,7 @@ export default function SkillScreen() {
               styles.options,
               isTablet && styles.optionsTablet,
             ]}
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={Platform.OS !== "web"}
             bounces={false}
           >
             {OPTIONS.map((level) => {

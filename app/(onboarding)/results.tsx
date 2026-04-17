@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet, Pressable, Modal } from "react-native";
+import { View, ScrollView, StyleSheet, Pressable, Modal, Platform } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
@@ -212,7 +212,7 @@ export default function ResultsScreen() {
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={Platform.OS !== "web"}
       >
         {/* Header */}
         <View style={[styles.header, { paddingHorizontal: hPadding }]}>
