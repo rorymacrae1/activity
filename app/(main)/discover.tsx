@@ -26,11 +26,12 @@ import { useFavoritesStore } from "@stores/favorites";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { usePrefetchImages } from "@hooks/usePrefetchImages";
-import { colors, spacing, radius } from "@theme";
+import { colors, spacing, radius, typography } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Icon } from "@components/ui/Icon";
 import { LoadingState } from "@components/ui/LoadingState";
 import { EmptyState } from "@components/ui/EmptyState";
+import { ResortImage } from "@components/ui/ResortImage";
 import { ResortScatterPlot } from "@components/resort/ResortScatterPlot";
 import {
   DiscoverControls,
@@ -98,17 +99,14 @@ function ResortRow({ resort, isFavorite }: ResortRowProps) {
       accessibilityRole="button"
       accessibilityLabel={`${resort.name}, ${resort.country}`}
     >
-      {/* Left: mountain icon */}
-      <View style={styles.rowIcon}>
-        <Icon
-          name="mountain"
-          size={18}
-          color={colors.brand.primary}
-          strokeWidth={1.75}
-        />
-      </View>
+      {/* Left: resort thumbnail */}
+      <ResortImage
+        uri={resort.assets.heroImage}
+        style={styles.rowThumb}
+        accessibilityLabel={resort.name}
+      />
 
-      {/* Centre: name + location */}
+      {/* Centre: name + location + stats */}
       <View style={styles.rowBody}>
         <View style={styles.rowNameRow}>
           <Text style={styles.rowName} numberOfLines={1}>
@@ -122,7 +120,7 @@ function ResortRow({ resort, isFavorite }: ResortRowProps) {
             : `${resort.country} · ${resort.region}`}
         </Text>
 
-        {/* Stats chips */}
+        {/* Key stats */}
         <View style={styles.rowStats}>
           <View style={styles.statChip}>
             <Icon
@@ -142,11 +140,6 @@ function ResortRow({ resort, isFavorite }: ResortRowProps) {
             />
             <Text style={styles.statChipText}>
               Snow {resort.attributes.snowReliability}/5
-            </Text>
-          </View>
-          <View style={styles.statChip}>
-            <Text style={styles.statChipText}>
-              {resort.terrain.beginner}% beginner
             </Text>
           </View>
         </View>
@@ -554,8 +547,8 @@ const styles = StyleSheet.create({
     color: colors.ink.rich,
   },
   pageSubtitle: {
+    ...typography.bodySmall,
     color: colors.ink.muted,
-    fontSize: 14,
   },
 
   // View toggle (List | Map)
@@ -622,7 +615,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   sortLabel: {
-    fontSize: 13,
+    ...typography.labelSmall,
     color: colors.ink.muted,
     marginRight: spacing.xs,
   },
@@ -631,21 +624,23 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: radius.sm,
     backgroundColor: colors.transparent,
+    borderWidth: 1,
+    borderColor: colors.transparent,
   },
   sortChipActive: {
-    backgroundColor: colors.canvas.muted,
+    backgroundColor: colors.surface.primary,
+    borderColor: colors.brand.primary,
   },
   sortChipText: {
-    fontSize: 13,
+    ...typography.labelSmall,
     color: colors.ink.muted,
-    fontWeight: "500",
   },
   sortChipTextActive: {
-    color: colors.ink.rich,
-    fontWeight: "600",
+    color: colors.brand.primary,
+    fontWeight: "600" as const,
   },
   resultsCount: {
-    fontSize: 12,
+    ...typography.caption,
     color: colors.ink.faint,
   },
 
@@ -683,13 +678,10 @@ const styles = StyleSheet.create({
   rowPressed: {
     backgroundColor: colors.canvas.subtle,
   },
-  rowIcon: {
-    width: 40,
-    height: 40,
+  rowThumb: {
+    width: 52,
+    height: 52,
     borderRadius: radius.md,
-    backgroundColor: colors.brand.primarySubtle,
-    alignItems: "center",
-    justifyContent: "center",
     flexShrink: 0,
   },
   rowBody: {
@@ -702,8 +694,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   rowName: {
-    fontSize: 15,
-    fontWeight: "600",
+    ...typography.bodyMedium,
     color: colors.ink.rich,
     flex: 1,
   },
@@ -715,7 +706,7 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   rowLocation: {
-    fontSize: 13,
+    ...typography.bodySmall,
     color: colors.ink.muted,
   },
   rowStats: {
@@ -734,8 +725,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.xs,
   },
   statChipText: {
-    fontSize: 11,
+    ...typography.caption,
     color: colors.ink.muted,
-    fontWeight: "500",
+    fontWeight: "500" as const,
   },
 });
