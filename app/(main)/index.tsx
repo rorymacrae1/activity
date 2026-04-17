@@ -61,6 +61,9 @@ export default function PersonalizedHomeScreen() {
           favoriteIds.length,
         );
         setCompletionStatus(status);
+      } catch {
+        // Completion status is non-critical; degrade gracefully
+        setCompletionStatus(null);
       } finally {
         setLoading(false);
       }

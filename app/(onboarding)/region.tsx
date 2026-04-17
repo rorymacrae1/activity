@@ -155,48 +155,55 @@ export default function RegionScreen() {
     CountryWithCount[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   // Fetch countries with resort counts from Supabase
   useEffect(() => {
     async function loadCountries() {
       setLoading(true);
-      const countsByCountry = await getResortCountsByCountry();
+      setLoadError(false);
+      try {
+        const countsByCountry = await getResortCountsByCountry();
 
-      // Build country list from DB data, using content.json for localized names/flags
-      const countriesContent =
-        (
-          content as unknown as Record<
-            string,
-            Record<string, { name: string; flag: string }>
-          >
-        ).countries || {};
-      const countries: CountryWithCount[] = Object.entries(countsByCountry)
-        .filter(([_, count]) => count > 0)
-        .map(([countryId, count]) => {
-          const localized = countriesContent[countryId] || {
-            name: countryId,
-            flag: "🏔️",
-          };
-          return {
-            id: countryId, // DB country name (e.g., "France")
-            name: localized.name, // Localized display name
-            flag: localized.flag, // Emoji flag
-            resorts: count,
-          };
-        })
-        .sort((a, b) => b.resorts - a.resorts); // Sort by resort count descending
+        // Build country list from DB data, using content.json for localized names/flags
+        const countriesContent =
+          (
+            content as unknown as Record<
+              string,
+              Record<string, { name: string; flag: string }>
+            >
+          ).countries || {};
+        const countries: CountryWithCount[] = Object.entries(countsByCountry)
+          .filter(([_, count]) => count > 0)
+          .map(([countryId, count]) => {
+            const localized = countriesContent[countryId] || {
+              name: countryId,
+              flag: "🏔️",
+            };
+            return {
+              id: countryId, // DB country name (e.g., "France")
+              name: localized.name, // Localized display name
+              flag: localized.flag, // Emoji flag
+              resorts: count,
+            };
+          })
+          .sort((a, b) => b.resorts - a.resorts); // Sort by resort count descending
 
-      setAvailableCountries(countries);
+        setAvailableCountries(countries);
 
-      // Auto-select all countries on first load so new users start with "Anywhere in Europe"
-      if (regions.length === 0) {
-        setRegions(countries.map((c) => c.id));
+        // Auto-select all countries on first load so new users start with "Anywhere in Europe"
+        if (regions.length === 0) {
+          setRegions(countries.map((c) => c.id));
+        }
+      } catch {
+        setLoadError(true);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     }
     loadCountries();
-  }, [content]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [content, retryCount]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const allSelected =
     availableCountries.length > 0 &&
@@ -226,6 +233,26 @@ export default function RegionScreen() {
           >
             Loading countries...
           </Text>
+        </View>
+      </QuizLayout>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <QuizLayout scrollable>
+        <View style={[styles.inner, styles.loadingContainer]}>
+          <Text variant="h3" align="center" style={{ marginBottom: spacing.sm }}>
+            Couldn't load regions
+          </Text>
+          <Text variant="body" color={colors.ink.muted} align="center" style={{ marginBottom: spacing.lg }}>
+            Check your connection and try again.
+          </Text>
+          <Button
+            label="Try Again"
+            variant="secondary"
+            onPress={() => setRetryCount((c) => c + 1)}
+          />
         </View>
       </QuizLayout>
     );

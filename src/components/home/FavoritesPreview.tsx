@@ -31,11 +31,16 @@ export function FavoritesPreview({
     async function loadResorts() {
       setLoading(true);
       const idsToLoad = favoriteIds.slice(0, maxItems);
-      const loaded = await Promise.all(
-        idsToLoad.map((id) => getResortByIdAsync(id)),
-      );
-      setResorts(loaded.filter((r): r is Resort => r !== null));
-      setLoading(false);
+      try {
+        const loaded = await Promise.all(
+          idsToLoad.map((id) => getResortByIdAsync(id)),
+        );
+        setResorts(loaded.filter((r): r is Resort => r !== null));
+      } catch {
+        // Silently fail — preview just won't show
+      } finally {
+        setLoading(false);
+      }
     }
     if (favoriteIds.length > 0) {
       loadResorts();

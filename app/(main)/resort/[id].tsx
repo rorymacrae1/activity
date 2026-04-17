@@ -32,6 +32,7 @@ import { colors, spacing, radius, typography } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { EmptyState } from "@components/ui/EmptyState";
+import { ErrorState } from "@components/ui/ErrorState";
 import { LoadingState } from "@components/ui/LoadingState";
 import { OverviewCarousel } from "@components/resort/OverviewCarousel";
 import {
@@ -50,6 +51,7 @@ import {
   BUDGET_LEVEL_MAP,
   DEFAULT_ABILITY,
 } from "@/constants/options";
+import { LOAD_TIMEOUT_MS } from "@/constants/scoring";
 
 export default function ResortDetailScreen() {
   const { id, siblingIds: siblingIdsParam } = useLocalSearchParams<{
@@ -59,6 +61,8 @@ export default function ResortDetailScreen() {
   const [resort, setResort] = useState<Resort | null>(null);
   const [similarResorts, setSimilarResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
   const { setVisited } = useVisitedStore();
   const isVisited = useVisitedStore((s) => s.isVisited(id));
@@ -98,42 +102,65 @@ export default function ResortDetailScreen() {
   }));
 
   useEffect(() => {
+    let cancelled = false;
     async function loadResort() {
       setLoading(true);
-      const data = await getResortByIdAsync(id);
-      setResort(data ?? null);
+      setLoadError(false);
 
-      // Load visited status if logged in and update local cache
-      if (data && user) {
-        const visited = await hasVisitedResort(user.id, id);
-        setVisited(id, visited);
-      }
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("timeout")), LOAD_TIMEOUT_MS),
+      );
 
-      // Load similar resorts: use passed IDs if available, otherwise compute
-      if (data) {
-        if (siblingIdsParam) {
-          // Use IDs passed from results page
-          const ids = siblingIdsParam.split(",").filter(Boolean);
-          const siblings = await Promise.all(
-            ids.slice(0, 5).map((sibId) => getResortByIdAsync(sibId)),
-          );
-          setSimilarResorts(siblings.filter((r): r is Resort => r !== null));
-        } else {
-          // Compute similar resorts based on attributes
-          const similar = await getSimilarResorts(id, 5);
-          setSimilarResorts(similar);
+      try {
+        const data = await Promise.race([getResortByIdAsync(id), timeout]);
+        if (cancelled) return;
+        setResort(data ?? null);
+
+        // Load visited status if logged in and update local cache
+        if (data && user) {
+          const visited = await hasVisitedResort(user.id, id);
+          if (!cancelled) setVisited(id, visited);
         }
-      }
 
-      setLoading(false);
+        // Load similar resorts: use passed IDs if available, otherwise compute
+        if (data && !cancelled) {
+          if (siblingIdsParam) {
+            const ids = siblingIdsParam.split(",").filter(Boolean);
+            const siblings = await Promise.all(
+              ids.slice(0, 5).map((sibId) => getResortByIdAsync(sibId)),
+            );
+            if (!cancelled) setSimilarResorts(siblings.filter((r): r is Resort => r !== null));
+          } else {
+            const similar = await getSimilarResorts(id, 5);
+            if (!cancelled) setSimilarResorts(similar);
+          }
+        }
+      } catch {
+        if (!cancelled) setLoadError(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
     loadResort();
-  }, [id, siblingIdsParam, user]);
+    return () => { cancelled = true; };
+  }, [id, siblingIdsParam, user, retryCount]);
 
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
         <LoadingState message="Loading resort..." />
+      </SafeAreaView>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ErrorState
+          message="Couldn't load this resort"
+          detail="Check your connection and try again."
+          onRetry={() => setRetryCount((c) => c + 1)}
+        />
       </SafeAreaView>
     );
   }

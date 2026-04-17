@@ -8,6 +8,7 @@ import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
 import { spacing } from "@theme";
 import { EmptyState } from "@components/ui/EmptyState";
+import { ErrorState } from "@components/ui/ErrorState";
 import { SectionHeader } from "@components/ui/SectionHeader";
 import { ScreenContainer } from "@components/ui/ScreenContainer";
 import { LoadingState } from "@components/ui/LoadingState";
@@ -27,23 +28,43 @@ export default function FavoritesScreen() {
   const favoriteIds = useFavoritesStore((state) => state.favoriteIds);
   const [favoriteResorts, setFavoriteResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const { numColumns, hPadding } = useLayout();
   const content = useContent();
 
   useEffect(() => {
     async function loadFavorites() {
       setLoading(true);
-      const resorts = await getResortsByIds(favoriteIds);
-      setFavoriteResorts(resorts);
-      setLoading(false);
+      setLoadError(false);
+      try {
+        const resorts = await getResortsByIds(favoriteIds);
+        setFavoriteResorts(resorts);
+      } catch {
+        setLoadError(true);
+      } finally {
+        setLoading(false);
+      }
     }
     loadFavorites();
-  }, [favoriteIds]);
+  }, [favoriteIds, retryCount]);
 
   if (loading) {
     return (
       <ScreenContainer>
         <LoadingState message="Loading saved resorts..." />
+      </ScreenContainer>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <ScreenContainer>
+        <ErrorState
+          message="Couldn't load saved resorts"
+          detail="Check your connection and try again."
+          onRetry={() => setRetryCount((c) => c + 1)}
+        />
       </ScreenContainer>
     );
   }

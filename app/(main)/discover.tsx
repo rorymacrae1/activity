@@ -31,6 +31,7 @@ import { Text } from "@components/ui/Text";
 import { Icon } from "@components/ui/Icon";
 import { LoadingState } from "@components/ui/LoadingState";
 import { EmptyState } from "@components/ui/EmptyState";
+import { ErrorState } from "@components/ui/ErrorState";
 import { ResortImage } from "@components/ui/ResortImage";
 import { ResortScatterPlot } from "@components/resort/ResortScatterPlot";
 import {
@@ -167,6 +168,8 @@ const ITEM_HEIGHT = ROW_HEIGHT + SEPARATOR_HEIGHT;
 export default function DiscoverScreen() {
   const [allResorts, setAllResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("az");
   const [viewMode, setViewMode] = useState<ViewMode>("list");
@@ -228,10 +231,15 @@ export default function DiscoverScreen() {
 
   // Load all resorts on mount
   useEffect(() => {
+    setFetchError(false);
     getAllResortsAsync()
-      .then(setAllResorts)
+      .then((resorts) => {
+        setAllResorts(resorts);
+        if (resorts.length === 0) setFetchError(true);
+      })
+      .catch(() => setFetchError(true))
       .finally(() => setLoading(false));
-  }, []);
+  }, [retryCount]);
 
   // Prefetch hero images for visible resorts
   usePrefetchImages(allResorts);
@@ -304,6 +312,21 @@ export default function DiscoverScreen() {
     return (
       <SafeAreaView style={styles.container} edges={["top"]}>
         <LoadingState message="Loading resorts…" />
+      </SafeAreaView>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <ErrorState
+          message="Couldn't load resorts"
+          detail="Check your connection and try again."
+          onRetry={() => {
+            setLoading(true);
+            setRetryCount((c) => c + 1);
+          }}
+        />
       </SafeAreaView>
     );
   }

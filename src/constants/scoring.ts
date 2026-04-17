@@ -48,3 +48,9 @@ export const LOADING_PHASE_TIMES = [3_000, 7_000, 10_000] as const;
 
 /** Fetch timeout for recommendation requests (ms). */
 export const RECOMMENDATION_TIMEOUT_MS = 12_000;
+
+/** General screen data-load timeout (ms). */
+export const LOAD_TIMEOUT_MS = 10_000;
+
+/** Delay before showing slow-load reassurance message in LoadingState (ms). */
+export const SLOW_LOAD_THRESHOLD_MS = 5_000;
