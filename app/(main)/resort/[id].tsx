@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import Head from "expo-router/head";
 import { View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -15,6 +16,7 @@ import { getResortSchema, getResortBreadcrumbs } from "@/utils/schema";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getResortByIdAsync, getSimilarResorts } from "@services/resort";
 import { useFavoritesStore } from "@stores/favorites";
+import { useVisitedStore } from "@stores/visited";
 import { useAuthStore } from "@stores/auth";
 import { useDismissedStore } from "@stores/dismissed";
 import {
@@ -26,10 +28,9 @@ import { useToast } from "@components/ui/Toast";
 import { ResortImage } from "@components/ui/ResortImage";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
-import { colors, spacing, radius } from "@theme";
+import { colors, spacing, radius, typography } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
-import { Badge } from "@components/ui/Badge";
 import { EmptyState } from "@components/ui/EmptyState";
 import { LoadingState } from "@components/ui/LoadingState";
 import { OverviewCarousel } from "@components/resort/OverviewCarousel";
@@ -58,8 +59,9 @@ export default function ResortDetailScreen() {
   const [resort, setResort] = useState<Resort | null>(null);
   const [similarResorts, setSimilarResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isVisited, setIsVisited] = useState(false);
   const { isFavorite, addFavorite, removeFavorite } = useFavoritesStore();
+  const { setVisited } = useVisitedStore();
+  const isVisited = useVisitedStore((s) => s.isVisited(id));
   const { user } = useAuthStore();
   const { dismiss } = useDismissedStore();
   const { showToast } = useToast();
@@ -101,10 +103,10 @@ export default function ResortDetailScreen() {
       const data = await getResortByIdAsync(id);
       setResort(data ?? null);
 
-      // Load visited status if logged in
+      // Load visited status if logged in and update local cache
       if (data && user) {
         const visited = await hasVisitedResort(user.id, id);
-        setIsVisited(visited);
+        setVisited(id, visited);
       }
 
       // Load similar resorts: use passed IDs if available, otherwise compute
@@ -172,13 +174,13 @@ export default function ResortDetailScreen() {
       return;
     }
     const next = !isVisited;
-    setIsVisited(next);
+    setVisited(resort.id, next); // Optimistic
     if (next) {
       const { error } = await addVisitedResort(user.id, resort.id);
-      if (error) setIsVisited(false);
+      if (error) setVisited(resort.id, !next); // Rollback
     } else {
       const { error } = await removeVisitedResort(user.id, resort.id);
-      if (error) setIsVisited(true);
+      if (error) setVisited(resort.id, !next); // Rollback
     }
   };
 
@@ -282,33 +284,43 @@ export default function ResortDetailScreen() {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
       >
-        {/* Full-bleed hero */}
+        {/* Full-bleed hero with gradient overlay */}
         <View style={[styles.heroContainer, { height: heroHeight }]}>
           <ResortImage
             uri={resort.assets.heroImage}
             style={styles.heroImage}
             accessibilityLabel={`${resort.name} ski resort`}
           />
+          {/* Dark gradient for text legibility */}
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.72)"]}
+            style={styles.heroGradient}
+            pointerEvents="none"
+          />
+          {/* Resort identity overlay */}
+          <View style={styles.heroOverlay} pointerEvents="none">
+            <Text style={styles.heroName}>{resort.name}</Text>
+            <Text style={styles.heroLocation}>
+              {resort.region} · {resort.country}
+            </Text>
+            <View style={styles.heroStats}>
+              <Text style={styles.heroStat}>{resort.stats.totalKm}km</Text>
+              <Text style={styles.heroStatDot}> · </Text>
+              <Text style={styles.heroStat}>
+                {resort.location.villageAltitude}–{resort.location.peakAltitude}m
+              </Text>
+              <Text style={styles.heroStatDot}> · </Text>
+              <Text style={styles.heroStat}>
+                €{resort.attributes.averageDailyCost}/day
+              </Text>
+            </View>
+          </View>
         </View>
 
         {/* Content */}
         <View style={[styles.centeredContent, isTablet && styles.tabletCenter]}>
           <View style={[styles.content, { paddingHorizontal: hPadding }]}>
-            {/* Header */}
-            <View style={styles.header}>
-              <View style={styles.titleRow}>
-                <Text variant="h1" style={styles.name}>
-                  {resort.name}
-                </Text>
-                <Badge label={resort.country} variant="neutral" />
-              </View>
-              <Text variant="body" color={colors.ink.normal}>
-                {resort.region} • {resort.location.villageAltitude}m –{" "}
-                {resort.location.peakAltitude}m
-              </Text>
-            </View>
-
-            {/* Highlights */}
+            {/* Highlights — quick wins at a glance */}
             <View style={styles.highlights}>
               {resort.content.highlights.slice(0, 3).map((h, i) => (
                 <View key={i} style={styles.highlightChip}>
@@ -427,25 +439,50 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: colors.canvas.subtle,
   },
+  heroGradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 160,
+  },
+  heroOverlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
+  heroName: {
+    ...typography.h1,
+    color: colors.ink.inverse,
+    marginBottom: spacing.xxs,
+  },
+  heroLocation: {
+    fontSize: 15,
+    color: "rgba(255,255,255,0.8)",
+    marginBottom: spacing.sm,
+  },
+  heroStats: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  heroStat: {
+    fontSize: 14,
+    fontWeight: "600" as const,
+    color: colors.ink.inverse,
+  },
+  heroStatDot: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.5)",
+  },
   centeredContent: {
     flex: 1,
   },
   content: {
     paddingTop: spacing.lg,
     paddingBottom: spacing.lg,
-  },
-  header: {
-    marginBottom: spacing.md,
-    gap: spacing.xxs,
-  },
-  titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: spacing.sm,
-  },
-  name: {
-    flex: 1,
   },
   highlights: {
     flexDirection: "row",

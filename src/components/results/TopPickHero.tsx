@@ -1,5 +1,12 @@
+import { useEffect, useState } from "react";
 import { View, StyleSheet, Dimensions, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withDelay,
+} from "react-native-reanimated";
 import { Text } from "@components/ui/Text";
 import { Icon } from "@components/ui/Icon";
 import { ResortImage } from "@components/ui/ResortImage";
@@ -22,8 +29,36 @@ interface TopPickHeroProps {
 export function TopPickHero({ result, onPress }: TopPickHeroProps) {
   const { resort, matchScore } = result;
 
+  // Count-up animation: 0 → matchScore over ~900ms with ease-out
+  const [displayScore, setDisplayScore] = useState(0);
+  useEffect(() => {
+    if (matchScore <= 0) return;
+    const steps = Math.min(matchScore, 45);
+    const interval = 900 / steps;
+    let count = 0;
+    const timer = setInterval(() => {
+      count++;
+      const eased = 1 - Math.pow(1 - count / steps, 2);
+      setDisplayScore(Math.min(Math.round(eased * matchScore), matchScore));
+      if (count >= steps) clearInterval(timer);
+    }, interval);
+    return () => clearInterval(timer);
+  }, [matchScore]);
+
+  // Entrance animation: fade + rise from below
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(20);
+  useEffect(() => {
+    opacity.value = withDelay(120, withSpring(1, { damping: 20, stiffness: 200 }));
+    translateY.value = withDelay(120, withSpring(0, { damping: 18, stiffness: 220 }));
+  }, [opacity, translateY]);
+  const heroStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
   const content = (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, heroStyle]}>
       {/* Hero image with gradient overlays */}
       <View style={styles.imageContainer}>
         <ResortImage
@@ -58,7 +93,7 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
         {/* Match score - prominent circular indicator */}
         <View style={styles.matchScoreContainer} pointerEvents="none">
           <View style={styles.matchScoreRing}>
-            <Text style={styles.matchScoreValue}>{matchScore}</Text>
+            <Text style={styles.matchScoreValue}>{displayScore}</Text>
             <Text style={styles.matchScorePercent}>%</Text>
           </View>
           <Text style={styles.matchScoreLabel}>Match</Text>
@@ -101,7 +136,7 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
           </View>
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 
   // Wrap in Pressable if onPress is provided

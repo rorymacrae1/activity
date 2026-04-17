@@ -170,6 +170,7 @@ export default function DiscoverScreen() {
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("az");
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [showRefine, setShowRefine] = useState(false);
   const { isFavorite } = useFavoritesStore();
   const { hPadding } = useLayout();
   const inputRef = useRef<TextInput>(null);
@@ -455,13 +456,38 @@ export default function DiscoverScreen() {
                   );
                 })}
               </View>
-              <Text style={styles.resultsCount}>
-                {results.length} resort{results.length !== 1 ? "s" : ""}
-              </Text>
+              <View style={styles.sortRight}>
+                <Pressable
+                  style={[styles.refineChip, showRefine && styles.refineChipActive]}
+                  onPress={() => setShowRefine((v) => !v)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Toggle refine panel"
+                  accessibilityState={{ selected: showRefine }}
+                >
+                  <Icon
+                    name="sliders-horizontal"
+                    size={13}
+                    color={showRefine ? colors.ink.inverse : colors.ink.normal}
+                    strokeWidth={2}
+                  />
+                  <Text style={[styles.refineChipText, showRefine && styles.refineChipTextActive]}>
+                    Refine
+                  </Text>
+                </Pressable>
+                <Text style={styles.resultsCount}>
+                  {results.length} resort{results.length !== 1 ? "s" : ""}
+                </Text>
+              </View>
             </View>
+            {/* Inline refine controls — shown when Refine is toggled */}
+            {showRefine ? (
+              <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
+            ) : null}
           </>
         ) : (
-          <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
+          <View style={{ paddingHorizontal: hPadding }}>
+            <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
+          </View>
         )}
 
         {/* ── Divider ── */}
@@ -642,6 +668,34 @@ const styles = StyleSheet.create({
   resultsCount: {
     ...typography.caption,
     color: colors.ink.faint,
+  },
+  sortRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  refineChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: radius.sm,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    backgroundColor: colors.transparent,
+  },
+  refineChipActive: {
+    backgroundColor: colors.brand.primary,
+    borderColor: colors.brand.primary,
+  },
+  refineChipText: {
+    ...typography.labelSmall,
+    color: colors.ink.normal,
+  },
+  refineChipTextActive: {
+    color: colors.ink.inverse,
+    fontWeight: "600" as const,
   },
 
   // Divider

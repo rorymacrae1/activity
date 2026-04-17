@@ -5,6 +5,7 @@ import { Text } from "@components/ui/Text";
 import { ResortImage } from "@components/ui/ResortImage";
 import { useLayout } from "@hooks/useLayout";
 import { useProfile } from "@stores/auth";
+import { useVisitedStore } from "@stores/visited";
 import { colors, spacing, radius } from "@theme";
 import type { RecommendationResult } from "@/types/recommendation";
 
@@ -28,6 +29,7 @@ export function ResortCard({
   const { resort, matchScore, matchReasons } = result;
   const { cardImageHeight } = useLayout();
   const profile = useProfile();
+  const isVisited = useVisitedStore((s) => s.isVisited(resort.id));
   const homeAirport = profile?.home_airport ?? null;
   const nearestAirport = resort.attributes.nearestAirport;
   const transferMins = resort.attributes.transferTimeMinutes;
@@ -64,6 +66,12 @@ export function ResortCard({
           <View style={styles.matchBadge}>
             <Text style={styles.matchScore}>{matchScore}</Text>
             <Text style={styles.matchPercent}>%</Text>
+          </View>
+        ) : null}
+        {/* Visited badge — shown when user has been to this resort */}
+        {isVisited ? (
+          <View style={styles.visitedBadge}>
+            <Text style={styles.visitedText}>✓ Visited</Text>
           </View>
         ) : null}
       </View>
@@ -219,6 +227,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: colors.brand.primary,
     marginLeft: 1,
+  },
+  visitedBadge: {
+    position: "absolute",
+    bottom: spacing.sm,
+    left: spacing.sm,
+    backgroundColor: colors.sentiment.successSubtle,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 3,
+    borderRadius: radius.full,
+  },
+  visitedText: {
+    fontSize: 12,
+    fontWeight: "600" as const,
+    color: colors.sentiment.success,
   },
   content: {
     padding: spacing.md,

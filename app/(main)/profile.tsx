@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { useFavoritesStore } from "@stores/favorites";
 import { useAuthStore, useIsAuthenticated, useProfile } from "@stores/auth";
+import { useVisitedStore } from "@stores/visited";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
 import { colors, spacing, radius } from "@theme";
@@ -32,6 +33,7 @@ export default function ProfileScreen() {
     clearAll: clearFavorites,
     syncToCloud: syncFavoritesToCloud,
   } = useFavoritesStore();
+  const visitedIds = useVisitedStore((s) => s.visitedIds);
   const { signOut, user } = useAuthStore();
   const isAuthenticated = useIsAuthenticated();
   const profile = useProfile();
@@ -165,7 +167,7 @@ export default function ProfileScreen() {
             <Card elevation="subtle" style={styles.prefsCard}>
               <View style={styles.accountInfo}>
                 <View style={styles.avatar}>
-                  <Text variant="h3" color={colors.text.inverse}>
+                  <Text variant="h3" color={colors.ink.inverse}>
                     {(profile?.display_name || user?.email || "U")
                       .charAt(0)
                       .toUpperCase()}
@@ -177,7 +179,7 @@ export default function ProfileScreen() {
                   </Text>
                   <Text
                     variant="bodySmall"
-                    color={colors.text.secondary}
+                    color={colors.ink.normal}
                     numberOfLines={1}
                   >
                     {user?.email}
@@ -204,7 +206,7 @@ export default function ProfileScreen() {
             <Card elevation="subtle" style={styles.prefsCard}>
               <Text
                 variant="body"
-                color={colors.text.secondary}
+                color={colors.ink.normal}
                 style={styles.signInPrompt}
               >
                 Sign in to sync your preferences and favorites across devices.
@@ -262,10 +264,17 @@ export default function ProfileScreen() {
                       )
               }
             />
+            <View style={styles.divider} />
+            <PrefRow
+              label="Visited Resorts"
+              value={
+                visitedIds.length === 0
+                  ? content.profile.notSet
+                  : `${visitedIds.length} resort${visitedIds.length === 1 ? "" : "s"}`
+              }
+            />
           </Card>
         </View>
-
-        {/* Actions */}
         <View style={styles.section}>
           <SectionHeader title={content.profile.actionsSection} />
           <View style={styles.actions}>
@@ -334,7 +343,7 @@ export default function ProfileScreen() {
         {/* About */}
         <View style={styles.section}>
           <SectionHeader title={content.profile.aboutSection} />
-          <Text variant="bodySmall" color={colors.text.secondary}>
+          <Text variant="bodySmall" color={colors.ink.normal}>
             {content.profile.aboutText}
           </Text>
         </View>
@@ -347,7 +356,7 @@ function PrefRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.prefRow}>
       <Text variant="body">{label}</Text>
-      <Text variant="body" color={colors.text.secondary}>
+      <Text variant="body" color={colors.ink.normal}>
         {value}
       </Text>
     </View>
@@ -391,8 +400,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   langBtnActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    backgroundColor: colors.brand.primary,
+    borderColor: colors.brand.primary,
   },
   langTextActive: { color: colors.ink.onBrand },
   accountInfo: {
@@ -405,7 +414,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.brand.primary,
     justifyContent: "center",
     alignItems: "center",
   },

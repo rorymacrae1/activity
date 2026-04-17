@@ -218,7 +218,7 @@ export default function ResultsScreen() {
         <View style={[styles.header, { paddingHorizontal: hPadding }]}>
           <View style={styles.headerContent}>
             <Text variant="h1">{content.onboarding.results.title}</Text>
-            <Text variant="body" color={colors.text.secondary}>
+            <Text variant="body" color={colors.ink.normal}>
               {content.onboarding.results.subtitle}
             </Text>
           </View>
@@ -327,7 +327,7 @@ export default function ResultsScreen() {
           </Text>
           <Text
             variant="body"
-            color={colors.text.secondary}
+            color={colors.ink.normal}
             style={styles.modalSubtitle}
           >
             Adjust and we'll re-rank the resorts instantly.
@@ -498,12 +498,12 @@ const styles = StyleSheet.create({
   decisionFlowTitle: {
     fontSize: 15,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginBottom: 2,
   },
   decisionFlowSubtitle: {
     fontSize: 13,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
   decisionFlowArrow: {
     fontSize: 20,
@@ -557,7 +557,7 @@ const styles = StyleSheet.create({
   sliderLabelText: {
     fontSize: 15,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   sliderValue: {
     fontSize: 13,
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
   },
   sliderEndLabel: {
     fontSize: 11,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
   },
   modalActions: {
     flexDirection: "row",
