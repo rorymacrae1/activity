@@ -25,7 +25,7 @@ function TabIcon({ icon, label, focused }: TabIconProps) {
   );
 }
 
-const styles = StyleSheet.create({});
+const _styles = StyleSheet.create({});
 
 /**
  * Main app layout with bottom tab navigation.

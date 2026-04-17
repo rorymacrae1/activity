@@ -29,7 +29,7 @@ jest.mock("@/lib/supabase", () => ({
 }));
 
 function getSupabaseMock() {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+   
   return jest.requireMock("@/lib/supabase").supabase;
 }
 

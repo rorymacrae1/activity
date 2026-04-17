@@ -1,6 +1,6 @@
 import { View, StyleSheet, Pressable, Platform } from "react-native";
 import { Text } from "./Text";
-import { colors, spacing, webStyles } from "@theme";
+import { spacing, webStyles } from "@theme";
 
 interface SectionHeaderProps {
   /** Section title */

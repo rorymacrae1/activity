@@ -2,7 +2,7 @@
  * Lightweight Reanimated mock for component tests.
  * Avoids native module initialization (react-native-worklets).
  */
-import React from "react";
+import type React from "react";
 import { View, ScrollView } from "react-native";
 
 const noopSharedValue = (init: unknown) => ({ value: init });

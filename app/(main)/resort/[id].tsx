@@ -8,7 +8,9 @@ import Animated, {
   withSequence,
   withSpring,
 } from "react-native-reanimated";
-import { Heart, CheckCircle, XCircle } from "lucide-react-native";
+import Heart from "lucide-react-native/dist/cjs/icons/heart";
+import CheckCircle from "lucide-react-native/dist/cjs/icons/circle-check";
+import XCircle from "lucide-react-native/dist/cjs/icons/circle-x";
 import { getResortSchema, getResortBreadcrumbs } from "@/utils/schema";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getResortByIdAsync, getSimilarResorts } from "@services/resort";

@@ -4,14 +4,8 @@
  */
 
 import React, { useRef } from "react";
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Dimensions,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-} from "react-native";
+import type { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import { View, ScrollView, StyleSheet, Dimensions } from "react-native";
 import { Text } from "@/components/ui";
 import { ReasonCard } from "./ReasonCard";
 import { colors } from "@/theme/colors";
@@ -19,7 +13,7 @@ import { spacing } from "@/theme/spacing";
 import { typography } from "@/theme/typography";
 import type { AttributeScores } from "@/types/recommendation";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = 260;
 const CARD_MARGIN = spacing.sm;
 

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import type { ErrorInfo, ReactNode } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
-import { AlertTriangle } from "lucide-react-native";
+import AlertTriangle from "lucide-react-native/dist/cjs/icons/triangle-alert";
 import { colors } from "@theme/colors";
 import { typography } from "@theme/typography";
 import { spacing } from "@theme/spacing";

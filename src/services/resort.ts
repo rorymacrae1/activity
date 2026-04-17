@@ -134,6 +134,62 @@ function parseWKBPoint(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Continent classification from country name
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CONTINENT_MAP: Record<string, Resort["continent"]> = {
+  // Europe
+  France: "Europe",
+  Austria: "Europe",
+  Switzerland: "Europe",
+  Italy: "Europe",
+  Germany: "Europe",
+  Spain: "Europe",
+  Andorra: "Europe",
+  Norway: "Europe",
+  Sweden: "Europe",
+  Finland: "Europe",
+  Bulgaria: "Europe",
+  Romania: "Europe",
+  Slovenia: "Europe",
+  Slovakia: "Europe",
+  "Czech Republic": "Europe",
+  Poland: "Europe",
+  Scotland: "Europe",
+  "United Kingdom": "Europe",
+  Greece: "Europe",
+  Turkey: "Europe",
+  Georgia: "Europe",
+  Montenegro: "Europe",
+  "Bosnia and Herzegovina": "Europe",
+  Serbia: "Europe",
+  Croatia: "Europe",
+  Iceland: "Europe",
+  Liechtenstein: "Europe",
+  // North America
+  "United States": "North America",
+  Canada: "North America",
+  // South America
+  Argentina: "South America",
+  Chile: "South America",
+  // Asia
+  Japan: "Asia",
+  "South Korea": "Asia",
+  China: "Asia",
+  India: "Asia",
+  Iran: "Asia",
+  Lebanon: "Asia",
+  Kazakhstan: "Asia",
+  // Oceania
+  Australia: "Oceania",
+  "New Zealand": "Oceania",
+};
+
+function getContinent(country: string): Resort["continent"] {
+  return CONTINENT_MAP[country] ?? "Europe";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Supabase resort table schema (from existing database)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -264,13 +320,28 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
   const liftPassDayCost = cost?.lift_pass_daily_gbp ?? 60;
   const liftPassSixDayCost = cost?.lift_pass_weekly_gbp ?? 300;
   // Average daily: lift pass + lunch + half-day rental (own skis half the time)
-  const avgDailyCost = cost
+  // When component cost data is available, sum the parts.
+  // When missing, derive from overall_cost_index (1–5 scale from DB)
+  // to avoid inaccurate fallback values (e.g. St. Moritz getting mid-range).
+  const COST_INDEX_DAILY: Record<number, number> = {
+    1: 90, // budget
+    2: 130, // mid-low
+    3: 170, // mid
+    4: 230, // premium
+    5: 320, // luxury
+  };
+  const componentCost = cost
     ? Math.round(
         (cost.lift_pass_daily_gbp ?? 60) +
           (cost.mountain_lunch_gbp ?? 25) +
           (cost.ski_rental_daily_gbp ?? 40) / 2,
       )
-    : 150;
+    : null;
+  const indexDerived = cost?.overall_cost_index
+    ? (COST_INDEX_DAILY[cost.overall_cost_index] ?? 150)
+    : null;
+  // Prefer component cost when available; fall back to index-derived; then default
+  const avgDailyCost = componentCost ?? indexDerived ?? 150;
 
   // ── Stats ───────────────────────────────────────────────────────────────────
   const totalKm = slopes?.total_km ?? row.total_km_piste ?? 0;
@@ -280,8 +351,13 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
     (slopes?.half_pipe ? 1 : 0);
 
   // ── Weather data ────────────────────────────────────────────────────────────
-  // Peak season = December (12) through March (3)
-  const PEAK_MONTHS = new Set([12, 1, 2, 3]);
+  // Determine hemisphere from latitude for correct peak month selection
+  const resortLat = parseWKBPoint(row.location)?.lat ?? 47; // default Northern
+  const isSouthernHemisphere = resortLat < 0;
+  // Northern hemisphere peak: Dec–Mar; Southern hemisphere peak: Jun–Sep
+  const PEAK_MONTHS = isSouthernHemisphere
+    ? new Set([6, 7, 8, 9])
+    : new Set([12, 1, 2, 3]);
   const peakWeather = (row.weather_month ?? []).filter((w) =>
     PEAK_MONTHS.has(w.month),
   );
@@ -403,6 +479,7 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
     country: row.country,
     region,
     subRegion: undefined,
+    continent: getContinent(row.country),
     location: {
       lat: parseWKBPoint(row.location)?.lat ?? 0,
       lng: parseWKBPoint(row.location)?.lng ?? 0,
@@ -446,9 +523,7 @@ function supabaseRowToResort(row: SupabaseResortRow): Resort {
       highlights,
     },
     assets: {
-      heroImage: row.hero_image
-        ? `${row.hero_image.split("?")[0]}?w=1200&q=80&auto=format&fit=crop`
-        : getResortHeroImage(row.name),
+      heroImage: row.hero_image ?? getResortHeroImage(row.name),
       pisteMap: "",
     },
     season: {

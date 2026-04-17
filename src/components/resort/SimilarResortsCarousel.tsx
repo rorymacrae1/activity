@@ -4,14 +4,8 @@
  */
 
 import React, { useRef, useState } from "react";
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-} from "react-native";
+import type { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import { View, ScrollView, StyleSheet, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { Text } from "@/components/ui";
 import { Icon } from "@/components/ui/Icon";
@@ -251,7 +245,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: spacing.xs,
     right: spacing.xs,
-    backgroundColor: "rgba(0,0,0,0.6)",
+    backgroundColor: colors.onDark.backdrop,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xxs,
     borderRadius: radius.sm,

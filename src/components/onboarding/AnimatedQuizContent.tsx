@@ -40,15 +40,14 @@ function CrossfadeContent({
   const progress = useSharedValue(0);
 
   useFocusEffect(
-    // progress is a Reanimated SharedValue (stable ref) — not reactive
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     useCallback(() => {
       progress.value = 0;
       progress.value = withDelay(
         delay,
         withTiming(1, { duration: 300, easing: Easing.out(Easing.cubic) }),
       );
-    }, [delay]),
+    }, [delay, progress]),
   );
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -75,15 +74,14 @@ function StaggeredContent({ children, delay = 0 }: StaggeredProps) {
   const progress = useSharedValue(0);
 
   useFocusEffect(
-    // progress is a Reanimated SharedValue (stable ref) — not reactive
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     useCallback(() => {
       progress.value = 0;
       progress.value = withDelay(
         delay,
         withTiming(1, { duration: 400, easing: Easing.out(Easing.cubic) }),
       );
-    }, [delay]),
+    }, [delay, progress]),
   );
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -116,15 +114,14 @@ export function StaggeredItem({
   const progress = useSharedValue(0);
 
   useFocusEffect(
-    // progress is a Reanimated SharedValue (stable ref) — not reactive
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     useCallback(() => {
       progress.value = 0;
       progress.value = withDelay(
         index * baseDelay,
         withSpring(1, { damping: 20, stiffness: 300 }),
       );
-    }, [index, baseDelay]),
+    }, [index, baseDelay, progress]),
   );
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -151,15 +148,14 @@ function SoftScaleContent({
   const progress = useSharedValue(0);
 
   useFocusEffect(
-    // progress is a Reanimated SharedValue (stable ref) — not reactive
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     useCallback(() => {
       progress.value = 0;
       progress.value = withDelay(
         delay,
         withSpring(1, { damping: 18, stiffness: 200 }),
       );
-    }, [delay]),
+    }, [delay, progress]),
   );
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -187,15 +183,14 @@ function ParallaxContent({
   const progress = useSharedValue(0);
 
   useFocusEffect(
-    // progress is a Reanimated SharedValue (stable ref) — not reactive
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     useCallback(() => {
       progress.value = 0;
       progress.value = withDelay(
         delay,
         withTiming(1, { duration: 250, easing: Easing.out(Easing.cubic) }),
       );
-    }, [delay]),
+    }, [delay, progress]),
   );
 
   const animatedStyle = useAnimatedStyle(() => ({

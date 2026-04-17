@@ -40,6 +40,7 @@ const makeResort = (overrides: Partial<Resort> = {}): Resort => ({
   name: "Test Resort",
   country: "Switzerland",
   region: "Valais",
+  continent: "Europe",
   subRegion: undefined,
   location: { lat: 46.0, lng: 7.5, villageAltitude: 1500, peakAltitude: 3000 },
   terrain: { beginner: 30, intermediate: 40, advanced: 30 },

@@ -148,7 +148,7 @@ function CountryCard({
 
 export default function RegionScreen() {
   const { regions, setRegions } = usePreferencesStore();
-  const { isTablet, hPadding, layoutMode } = useLayout();
+  const { isTablet, hPadding, layoutMode: _layoutMode } = useLayout();
   const content = useContent();
 
   const [availableCountries, setAvailableCountries] = useState<
@@ -163,7 +163,13 @@ export default function RegionScreen() {
       const countsByCountry = await getResortCountsByCountry();
 
       // Build country list from DB data, using content.json for localized names/flags
-      const countriesContent = (content as any).countries || {};
+      const countriesContent =
+        (
+          content as unknown as Record<
+            string,
+            Record<string, { name: string; flag: string }>
+          >
+        ).countries || {};
       const countries: CountryWithCount[] = Object.entries(countsByCountry)
         .filter(([_, count]) => count > 0)
         .map(([countryId, count]) => {
@@ -257,6 +263,7 @@ export default function RegionScreen() {
             style={styles.inner}
             contentContainerStyle={[
               styles.innerContent,
+              // eslint-disable-next-line react-native/no-inline-styles
               { paddingHorizontal: isTablet ? 0 : hPadding },
             ]}
             showsVerticalScrollIndicator={false}
@@ -349,7 +356,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     alignSelf: "flex-start",
     // Shadow for consistency
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 6,
@@ -402,7 +409,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border.subtle,
     gap: spacing.sm,
     // Multi-layer shadow (native)
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.08,
     shadowRadius: 8,

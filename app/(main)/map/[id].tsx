@@ -19,7 +19,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { getResortByIdAsync } from "@services/resort";
 import { useContent } from "@hooks/useContent";
-import { MapPin } from "lucide-react-native";
+import MapPin from "lucide-react-native/dist/cjs/icons/map-pin";
 import { colors } from "@theme/colors";
 import { typography } from "@theme/typography";
 import { spacing } from "@theme/spacing";

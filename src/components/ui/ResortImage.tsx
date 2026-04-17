@@ -35,7 +35,7 @@ const DEFAULT_RESORT_IMAGE = require("../../../assets/images/default-resort.jpg"
 const ALPINE_BLURHASH = "L6PZfSi_.AyE_3t7t7R**0o#DgR4";
 
 interface ResortImageProps {
-  /** Remote URI for the resort hero photo. Falls back to local asset if falsy. */
+  /** Remote URI for the resort hero photo. Falls back to bundled default if falsy. */
   uri?: string;
   style?: StyleProp<ImageStyle>;
   accessibilityLabel?: string;
@@ -51,9 +51,12 @@ export function ResortImage({
 }: ResortImageProps) {
   const [useFallback, setUseFallback] = useState(false);
 
+  // Priority: remote URI (CDN) → bundled default fallback
+  const resolvedSource = uri && !useFallback ? { uri } : DEFAULT_RESORT_IMAGE;
+
   return (
     <Image
-      source={uri && !useFallback ? { uri } : DEFAULT_RESORT_IMAGE}
+      source={resolvedSource}
       placeholder={{ blurhash: ALPINE_BLURHASH }}
       contentFit={contentFit}
       transition={200}

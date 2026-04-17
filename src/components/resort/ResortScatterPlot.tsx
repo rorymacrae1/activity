@@ -9,13 +9,8 @@
  */
 
 import { useCallback, useMemo, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  LayoutChangeEvent,
-} from "react-native";
+import type { LayoutChangeEvent } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView } from "react-native";
 import Svg, { Circle, Line, Rect, Text as SvgText } from "react-native-svg";
 import { router } from "expo-router";
 import type { Resort } from "@/types/resort";
@@ -77,18 +72,19 @@ interface PanelProps {
 }
 
 function SelectedPanel({ point, onClose }: PanelProps) {
-  if (!point) return null;
-
-  const color = scoreColor(point.score);
-  const tierLabel = scoreTierLabel(point.score);
-
   const handleGoToResort = useCallback(() => {
+    if (!point) return;
     onClose();
     router.push({
       pathname: "/(main)/resort/[id]",
       params: { id: point.id },
     });
-  }, [point.id, onClose]);
+  }, [point, onClose]);
+
+  if (!point) return null;
+
+  const color = scoreColor(point.score);
+  const tierLabel = scoreTierLabel(point.score);
 
   return (
     <View style={panel.container}>
@@ -219,7 +215,6 @@ export function ResortScatterPlot({ resorts, prefs }: ResortScatterPlotProps) {
             {/* Subtle grid lines */}
             {[0.25, 0.5, 0.75].map((frac) => {
               const x = canvasWidth * frac;
-              const y = canvasHeight * frac;
               return (
                 <Line
                   key={`gx-${frac}`}
@@ -398,7 +393,7 @@ const panel = StyleSheet.create({
     gap: spacing.sm,
     marginTop: spacing.xs,
     // Subtle shadow
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.07,
     shadowRadius: 8,

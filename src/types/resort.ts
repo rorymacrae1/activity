@@ -99,6 +99,7 @@ export interface Resort {
   country: string;
   region: string;
   subRegion?: string;
+  continent: "Europe" | "North America" | "South America" | "Asia" | "Oceania";
   location: ResortLocation;
   terrain: TerrainDistribution;
   stats: ResortStats;

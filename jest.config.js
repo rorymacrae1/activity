@@ -1,6 +1,7 @@
 /** @type {import('jest').Config} */
 
 const sharedModuleNameMapper = {
+  "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/src/__mocks__/fileMock.ts",
   "^@/lib/storage(\\.native)?$": "<rootDir>/src/__mocks__/lib/storage.ts",
   "^@lib/supabase$": "<rootDir>/src/__mocks__/lib/supabase.ts",
   "^@expo-google-fonts/(.*)$": "<rootDir>/src/__mocks__/expo-google-fonts.ts",

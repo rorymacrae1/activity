@@ -10,45 +10,43 @@
 
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  Mountain,
-  Heart,
-  Target,
-  Sparkles,
-  Snowflake,
-  Plane,
-  Settings,
-  Search,
-  ChevronRight,
-  ChevronLeft,
-  MapPin,
-  Star,
-  Users,
-  Calendar,
-  TrendingUp,
-  Compass,
-  Home,
-  User,
-  LogIn,
-  Check,
-  X,
-  Info,
-  AlertTriangle,
-  Car,
-  Train,
-  Hotel,
-  Bookmark,
-  Wallet,
-  CircleDollarSign,
-  Ticket,
-  CloudSnow,
-  Wine,
-  MapPinned,
-  Gauge,
-  UsersRound,
-  Activity,
-  type LucideIcon,
-} from "lucide-react-native";
+import type { LucideIcon } from "lucide-react-native";
+import Mountain from "lucide-react-native/dist/cjs/icons/mountain";
+import Heart from "lucide-react-native/dist/cjs/icons/heart";
+import Target from "lucide-react-native/dist/cjs/icons/target";
+import Sparkles from "lucide-react-native/dist/cjs/icons/sparkles";
+import Snowflake from "lucide-react-native/dist/cjs/icons/snowflake";
+import Plane from "lucide-react-native/dist/cjs/icons/plane";
+import Settings from "lucide-react-native/dist/cjs/icons/settings";
+import Search from "lucide-react-native/dist/cjs/icons/search";
+import ChevronRight from "lucide-react-native/dist/cjs/icons/chevron-right";
+import ChevronLeft from "lucide-react-native/dist/cjs/icons/chevron-left";
+import MapPin from "lucide-react-native/dist/cjs/icons/map-pin";
+import Star from "lucide-react-native/dist/cjs/icons/star";
+import Users from "lucide-react-native/dist/cjs/icons/users";
+import Calendar from "lucide-react-native/dist/cjs/icons/calendar";
+import TrendingUp from "lucide-react-native/dist/cjs/icons/trending-up";
+import Compass from "lucide-react-native/dist/cjs/icons/compass";
+import Home from "lucide-react-native/dist/cjs/icons/house";
+import User from "lucide-react-native/dist/cjs/icons/user";
+import LogIn from "lucide-react-native/dist/cjs/icons/log-in";
+import Check from "lucide-react-native/dist/cjs/icons/check";
+import X from "lucide-react-native/dist/cjs/icons/x";
+import Info from "lucide-react-native/dist/cjs/icons/info";
+import AlertTriangle from "lucide-react-native/dist/cjs/icons/triangle-alert";
+import Car from "lucide-react-native/dist/cjs/icons/car";
+import Train from "lucide-react-native/dist/cjs/icons/tram-front";
+import Hotel from "lucide-react-native/dist/cjs/icons/hotel";
+import Bookmark from "lucide-react-native/dist/cjs/icons/bookmark";
+import Wallet from "lucide-react-native/dist/cjs/icons/wallet";
+import CircleDollarSign from "lucide-react-native/dist/cjs/icons/circle-dollar-sign";
+import Ticket from "lucide-react-native/dist/cjs/icons/ticket";
+import CloudSnow from "lucide-react-native/dist/cjs/icons/cloud-snow";
+import Wine from "lucide-react-native/dist/cjs/icons/wine";
+import MapPinned from "lucide-react-native/dist/cjs/icons/map-pinned";
+import Gauge from "lucide-react-native/dist/cjs/icons/gauge";
+import UsersRound from "lucide-react-native/dist/cjs/icons/users-round";
+import Activity from "lucide-react-native/dist/cjs/icons/activity";
 import { colors } from "@/theme/colors";
 
 // ─────────────────────────────────────────────────────────────────────────────

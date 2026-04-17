@@ -15,7 +15,6 @@ import {
   FlatList,
   TextInput,
   Pressable,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
@@ -26,6 +25,7 @@ import { getAllResortsAsync } from "@services/resort";
 import { useFavoritesStore } from "@stores/favorites";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
+import { usePrefetchImages } from "@hooks/usePrefetchImages";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Icon } from "@components/ui/Icon";
@@ -238,6 +238,9 @@ export default function DiscoverScreen() {
       .then(setAllResorts)
       .finally(() => setLoading(false));
   }, []);
+
+  // Prefetch hero images for visible resorts
+  usePrefetchImages(allResorts);
 
   // Filtered + sorted results
   const results = useMemo(() => {
@@ -569,7 +572,7 @@ const styles = StyleSheet.create({
   },
   viewToggleBtnActive: {
     backgroundColor: colors.surface.primary,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 2,

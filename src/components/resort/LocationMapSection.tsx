@@ -37,19 +37,15 @@ function IframeMap({ html }: { html: string }) {
   }, [html]);
 
   if (!src) return null;
-  return (
-    <iframe
-      src={src}
-      style={{
-        width: "100%",
-        height: "100%",
-        border: "none",
-        display: "block",
-      }}
-      title="Resort map"
-    />
-  );
+  return <iframe src={src} style={iframeStyle} title="Resort map" />;
 }
+
+const iframeStyle: React.CSSProperties = {
+  width: "100%",
+  height: "100%",
+  border: "none",
+  display: "block",
+};
 
 // ─── Map pin hex values (mirrored from src/theme/colors.ts) ─────────────────
 const PIN_RESORT = "#4A90A4"; // colors.brand.primary / ice[500]
@@ -283,7 +279,7 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
   },
   overlayBadge: {
-    backgroundColor: "rgba(30,42,56,0.75)",
+    backgroundColor: colors.surface.overlay,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: radius.md,

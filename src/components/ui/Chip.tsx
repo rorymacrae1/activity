@@ -59,7 +59,7 @@ export function Chip({
   onPress,
   leftIcon,
   disabled,
-  variant = "filter",
+  variant: _variant = "filter",
 }: ChipProps) {
   const scale = useSharedValue(1);
 

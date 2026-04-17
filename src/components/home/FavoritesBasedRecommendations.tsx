@@ -5,10 +5,8 @@
 
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Text } from "@/components/ui/Text";
 import { SimilarResortsCarousel } from "@/components/resort/SimilarResortsCarousel";
 import { getSimilarResorts, getResortByIdAsync } from "@/services/resort";
-import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import type { Resort } from "@/types/resort";
 

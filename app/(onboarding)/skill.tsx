@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   },
   pisteMarker: {
     // Subtle shadow for depth
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.15,
     shadowRadius: 2,

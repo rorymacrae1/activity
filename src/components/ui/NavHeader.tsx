@@ -1,4 +1,4 @@
-import { View, StyleSheet, Pressable, Platform, Image } from "react-native";
+import { View, StyleSheet, Pressable, Image } from "react-native";
 import { useState } from "react";
 import Animated, {
   useAnimatedStyle,
@@ -12,7 +12,7 @@ import { Icon, type IconName } from "./Icon";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius, shadows } from "@theme";
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const _AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /** Features that are coming soon — shown in dropdown */
 const COMING_SOON: { id: string; label: string; icon: IconName }[] = [
@@ -22,7 +22,6 @@ const COMING_SOON: { id: string; label: string; icon: IconName }[] = [
   { id: "reviews", label: "Community Reviews", icon: "star" },
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const logoImage = require("../../../assets/Piste Wise logo with mountain icon.png");
 
 /**

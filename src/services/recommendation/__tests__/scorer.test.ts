@@ -2,11 +2,14 @@ import { calculateScores } from "../scorer";
 import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
 
-const makeResort = (overrides: Partial<Resort["attributes"] & Resort["terrain"]> = {}): Resort => ({
+const makeResort = (
+  overrides: Partial<Resort["attributes"] & Resort["terrain"]> = {},
+): Resort => ({
   id: "test-resort",
   name: "Test Resort",
   country: "France",
   region: "Alps",
+  continent: "Europe",
   location: { lat: 0, lng: 0, villageAltitude: 1500, peakAltitude: 3000 },
   terrain: {
     beginner: overrides.beginner ?? 25,
@@ -25,9 +28,9 @@ const makeResort = (overrides: Partial<Resort["attributes"] & Resort["terrain"]>
     liftModernity: 4,
     nearestAirport: "Geneva (GVA)",
     transferTimeMinutes: 120,
-      townStyle: "Traditional village",
-      barCount: 20,
-      otherActivities: ["Ice skating", "Snowshoeing"],
+    townStyle: "Traditional village",
+    barCount: 20,
+    otherActivities: ["Ice skating", "Snowshoeing"],
   },
   content: { description: "A test resort.", highlights: [] },
   assets: { heroImage: "", pisteMap: "" },
@@ -48,27 +51,79 @@ const basePrefs: NormalizedPreferences = {
 describe("calculateScores", () => {
   describe("skill score", () => {
     it("scores 100 for perfect intermediate terrain", () => {
-      const resort = makeResort({ beginner: 20, intermediate: 55, advanced: 25 });
-      const scores = calculateScores(resort, { ...basePrefs, minSkill: 0.5, maxSkill: 0.5 });
+      const resort = makeResort({
+        beginner: 20,
+        intermediate: 55,
+        advanced: 25,
+      });
+      const scores = calculateScores(resort, {
+        ...basePrefs,
+        minSkill: 0.5,
+        maxSkill: 0.5,
+      });
       expect(scores.skill).toBe(100);
     });
 
     it("scores 100 for perfect beginner terrain", () => {
-      const resort = makeResort({ beginner: 50, intermediate: 40, advanced: 10 });
-      const scores = calculateScores(resort, { ...basePrefs, minSkill: 0, maxSkill: 0 });
+      const resort = makeResort({
+        beginner: 50,
+        intermediate: 40,
+        advanced: 10,
+      });
+      const scores = calculateScores(resort, {
+        ...basePrefs,
+        minSkill: 0,
+        maxSkill: 0,
+      });
       expect(scores.skill).toBe(100);
     });
 
     it("scores 100 for perfect advanced terrain", () => {
-      const resort = makeResort({ beginner: 10, intermediate: 30, advanced: 60 });
-      const scores = calculateScores(resort, { ...basePrefs, minSkill: 1, maxSkill: 1 });
+      const resort = makeResort({
+        beginner: 5,
+        intermediate: 25,
+        advanced: 70,
+      });
+      const scores = calculateScores(resort, {
+        ...basePrefs,
+        minSkill: 1,
+        maxSkill: 1,
+      });
       expect(scores.skill).toBe(100);
     });
 
     it("penalises beginner-heavy resort for advanced skier", () => {
-      const resort = makeResort({ beginner: 70, intermediate: 20, advanced: 10 });
-      const scores = calculateScores(resort, { ...basePrefs, minSkill: 1, maxSkill: 1 });
+      const resort = makeResort({
+        beginner: 70,
+        intermediate: 20,
+        advanced: 10,
+      });
+      const scores = calculateScores(resort, {
+        ...basePrefs,
+        minSkill: 1,
+        maxSkill: 1,
+      });
       expect(scores.skill).toBeLessThan(70);
+    });
+
+    it("differentiates red runner from expert skier", () => {
+      // Red runner (0.67) prefers {10, 35, 55}; expert (1.0) prefers {5, 25, 70}
+      const resort = makeResort({
+        beginner: 10,
+        intermediate: 35,
+        advanced: 55,
+      });
+      const redScores = calculateScores(resort, {
+        ...basePrefs,
+        minSkill: 0.67,
+        maxSkill: 0.67,
+      });
+      const expertScores = calculateScores(resort, {
+        ...basePrefs,
+        minSkill: 1,
+        maxSkill: 1,
+      });
+      expect(redScores.skill).toBeGreaterThan(expertScores.skill);
     });
 
     it("returns a number between 0 and 100", () => {
@@ -83,13 +138,19 @@ describe("calculateScores", () => {
     it("scores highly when resort cost matches budget range", () => {
       // mid budget (0.33) → range €100-180, ideal €140
       const resort = makeResort({ averageDailyCost: 140 });
-      const scores = calculateScores(resort, { ...basePrefs, budgetLevel: 0.33 });
+      const scores = calculateScores(resort, {
+        ...basePrefs,
+        budgetLevel: 0.33,
+      });
       expect(scores.budget).toBeGreaterThanOrEqual(90);
     });
 
     it("gives partial credit when resort is under budget", () => {
       const resort = makeResort({ averageDailyCost: 80 }); // Under mid range
-      const scores = calculateScores(resort, { ...basePrefs, budgetLevel: 0.33 });
+      const scores = calculateScores(resort, {
+        ...basePrefs,
+        budgetLevel: 0.33,
+      });
       expect(scores.budget).toBe(75);
     });
 
@@ -130,13 +191,19 @@ describe("calculateScores", () => {
   describe("activity score", () => {
     it("scores highly for family preference with family resort", () => {
       const resort = makeResort({ familyScore: 5, nightlifeScore: 1 });
-      const scores = calculateScores(resort, { ...basePrefs, familyNightlife: 0 });
+      const scores = calculateScores(resort, {
+        ...basePrefs,
+        familyNightlife: 0,
+      });
       expect(scores.activity).toBe(100);
     });
 
     it("scores highly for nightlife preference with nightlife resort", () => {
       const resort = makeResort({ familyScore: 1, nightlifeScore: 5 });
-      const scores = calculateScores(resort, { ...basePrefs, familyNightlife: 1 });
+      const scores = calculateScores(resort, {
+        ...basePrefs,
+        familyNightlife: 1,
+      });
       expect(scores.activity).toBe(100);
     });
   });

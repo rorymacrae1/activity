@@ -1,10 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  ImageBackground,
-  ScrollView,
-  Platform,
-} from "react-native";
+import { View, StyleSheet, ImageBackground, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLayout } from "@hooks/useLayout";
 import { colors, spacing, radius, shadows } from "@theme";
@@ -51,7 +45,7 @@ export function QuizLayout({
   children,
   footer,
   scrollable = false,
-  stepLabel,
+  stepLabel: _stepLabel,
 }: QuizLayoutProps) {
   const { isTablet } = useLayout();
 
@@ -128,11 +122,11 @@ const styles = StyleSheet.create({
   },
   scrim: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(10,22,40,0.55)", // navy tint matching brand
+    backgroundColor: colors.onDark.scrim, // navy tint matching brand
   },
   tabletSafe: {
     flex: 1,
-    backgroundColor: "transparent",
+    backgroundColor: colors.transparent,
   },
   tabletCenter: {
     flex: 1,
@@ -149,7 +143,7 @@ const styles = StyleSheet.create({
     ...shadows.xl,
     // Subtle top border for glass-like depth
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.12)",
+    borderColor: colors.onDark.border.subtle,
     overflow: "hidden",
   },
   cardContent: {

@@ -79,7 +79,4 @@ const styles = StyleSheet.create({
     flex: 1,
     width: undefined,
   },
-  icon: {
-    marginBottom: spacing.xs,
-  },
 });

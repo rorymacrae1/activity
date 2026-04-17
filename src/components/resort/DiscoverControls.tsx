@@ -34,8 +34,8 @@ interface DiscoverControlsProps {
 const SKILL_OPTS = [
   { label: "Beginner", min: 0, max: 0 },
   { label: "Inter.", min: 0.33, max: 0.33 },
-  { label: "Red", min: 0.67, max: 0.67 },
-  { label: "Advanced", min: 1, max: 1 },
+  { label: "Adv. Inter.", min: 0.67, max: 0.67 },
+  { label: "Expert", min: 1, max: 1 },
 ] as const;
 
 const BUDGET_OPTS = [
@@ -223,7 +223,7 @@ const seg = StyleSheet.create({
   },
   btnActive: {
     backgroundColor: colors.surface.primary,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 2,

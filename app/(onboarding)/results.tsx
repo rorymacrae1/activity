@@ -17,6 +17,7 @@ import { getRecommendations } from "@services/recommendation";
 import { useDismissedStore } from "@stores/dismissed";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
+import { usePrefetchImages } from "@hooks/usePrefetchImages";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -25,7 +26,8 @@ import { EmptyState } from "@components/ui/EmptyState";
 import { ScreenContainer } from "@components/ui/ScreenContainer";
 import { NavBar } from "@components/ui/NavBar";
 import { Slider } from "@components/ui/Slider";
-import { Search, SlidersHorizontal } from "lucide-react-native";
+import Search from "lucide-react-native/dist/cjs/icons/search";
+import SlidersHorizontal from "lucide-react-native/dist/cjs/icons/sliders-horizontal";
 import {
   TopPickHero,
   ReasonCarousel,
@@ -110,8 +112,10 @@ export default function ResultsScreen() {
 
   useEffect(() => {
     runRecommendations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Prefetch hero images for faster detail-page loads
+  usePrefetchImages(results.map((r) => r.resort));
 
   // Advance loading phase messages over time
   useEffect(() => {
@@ -517,7 +521,7 @@ const styles = StyleSheet.create({
   // ── Tweak modal ────────────────────────────────────────────────────────────
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: colors.onDark.backdrop,
   },
   modalSheet: {
     backgroundColor: colors.background.primary,

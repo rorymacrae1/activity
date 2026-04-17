@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { User, Session, AuthError } from "@supabase/supabase-js";
+import type { User, Session} from "@supabase/supabase-js";
+import { AuthError } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Profile } from "@/types/supabase";
 

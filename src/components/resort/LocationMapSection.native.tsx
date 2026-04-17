@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
   },
   overlayBadge: {
-    backgroundColor: "rgba(30,42,56,0.75)",
+    backgroundColor: colors.surface.overlay,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: radius.md,

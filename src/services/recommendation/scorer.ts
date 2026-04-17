@@ -16,9 +16,12 @@ function getIdealDistribution(skill: number): {
   } else if (skill < 0.67) {
     // Intermediate wants: balanced with emphasis on blues/reds
     return { beginner: 20, intermediate: 55, advanced: 25 };
+  } else if (skill < 0.84) {
+    // Red runner wants: strong reds with some blacks
+    return { beginner: 10, intermediate: 35, advanced: 55 };
   } else {
-    // Advanced wants: more challenging terrain
-    return { beginner: 10, intermediate: 30, advanced: 60 };
+    // Advanced wants: maximum challenging terrain
+    return { beginner: 5, intermediate: 25, advanced: 70 };
   }
 }
 
@@ -41,7 +44,10 @@ function scoreForSkill(resort: Resort, skill: number): number {
  * 40% weight on serving the strongest member (ceiling/challenge).
  * For solo/couple (minSkill === maxSkill), this is identical to the previous behaviour.
  */
-function calculateSkillScore(resort: Resort, prefs: NormalizedPreferences): number {
+function calculateSkillScore(
+  resort: Resort,
+  prefs: NormalizedPreferences,
+): number {
   const accessScore = scoreForSkill(resort, prefs.minSkill);
   const ceilingScore = scoreForSkill(resort, prefs.maxSkill);
   // Family trips: boost accessibility weight slightly

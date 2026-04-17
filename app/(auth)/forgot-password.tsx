@@ -7,7 +7,7 @@ import {
   Platform,
 } from "react-native";
 import Head from "expo-router/head";
-import { router, Link } from "expo-router";
+import { Link } from "expo-router";
 import { colors, spacing, radius, typography as typo } from "@theme";
 import { fontFamily } from "@theme/fonts";
 import { Text } from "@components/ui/Text";
@@ -57,9 +57,7 @@ export default function ForgotPasswordScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <View
-          style={[styles.scrollContent, { paddingHorizontal: hPadding }]}
-        >
+        <View style={[styles.scrollContent, { paddingHorizontal: hPadding }]}>
           {/* Header */}
           <View style={styles.header}>
             <Text variant="h1">
@@ -129,7 +127,11 @@ export default function ForgotPasswordScreen() {
               Remember your password?{" "}
             </Text>
             <Link href="/(auth)/sign-in" asChild>
-              <Text variant="body" color={colors.primary} style={styles.linkText}>
+              <Text
+                variant="body"
+                color={colors.primary}
+                style={styles.linkText}
+              >
                 Sign In
               </Text>
             </Link>

@@ -17,7 +17,7 @@ import Animated, {
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
-import { colors, spacing, radius, shadows } from "@theme";
+import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
@@ -45,6 +45,7 @@ function PersonIcon({
   const bodyHeight = size * 0.5;
 
   return (
+    // eslint-disable-next-line react-native/no-inline-styles
     <View style={[{ width: size, height: size, alignItems: "center" }, style]}>
       {/* Head */}
       <View

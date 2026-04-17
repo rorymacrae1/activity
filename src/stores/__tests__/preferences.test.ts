@@ -1,10 +1,11 @@
 import { act } from "react";
 import { usePreferencesStore } from "@stores/preferences";
+import type { SkillLevel } from "@/types/preferences";
 
 const initialState = {
   hasCompletedOnboarding: false,
   tripType: null,
-  groupAbilities: [] as import("@/types/preferences").SkillLevel[],
+  groupAbilities: [] as SkillLevel[],
   budgetLevel: null,
   regions: [] as string[],
   crowdPreference: 3,
@@ -27,8 +28,12 @@ describe("usePreferencesStore", () => {
   });
 
   it("setGroupAbilities updates groupAbilities", () => {
-    act(() => usePreferencesStore.getState().setGroupAbilities(["intermediate"]));
-    expect(usePreferencesStore.getState().groupAbilities).toEqual(["intermediate"]);
+    act(() =>
+      usePreferencesStore.getState().setGroupAbilities(["intermediate"]),
+    );
+    expect(usePreferencesStore.getState().groupAbilities).toEqual([
+      "intermediate",
+    ]);
   });
 
   it("setBudgetLevel updates budgetLevel", () => {
@@ -37,8 +42,13 @@ describe("usePreferencesStore", () => {
   });
 
   it("setRegions updates regions array", () => {
-    act(() => usePreferencesStore.getState().setRegions(["france-alps", "austria"]));
-    expect(usePreferencesStore.getState().regions).toEqual(["france-alps", "austria"]);
+    act(() =>
+      usePreferencesStore.getState().setRegions(["france-alps", "austria"]),
+    );
+    expect(usePreferencesStore.getState().regions).toEqual([
+      "france-alps",
+      "austria",
+    ]);
   });
 
   it("setCrowdPreference updates crowdPreference", () => {

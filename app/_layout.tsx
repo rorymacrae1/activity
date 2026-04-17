@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
     // Subtle shadow on ultra-wide screens
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.05,
     shadowRadius: 20,

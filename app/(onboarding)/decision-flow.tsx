@@ -56,6 +56,7 @@ function FlowNode({
         style={[
           styles.node,
           { width: size, height: size },
+          // eslint-disable-next-line react-native/no-inline-styles
           highlighted && { borderColor: scoreColor, borderWidth: 3 },
         ]}
       >
@@ -504,7 +505,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: colors.onDark.surface.light,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.sm,
@@ -519,7 +520,7 @@ const styles = StyleSheet.create({
   },
   resultScore: {
     ...typography.body,
-    color: "rgba(255,255,255,0.9)",
+    color: colors.onDark.text.secondary,
   },
   resultScoreValue: {
     fontWeight: "700",

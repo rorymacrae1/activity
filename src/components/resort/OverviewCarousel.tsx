@@ -4,12 +4,13 @@
  */
 
 import React, { useRef, useState } from "react";
+import type {
+  NativeSyntheticEvent,
+  NativeScrollEvent} from "react-native";
 import {
   View,
   ScrollView,
-  StyleSheet,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
+  StyleSheet
 } from "react-native";
 import { Text } from "@/components/ui";
 import { Icon, type IconName } from "@/components/ui/Icon";

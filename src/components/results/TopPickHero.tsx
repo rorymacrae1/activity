@@ -1,13 +1,12 @@
 import { View, StyleSheet, Dimensions, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "@components/ui/Text";
-import { Badge } from "@components/ui/Badge";
 import { Icon } from "@components/ui/Icon";
 import { ResortImage } from "@components/ui/ResortImage";
 import { colors, spacing, radius } from "@theme";
 import type { RecommendationResult } from "@/types/recommendation";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: _SCREEN_WIDTH } = Dimensions.get("window");
 
 interface TopPickHeroProps {
   result: RecommendationResult;
@@ -157,7 +156,7 @@ const styles = StyleSheet.create({
     left: spacing.md,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.95)",
+    backgroundColor: colors.onDark.surface.glass,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius: radius.full,
@@ -182,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -196,13 +195,13 @@ const styles = StyleSheet.create({
   matchScorePercent: {
     fontSize: 14,
     fontWeight: "600",
-    color: "rgba(255,255,255,0.8)",
+    color: colors.onDark.text.tertiary,
     marginTop: 2,
   },
   matchScoreLabel: {
     fontSize: 11,
     fontWeight: "600",
-    color: "rgba(255,255,255,0.9)",
+    color: colors.onDark.text.secondary,
     marginTop: spacing.xs,
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -222,7 +221,7 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 15,
-    color: "rgba(255,255,255,0.85)",
+    color: colors.onDark.text.secondary,
     marginBottom: spacing.md,
   },
   statsRow: {
@@ -239,7 +238,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 11,
-    color: "rgba(255,255,255,0.7)",
+    color: colors.onDark.text.tertiary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginTop: 2,
@@ -247,7 +246,7 @@ const styles = StyleSheet.create({
   statDivider: {
     width: 1,
     height: 24,
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: colors.onDark.surface.medium,
     marginHorizontal: spacing.md,
   },
 });

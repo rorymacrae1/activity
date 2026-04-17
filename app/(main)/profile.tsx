@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
-  langTextActive: { color: "#fff" },
+  langTextActive: { color: colors.ink.onBrand },
   accountInfo: {
     flexDirection: "row",
     alignItems: "center",

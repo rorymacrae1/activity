@@ -3,7 +3,7 @@
  * All three render real data from the Resort type.
  */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Text } from "@/components/ui";
 import { Icon } from "@/components/ui/Icon";
@@ -11,6 +11,8 @@ import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { typography } from "@/theme/typography";
+import { useAuthStore } from "@/stores/auth";
+import { isUKIrelandAirport, getAirportCountry } from "@/lib/airportCountry";
 import type { Resort } from "@/types/resort";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -201,6 +203,7 @@ interface TransportSectionProps {
 
 /**
  * Shows real transport options using airport, train, and drive data.
+ * Train and drive rows adapt based on the user's home airport country.
  */
 export function TransportSection({ resort }: TransportSectionProps) {
   const {
@@ -212,6 +215,28 @@ export function TransportSection({ resort }: TransportSectionProps) {
     driveHoursFromLondon,
   } = resort.attributes;
 
+  const homeAirport = useAuthStore((s) => s.profile?.home_airport ?? null);
+  const [originCountry, setOriginCountry] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!homeAirport) {
+      setOriginCountry(null);
+      return;
+    }
+    // Fast synchronous check for UK/Ireland — no bundle load needed
+    if (isUKIrelandAirport(homeAirport)) {
+      setOriginCountry("United Kingdom");
+      return;
+    }
+    getAirportCountry(homeAirport).then(setOriginCountry);
+  }, [homeAirport]);
+
+  // When home airport is unknown or outside UK/Ireland, hide London-centric rows
+  const isUKUser =
+    originCountry === null || // default for logged-out / no preference set
+    originCountry === "United Kingdom" ||
+    originCountry === "Ireland";
+
   const transferHours = Math.floor(transferTimeMinutes / 60);
   const transferMins = transferTimeMinutes % 60;
   const transferDisplay =
@@ -219,20 +244,34 @@ export function TransportSection({ resort }: TransportSectionProps) {
       ? transferMins > 0
         ? `${transferHours}h ${transferMins}m transfer`
         : `${transferHours}h transfer`
-      : `${transferMins}m transfer`;
+      : transferMins > 0
+        ? `${transferMins}m transfer`
+        : "Transfer time unknown";
+
+  // Format decimal hours as e.g. "8h 30m" or "11h"
+  function formatHours(h: number): string {
+    const whole = Math.floor(h);
+    const mins = Math.round((h - whole) * 60);
+    return mins > 0 ? `${whole}h ${mins}m` : `${whole}h`;
+  }
 
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Getting There</Text>
       <View style={styles.infoStack}>
-        <InfoRow
-          icon="plane"
-          label="Fly"
-          value={nearestAirport}
-          detail={transferDisplay}
-          iconColor={colors.brand.primary}
-        />
-        {trainAccessible && (
+        {/* Fly — always shown, nearest airport is origin-agnostic */}
+        {nearestAirport ? (
+          <InfoRow
+            icon="plane"
+            label="Fly"
+            value={nearestAirport}
+            detail={transferDisplay}
+            iconColor={colors.brand.primary}
+          />
+        ) : null}
+
+        {/* Train — only meaningful for UK/Ireland users */}
+        {trainAccessible && isUKUser && (
           <InfoRow
             icon="train"
             label="Train"
@@ -240,7 +279,7 @@ export function TransportSection({ resort }: TransportSectionProps) {
               eurostarDirect
                 ? "Eurostar direct"
                 : trainJourneyHours != null
-                  ? `~${trainJourneyHours}h from London`
+                  ? `~${formatHours(trainJourneyHours)} from London`
                   : "Rail connection available"
             }
             detail={
@@ -251,21 +290,34 @@ export function TransportSection({ resort }: TransportSectionProps) {
             iconColor={colors.sentiment.success}
           />
         )}
-        <InfoRow
-          icon="car"
-          label="Drive"
-          value={
-            driveHoursFromLondon != null
-              ? `~${driveHoursFromLondon}h from London`
-              : `${resort.region}, ${resort.country}`
-          }
-          detail={
-            driveHoursFromLondon != null
-              ? "Via Channel Tunnel or ferry"
-              : "Check Google Maps for directions"
-          }
-          iconColor={colors.text.secondary}
-        />
+        {trainAccessible && !isUKUser && (
+          <InfoRow
+            icon="train"
+            label="Train"
+            value="Rail accessible"
+            detail="Check local rail routes"
+            iconColor={colors.sentiment.success}
+          />
+        )}
+
+        {/* Drive — UK users get London-origin time; others get a generic prompt */}
+        {isUKUser && driveHoursFromLondon != null ? (
+          <InfoRow
+            icon="car"
+            label="Drive"
+            value={`~${formatHours(driveHoursFromLondon)} from London`}
+            detail="Via Channel Tunnel or ferry"
+            iconColor={colors.ink.muted}
+          />
+        ) : (
+          <InfoRow
+            icon="car"
+            label="Drive"
+            value={`${resort.region}, ${resort.country}`}
+            detail="Check Google Maps for directions"
+            iconColor={colors.ink.muted}
+          />
+        )}
       </View>
     </View>
   );

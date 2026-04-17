@@ -1,4 +1,5 @@
-import { View, StyleSheet, LayoutChangeEvent } from "react-native";
+import type { LayoutChangeEvent } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useState } from "react";
 import Animated, {
   useAnimatedStyle,

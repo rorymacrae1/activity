@@ -1,6 +1,6 @@
 import { View, Image, StyleSheet } from "react-native";
 import { Text } from "./Text";
-import { colors, spacing } from "@theme";
+import { spacing } from "@theme";
 
 // Yeti loading GIF
 const LOADING_YETI = require("../../../assets/LoadingYeti.gif");

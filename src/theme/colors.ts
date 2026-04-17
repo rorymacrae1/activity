@@ -277,15 +277,23 @@ export const colors = {
     surface: {
       subtle: "rgba(255, 255, 255, 0.1)",
       light: "rgba(255, 255, 255, 0.15)",
+      medium: "rgba(255, 255, 255, 0.3)",
+      glass: "rgba(255, 255, 255, 0.95)",
     },
     border: {
       subtle: "rgba(255, 255, 255, 0.1)",
       light: "rgba(255, 255, 255, 0.15)",
     },
+    /** Semi-transparent black backdrop for modals/overlays on dark bg */
+    backdrop: "rgba(0, 0, 0, 0.4)",
+    /** Navy-tinted scrim for quiz/onboarding photo overlay */
+    scrim: "rgba(10, 22, 40, 0.55)",
   },
 
   // === Utility ===
   transparent: "transparent",
+  /** Platform shadow base colour — use with shadowOpacity */
+  shadow: primitive.black,
 } as const;
 
 export type Colors = typeof colors;

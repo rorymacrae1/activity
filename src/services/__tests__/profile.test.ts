@@ -311,9 +311,7 @@ describe("getProfileCompletionStatus", () => {
     setupSelectSingleChain({ home_airport: "LHR" });
     // getVisitedResorts — setup after first call
     const fromMock = getSupabaseMock().from;
-    let callCount = 0;
     fromMock.mockImplementation((table: string) => {
-      callCount++;
       if (table === "profiles") {
         const selectSingle = {
           eq: jest.fn().mockReturnValue({

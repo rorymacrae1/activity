@@ -8,6 +8,7 @@ const makeResort = (attrs: Partial<Resort["attributes"]> = {}): Resort => ({
   name: "Test Resort",
   country: "France",
   region: "Alps",
+  continent: "Europe",
   location: { lat: 0, lng: 0, villageAltitude: 1500, peakAltitude: 3000 },
   terrain: { beginner: 25, intermediate: 50, advanced: 25 },
   stats: { totalRuns: 100, totalKm: 200, lifts: 30, snowParks: 2 },
