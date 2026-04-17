@@ -225,7 +225,7 @@ export default function TripTypeScreen() {
 
           <View style={styles.header}>
             <Text variant="h2">{content.onboarding.tripType.title}</Text>
-            <Text variant="body" color={colors.text.secondary}>
+            <Text variant="body" color={colors.ink.normal}>
               {content.onboarding.tripType.subtitle}
             </Text>
           </View>

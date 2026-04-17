@@ -29,7 +29,7 @@ export function ScreenContainer({
   children,
   edges,
   style,
-  backgroundColor = colors.background.primary,
+  backgroundColor = colors.canvas.default,
   noMaxWidth = false,
 }: ScreenContainerProps) {
   const { contentMaxWidth, isTablet } = useLayout();

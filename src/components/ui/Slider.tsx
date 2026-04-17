@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
   fill: {
     height: "100%",
-    backgroundColor: colors.primary,
+    backgroundColor: colors.brand.primary,
     borderRadius: 3,
   },
   thumb: {
@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
     width: THUMB_SIZE,
     height: THUMB_SIZE,
     borderRadius: THUMB_SIZE / 2,
-    backgroundColor: colors.primary,
-    shadowColor: colors.text.primary,
+    backgroundColor: colors.brand.primary,
+    shadowColor: colors.ink.rich,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,

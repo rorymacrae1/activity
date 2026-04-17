@@ -69,7 +69,7 @@ export default function VibesScreen() {
 
           <View style={styles.header}>
             <Text variant="h2">{content.onboarding.vibes.title}</Text>
-            <Text variant="body" color={colors.text.secondary}>
+            <Text variant="body" color={colors.ink.normal}>
               {content.onboarding.vibes.subtitle}
             </Text>
           </View>
@@ -136,7 +136,7 @@ function SliderRow({
     <View style={rowStyles.wrap}>
       <View style={rowStyles.header}>
         <Text variant="h4">{label}</Text>
-        <Text variant="bodySmall" color={colors.text.secondary}>
+        <Text variant="bodySmall" color={colors.ink.normal}>
           {valueLabel}
         </Text>
       </View>
@@ -150,10 +150,10 @@ function SliderRow({
         accessibilityHint={accessHint}
       />
       <View style={rowStyles.ends}>
-        <Text variant="caption" color={colors.text.tertiary}>
+        <Text variant="caption" color={colors.ink.muted}>
           {left}
         </Text>
-        <Text variant="caption" color={colors.text.tertiary}>
+        <Text variant="caption" color={colors.ink.muted}>
           {right}
         </Text>
       </View>

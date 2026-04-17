@@ -259,18 +259,18 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     ...typography.labelSmall,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: spacing.xxs,
   },
   cardValue: {
     ...typography.h3,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   cardSubtitle: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     marginTop: spacing.xxs,
   },
   pagination: {

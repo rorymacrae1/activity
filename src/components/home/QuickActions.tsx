@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     marginBottom: spacing.md,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     fontSize: 18,
     fontWeight: "700",
   },
@@ -138,12 +138,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginBottom: spacing.xxs,
   },
   sublabel: {
     fontSize: 13,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     lineHeight: 18,
   },
 });

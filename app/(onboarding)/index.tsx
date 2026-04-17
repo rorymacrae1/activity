@@ -44,7 +44,7 @@ export default function WelcomeScreen() {
             </Text>
             <Text
               variant="body"
-              color={colors.text.secondary}
+              color={colors.ink.normal}
               align="center"
               style={styles.tagline}
             >
@@ -76,7 +76,7 @@ export default function WelcomeScreen() {
               fullWidth
               size="prominent"
             />
-            <Text variant="caption" color={colors.text.tertiary} align="center">
+            <Text variant="caption" color={colors.ink.muted} align="center">
               {content.onboarding.welcome.ctaSubtext}
             </Text>
           </View>

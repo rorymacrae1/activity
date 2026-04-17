@@ -136,11 +136,11 @@ const styles = StyleSheet.create({
   },
   heading: {
     ...typography.h3,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   subheading: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     marginTop: spacing.xxs,
   },
   scrollContent: {
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   paginationText: {
     ...typography.labelSmall,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
   },
 });
 

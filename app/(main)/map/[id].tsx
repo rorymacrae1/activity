@@ -113,7 +113,7 @@ export default function MapScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
-          <ActivityIndicator size="large" color={colors.primary[500]} />
+          <ActivityIndicator size="large" color={colors.brand.primary} />
           <Text style={styles.errorText}>Loading map...</Text>
         </View>
       </SafeAreaView>
@@ -166,7 +166,7 @@ export default function MapScreen() {
           </GestureDetector>
         ) : (
           <View style={styles.noMapContainer}>
-            <MapPin size={48} color={colors.text.tertiary} strokeWidth={1.5} />
+            <MapPin size={48} color={colors.ink.muted} strokeWidth={1.5} />
             <Text style={styles.noMapText}>{content.map.noMap}</Text>
           </View>
         )}
@@ -215,7 +215,7 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
   },
   errorContainer: {
     flex: 1,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...typography.body,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
   header: {
     flexDirection: "row",
@@ -243,18 +243,18 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   title: {
     ...typography.h3,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   placeholder: {
     width: 40,
   },
   mapContainer: {
     flex: 1,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.canvas.subtle,
     overflow: "hidden",
   },
   mapWrapper: {
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   },
   noMapText: {
     ...typography.body,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
   legend: {
     padding: spacing.md,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   },
   legendTitle: {
     ...typography.h3,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginBottom: spacing.sm,
   },
   legendItems: {
@@ -302,11 +302,11 @@ const styles = StyleSheet.create({
   },
   legendText: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
   instructions: {
     ...typography.caption,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
     textAlign: "center",
     paddingBottom: spacing.md,
   },

@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   heading: {
-    color: colors.text.primary,
+    color: colors.ink.rich,
     fontSize: 18,
     fontWeight: "700",
   },
@@ -187,12 +187,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginBottom: spacing.xs,
   },
   emptyText: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     marginBottom: spacing.md,
     textAlign: "center",
   },
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   emptyButtonText: {
-    color: colors.text.inverse,
+    color: colors.ink.inverse,
     fontSize: 14,
     fontWeight: "600",
   },
@@ -235,16 +235,16 @@ const styles = StyleSheet.create({
   resortName: {
     fontSize: 15,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginBottom: spacing.xxs,
   },
   resortLocation: {
     fontSize: 13,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
   chevron: {
     fontSize: 22,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
     fontWeight: "300",
   },
   moreItem: {
@@ -262,6 +262,6 @@ const styles = StyleSheet.create({
   },
   moreLabel: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
 });

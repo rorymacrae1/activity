@@ -158,7 +158,7 @@ export function AccommodationSection({ resort }: AccommodationSectionProps) {
               ? "Slope-side options confirmed"
               : "Short transfer to slopes"
           }
-          iconColor={hasSkiInOut ? colors.brand.primary : colors.text.tertiary}
+          iconColor={hasSkiInOut ? colors.brand.primary : colors.ink.muted}
         />
         <InfoRow
           icon="home"
@@ -169,7 +169,7 @@ export function AccommodationSection({ resort }: AccommodationSectionProps) {
               ? "Full-board chalet options"
               : "Apartments & hotels available"
           }
-          iconColor={hasCatered ? colors.brand.primary : colors.text.secondary}
+          iconColor={hasCatered ? colors.brand.primary : colors.ink.normal}
         />
         <InfoRow
           icon="users-round"
@@ -181,7 +181,7 @@ export function AccommodationSection({ resort }: AccommodationSectionProps) {
               : "Standard resort facilities"
           }
           iconColor={
-            hasKidsClub ? colors.sentiment.success : colors.text.tertiary
+            hasKidsClub ? colors.sentiment.success : colors.ink.muted
           }
         />
       </View>
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...typography.h3,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginBottom: spacing.md,
   },
   // ── Shared info rows ──
@@ -363,19 +363,19 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     ...typography.labelSmall,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 2,
   },
   infoValue: {
     ...typography.bodyMedium,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     fontWeight: "600",
   },
   infoDetail: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     marginTop: 2,
   },
   // ── Activities ──
@@ -402,16 +402,16 @@ const styles = StyleSheet.create({
   },
   apresValue: {
     ...typography.bodyLarge,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     fontWeight: "700",
   },
   apresLabel: {
     ...typography.caption,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
   },
   apresSceneLabel: {
     ...typography.bodyMedium,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     fontWeight: "500",
   },
   activitiesList: {
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
   },
   activityText: {
     ...typography.bodySmall,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   noActivities: {
     backgroundColor: colors.surface.secondary,
@@ -441,12 +441,12 @@ const styles = StyleSheet.create({
   },
   noActivitiesText: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
   // ── Accommodation ──
   footerNote: {
     ...typography.caption,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
     marginTop: spacing.md,
     fontStyle: "italic",
   },

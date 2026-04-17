@@ -53,7 +53,7 @@ export function ProfileCompletionCard({
             <Text variant="h3" style={styles.title}>
               Let's Personalise Your Experience
             </Text>
-            <Text variant="body" color={colors.text.secondary}>
+            <Text variant="body" color={colors.ink.normal}>
               Help us find your perfect resorts
             </Text>
           </View>
@@ -69,7 +69,7 @@ export function ProfileCompletionCard({
               ]}
             />
           </View>
-          <Text variant="caption" color={colors.text.tertiary}>
+          <Text variant="caption" color={colors.ink.muted}>
             {completionPercentage}% complete
           </Text>
         </View>
@@ -81,10 +81,10 @@ export function ProfileCompletionCard({
               <Icon
                 name="mountain"
                 size={16}
-                color={colors.text.secondary}
+                color={colors.ink.normal}
                 strokeWidth={1.5}
               />
-              <Text variant="caption" color={colors.text.secondary}>
+              <Text variant="caption" color={colors.ink.normal}>
                 Add resorts you've visited
               </Text>
             </View>
@@ -94,10 +94,10 @@ export function ProfileCompletionCard({
               <Icon
                 name="plane"
                 size={16}
-                color={colors.text.secondary}
+                color={colors.ink.normal}
                 strokeWidth={1.5}
               />
-              <Text variant="caption" color={colors.text.secondary}>
+              <Text variant="caption" color={colors.ink.normal}>
                 Set your home airport
               </Text>
             </View>
@@ -107,10 +107,10 @@ export function ProfileCompletionCard({
               <Icon
                 name="heart"
                 size={16}
-                color={colors.text.secondary}
+                color={colors.ink.normal}
                 strokeWidth={1.5}
               />
-              <Text variant="caption" color={colors.text.secondary}>
+              <Text variant="caption" color={colors.ink.normal}>
                 Save resorts you love
               </Text>
             </View>
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     gap: spacing.xxs,
   },
   title: {
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   progressContainer: {
     flexDirection: "row",

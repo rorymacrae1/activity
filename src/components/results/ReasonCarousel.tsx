@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
   heading: {
     ...typography.h3,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,

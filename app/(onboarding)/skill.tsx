@@ -91,7 +91,7 @@ export default function SkillScreen() {
 
           <View style={styles.header}>
             <Text variant="h2">{content.onboarding.skill.title}</Text>
-            <Text variant="body" color={colors.text.secondary}>
+            <Text variant="body" color={colors.ink.normal}>
               {content.onboarding.skill.subtitle}
             </Text>
           </View>
@@ -125,17 +125,17 @@ export default function SkillScreen() {
                   <View style={styles.optionText}>
                     <Text
                       variant="h4"
-                      color={active ? colors.primary : colors.text.primary}
+                      color={active ? colors.brand.primary : colors.ink.rich}
                     >
                       {optContent.title}
                     </Text>
-                    <Text variant="bodySmall" color={colors.text.secondary}>
+                    <Text variant="bodySmall" color={colors.ink.normal}>
                       {optContent.description}
                     </Text>
                   </View>
                   {active && (
                     <View style={styles.checkmark}>
-                      <Text variant="caption" color={colors.primary}>
+                      <Text variant="caption" color={colors.brand.primary}>
                         ✓
                       </Text>
                     </View>
@@ -164,11 +164,11 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.canvas.subtle,
     padding: spacing.md,
     borderRadius: radius.lg,
     borderWidth: 2,
-    borderColor: colors.background.secondary,
+    borderColor: colors.canvas.subtle,
     gap: spacing.md,
   },
   optionRow: {
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     minWidth: 200,
   },
   optionActive: {
-    borderColor: colors.primary,
+    borderColor: colors.brand.primary,
     backgroundColor: colors.primarySubtle,
   },
   pisteMarker: {

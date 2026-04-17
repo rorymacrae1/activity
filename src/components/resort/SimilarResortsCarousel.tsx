@@ -95,7 +95,7 @@ function SimilarResortCard({
             <Icon
               name="mountain"
               size={12}
-              color={colors.text.secondary}
+              color={colors.ink.normal}
               strokeWidth={2}
             />
             <Text style={styles.stat}>{resort.stats.totalKm}km</Text>
@@ -104,7 +104,7 @@ function SimilarResortCard({
             <Icon
               name="wallet"
               size={12}
-              color={colors.text.secondary}
+              color={colors.ink.normal}
               strokeWidth={2}
             />
             <Text style={styles.stat}>{formatPriceLevel(priceLevel)}</Text>
@@ -204,11 +204,11 @@ const styles = StyleSheet.create({
   },
   heading: {
     ...typography.h3,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   subheading: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     marginTop: spacing.xxs,
   },
   scrollContent: {
@@ -261,11 +261,11 @@ const styles = StyleSheet.create({
   name: {
     ...typography.bodyMedium,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   region: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     marginTop: 2,
   },
   statsRow: {
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   },
   stat: {
     ...typography.bodySmall,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
   },
   // Pagination
   pagination: {

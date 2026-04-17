@@ -18,7 +18,7 @@ function TabIcon({ icon, label, focused }: TabIconProps) {
       <Icon
         name={icon}
         size={22}
-        color={focused ? colors.primary : colors.text.tertiary}
+        color={focused ? colors.brand.primary : colors.ink.muted}
         strokeWidth={focused ? 2 : 1.5}
       />
     </View>
@@ -35,10 +35,10 @@ export default function MainLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.text.tertiary,
+        tabBarActiveTintColor: colors.brand.primary,
+        tabBarInactiveTintColor: colors.ink.muted,
         tabBarStyle: {
-          backgroundColor: colors.background.primary,
+          backgroundColor: colors.canvas.default,
           borderTopColor: colors.border.default,
         },
       }}

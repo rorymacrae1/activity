@@ -65,7 +65,7 @@ export default function ForgotPasswordScreen() {
             </Text>
             <Text
               variant="body"
-              color={colors.text.secondary}
+              color={colors.ink.normal}
               style={styles.subtitle}
             >
               {sent
@@ -85,7 +85,7 @@ export default function ForgotPasswordScreen() {
                   value={email}
                   onChangeText={setEmail}
                   placeholder="you@example.com"
-                  placeholderTextColor={colors.text.tertiary}
+                  placeholderTextColor={colors.ink.muted}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoComplete="email"
@@ -107,7 +107,7 @@ export default function ForgotPasswordScreen() {
               <Text style={styles.successIcon}>✉️</Text>
               <Text
                 variant="bodySmall"
-                color={colors.text.secondary}
+                color={colors.ink.normal}
                 align="center"
               >
                 Didn't receive it? Check your spam folder, or{" "}
@@ -123,7 +123,7 @@ export default function ForgotPasswordScreen() {
 
           {/* Back to sign in */}
           <View style={styles.footer}>
-            <Text variant="body" color={colors.text.secondary}>
+            <Text variant="body" color={colors.ink.normal}>
               Remember your password?{" "}
             </Text>
             <Link href="/(auth)/sign-in" asChild>
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     fontSize: typo.body.fontSize,
     fontFamily: fontFamily.regular,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   successCard: {
     padding: spacing.xl,

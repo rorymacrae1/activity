@@ -108,12 +108,12 @@ const styles = StyleSheet.create({
   },
   labelText: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
   },
   barContainer: {
     flex: 1,
     height: 12,
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.canvas.subtle,
     borderRadius: 6,
     overflow: "hidden",
   },
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   },
   percentage: {
     ...typography.bodySmall,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     fontWeight: "600",
     width: 40,
     textAlign: "right",

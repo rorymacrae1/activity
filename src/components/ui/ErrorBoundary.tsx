@@ -85,31 +85,31 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: spacing.xl,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
   },
   iconContainer: {
     marginBottom: spacing.lg,
   },
   title: {
     ...typography.h2,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginBottom: spacing.sm,
     textAlign: "center",
   },
   message: {
     ...typography.body,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     textAlign: "center",
     marginBottom: spacing.xl,
   },
   button: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.brand.primary,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.xl,
     borderRadius: 12,
   },
   buttonText: {
     ...typography.button,
-    color: colors.text.inverse,
+    color: colors.ink.inverse,
   },
 });

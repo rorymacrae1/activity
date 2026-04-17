@@ -92,7 +92,7 @@ export function ResortSearchInput({
         value={query}
         onChangeText={handleSearch}
         placeholder={placeholder}
-        placeholderTextColor={colors.text.tertiary}
+        placeholderTextColor={colors.ink.muted}
         autoCapitalize="none"
         autoCorrect={false}
         accessibilityLabel="Search resorts"
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     fontSize: 16,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     backgroundColor: colors.surface.primary,
   },
   resultsContainer: {
@@ -171,11 +171,11 @@ const styles = StyleSheet.create({
   resultName: {
     fontSize: 16,
     fontWeight: "500",
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   resultLocation: {
     fontSize: 14,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     marginTop: 2,
   },
   separator: {

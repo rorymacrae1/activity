@@ -88,7 +88,7 @@ function OptionCard({
         <View style={styles.badge}>
           <Text
             variant="caption"
-            color={colors.text.inverse}
+            color={colors.ink.inverse}
             style={styles.badgeText}
           >
             {opt.badge}
@@ -101,14 +101,14 @@ function OptionCard({
         <View style={styles.optionTitleRow}>
           <Text
             variant="bodyMedium"
-            color={active ? colors.primary : colors.text.primary}
+            color={active ? colors.brand.primary : colors.ink.rich}
             style={styles.optionTitle}
           >
             {opt.title}
           </Text>
           {active && (
             <View style={styles.checkmark}>
-              <Text variant="caption" color={colors.primary}>
+              <Text variant="caption" color={colors.brand.primary}>
                 ✓
               </Text>
             </View>
@@ -116,7 +116,7 @@ function OptionCard({
         </View>
         <Text
           variant="bodySmallMedium"
-          color={active ? colors.primary : colors.text.tertiary}
+          color={active ? colors.brand.primary : colors.ink.muted}
         >
           {opt.range}
         </Text>
@@ -125,7 +125,7 @@ function OptionCard({
       {/* Description */}
       <Text
         variant="bodySmall"
-        color={colors.text.secondary}
+        color={colors.ink.normal}
         style={styles.optionDesc}
       >
         {opt.description}
@@ -196,7 +196,7 @@ export default function BudgetScreen() {
           {/* Header */}
           <View style={styles.header}>
             <Text variant="h2">{content.onboarding.budget.title}</Text>
-            <Text variant="bodySmall" color={colors.text.secondary}>
+            <Text variant="bodySmall" color={colors.ink.normal}>
               {content.onboarding.budget.subtitle}
             </Text>
           </View>
@@ -221,7 +221,7 @@ export default function BudgetScreen() {
             {/* Reassurance hint - inside scroll on mobile */}
             <Text
               variant="caption"
-              color={colors.text.tertiary}
+              color={colors.ink.muted}
               style={styles.hint}
             >
               {content.onboarding.budget.hint}
@@ -254,11 +254,11 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   option: {
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.canvas.subtle,
     padding: spacing.md,
     borderRadius: radius.md,
     borderWidth: 2,
-    borderColor: colors.background.secondary,
+    borderColor: colors.canvas.subtle,
     gap: spacing.xxs,
     position: "relative",
     overflow: "hidden",
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
   },
   optionActive: {
-    borderColor: colors.primary,
+    borderColor: colors.brand.primary,
     backgroundColor: colors.primarySubtle,
   },
   optionHeader: {
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     right: 0,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.brand.primary,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xxs,
     borderBottomLeftRadius: radius.sm,

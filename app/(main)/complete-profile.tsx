@@ -177,7 +177,7 @@ export default function CompleteProfileScreen() {
             </View>
             <View>
               <Text variant="h3">Resort History</Text>
-              <Text variant="body" color={colors.text.secondary}>
+              <Text variant="body" color={colors.ink.normal}>
                 Enter resorts you have visited before
               </Text>
             </View>
@@ -228,7 +228,7 @@ export default function CompleteProfileScreen() {
                     <Icon
                       name="x"
                       size={14}
-                      color={colors.text.secondary}
+                      color={colors.ink.normal}
                       strokeWidth={2}
                     />
                   </Pressable>
@@ -251,7 +251,7 @@ export default function CompleteProfileScreen() {
             </View>
             <View>
               <Text variant="h3">Home Airport</Text>
-              <Text variant="body" color={colors.text.secondary}>
+              <Text variant="body" color={colors.ink.normal}>
                 Where do you usually fly from?
               </Text>
             </View>
@@ -279,7 +279,7 @@ export default function CompleteProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
   },
   header: {
     flexDirection: "row",
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 18,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   headerTitle: {
     flex: 1,
@@ -371,12 +371,12 @@ const styles = StyleSheet.create({
   visitedName: {
     fontSize: 15,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
     lineHeight: 20,
   },
   visitedLocation: {
     fontSize: 12,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     marginTop: 1,
   },
   removeButton: {

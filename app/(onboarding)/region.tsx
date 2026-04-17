@@ -275,7 +275,7 @@ export default function RegionScreen() {
             {/* Header */}
             <View style={styles.header}>
               <Text variant="h2">{content.onboarding.region.title}</Text>
-              <Text variant="body" color={colors.text.secondary}>
+              <Text variant="body" color={colors.ink.normal}>
                 {content.onboarding.region.subtitle}
               </Text>
             </View>

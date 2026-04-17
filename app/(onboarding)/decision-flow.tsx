@@ -331,7 +331,7 @@ export default function DecisionFlowScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
   },
   header: {
     flexDirection: "row",
@@ -350,11 +350,11 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   headerTitle: {
     ...typography.h3,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   headerSpacer: {
     width: 40,
@@ -371,13 +371,13 @@ const styles = StyleSheet.create({
   },
   introTitle: {
     ...typography.h2,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     textAlign: "center",
     marginBottom: spacing.sm,
   },
   introText: {
     ...typography.body,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     textAlign: "center",
     maxWidth: 300,
   },
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   },
   dividerLabel: {
     ...typography.label,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
     paddingHorizontal: spacing.sm,
     textTransform: "uppercase",
     letterSpacing: 1,
@@ -449,13 +449,13 @@ const styles = StyleSheet.create({
   },
   nodeLabel: {
     ...typography.labelSmall,
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginTop: spacing.xs,
     textAlign: "center",
   },
   nodeValue: {
     ...typography.bodySmall,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
     textAlign: "center",
   },
   connectorVertical: {
@@ -486,12 +486,12 @@ const styles = StyleSheet.create({
   engineTitle: {
     ...typography.bodyMedium,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
     marginBottom: spacing.xs,
   },
   engineText: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     textAlign: "center",
   },
   resultBox: {

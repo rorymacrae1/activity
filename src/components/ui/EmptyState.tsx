@@ -39,7 +39,7 @@ export function EmptyState({ icon, title, message, action }: EmptyStateProps) {
         <Icon
           name={icon}
           size={48}
-          color={colors.text.tertiary}
+          color={colors.ink.muted}
           strokeWidth={1.25}
         />
       </View>

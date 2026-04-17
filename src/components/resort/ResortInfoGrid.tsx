@@ -173,7 +173,7 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
             />
             <Text
               variant="captionMedium"
-              color={colors.text.tertiary}
+              color={colors.ink.muted}
               style={styles.cellLabel}
             >
               {cell.label}
@@ -184,7 +184,7 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
             <View style={styles.activitiesWrap}>
               {cell.activities.map((a) => (
                 <View key={a} style={styles.activityChip}>
-                  <Text variant="caption" color={colors.text.secondary}>
+                  <Text variant="caption" color={colors.ink.normal}>
                     {a}
                   </Text>
                 </View>
@@ -206,7 +206,7 @@ export function ResortInfoGrid({ resort }: ResortInfoGridProps) {
               {cell.sub ? (
                 <Text
                   variant="caption"
-                  color={colors.text.tertiary}
+                  color={colors.ink.muted}
                   style={styles.cellSub}
                 >
                   {cell.sub}
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   },
   cell: {
     width: "48%",
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.canvas.subtle,
     borderRadius: radius.md,
     padding: spacing.md,
     gap: spacing.xs,
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.4,
   },
   cellPrimary: {
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   cellSub: {
     marginTop: 2,

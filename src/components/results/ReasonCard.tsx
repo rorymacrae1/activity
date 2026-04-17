@@ -185,11 +185,11 @@ const styles = StyleSheet.create({
   label: {
     ...typography.bodyMedium,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   description: {
     ...typography.bodySmall,
-    color: colors.text.tertiary,
+    color: colors.ink.muted,
     marginTop: 2,
   },
   scoreBadge: {
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   message: {
     ...typography.bodySmall,
-    color: colors.text.secondary,
+    color: colors.ink.normal,
     lineHeight: 18,
   },
 });

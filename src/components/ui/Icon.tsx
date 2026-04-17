@@ -5,7 +5,7 @@
  * the premium Airbnb-like aesthetic of PisteWise.
  *
  * @example
- * <Icon name="mountain" size={24} color={colors.text.primary} />
+ * <Icon name="mountain" size={24} color={colors.ink.rich} />
  */
 
 import React from "react";
@@ -47,6 +47,7 @@ import MapPinned from "lucide-react-native/dist/cjs/icons/map-pinned";
 import Gauge from "lucide-react-native/dist/cjs/icons/gauge";
 import UsersRound from "lucide-react-native/dist/cjs/icons/users-round";
 import Activity from "lucide-react-native/dist/cjs/icons/activity";
+import SlidersHorizontal from "lucide-react-native/dist/cjs/icons/sliders-horizontal";
 import { colors } from "@/theme/colors";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -91,6 +92,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   gauge: Gauge,
   "users-round": UsersRound,
   activity: Activity,
+  "sliders-horizontal": SlidersHorizontal,
 
   // Feedback
   check: Check,
@@ -110,7 +112,7 @@ interface IconProps {
   name: IconName;
   /** Size in pixels (default: 24) */
   size?: number;
-  /** Icon color (default: colors.text.primary) */
+  /** Icon color (default: colors.ink.rich) */
   color?: string;
   /** Stroke width (default: 1.5 for premium thin look) */
   strokeWidth?: number;
@@ -123,7 +125,7 @@ interface IconProps {
 export function Icon({
   name,
   size = 24,
-  color = colors.text.primary,
+  color = colors.ink.rich,
   strokeWidth = 1.5,
 }: IconProps) {
   const LucideIcon = ICON_MAP[name];
@@ -152,7 +154,7 @@ interface IconCircleProps extends IconProps {
  */
 export function IconCircle({
   name,
-  color = colors.text.primary,
+  color = colors.ink.rich,
   backgroundColor = colors.surface.secondary,
   circleSize = 48,
   strokeWidth = 1.5,

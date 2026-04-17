@@ -288,7 +288,7 @@ export default function DiscoverScreen() {
 
   const getItemLayout = useCallback(
     (_: ArrayLike<Resort> | null | undefined, index: number) => ({
-      length: ROW_HEIGHT,
+      length: ITEM_HEIGHT,
       offset: ITEM_HEIGHT * index,
       index,
     }),

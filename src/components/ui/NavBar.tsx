@@ -108,30 +108,30 @@ const styles = StyleSheet.create({
   userGreeting: {
     fontSize: 14,
     fontWeight: "600",
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   avatarCircle: {
     width: 32,
     height: 32,
     borderRadius: radius.full,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.brand.primary,
     alignItems: "center",
     justifyContent: "center",
   },
   avatarText: {
     fontSize: 14,
     fontWeight: "700",
-    color: colors.text.inverse,
+    color: colors.ink.inverse,
   },
   signInButton: {
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.lg,
     borderRadius: radius.full,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.brand.primary,
   },
   signInText: {
     fontSize: 14,
     fontWeight: "600",
-    color: colors.text.inverse,
+    color: colors.ink.inverse,
   },
 });

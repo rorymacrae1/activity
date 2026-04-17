@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     paddingBottom: spacing.lg,
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
     borderTopWidth: 1,
     borderTopColor: colors.border.subtle,
   },
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.onDark.backdrop,
   },
   modalSheet: {
-    backgroundColor: colors.background.primary,
+    backgroundColor: colors.canvas.default,
     borderTopLeftRadius: radius.xl,
     borderTopRightRadius: radius.xl,
     paddingHorizontal: spacing.lg,

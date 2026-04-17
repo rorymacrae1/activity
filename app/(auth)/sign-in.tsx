@@ -119,7 +119,7 @@ export default function SignInScreen() {
             <Text variant="h1">Welcome Back</Text>
             <Text
               variant="body"
-              color={colors.text.secondary}
+              color={colors.ink.normal}
               style={styles.subtitle}
             >
               Sign in to sync your preferences and favorites across devices.
@@ -137,7 +137,7 @@ export default function SignInScreen() {
                 value={email}
                 onChangeText={setEmail}
                 placeholder="you@example.com"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor={colors.ink.muted}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoComplete="email"
@@ -153,7 +153,7 @@ export default function SignInScreen() {
                 </Text>
                 <Link href="/(auth)/forgot-password" asChild>
                   <Pressable accessibilityRole="link">
-                    <Text variant="bodySmall" color={colors.primary}>
+                    <Text variant="bodySmall" color={colors.brand.primary}>
                       Forgot password?
                     </Text>
                   </Pressable>
@@ -165,7 +165,7 @@ export default function SignInScreen() {
                   value={password}
                   onChangeText={setPassword}
                   placeholder="••••••••"
-                  placeholderTextColor={colors.text.tertiary}
+                  placeholderTextColor={colors.ink.muted}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoComplete="password"
@@ -179,7 +179,7 @@ export default function SignInScreen() {
                   }
                   accessibilityRole="button"
                 >
-                  <Text variant="bodySmall" color={colors.text.secondary}>
+                  <Text variant="bodySmall" color={colors.ink.normal}>
                     {showPassword ? "Hide" : "Show"}
                   </Text>
                 </Pressable>
@@ -199,7 +199,7 @@ export default function SignInScreen() {
             <View style={styles.dividerLine} />
             <Text
               variant="bodySmall"
-              color={colors.text.tertiary}
+              color={colors.ink.muted}
               style={styles.dividerText}
             >
               or continue with
@@ -229,14 +229,14 @@ export default function SignInScreen() {
 
           {/* Sign Up Link */}
           <View style={styles.footer}>
-            <Text variant="body" color={colors.text.secondary}>
+            <Text variant="body" color={colors.ink.normal}>
               Don't have an account?{" "}
             </Text>
             <Link href="/(auth)/sign-up" asChild>
               <Pressable accessibilityRole="link">
                 <Text
                   variant="body"
-                  color={colors.primary}
+                  color={colors.brand.primary}
                   style={styles.linkText}
                 >
                   Sign Up
@@ -252,7 +252,7 @@ export default function SignInScreen() {
             accessibilityLabel="Continue without signing in"
             accessibilityRole="button"
           >
-            <Text variant="bodySmall" color={colors.text.tertiary}>
+            <Text variant="bodySmall" color={colors.ink.muted}>
               Continue without an account
             </Text>
           </Pressable>
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     fontSize: typo.body.fontSize,
     fontFamily: fontFamily.regular,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   passwordContainer: {
     position: "relative",

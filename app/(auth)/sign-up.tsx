@@ -139,7 +139,7 @@ export default function SignUpScreen() {
             <Text variant="h1">Create Account</Text>
             <Text
               variant="body"
-              color={colors.text.secondary}
+              color={colors.ink.normal}
               style={styles.subtitle}
             >
               Sign up to save your preferences and sync across devices.
@@ -157,7 +157,7 @@ export default function SignUpScreen() {
                 value={displayName}
                 onChangeText={setDisplayName}
                 placeholder="Your name"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor={colors.ink.muted}
                 autoCapitalize="words"
                 autoComplete="name"
                 editable={!isLoading}
@@ -173,7 +173,7 @@ export default function SignUpScreen() {
                 value={email}
                 onChangeText={setEmail}
                 placeholder="you@example.com"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor={colors.ink.muted}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoComplete="email"
@@ -192,7 +192,7 @@ export default function SignUpScreen() {
                   value={password}
                   onChangeText={setPassword}
                   placeholder="At least 6 characters"
-                  placeholderTextColor={colors.text.tertiary}
+                  placeholderTextColor={colors.ink.muted}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoComplete="new-password"
@@ -206,7 +206,7 @@ export default function SignUpScreen() {
                   }
                   accessibilityRole="button"
                 >
-                  <Text variant="bodySmall" color={colors.text.secondary}>
+                  <Text variant="bodySmall" color={colors.ink.normal}>
                     {showPassword ? "Hide" : "Show"}
                   </Text>
                 </Pressable>
@@ -222,7 +222,7 @@ export default function SignUpScreen() {
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 placeholder="Re-enter your password"
-                placeholderTextColor={colors.text.tertiary}
+                placeholderTextColor={colors.ink.muted}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoComplete="new-password"
@@ -243,7 +243,7 @@ export default function SignUpScreen() {
             <View style={styles.dividerLine} />
             <Text
               variant="bodySmall"
-              color={colors.text.tertiary}
+              color={colors.ink.muted}
               style={styles.dividerText}
             >
               or sign up with
@@ -273,14 +273,14 @@ export default function SignUpScreen() {
 
           {/* Sign In Link */}
           <View style={styles.footer}>
-            <Text variant="body" color={colors.text.secondary}>
+            <Text variant="body" color={colors.ink.normal}>
               Already have an account?{" "}
             </Text>
             <Link href="/(auth)/sign-in" asChild>
               <Pressable accessibilityRole="link">
                 <Text
                   variant="body"
-                  color={colors.primary}
+                  color={colors.brand.primary}
                   style={styles.linkText}
                 >
                   Sign In
@@ -296,7 +296,7 @@ export default function SignUpScreen() {
             accessibilityLabel="Continue without signing up"
             accessibilityRole="button"
           >
-            <Text variant="bodySmall" color={colors.text.tertiary}>
+            <Text variant="bodySmall" color={colors.ink.muted}>
               Continue without an account
             </Text>
           </Pressable>
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     fontSize: typo.body.fontSize,
     fontFamily: fontFamily.regular,
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   passwordContainer: {
     position: "relative",

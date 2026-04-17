@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontWeight: "500",
-    color: colors.text.primary,
+    color: colors.ink.rich,
   },
   actionButton: {
     marginLeft: spacing.sm,

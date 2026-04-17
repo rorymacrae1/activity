@@ -225,7 +225,7 @@ export default function ProfileScreen() {
           <SectionHeader title={content.profile.preferencesSection} />
           {!hasCompletedSetup ? (
             <View style={styles.warningBanner}>
-              <Text variant="bodySmall" color={colors.warning}>
+              <Text variant="bodySmall" color={colors.sentiment.warning}>
                 ⚠️ {content.profile.incompleteWarning}
               </Text>
             </View>
@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.surface.divider,
   },
   warningBanner: {
-    backgroundColor: colors.warningSubtle,
+    backgroundColor: colors.sentiment.warningSubtle,
     padding: spacing.md,
     borderRadius: radius.sm,
     marginBottom: spacing.md,
