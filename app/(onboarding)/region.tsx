@@ -26,7 +26,10 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
-import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
+import {
+  AnimatedQuizContent,
+  StaggeredItem,
+} from "@components/onboarding/AnimatedQuizContent";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -336,14 +339,15 @@ export default function RegionScreen() {
 
             {/* Country grid — 2 cols on tablet */}
             <View style={[styles.grid, isTablet && styles.gridTablet]}>
-              {availableCountries.map((country) => (
-                <CountryCard
-                  key={country.id}
-                  country={country}
-                  selected={regions.includes(country.id)}
-                  onToggle={() => toggle(country.id)}
-                  isTablet={isTablet}
-                />
+              {availableCountries.map((country, index) => (
+                <StaggeredItem key={country.id} index={index} baseDelay={60}>
+                  <CountryCard
+                    country={country}
+                    selected={regions.includes(country.id)}
+                    onToggle={() => toggle(country.id)}
+                    isTablet={isTablet}
+                  />
+                </StaggeredItem>
               ))}
             </View>
           </ScrollView>

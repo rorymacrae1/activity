@@ -9,7 +9,10 @@ import { Button } from "@components/ui/Button";
 import { Slider } from "@components/ui/Slider";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
-import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
+import {
+  AnimatedQuizContent,
+  StaggeredItem,
+} from "@components/onboarding/AnimatedQuizContent";
 
 export default function VibesScreen() {
   const {
@@ -75,36 +78,42 @@ export default function VibesScreen() {
           </View>
 
           <View style={styles.sliders}>
-            <SliderRow
-              label={content.onboarding.vibes.crowd.label}
-              value={crowdPreference}
-              valueLabel={crowdLabel}
-              onChange={setCrowdPreference}
-              left={content.onboarding.vibes.crowd.left}
-              right={content.onboarding.vibes.crowd.right}
-              accessLabel="Crowd level"
-              accessHint="Slide right for lively"
-            />
-            <SliderRow
-              label={content.onboarding.vibes.focus.label}
-              value={familyVsNightlife}
-              valueLabel={familyLabel}
-              onChange={setFamilyVsNightlife}
-              left={content.onboarding.vibes.focus.left}
-              right={content.onboarding.vibes.focus.right}
-              accessLabel="Resort focus"
-              accessHint="Slide right for nightlife"
-            />
-            <SliderRow
-              label={content.onboarding.vibes.snow.label}
-              value={snowImportance}
-              valueLabel={snowLabel}
-              onChange={setSnowImportance}
-              left={content.onboarding.vibes.snow.left}
-              right={content.onboarding.vibes.snow.right}
-              accessLabel="Snow importance"
-              accessHint="Slide right if snow is critical"
-            />
+            <StaggeredItem index={0} baseDelay={100}>
+              <SliderRow
+                label={content.onboarding.vibes.crowd.label}
+                value={crowdPreference}
+                valueLabel={crowdLabel}
+                onChange={setCrowdPreference}
+                left={content.onboarding.vibes.crowd.left}
+                right={content.onboarding.vibes.crowd.right}
+                accessLabel="Crowd level"
+                accessHint="Slide right for lively"
+              />
+            </StaggeredItem>
+            <StaggeredItem index={1} baseDelay={100}>
+              <SliderRow
+                label={content.onboarding.vibes.focus.label}
+                value={familyVsNightlife}
+                valueLabel={familyLabel}
+                onChange={setFamilyVsNightlife}
+                left={content.onboarding.vibes.focus.left}
+                right={content.onboarding.vibes.focus.right}
+                accessLabel="Resort focus"
+                accessHint="Slide right for nightlife"
+              />
+            </StaggeredItem>
+            <StaggeredItem index={2} baseDelay={100}>
+              <SliderRow
+                label={content.onboarding.vibes.snow.label}
+                value={snowImportance}
+                valueLabel={snowLabel}
+                onChange={setSnowImportance}
+                left={content.onboarding.vibes.snow.left}
+                right={content.onboarding.vibes.snow.right}
+                accessLabel="Snow importance"
+                accessHint="Slide right if snow is critical"
+              />
+            </StaggeredItem>
           </View>
         </View>
       </AnimatedQuizContent>

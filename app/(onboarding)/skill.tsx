@@ -1,5 +1,13 @@
 import { View, StyleSheet, Pressable, ScrollView, Platform } from "react-native";
 import { router } from "expo-router";
+import * as Haptics from "expo-haptics";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+  interpolate,
+} from "react-native-reanimated";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
@@ -8,9 +16,14 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
-import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
+import {
+  AnimatedQuizContent,
+  StaggeredItem,
+} from "@components/onboarding/AnimatedQuizContent";
 import type { SkillLevel } from "@/types/preferences";
 import { SKILL_LEVELS } from "@/constants/options";
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /** Piste marker colors matching real European ski signage */
 const PISTE_COLORS: Record<SkillLevel, string> = {
@@ -42,6 +55,85 @@ function PisteMarker({
         },
       ]}
     />
+  );
+}
+
+/** Animated option card with press feedback — mirrors trip-type OptionCard. */
+function OptionCard({
+  level,
+  active,
+  onSelect,
+  isTablet,
+  title,
+  description,
+}: {
+  level: SkillLevel;
+  active: boolean;
+  onSelect: () => void;
+  isTablet: boolean;
+  title: string;
+  description: string;
+}) {
+  const scale = useSharedValue(1);
+  const pressed = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    shadowOpacity: interpolate(pressed.value, [0, 1], [0.08, 0.15]),
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.97, { damping: 15, stiffness: 400 });
+    pressed.value = withTiming(1, { duration: 100 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, { damping: 12, stiffness: 300 });
+    pressed.value = withTiming(0, { duration: 200 });
+  };
+
+  const handlePress = () => {
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    onSelect();
+  };
+
+  return (
+    <AnimatedPressable
+      style={[
+        styles.option,
+        active && styles.optionActive,
+        isTablet && styles.optionRow,
+        animatedStyle,
+      ]}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked: active }}
+      accessibilityLabel={`${title}: ${description}`}
+    >
+      <PisteMarker level={level} />
+      <View style={styles.optionText}>
+        <Text
+          variant="h4"
+          color={active ? colors.brand.primary : colors.ink.rich}
+        >
+          {title}
+        </Text>
+        <Text variant="bodySmall" color={colors.ink.normal}>
+          {description}
+        </Text>
+      </View>
+      {active && (
+        <View style={styles.checkmark}>
+          <Text variant="caption" color={colors.brand.primary}>
+            ✓
+          </Text>
+        </View>
+      )}
+    </AnimatedPressable>
   );
 }
 
@@ -105,42 +197,20 @@ export default function SkillScreen() {
             showsVerticalScrollIndicator={Platform.OS !== "web"}
             bounces={false}
           >
-            {OPTIONS.map((level) => {
+            {OPTIONS.map((level, index) => {
               const optContent = content.onboarding.skill.options[level];
               const active = groupAbilities.includes(level);
               return (
-                <Pressable
-                  key={level}
-                  style={[
-                    styles.option,
-                    active && styles.optionActive,
-                    isTablet && styles.optionRow,
-                  ]}
-                  onPress={() => toggle(level)}
-                  accessibilityRole="checkbox"
-                  accessibilityState={{ checked: active }}
-                  accessibilityLabel={`${optContent.title}: ${optContent.description}`}
-                >
-                  <PisteMarker level={level} />
-                  <View style={styles.optionText}>
-                    <Text
-                      variant="h4"
-                      color={active ? colors.brand.primary : colors.ink.rich}
-                    >
-                      {optContent.title}
-                    </Text>
-                    <Text variant="bodySmall" color={colors.ink.normal}>
-                      {optContent.description}
-                    </Text>
-                  </View>
-                  {active && (
-                    <View style={styles.checkmark}>
-                      <Text variant="caption" color={colors.brand.primary}>
-                        ✓
-                      </Text>
-                    </View>
-                  )}
-                </Pressable>
+                <StaggeredItem key={level} index={index} baseDelay={80}>
+                  <OptionCard
+                    level={level}
+                    active={active}
+                    onSelect={() => toggle(level)}
+                    isTablet={isTablet}
+                    title={optContent.title}
+                    description={optContent.description}
+                  />
+                </StaggeredItem>
               );
             })}
           </ScrollView>

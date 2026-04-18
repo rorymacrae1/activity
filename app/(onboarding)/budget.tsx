@@ -20,7 +20,10 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
-import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
+import {
+  AnimatedQuizContent,
+  StaggeredItem,
+} from "@components/onboarding/AnimatedQuizContent";
 import type { BudgetLevel } from "@/types/preferences";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -208,14 +211,15 @@ export default function BudgetScreen() {
             showsVerticalScrollIndicator={Platform.OS !== "web"}
             bounces={false}
           >
-            {OPTIONS.map((opt) => (
-              <OptionCard
-                key={opt.level}
-                opt={opt}
-                active={budgetLevel === opt.level}
-                onSelect={() => setBudgetLevel(opt.level)}
-                isTablet={isTablet}
-              />
+            {OPTIONS.map((opt, index) => (
+              <StaggeredItem key={opt.level} index={index} baseDelay={80}>
+                <OptionCard
+                  opt={opt}
+                  active={budgetLevel === opt.level}
+                  onSelect={() => setBudgetLevel(opt.level)}
+                  isTablet={isTablet}
+                />
+              </StaggeredItem>
             ))}
 
             {/* Reassurance hint - inside scroll on mobile */}
