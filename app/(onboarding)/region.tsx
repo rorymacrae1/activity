@@ -340,7 +340,7 @@ export default function RegionScreen() {
             {/* Country grid — 2 cols on tablet */}
             <View style={[styles.grid, isTablet && styles.gridTablet]}>
               {availableCountries.map((country, index) => (
-                <StaggeredItem key={country.id} index={index} baseDelay={60}>
+                <StaggeredItem key={country.id} index={index} baseDelay={60} style={isTablet ? styles.regionCardTabletWrapper : undefined}>
                   <CountryCard
                     country={country}
                     selected={regions.includes(country.id)}
@@ -446,10 +446,12 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  regionCardTablet: {
+  regionCardTabletWrapper: {
     width: "47%",
     minWidth: 220,
     maxWidth: 280,
+  },
+  regionCardTablet: {
     padding: spacing.md,
   },
   regionCardActive: {

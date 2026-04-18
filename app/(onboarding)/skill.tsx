@@ -104,7 +104,6 @@ function OptionCard({
       style={[
         styles.option,
         active && styles.optionActive,
-        isTablet && styles.optionRow,
         animatedStyle,
       ]}
       onPress={handlePress}
@@ -201,7 +200,7 @@ export default function SkillScreen() {
               const optContent = content.onboarding.skill.options[level];
               const active = groupAbilities.includes(level);
               return (
-                <StaggeredItem key={level} index={index} baseDelay={80}>
+                <StaggeredItem key={level} index={index} baseDelay={80} style={isTablet ? styles.optionRow : undefined}>
                   <OptionCard
                     level={level}
                     active={active}

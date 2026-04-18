@@ -212,7 +212,7 @@ export default function BudgetScreen() {
             bounces={false}
           >
             {OPTIONS.map((opt, index) => (
-              <StaggeredItem key={opt.level} index={index} baseDelay={80}>
+              <StaggeredItem key={opt.level} index={index} baseDelay={80} style={isTablet ? styles.optionTabletWrapper : undefined}>
                 <OptionCard
                   opt={opt}
                   active={budgetLevel === opt.level}
@@ -267,8 +267,10 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
   },
-  optionTablet: {
+  optionTabletWrapper: {
     width: "47%",
+  },
+  optionTablet: {
     padding: spacing.lg,
     borderRadius: radius.lg,
   },

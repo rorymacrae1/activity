@@ -106,10 +106,12 @@ export function StaggeredItem({
   children,
   index = 0,
   baseDelay = 60,
+  style,
 }: {
   children: React.ReactNode;
   index?: number;
   baseDelay?: number;
+  style?: object;
 }) {
   const progress = useSharedValue(0);
 
@@ -132,7 +134,7 @@ export function StaggeredItem({
     ],
   }));
 
-  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
+  return <Animated.View style={[animatedStyle, style]}>{children}</Animated.View>;
 }
 
 // =============================================================================
