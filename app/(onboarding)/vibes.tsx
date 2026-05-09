@@ -52,7 +52,7 @@ export default function VibesScreen() {
           <Button
             label={`← ${content.onboarding.vibes.back}`}
             variant="ghost"
-            onPress={() => router.back()}
+            onPress={() => router.push("/(onboarding)/region")}
             style={styles.backBtn}
           />
           <Button

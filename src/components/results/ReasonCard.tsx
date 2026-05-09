@@ -1,10 +1,11 @@
 /**
  * ReasonCard - Individual match reason card for the carousel
- * Displays an attribute score with icon, label, and animated progress bar
+ * Displays an attribute score with icon, label, and progress bar
  */
 
 import React from "react";
 import { View, StyleSheet } from "react-native";
+import type { ViewStyle, StyleProp } from "react-native";
 import { Text } from "@/components/ui";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
@@ -69,6 +70,8 @@ interface ReasonCardProps {
   score: number;
   /** Optional width for the card */
   width?: number;
+  /** Optional additional styles */
+  style?: StyleProp<ViewStyle>;
 }
 
 /**
@@ -79,6 +82,16 @@ function getScoreColor(score: number): string {
   if (score >= 60) return colors.match.good;
   if (score >= 40) return colors.match.fair;
   return colors.match.poor;
+}
+
+/**
+ * Get score label text
+ */
+function getScoreLabel(score: number): string {
+  if (score >= 80) return "Excellent";
+  if (score >= 60) return "Good";
+  if (score >= 40) return "Fair";
+  return "Low";
 }
 
 /**
@@ -95,7 +108,12 @@ function getScoreMessage(attribute: string, score: number): string {
 /**
  * ReasonCard component
  */
-export function ReasonCard({ attribute, score, width = 260 }: ReasonCardProps) {
+export function ReasonCard({
+  attribute,
+  score,
+  width = 260,
+  style,
+}: ReasonCardProps) {
   const config = ATTRIBUTE_CONFIG[attribute];
 
   if (!config) {
@@ -103,32 +121,39 @@ export function ReasonCard({ attribute, score, width = 260 }: ReasonCardProps) {
   }
 
   const scoreColor = getScoreColor(score);
+  const scoreLabel = getScoreLabel(score);
   const message = getScoreMessage(attribute, score);
 
   return (
     <View
-      style={[styles.container, { width }]}
+      style={[styles.container, { width }, style]}
       accessibilityRole="text"
       accessibilityLabel={`${config.label}: ${score}% match. ${message}`}
     >
-      {/* Icon and Label */}
-      <View style={styles.header}>
-        <View style={styles.iconContainer}>
+      {/* Score ring + icon */}
+      <View style={styles.scoreSection}>
+        <View style={[styles.scoreRing, { borderColor: scoreColor }]}>
+          <Text style={[styles.scoreValue, { color: scoreColor }]}>
+            {score}
+          </Text>
+        </View>
+        <View
+          style={[styles.iconBadge, { backgroundColor: `${scoreColor}18` }]}
+        >
           <Icon
             name={config.icon}
-            size={20}
-            color={colors.brand.primary}
-            strokeWidth={1.5}
+            size={16}
+            color={scoreColor}
+            strokeWidth={2}
           />
         </View>
-        <View style={styles.labelContainer}>
-          <Text style={styles.label}>{config.label}</Text>
-          <Text style={styles.description}>{config.description}</Text>
-        </View>
-        <View style={[styles.scoreBadge, { backgroundColor: scoreColor }]}>
-          <Text style={styles.scoreText}>{score}%</Text>
-        </View>
       </View>
+
+      {/* Label + score label */}
+      <Text style={styles.label}>{config.label}</Text>
+      <Text style={[styles.scoreLabel, { color: scoreColor }]}>
+        {scoreLabel}
+      </Text>
 
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
@@ -155,58 +180,59 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.surface.primary,
     borderRadius: radius.lg,
-    padding: spacing.md,
-    marginRight: spacing.sm,
-    shadowColor: colors.ink.rich,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    padding: spacing.lg,
     borderWidth: 1,
     borderColor: colors.border.subtle,
-  },
-  header: {
-    flexDirection: "row",
     alignItems: "center",
-    marginBottom: spacing.sm,
   },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface.secondary,
+  scoreSection: {
+    position: "relative",
+    marginBottom: spacing.md,
+  },
+  scoreRing: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 3,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: spacing.sm,
+    backgroundColor: colors.surface.primary,
   },
-  labelContainer: {
-    flex: 1,
+  scoreValue: {
+    ...typography.h2,
+    fontWeight: "700",
+  },
+  iconBadge: {
+    position: "absolute",
+    bottom: -4,
+    right: -4,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: colors.surface.primary,
   },
   label: {
     ...typography.bodyMedium,
     fontWeight: "600",
     color: colors.ink.rich,
+    textAlign: "center",
   },
-  description: {
-    ...typography.bodySmall,
-    color: colors.ink.muted,
-    marginTop: 2,
-  },
-  scoreBadge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.full,
-  },
-  scoreText: {
+  scoreLabel: {
     ...typography.labelSmall,
-    fontWeight: "700",
-    color: colors.ink.onBrand,
+    fontWeight: "600",
+    marginTop: spacing.xxs,
+    textAlign: "center",
   },
   progressContainer: {
+    width: "100%",
+    marginTop: spacing.md,
     marginBottom: spacing.sm,
   },
   progressBackground: {
-    height: 8,
+    height: 6,
     backgroundColor: colors.surface.tertiary,
     borderRadius: radius.full,
     overflow: "hidden",
@@ -219,6 +245,7 @@ const styles = StyleSheet.create({
     ...typography.bodySmall,
     color: colors.ink.normal,
     lineHeight: 18,
+    textAlign: "center",
   },
 });
 

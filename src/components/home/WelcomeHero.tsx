@@ -8,49 +8,56 @@ import { View, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text } from "@/components/ui/Text";
 import { Icon, type IconName } from "@/components/ui/Icon";
+import { useContent } from "@/hooks/useContent";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { typography } from "@/theme/typography";
+import { fontFamily } from "@/theme/fonts";
+import type { Content } from "@/content";
 
 interface WelcomeHeroProps {
   firstName: string;
   favoritesCount: number;
-  profileComplete: boolean;
+  profileCompletionPercentage: number;
 }
 
 /**
- * Get time-appropriate greeting
+ * Get time-appropriate greeting from content
  */
-function getGreeting(): string {
+function getGreeting(t: Content["home"]["welcome"]): string {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return t.goodMorning;
+  if (hour < 17) return t.goodAfternoon;
+  return t.goodEvening;
 }
 
 /**
  * Get current ski season status with appropriate icon
  */
-function getSeasonStatus(): { icon: IconName; message: string } {
+function getSeasonStatus(t: Content["home"]["welcome"]): {
+  icon: IconName;
+  message: string;
+} {
   const month = new Date().getMonth();
-  // Northern hemisphere ski season: Nov-Apr
   if (month >= 10 || month <= 3) {
-    return { icon: "snowflake", message: "Ski season is on!" };
+    return { icon: "snowflake", message: t.seasonOn };
   }
   if (month >= 4 && month <= 5) {
-    return { icon: "snowflake", message: "Spring skiing available" };
+    return { icon: "snowflake", message: t.seasonSpring };
   }
-  return { icon: "compass", message: "Planning ahead?" };
+  return { icon: "compass", message: t.seasonOff };
 }
 
 export function WelcomeHero({
   firstName,
   favoritesCount,
-  profileComplete,
+  profileCompletionPercentage,
 }: WelcomeHeroProps) {
-  const greeting = getGreeting();
-  const season = getSeasonStatus();
+  const content = useContent();
+  const t = content.home.welcome;
+  const greeting = getGreeting(t);
+  const season = getSeasonStatus(t);
 
   return (
     <LinearGradient
@@ -87,15 +94,13 @@ export function WelcomeHero({
         <View style={styles.statItem}>
           <Text style={styles.statValue}>{favoritesCount}</Text>
           <Text style={styles.statLabel}>
-            {favoritesCount === 1 ? "Favorite" : "Favorites"}
+            {favoritesCount === 1 ? t.favorite : t.favorites}
           </Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>
-            {profileComplete ? "100%" : "60%"}
-          </Text>
-          <Text style={styles.statLabel}>Profile</Text>
+          <Text style={styles.statValue}>{profileCompletionPercentage}%</Text>
+          <Text style={styles.statLabel}>{t.profile}</Text>
         </View>
       </View>
     </LinearGradient>
@@ -149,10 +154,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   name: {
-    fontSize: 34,
-    fontWeight: "700" as const,
-    lineHeight: 40,
-    letterSpacing: -1,
+    ...typography.display,
+    fontFamily: fontFamily.bold,
     color: colors.ink.inverse,
     marginBottom: spacing.md,
   },
@@ -167,8 +170,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   seasonText: {
-    fontSize: 13,
-    fontWeight: "500",
+    ...typography.labelSmall,
     color: colors.onDark.text.secondary,
   },
   statsRow: {
@@ -188,11 +190,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxs,
   },
   statLabel: {
-    fontSize: 12,
-    fontWeight: "500",
+    ...typography.overline,
     color: colors.onDark.text.muted,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
   },
   statDivider: {
     width: 1,

@@ -13,6 +13,7 @@ import { Icon } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
+import { useContent } from "@/hooks/useContent";
 
 interface ProfileCompletionCardProps {
   /** Completion percentage (0-100) */
@@ -33,6 +34,8 @@ export function ProfileCompletionCard({
   completionPercentage,
   missing,
 }: ProfileCompletionCardProps) {
+  const t = useContent().home.profileCompletion;
+
   const handlePress = () => {
     router.push("/(main)/complete-profile");
   };
@@ -50,10 +53,10 @@ export function ProfileCompletionCard({
         </View>
         <View style={styles.headerText}>
           <Text variant="h3" style={styles.title}>
-            Let's Personalise Your Experience
+            {t.title}
           </Text>
           <Text variant="body" color={colors.ink.normal}>
-            Help us find your perfect resorts
+            {t.subtitle}
           </Text>
         </View>
       </View>
@@ -62,14 +65,11 @@ export function ProfileCompletionCard({
       <View style={styles.progressContainer}>
         <View style={styles.progressTrack}>
           <View
-            style={[
-              styles.progressFill,
-              { width: `${completionPercentage}%` },
-            ]}
+            style={[styles.progressFill, { width: `${completionPercentage}%` }]}
           />
         </View>
         <Text variant="caption" color={colors.ink.muted}>
-          {completionPercentage}% complete
+          {completionPercentage}% {t.complete}
         </Text>
       </View>
 
@@ -84,7 +84,7 @@ export function ProfileCompletionCard({
               strokeWidth={1.5}
             />
             <Text variant="caption" color={colors.ink.normal}>
-              Add resorts you've visited
+              {t.addVisited}
             </Text>
           </View>
         )}
@@ -97,7 +97,7 @@ export function ProfileCompletionCard({
               strokeWidth={1.5}
             />
             <Text variant="caption" color={colors.ink.normal}>
-              Set your home airport
+              {t.setAirport}
             </Text>
           </View>
         )}
@@ -110,14 +110,14 @@ export function ProfileCompletionCard({
               strokeWidth={1.5}
             />
             <Text variant="caption" color={colors.ink.normal}>
-              Save resorts you love
+              {t.saveFavorites}
             </Text>
           </View>
         )}
       </View>
 
       <Button
-        label="Complete Profile"
+        label={t.button}
         onPress={handlePress}
         fullWidth
         style={styles.button}

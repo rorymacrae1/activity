@@ -1,13 +1,16 @@
 {
   "onboarding": {
     "welcome": {
-      "appTitle": "PeakWise",
-      "tagline": "Finde dein perfektes Skigebiet in Sekunden",
-      "valueProp1": "Personalisiert nach deinem Können und Stil",
-      "valueProp2": "Über 30 Top-Skigebiete in Europa",
-      "valueProp3": "Funktioniert offline — mit auf die Piste",
-      "cta": "Mein Skigebiet finden",
-      "ctaSubtext": "Dauert etwa 1 Minute"
+      "appTitle": "PisteWise",
+      "tagline": "Dein nächster Skiurlaub, geklärt.",
+      "subtitle": "Beantworte 5 kurze Fragen und wir finden das perfekte Skigebiet für deine Gruppe, dein Können und dein Budget.",
+      "valueProp1": "Abgestimmt auf Können, Budget und Stil",
+      "valueProp2": "{count} ausgewählte Skigebiete",
+      "valueProp3": "Funktioniert offline — mit auf den Berg",
+      "cta": "Los geht's",
+      "ctaSubtext": "5 Fragen · dauert weniger als eine Minute",
+      "returningCta": "Meine Ergebnisse ansehen",
+      "returningSubtext": "Dort weitermachen, wo du aufgehört hast"
     },
     "tripType": {
       "title": "Für wen ist diese Reise?",
@@ -169,6 +172,22 @@
     "language": "Sprache",
     "languageSection": "Sprache",
     "resetLoading": "Präferenzen werden zurückgesetzt...",
+    "myProfile": "Mein Profil",
+    "visitedResorts": "Besuchte Skigebiete",
+    "allRegions": "Alle Regionen",
+    "tier": "Preisklasse",
+    "signInPrompt": "Melden Sie sich an, um Ihre Daten zu synchronisieren",
+    "welcome": "Willkommen",
+    "syncNow": "Jetzt synchronisieren",
+    "signOut": "Abmelden",
+    "syncAlerts": {
+      "signOutTitle": "Abmelden",
+      "signOutMessage": "Möchten Sie sich wirklich abmelden?",
+      "signOutConfirm": "Abmelden",
+      "cancel": "Abbrechen",
+      "syncSuccess": "Erfolgreich synchronisiert!",
+      "syncError": "Synchronisierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+    },
     "alerts": {
       "retakeTitle": "Quiz wiederholen",
       "retakeMessage": "Dadurch werden deine Präferenzen zurückgesetzt. Bist du sicher?",
@@ -251,6 +270,7 @@
     "snow": "{snow}/5 Schnee",
     "cost": "€{cost}/Tag"
   },
+  "currencySymbol": "€",
   "progress": {
     "step": "Schritt {current} von {total}"
   },
@@ -273,5 +293,124 @@
     "Spain": { "name": "Spanien", "flag": "🇪🇸" },
     "Switzerland": { "name": "Schweiz", "flag": "🇨🇭" },
     "UK": { "name": "Vereinigtes Königreich", "flag": "🇬🇧" }
+  },
+  "home": {
+    "welcome": {
+      "goodMorning": "Guten Morgen",
+      "goodAfternoon": "Guten Tag",
+      "goodEvening": "Guten Abend",
+      "seasonOn": "Skisaison ist eröffnet!",
+      "seasonSpring": "Frühlingsskifahren möglich",
+      "seasonOff": "Schon am Planen?",
+      "favorite": "Favorit",
+      "favorites": "Favoriten",
+      "profile": "Profil"
+    },
+    "quickActions": {
+      "heading": "Schnellzugriff",
+      "browseLabel": "Skigebiete entdecken",
+      "browseSub": "Entdecken Sie Ihre nächste Reise",
+      "retakeLabel": "Quiz wiederholen",
+      "retakeSub": "Präferenzen aktualisieren",
+      "profileLabel": "Profil vervollständigen",
+      "profileSub": "Bessere Empfehlungen"
+    },
+    "favoritesPreview": {
+      "heading": "Ihre Favoriten",
+      "viewAll": "Alle anzeigen",
+      "emptyTitle": "Noch keine Favoriten",
+      "emptyText": "Durchsuchen Sie Skigebiete und speichern Sie Ihre Favoriten",
+      "emptyButton": "Skigebiete durchsuchen",
+      "moreResort": "weiteres Skigebiet",
+      "moreResorts": "weitere Skigebiete"
+    },
+    "profileCompletion": {
+      "title": "Personalisieren Sie Ihr Erlebnis",
+      "subtitle": "Helfen Sie uns, Ihre perfekten Skigebiete zu finden",
+      "complete": "abgeschlossen",
+      "addVisited": "Besuchte Skigebiete hinzufügen",
+      "setAirport": "Heimatflughafen festlegen",
+      "saveFavorites": "Lieblingsgebiete speichern",
+      "button": "Profil vervollständigen"
+    },
+    "recommendations": {
+      "heading": "Ähnlich wie {name}",
+      "fallbackHeading": "Skigebiete, die Ihnen gefallen könnten",
+      "subheading": "Diese Skigebiete sind ähnlich"
+    }
+  },
+  "discoverScreen": {
+    "title": "Entdecken",
+    "subtitle": "{count} Skigebiete",
+    "searchPlaceholder": "Suchen…",
+    "searchPlaceholderLong": "Nach Name, Land oder Region suchen…",
+    "sortLabel": "Sortieren:",
+    "sortAZ": "A – Z",
+    "sortKm": "Meiste km",
+    "sortSnow": "Bester Schnee",
+    "refine": "Verfeinern",
+    "listView": "Listenansicht",
+    "chartView": "Vergleichsansicht",
+    "chartLabel": "Vergleichen",
+    "resultsCount": "{count} Skigebiet",
+    "resultsCountPlural": "{count} Skigebiete",
+    "emptyTitle": "Keine Skigebiete gefunden",
+    "emptyMessageSearch": "Keine Skigebiete für \u201E{query}\u201C gefunden.",
+    "emptyMessageDefault": "Versuchen Sie, Ihre Suche oder Filter anzupassen.",
+    "clearSearch": "Suche löschen"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Bei PisteWise anmelden",
+      "subtitle": "Ihre Präferenzen. Auf jedem Gerät.",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "forgotPassword": "Passwort vergessen?",
+      "submit": "Anmelden",
+      "submitting": "Anmeldung läuft…",
+      "or": "Oder anmelden mit",
+      "apple": "Weiter mit Apple",
+      "google": "Weiter mit Google",
+      "noAccount": "Noch kein Konto?",
+      "signUpLink": "Registrieren",
+      "skip": "Ohne Konto fortfahren",
+      "validationEmpty": "Bitte E-Mail und Passwort eingeben.",
+      "welcomeBack": "Willkommen zurück!"
+    },
+    "signUp": {
+      "title": "Konto erstellen",
+      "subtitle": "Ein Konto. Alle Ihre Skigebiete.",
+      "displayName": "Anzeigename (optional)",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "submit": "Konto erstellen",
+      "submitting": "Wird erstellt…",
+      "placeholder": "Mindestens 6 Zeichen",
+      "or": "Oder registrieren mit",
+      "apple": "Weiter mit Apple",
+      "google": "Weiter mit Google",
+      "hasAccount": "Bereits ein Konto?",
+      "signInLink": "Anmelden",
+      "successMessage": "Konto erstellt! Willkommen bei PisteWise.",
+      "confirmEmail": "Bestätigen Sie Ihr Konto per E-Mail.",
+      "validationEmail": "Bitte E-Mail eingeben.",
+      "validationPassword": "Bitte Passwort eingeben.",
+      "validationPasswordLength": "Passwort muss mindestens 6 Zeichen haben.",
+      "validationPasswordMatch": "Passwörter stimmen nicht überein."
+    },
+    "forgotPassword": {
+      "title": "Passwort zurücksetzen",
+      "sentTitle": "Prüfen Sie Ihren Posteingang",
+      "subtitle": "Geben Sie Ihre E-Mail ein und wir senden Ihnen einen Link.",
+      "sentSubtitle": "Wir haben einen Link an {email} gesendet.",
+      "email": "E-Mail",
+      "submit": "Link senden",
+      "submitting": "Wird gesendet…",
+      "validationEmpty": "Bitte E-Mail-Adresse eingeben.",
+      "backToSignIn": "Zurück zur Anmeldung"
+    },
+    "showPassword": "Anzeigen",
+    "hidePassword": "Verbergen"
   }
 }

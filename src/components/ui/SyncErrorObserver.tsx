@@ -9,6 +9,7 @@
 import { useEffect, useRef } from "react";
 import { useFavoritesStore } from "@stores/favorites";
 import { usePreferencesStore } from "@stores/preferences";
+import { useAuthStore } from "@stores/auth";
 import { useToast } from "@components/ui/Toast";
 
 export function SyncErrorObserver() {
@@ -16,10 +17,24 @@ export function SyncErrorObserver() {
 
   const favoritesError = useFavoritesStore((s) => s.syncError);
   const prefsError = usePreferencesStore((s) => s.syncError);
+  const connectionError = useAuthStore((s) => s.connectionError);
 
   // Track which error we last reported so we don't toast twice on re-renders
   const lastFavError = useRef<string | null>(null);
   const lastPrefsError = useRef<string | null>(null);
+  const lastConnError = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (connectionError && connectionError !== lastConnError.current) {
+      lastConnError.current = connectionError;
+      showToast({
+        type: "warning",
+        message: connectionError,
+        duration: 5000,
+      });
+      useAuthStore.setState({ connectionError: null });
+    }
+  }, [connectionError, showToast]);
 
   useEffect(() => {
     if (favoritesError && favoritesError !== lastFavError.current) {

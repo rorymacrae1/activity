@@ -2,6 +2,8 @@ import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
 import type { AttributeScores } from "@/types/recommendation";
 import { SCORE_THRESHOLDS } from "@/constants/scoring";
+import { getCurrencySymbol } from "@/content";
+import { usePreferencesStore } from "@/stores/preferences";
 
 interface ReasonTemplate {
   excellent: string;
@@ -16,6 +18,8 @@ export function generateExplanations(
   scores: AttributeScores,
   prefs: NormalizedPreferences,
 ): string[] {
+  const lang = usePreferencesStore.getState().language;
+  const cs = getCurrencySymbol(lang);
   const reasons: string[] = [];
 
   // Templates for each attribute — all reference real resort data
@@ -37,8 +41,8 @@ export function generateExplanations(
       };
     },
     budget: (r) => ({
-      excellent: `Great value at ~€${r.attributes.averageDailyCost}/day (lift pass €${r.attributes.liftPassDayCost})`,
-      good: `Fits your budget at ~€${r.attributes.averageDailyCost}/day`,
+      excellent: `Great value at ~${cs}${r.attributes.averageDailyCost}/day (lift pass ${cs}${r.attributes.liftPassDayCost})`,
+      good: `Fits your budget at ~${cs}${r.attributes.averageDailyCost}/day`,
     }),
     vibe: (r) => {
       const crowd = r.attributes.crowdLevel;

@@ -19,6 +19,7 @@ import { ScreenContainer } from "@components/ui/ScreenContainer";
 import { useToast } from "@components/ui/Toast";
 import { useAuthStore } from "@stores/auth";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 
 /**
  * Sign up screen for new users.
@@ -35,12 +36,14 @@ export default function SignUpScreen() {
   const { signUp, signInWithGoogle, signInWithApple } = useAuthStore();
   const { hPadding, isDesktop } = useLayout();
   const { showToast } = useToast();
+  const t = useContent().auth.signUp;
+  const tAuth = useContent().auth;
 
   const validateForm = (): string | null => {
-    if (!email.trim()) return "Please enter your email.";
-    if (!password.trim()) return "Please enter a password.";
-    if (password.length < 6) return "Password must be at least 6 characters.";
-    if (password !== confirmPassword) return "Passwords do not match.";
+    if (!email.trim()) return t.validationEmail;
+    if (!password.trim()) return t.validationPassword;
+    if (password.length < 6) return t.validationPasswordLength;
+    if (password !== confirmPassword) return t.validationPasswordMatch;
     return null;
   };
 
@@ -65,7 +68,7 @@ export default function SignUpScreen() {
       // User is signed in immediately (email confirmation disabled)
       showToast({
         type: "success",
-        message: "Account created successfully! Welcome to PisteWise.",
+        message: t.successMessage,
         duration: 4000,
       });
       router.replace("/(main)");
@@ -73,7 +76,7 @@ export default function SignUpScreen() {
       // Email confirmation required
       showToast({
         type: "info",
-        message: "Check your email to confirm your account.",
+        message: t.confirmEmail,
         duration: 5000,
       });
       router.replace("/(auth)/sign-in");
@@ -90,7 +93,7 @@ export default function SignUpScreen() {
     } else {
       showToast({
         type: "success",
-        message: "Account created successfully! Welcome to PisteWise.",
+        message: t.successMessage,
         duration: 4000,
       });
       router.replace("/(main)");
@@ -107,7 +110,7 @@ export default function SignUpScreen() {
     } else {
       showToast({
         type: "success",
-        message: "Account created successfully! Welcome to PisteWise.",
+        message: t.successMessage,
         duration: 4000,
       });
       router.replace("/(main)");
@@ -131,173 +134,177 @@ export default function SignUpScreen() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={isDesktop ? styles.desktopForm : { paddingHorizontal: hPadding }}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text variant="h1">Create Account</Text>
-            <Text
-              variant="body"
-              color={colors.ink.normal}
-              style={styles.subtitle}
-            >
-              Sign up to save your preferences and sync across devices.
-            </Text>
-          </View>
-
-          {/* Sign Up Form */}
-          <Card elevation="subtle" style={styles.formCard}>
-            <View style={styles.inputGroup}>
-              <Text variant="label" style={styles.inputLabel}>
-                Display Name (optional)
+          <View
+            style={
+              isDesktop ? styles.desktopForm : { paddingHorizontal: hPadding }
+            }
+          >
+            {/* Header */}
+            <View style={styles.header}>
+              <Text variant="h1">{t.title}</Text>
+              <Text
+                variant="body"
+                color={colors.ink.normal}
+                style={styles.subtitle}
+              >
+                {t.subtitle}
               </Text>
-              <TextInput
-                style={styles.input}
-                value={displayName}
-                onChangeText={setDisplayName}
-                placeholder="Your name"
-                placeholderTextColor={colors.ink.muted}
-                autoCapitalize="words"
-                autoComplete="name"
-                editable={!isLoading}
-              />
             </View>
 
-            <View style={styles.inputGroup}>
-              <Text variant="label" style={styles.inputLabel}>
-                Email
-              </Text>
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder="you@example.com"
-                placeholderTextColor={colors.ink.muted}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-                autoCorrect={false}
-                editable={!isLoading}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text variant="label" style={styles.inputLabel}>
-                Password
-              </Text>
-              <View style={styles.passwordContainer}>
+            {/* Sign Up Form */}
+            <Card elevation="subtle" style={styles.formCard}>
+              <View style={styles.inputGroup}>
+                <Text variant="label" style={styles.inputLabel}>
+                  {t.displayName}
+                </Text>
                 <TextInput
-                  style={[styles.input, styles.passwordInput]}
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="At least 6 characters"
+                  style={styles.input}
+                  value={displayName}
+                  onChangeText={setDisplayName}
+                  placeholder="Your name"
+                  placeholderTextColor={colors.ink.muted}
+                  autoCapitalize="words"
+                  autoComplete="name"
+                  editable={!isLoading}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text variant="label" style={styles.inputLabel}>
+                  {t.email}
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="you@example.com"
+                  placeholderTextColor={colors.ink.muted}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoCorrect={false}
+                  editable={!isLoading}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text variant="label" style={styles.inputLabel}>
+                  {t.password}
+                </Text>
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={[styles.input, styles.passwordInput]}
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholder={t.placeholder}
+                    placeholderTextColor={colors.ink.muted}
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    autoComplete="new-password"
+                    editable={!isLoading}
+                  />
+                  <Pressable
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={styles.showPasswordBtn}
+                    accessibilityLabel={
+                      showPassword ? tAuth.hidePassword : tAuth.showPassword
+                    }
+                    accessibilityRole="button"
+                  >
+                    <Text variant="bodySmall" color={colors.ink.normal}>
+                      {showPassword ? tAuth.hidePassword : tAuth.showPassword}
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text variant="label" style={styles.inputLabel}>
+                  {t.confirmPassword}
+                </Text>
+                <TextInput
+                  style={styles.input}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  placeholder="Re-enter your password"
                   placeholderTextColor={colors.ink.muted}
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoComplete="new-password"
                   editable={!isLoading}
                 />
-                <Pressable
-                  onPress={() => setShowPassword(!showPassword)}
-                  style={styles.showPasswordBtn}
-                  accessibilityLabel={
-                    showPassword ? "Hide password" : "Show password"
-                  }
-                  accessibilityRole="button"
-                >
-                  <Text variant="bodySmall" color={colors.ink.normal}>
-                    {showPassword ? "Hide" : "Show"}
-                  </Text>
-                </Pressable>
               </View>
-            </View>
 
-            <View style={styles.inputGroup}>
-              <Text variant="label" style={styles.inputLabel}>
-                Confirm Password
-              </Text>
-              <TextInput
-                style={styles.input}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                placeholder="Re-enter your password"
-                placeholderTextColor={colors.ink.muted}
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-                autoComplete="new-password"
-                editable={!isLoading}
-              />
-            </View>
-
-            <Button
-              label={isLoading ? "Creating account..." : "Create Account"}
-              onPress={handleSignUp}
-              disabled={isLoading}
-              fullWidth
-            />
-          </Card>
-
-          {/* Divider */}
-          <View style={styles.dividerContainer}>
-            <View style={styles.dividerLine} />
-            <Text
-              variant="bodySmall"
-              color={colors.ink.muted}
-              style={styles.dividerText}
-            >
-              or sign up with
-            </Text>
-            <View style={styles.dividerLine} />
-          </View>
-
-          {/* Social Login */}
-          <View style={styles.socialButtons}>
-            {Platform.OS === "ios" && (
               <Button
-                label="Sign up with Apple"
-                variant="secondary"
-                onPress={handleAppleSignUp}
+                label={isLoading ? t.submitting : t.submit}
+                onPress={handleSignUp}
                 disabled={isLoading}
                 fullWidth
               />
-            )}
-            <Button
-              label="Sign up with Google"
-              variant="secondary"
-              onPress={handleGoogleSignUp}
-              disabled={isLoading}
-              fullWidth
-            />
-          </View>
+            </Card>
 
-          {/* Sign In Link */}
-          <View style={styles.footer}>
-            <Text variant="body" color={colors.ink.normal}>
-              Already have an account?{" "}
-            </Text>
-            <Link href="/(auth)/sign-in" asChild>
-              <Pressable accessibilityRole="link">
-                <Text
-                  variant="body"
-                  color={colors.brand.primary}
-                  style={styles.linkText}
-                >
-                  Sign In
-                </Text>
-              </Pressable>
-            </Link>
-          </View>
+            {/* Divider */}
+            <View style={styles.dividerContainer}>
+              <View style={styles.dividerLine} />
+              <Text
+                variant="bodySmall"
+                color={colors.ink.muted}
+                style={styles.dividerText}
+              >
+                {t.or}
+              </Text>
+              <View style={styles.dividerLine} />
+            </View>
 
-          {/* Skip for now */}
-          <Pressable
-            onPress={() => router.back()}
-            style={styles.skipButton}
-            accessibilityLabel="Continue without signing up"
-            accessibilityRole="button"
-          >
-            <Text variant="bodySmall" color={colors.ink.muted}>
-              Continue without an account
-            </Text>
-          </Pressable>
+            {/* Social Login */}
+            <View style={styles.socialButtons}>
+              {Platform.OS === "ios" && (
+                <Button
+                  label={t.apple}
+                  variant="secondary"
+                  onPress={handleAppleSignUp}
+                  disabled={isLoading}
+                  fullWidth
+                />
+              )}
+              <Button
+                label={t.google}
+                variant="secondary"
+                onPress={handleGoogleSignUp}
+                disabled={isLoading}
+                fullWidth
+              />
+            </View>
+
+            {/* Sign In Link */}
+            <View style={styles.footer}>
+              <Text variant="body" color={colors.ink.normal}>
+                {t.hasAccount}{" "}
+              </Text>
+              <Link href="/(auth)/sign-in" asChild>
+                <Pressable accessibilityRole="link">
+                  <Text
+                    variant="body"
+                    color={colors.brand.primary}
+                    style={styles.linkText}
+                  >
+                    {t.signInLink}
+                  </Text>
+                </Pressable>
+              </Link>
+            </View>
+
+            {/* Skip for now */}
+            <Pressable
+              onPress={() => router.back()}
+              style={styles.skipButton}
+              accessibilityLabel="Continue without signing up"
+              accessibilityRole="button"
+            >
+              <Text variant="bodySmall" color={colors.ink.muted}>
+                Continue without an account
+              </Text>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

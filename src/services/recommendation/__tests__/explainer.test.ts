@@ -78,7 +78,7 @@ describe("generateExplanations", () => {
       snow: 50,
     };
     const reasons = generateExplanations(resort, scores, basePrefs);
-    expect(reasons.some((r) => r.includes("€140"))).toBe(true);
+    expect(reasons.some((r) => r.includes("£140"))).toBe(true);
   });
 
   it("returns fallback reason when all scores are low", () => {

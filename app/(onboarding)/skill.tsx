@@ -1,13 +1,6 @@
-import { View, StyleSheet, Pressable, ScrollView, Platform } from "react-native";
+import { View, StyleSheet, Pressable, Platform } from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-  interpolate,
-} from "react-native-reanimated";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
@@ -22,8 +15,6 @@ import {
 } from "@components/onboarding/AnimatedQuizContent";
 import type { SkillLevel } from "@/types/preferences";
 import { SKILL_LEVELS } from "@/constants/options";
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /** Piste marker colors matching real European ski signage */
 const PISTE_COLORS: Record<SkillLevel, string> = {
@@ -74,24 +65,6 @@ function OptionCard({
   title: string;
   description: string;
 }) {
-  const scale = useSharedValue(1);
-  const pressed = useSharedValue(0);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    shadowOpacity: interpolate(pressed.value, [0, 1], [0.08, 0.15]),
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.97, { damping: 15, stiffness: 400 });
-    pressed.value = withTiming(1, { duration: 100 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 12, stiffness: 300 });
-    pressed.value = withTiming(0, { duration: 200 });
-  };
-
   const handlePress = () => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -100,39 +73,38 @@ function OptionCard({
   };
 
   return (
-    <AnimatedPressable
+    <Pressable
       style={[
         styles.option,
+        isTablet && styles.optionTablet,
         active && styles.optionActive,
-        animatedStyle,
       ]}
       onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
       accessibilityRole="checkbox"
       accessibilityState={{ checked: active }}
       accessibilityLabel={`${title}: ${description}`}
     >
       <PisteMarker level={level} />
-      <View style={styles.optionText}>
-        <Text
-          variant="h4"
-          color={active ? colors.brand.primary : colors.ink.rich}
-        >
-          {title}
-        </Text>
-        <Text variant="bodySmall" color={colors.ink.normal}>
-          {description}
-        </Text>
-      </View>
+      <Text
+        variant="h4"
+        color={active ? colors.brand.primary : colors.ink.rich}
+        style={styles.optionTitle}
+      >
+        {title}
+      </Text>
+      <Text
+        variant="bodySmall"
+        color={colors.ink.muted}
+        style={styles.optionDesc}
+      >
+        {description}
+      </Text>
       {active && (
         <View style={styles.checkmark}>
-          <Text variant="caption" color={colors.brand.primary}>
-            ✓
-          </Text>
+          <Text style={styles.checkmarkText}>✓</Text>
         </View>
       )}
-    </AnimatedPressable>
+    </Pressable>
   );
 }
 
@@ -161,7 +133,7 @@ export default function SkillScreen() {
           <Button
             label={`← ${content.onboarding.skill.back}`}
             variant="ghost"
-            onPress={() => router.back()}
+            onPress={() => router.push("/(onboarding)/trip-type")}
             style={styles.backBtn}
           />
           <Button
@@ -187,20 +159,19 @@ export default function SkillScreen() {
             </Text>
           </View>
 
-          <ScrollView
-            style={styles.optionsScroll}
-            contentContainerStyle={[
-              styles.options,
-              isTablet && styles.optionsTablet,
-            ]}
-            showsVerticalScrollIndicator={Platform.OS !== "web"}
-            bounces={false}
+          <View
+            style={[styles.optionsGrid, isTablet && styles.optionsGridTablet]}
           >
             {OPTIONS.map((level, index) => {
               const optContent = content.onboarding.skill.options[level];
               const active = groupAbilities.includes(level);
               return (
-                <StaggeredItem key={level} index={index} baseDelay={80} style={isTablet ? styles.optionRow : undefined}>
+                <StaggeredItem
+                  key={level}
+                  index={index}
+                  baseDelay={80}
+                  style={[styles.gridCell, isTablet && styles.gridCellTablet]}
+                >
                   <OptionCard
                     level={level}
                     active={active}
@@ -212,7 +183,7 @@ export default function SkillScreen() {
                 </StaggeredItem>
               );
             })}
-          </ScrollView>
+          </View>
         </View>
       </AnimatedQuizContent>
     </QuizLayout>
@@ -221,49 +192,68 @@ export default function SkillScreen() {
 
 const styles = StyleSheet.create({
   inner: { flex: 1 },
-  header: { marginBottom: spacing.lg, gap: spacing.xs },
-  optionsScroll: { flex: 1 },
-  options: { gap: spacing.sm, paddingBottom: spacing.sm },
-  optionsTablet: {
+  header: { marginBottom: spacing.md, gap: spacing.xs },
+  optionsGrid: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  optionsGridTablet: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: spacing.md,
     justifyContent: "center",
   },
+  gridCell: {
+    flexGrow: 1,
+  },
+  gridCellTablet: {
+    width: "48%",
+    minWidth: 140,
+  },
   option: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.canvas.subtle,
-    padding: spacing.md,
+    backgroundColor: colors.surface.primary,
+    padding: spacing.sm,
     borderRadius: radius.lg,
     borderWidth: 2,
-    borderColor: colors.canvas.subtle,
-    gap: spacing.md,
+    borderColor: colors.border.subtle,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
   },
-  optionRow: {
-    width: "48%",
-    minWidth: 200,
+  optionTablet: {
+    flex: 1,
+    padding: spacing.md,
   },
   optionActive: {
     borderColor: colors.brand.primary,
-    backgroundColor: colors.primarySubtle,
+    backgroundColor: colors.brand.primarySubtle,
   },
   pisteMarker: {
-    // Subtle shadow for depth
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.15,
-    shadowRadius: 2,
-    elevation: 2,
+    marginBottom: spacing.xs,
   },
-  optionText: { flex: 1 },
+  optionTitle: {
+    textAlign: "center",
+    marginBottom: spacing.xxs,
+  },
+  optionDesc: {
+    textAlign: "center",
+    lineHeight: 18,
+  },
   checkmark: {
+    position: "absolute",
+    top: spacing.xs,
+    right: spacing.xs,
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.primarySubtle,
+    backgroundColor: colors.brand.primary,
     alignItems: "center",
     justifyContent: "center",
+  },
+  checkmarkText: {
+    color: colors.ink.onBrand,
+    fontSize: 14,
+    fontWeight: "700",
   },
   footer: { flexDirection: "row", gap: spacing.sm },
   backBtn: { flex: 1 },

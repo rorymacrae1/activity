@@ -11,6 +11,7 @@ import { Text } from "@components/ui/Text";
 import { Icon } from "@components/ui/Icon";
 import { ResortImage } from "@components/ui/ResortImage";
 import { colors, spacing, radius, typography } from "@theme";
+import { useContent } from "@hooks/useContent";
 import type { RecommendationResult } from "@/types/recommendation";
 
 const { width: _SCREEN_WIDTH } = Dimensions.get("window");
@@ -28,6 +29,7 @@ interface TopPickHeroProps {
  */
 export function TopPickHero({ result, onPress }: TopPickHeroProps) {
   const { resort, matchScore } = result;
+  const content = useContent();
 
   // Count-up animation: 0 → matchScore over ~900ms with ease-out
   const [displayScore, setDisplayScore] = useState(0);
@@ -49,8 +51,14 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(20);
   useEffect(() => {
-    opacity.value = withDelay(120, withSpring(1, { damping: 20, stiffness: 200 }));
-    translateY.value = withDelay(120, withSpring(0, { damping: 18, stiffness: 220 }));
+    opacity.value = withDelay(
+      120,
+      withSpring(1, { damping: 20, stiffness: 200 }),
+    );
+    translateY.value = withDelay(
+      120,
+      withSpring(0, { damping: 18, stiffness: 220 }),
+    );
   }, [opacity, translateY]);
   const heroStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -129,7 +137,8 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
             <View style={styles.statDivider} />
             <View style={styles.stat}>
               <Text style={styles.statValue}>
-                €{resort.attributes.averageDailyCost}
+                {content.currencySymbol}
+                {resort.attributes.averageDailyCost}
               </Text>
               <Text style={styles.statLabel}>/day</Text>
             </View>

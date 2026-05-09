@@ -24,7 +24,8 @@ export const supabase: SupabaseClient<Database> | null = isSupabaseConfigured
       auth: {
         // Persist auth state — uses AsyncStorage on native, localStorage on web
         persistSession: true,
-        autoRefreshToken: true,
+        // Disable auto-refresh to prevent retry loops when offline / project paused
+        autoRefreshToken: false,
         detectSessionInUrl: true,
       },
     })

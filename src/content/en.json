@@ -2,12 +2,15 @@
   "onboarding": {
     "welcome": {
       "appTitle": "PisteWise",
-      "tagline": "Find your perfect ski resort in seconds",
-      "valueProp1": "Personalised to your skill and style",
-      "valueProp2": "30+ top European resorts",
-      "valueProp3": "Works offline — take it to the slopes",
-      "cta": "Find My Resort",
-      "ctaSubtext": "Takes about 1 minute"
+      "tagline": "Your next ski trip, sorted.",
+      "subtitle": "Answer 5 quick questions and we'll match you with the perfect resort for your group, ability, and budget.",
+      "valueProp1": "Matched to your skill, budget and style",
+      "valueProp2": "{count} hand-picked resorts",
+      "valueProp3": "Works offline — take it to the mountain",
+      "cta": "Let's Go",
+      "ctaSubtext": "5 questions · takes under a minute",
+      "returningCta": "View My Results",
+      "returningSubtext": "Pick up where you left off"
     },
     "tripType": {
       "title": "Who's this trip for?",
@@ -63,23 +66,23 @@
       "options": {
         "budget": {
           "title": "Value Explorer",
-          "range": "€80–120/day",
+          "range": "£80–120/day",
           "description": "Great skiing without the premium price tag"
         },
         "mid": {
           "title": "Sweet Spot",
-          "range": "€120–180/day",
+          "range": "£120–180/day",
           "description": "Quality gear, good food, top terrain",
           "badge": "Most popular"
         },
         "premium": {
           "title": "Full Experience",
-          "range": "€180–280/day",
+          "range": "£180–280/day",
           "description": "Priority everything, zero compromise"
         },
         "luxury": {
           "title": "No Limits",
-          "range": "€280+/day",
+          "range": "£280+/day",
           "description": "Exclusive access, five-star dining"
         }
       },
@@ -171,6 +174,22 @@
     "language": "Language",
     "languageSection": "Language",
     "resetLoading": "Resetting preferences...",
+    "myProfile": "My Profile",
+    "visitedResorts": "Visited Resorts",
+    "allRegions": "All regions",
+    "tier": "tier",
+    "signInPrompt": "Sign in to sync your data across devices",
+    "welcome": "Welcome",
+    "syncNow": "Sync Now",
+    "signOut": "Sign Out",
+    "syncAlerts": {
+      "signOutTitle": "Sign Out",
+      "signOutMessage": "Are you sure you want to sign out?",
+      "signOutConfirm": "Sign Out",
+      "cancel": "Cancel",
+      "syncSuccess": "Synced successfully!",
+      "syncError": "Sync failed. Please try again."
+    },
     "alerts": {
       "retakeTitle": "Retake Quiz",
       "retakeMessage": "This will reset your preferences. Are you sure?",
@@ -251,8 +270,9 @@
     "rank": "#{rank}",
     "km": "{km}km",
     "snow": "{snow}/5 snow",
-    "cost": "€{cost}/day"
+    "cost": "£{cost}/day"
   },
+  "currencySymbol": "£",
   "progress": {
     "step": "Step {current} of {total}"
   },
@@ -275,5 +295,124 @@
     "Spain": { "name": "Spain", "flag": "🇪🇸" },
     "Switzerland": { "name": "Switzerland", "flag": "🇨🇭" },
     "UK": { "name": "United Kingdom", "flag": "🇬🇧" }
+  },
+  "home": {
+    "welcome": {
+      "goodMorning": "Good morning",
+      "goodAfternoon": "Good afternoon",
+      "goodEvening": "Good evening",
+      "seasonOn": "Ski season is on!",
+      "seasonSpring": "Spring skiing available",
+      "seasonOff": "Planning ahead?",
+      "favorite": "Favorite",
+      "favorites": "Favorites",
+      "profile": "Profile"
+    },
+    "quickActions": {
+      "heading": "Quick Actions",
+      "browseLabel": "Browse Resorts",
+      "browseSub": "Discover your next trip",
+      "retakeLabel": "Retake Quiz",
+      "retakeSub": "Update your preferences",
+      "profileLabel": "Complete Profile",
+      "profileSub": "Better recommendations"
+    },
+    "favoritesPreview": {
+      "heading": "Your Favorites",
+      "viewAll": "View All",
+      "emptyTitle": "No favorites yet",
+      "emptyText": "Tap to browse resorts and save your favorites",
+      "emptyButton": "Browse Resorts",
+      "moreResort": "more resort",
+      "moreResorts": "more resorts"
+    },
+    "profileCompletion": {
+      "title": "Let's Personalise Your Experience",
+      "subtitle": "Help us find your perfect resorts",
+      "complete": "complete",
+      "addVisited": "Add resorts you've visited",
+      "setAirport": "Set your home airport",
+      "saveFavorites": "Save resorts you love",
+      "button": "Complete Profile"
+    },
+    "recommendations": {
+      "heading": "Similar to {name}",
+      "fallbackHeading": "Resorts You Might Like",
+      "subheading": "These resorts are similar"
+    }
+  },
+  "discoverScreen": {
+    "title": "Discover",
+    "subtitle": "{count} ski resorts",
+    "searchPlaceholder": "Search resorts…",
+    "searchPlaceholderLong": "Search by name, country or region…",
+    "sortLabel": "Sort:",
+    "sortAZ": "A – Z",
+    "sortKm": "Most km",
+    "sortSnow": "Best snow",
+    "refine": "Refine",
+    "listView": "List view",
+    "chartView": "Compare view",
+    "chartLabel": "Compare",
+    "resultsCount": "{count} resort",
+    "resultsCountPlural": "{count} resorts",
+    "emptyTitle": "No resorts found",
+    "emptyMessageSearch": "No resorts match \"{query}\". Try a different search.",
+    "emptyMessageDefault": "Try adjusting your search or filters.",
+    "clearSearch": "Clear search"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in to PisteWise",
+      "subtitle": "Your preferences. Every device.",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "submitting": "Signing in…",
+      "or": "Or sign in with",
+      "apple": "Continue with Apple",
+      "google": "Continue with Google",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign Up",
+      "skip": "Continue without an account",
+      "validationEmpty": "Please enter both email and password.",
+      "welcomeBack": "Welcome back!"
+    },
+    "signUp": {
+      "title": "Create Account",
+      "subtitle": "One account. All your resorts.",
+      "displayName": "Display Name (optional)",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submit": "Create Account",
+      "submitting": "Creating account…",
+      "placeholder": "At least 6 characters",
+      "or": "Or sign up with",
+      "apple": "Continue with Apple",
+      "google": "Continue with Google",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign In",
+      "successMessage": "Account created successfully! Welcome to PisteWise.",
+      "confirmEmail": "Check your email to confirm your account.",
+      "validationEmail": "Please enter your email.",
+      "validationPassword": "Please enter a password.",
+      "validationPasswordLength": "Password must be at least 6 characters.",
+      "validationPasswordMatch": "Passwords do not match."
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "sentTitle": "Check your inbox",
+      "subtitle": "Enter your email and we'll send a reset link.",
+      "sentSubtitle": "We've sent a reset link to {email}. Follow the link to set a new password.",
+      "email": "Email",
+      "submit": "Send Reset Link",
+      "submitting": "Sending…",
+      "validationEmpty": "Please enter your email address.",
+      "backToSignIn": "Back to Sign In"
+    },
+    "showPassword": "Show",
+    "hidePassword": "Hide"
   }
 }

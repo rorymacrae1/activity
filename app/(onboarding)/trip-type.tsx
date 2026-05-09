@@ -1,19 +1,6 @@
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Platform,
-  Pressable,
-} from "react-native";
+import { View, StyleSheet, Platform, Pressable } from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-  interpolate,
-} from "react-native-reanimated";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
@@ -22,10 +9,11 @@ import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { ProgressIndicator } from "@components/onboarding/ProgressIndicator";
-import { AnimatedQuizContent, StaggeredItem } from "@components/onboarding/AnimatedQuizContent";
+import {
+  AnimatedQuizContent,
+  StaggeredItem,
+} from "@components/onboarding/AnimatedQuizContent";
 import type { TripType } from "@/types/preferences";
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /**
  * Stylized person silhouette — luxury line-art aesthetic.
@@ -125,24 +113,6 @@ function OptionCard({
   onSelect: () => void;
   isTablet: boolean;
 }) {
-  const scale = useSharedValue(1);
-  const pressed = useSharedValue(0);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    shadowOpacity: interpolate(pressed.value, [0, 1], [0.08, 0.15]),
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.97, { damping: 15, stiffness: 400 });
-    pressed.value = withTiming(1, { duration: 100 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 12, stiffness: 300 });
-    pressed.value = withTiming(0, { duration: 200 });
-  };
-
   const handlePress = () => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -151,16 +121,13 @@ function OptionCard({
   };
 
   return (
-    <AnimatedPressable
+    <Pressable
       style={[
         styles.option,
         active && styles.optionActive,
         isTablet && styles.optionTablet,
-        animatedStyle,
       ]}
       onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
       accessibilityRole="radio"
       accessibilityState={{ selected: active }}
       accessibilityLabel={`${title}: ${description}`}
@@ -192,7 +159,7 @@ function OptionCard({
           <Text style={styles.checkmarkText}>✓</Text>
         </View>
       )}
-    </AnimatedPressable>
+    </Pressable>
   );
 }
 
@@ -230,19 +197,18 @@ export default function TripTypeScreen() {
             </Text>
           </View>
 
-          <ScrollView
-            style={styles.optionsScroll}
-            contentContainerStyle={[
-              styles.options,
-              isTablet && styles.optionsTablet,
-            ]}
-            showsVerticalScrollIndicator={Platform.OS !== "web"}
-            bounces={false}
+          <View
+            style={[styles.optionsGrid, isTablet && styles.optionsGridTablet]}
           >
             {OPTIONS.map((value, index) => {
               const optContent = content.onboarding.tripType.options[value];
               return (
-                <StaggeredItem key={value} index={index} baseDelay={80}>
+                <StaggeredItem
+                  key={value}
+                  index={index}
+                  baseDelay={80}
+                  style={[styles.gridCell, isTablet && styles.gridCellTablet]}
+                >
                   <OptionCard
                     value={value}
                     title={optContent.title}
@@ -254,7 +220,7 @@ export default function TripTypeScreen() {
                 </StaggeredItem>
               );
             })}
-          </ScrollView>
+          </View>
         </View>
       </AnimatedQuizContent>
     </QuizLayout>
@@ -263,44 +229,42 @@ export default function TripTypeScreen() {
 
 const styles = StyleSheet.create({
   inner: { flex: 1 },
-  header: { marginBottom: spacing.xl, gap: spacing.xs },
-  optionsScroll: { flex: 1 },
-  options: {
-    gap: spacing.sm,
-    paddingBottom: spacing.sm,
+  header: { marginBottom: spacing.md, gap: spacing.xs },
+  optionsGrid: {
+    flex: 1,
+    gap: spacing.xs,
   },
-  optionsTablet: {
+  optionsGridTablet: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: spacing.lg,
+    gap: spacing.md,
     justifyContent: "center",
+  },
+  gridCell: {
+    flexGrow: 1,
+  },
+  gridCellTablet: {
+    width: "48%",
+    minWidth: 140,
   },
   option: {
     backgroundColor: colors.surface.primary,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.xl,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    borderRadius: radius.lg,
     borderWidth: 2,
     borderColor: colors.border.subtle,
     alignItems: "center",
+    justifyContent: "center",
     position: "relative",
-    // Multi-layer shadow for depth
-    shadowColor: colors.ink.rich,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 3,
   },
   optionTablet: {
-    width: "47%",
-    minWidth: 200,
-    maxWidth: 240,
+    flex: 1,
+    paddingVertical: spacing.md,
   },
   optionActive: {
     borderColor: colors.brand.primary,
     backgroundColor: colors.brand.primarySubtle,
-    shadowOpacity: 0.15,
-    shadowOffset: { width: 0, height: 6 },
   },
   optionTitle: {
     textAlign: "center",
@@ -312,20 +276,14 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     position: "absolute",
-    top: spacing.sm,
-    right: spacing.sm,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    top: spacing.xs,
+    right: spacing.xs,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: colors.brand.primary,
     alignItems: "center",
     justifyContent: "center",
-    // Subtle shadow on checkmark
-    shadowColor: colors.brand.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 2,
   },
   checkmarkText: {
     color: colors.ink.onBrand,

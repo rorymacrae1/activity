@@ -27,6 +27,8 @@ import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { usePrefetchImages } from "@hooks/usePrefetchImages";
 import { colors, spacing, radius, typography } from "@theme";
+import { fontFamily } from "@theme/fonts";
+import { useContent } from "@hooks/useContent";
 import { Text } from "@components/ui/Text";
 import { Icon } from "@components/ui/Icon";
 import { LoadingState } from "@components/ui/LoadingState";
@@ -72,11 +74,7 @@ const NEUTRAL_PREFS: DiscoverPrefs = {
   snowImportance: 0.5,
 };
 
-const SORT_OPTIONS: { key: SortKey; label: string }[] = [
-  { key: "az", label: "A – Z" },
-  { key: "km", label: "Most km" },
-  { key: "snow", label: "Best snow" },
-];
+const SORT_KEYS: SortKey[] = ["az", "km", "snow"];
 
 // ─── Resort Row ──────────────────────────────────────────────────────────────
 
@@ -166,6 +164,12 @@ const ITEM_HEIGHT = ROW_HEIGHT + SEPARATOR_HEIGHT;
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 
 export default function DiscoverScreen() {
+  const t = useContent().discoverScreen;
+  const SORT_OPTIONS: { key: SortKey; label: string }[] = [
+    { key: "az", label: t.sortAZ },
+    { key: "km", label: t.sortKm },
+    { key: "snow", label: t.sortSnow },
+  ];
   const [allResorts, setAllResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -347,20 +351,27 @@ export default function DiscoverScreen() {
           {/* Left panel: filters always expanded */}
           <View style={styles.desktopSidebar}>
             <View style={styles.desktopSidebarHeader}>
-              <Text variant="h2" style={styles.pageTitle}>Discover</Text>
+              <Text variant="h2" style={styles.pageTitle}>
+                {t.title}
+              </Text>
               <Text variant="bodySmall" style={styles.pageSubtitle}>
-                {allResorts.length} ski resorts
+                {t.subtitle.replace("{count}", String(allResorts.length))}
               </Text>
             </View>
 
             {/* Search bar */}
             <View style={styles.sidebarSearch}>
               <View style={styles.searchBar}>
-                <Icon name="search" size={18} color={colors.ink.muted} strokeWidth={1.75} />
+                <Icon
+                  name="search"
+                  size={18}
+                  color={colors.ink.muted}
+                  strokeWidth={1.75}
+                />
                 <TextInput
                   ref={inputRef}
                   style={styles.searchInput}
-                  placeholder="Search resorts…"
+                  placeholder={t.searchPlaceholder}
                   placeholderTextColor={colors.ink.faint}
                   value={query}
                   onChangeText={setQuery}
@@ -368,13 +379,23 @@ export default function DiscoverScreen() {
                   clearButtonMode="never"
                   autoCorrect={false}
                   autoCapitalize="none"
-                  accessibilityLabel="Search resorts"
+                  accessibilityLabel={t.searchPlaceholder}
                   accessibilityRole="search"
                 />
                 {query.length > 0 && (
-                  <Pressable onPress={handleClearQuery} hitSlop={8} accessibilityLabel="Clear search" accessibilityRole="button">
+                  <Pressable
+                    onPress={handleClearQuery}
+                    hitSlop={8}
+                    accessibilityLabel={t.clearSearch}
+                    accessibilityRole="button"
+                  >
                     <View style={styles.clearButton}>
-                      <Icon name="x" size={14} color={colors.ink.muted} strokeWidth={2} />
+                      <Icon
+                        name="x"
+                        size={14}
+                        color={colors.ink.muted}
+                        strokeWidth={2}
+                      />
                     </View>
                   </Pressable>
                 )}
@@ -383,7 +404,7 @@ export default function DiscoverScreen() {
 
             {/* Sort */}
             <View style={styles.sidebarSort}>
-              <Text style={styles.sortLabel}>Sort by</Text>
+              <Text style={styles.sortLabel}>{t.sortLabel}</Text>
               <View style={styles.sidebarSortChips}>
                 {SORT_OPTIONS.map((opt) => {
                   const active = sortKey === opt.key;
@@ -395,7 +416,12 @@ export default function DiscoverScreen() {
                       accessibilityRole="button"
                       accessibilityState={{ selected: active }}
                     >
-                      <Text style={[styles.sortChipText, active && styles.sortChipTextActive]}>
+                      <Text
+                        style={[
+                          styles.sortChipText,
+                          active && styles.sortChipTextActive,
+                        ]}
+                      >
                         {opt.label}
                       </Text>
                     </Pressable>
@@ -406,7 +432,10 @@ export default function DiscoverScreen() {
 
             {/* Preference controls — always expanded on desktop */}
             <View style={styles.sidebarControls}>
-              <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
+              <DiscoverControls
+                value={discoverPrefs}
+                onChange={setDiscoverPrefs}
+              />
             </View>
           </View>
 
@@ -415,27 +444,63 @@ export default function DiscoverScreen() {
             {/* Header row: results count + view toggle */}
             <View style={styles.desktopContentHeader}>
               <Text style={styles.resultsCount}>
-                {results.length} resort{results.length !== 1 ? "s" : ""}
+                {results.length === 1
+                  ? t.resultsCount.replace("{count}", String(results.length))
+                  : t.resultsCountPlural.replace(
+                      "{count}",
+                      String(results.length),
+                    )}
               </Text>
               <View style={styles.viewToggle}>
                 <Pressable
-                  style={[styles.viewToggleBtn, viewMode === "list" && styles.viewToggleBtnActive]}
+                  style={[
+                    styles.viewToggleBtn,
+                    viewMode === "list" && styles.viewToggleBtnActive,
+                  ]}
                   onPress={() => setViewMode("list")}
                   accessibilityRole="button"
                   accessibilityLabel="List view"
                   accessibilityState={{ selected: viewMode === "list" }}
                 >
-                  <Icon name="list" size={15} color={viewMode === "list" ? colors.brand.primary : colors.ink.muted} strokeWidth={2} />
+                  <Icon
+                    name="list"
+                    size={15}
+                    color={
+                      viewMode === "list"
+                        ? colors.brand.primary
+                        : colors.ink.muted
+                    }
+                    strokeWidth={2}
+                  />
                 </Pressable>
                 <Pressable
-                  style={[styles.viewToggleBtn, viewMode === "map" && styles.viewToggleBtnActive]}
+                  style={[
+                    styles.viewToggleBtn,
+                    viewMode === "map" && styles.viewToggleBtnActive,
+                  ]}
                   onPress={() => setViewMode("map")}
                   accessibilityRole="button"
                   accessibilityLabel="Chart view"
                   accessibilityState={{ selected: viewMode === "map" }}
                 >
-                  <Icon name="grid" size={15} color={viewMode === "map" ? colors.brand.primary : colors.ink.muted} strokeWidth={2} />
-                  <Text style={[styles.viewToggleLabel, viewMode === "map" && styles.viewToggleLabelActive]}>Chart</Text>
+                  <Icon
+                    name="grid"
+                    size={15}
+                    color={
+                      viewMode === "map"
+                        ? colors.brand.primary
+                        : colors.ink.muted
+                    }
+                    strokeWidth={2}
+                  />
+                  <Text
+                    style={[
+                      styles.viewToggleLabel,
+                      viewMode === "map" && styles.viewToggleLabelActive,
+                    ]}
+                  >
+                    {t.chartLabel}
+                  </Text>
                 </Pressable>
               </View>
             </View>
@@ -449,15 +514,21 @@ export default function DiscoverScreen() {
                   resorts={allResorts}
                   prefs={normalizedPrefs}
                   query={query}
-                  filterIds={query ? new Set(results.map((r) => r.id)) : undefined}
+                  filterIds={
+                    query ? new Set(results.map((r) => r.id)) : undefined
+                  }
                 />
               </View>
             ) : results.length === 0 ? (
               <EmptyState
                 icon="search"
-                title="No resorts found"
-                message={query ? `No resorts match "${query}".` : "Start typing to search."}
-                action={{ label: "Clear search", onPress: () => setQuery("") }}
+                title={t.emptyTitle}
+                message={
+                  query
+                    ? t.emptyMessageSearch.replace("{query}", query)
+                    : t.emptyMessageDefault
+                }
+                action={{ label: t.clearSearch, onPress: () => setQuery("") }}
               />
             ) : (
               <FlatList
@@ -490,10 +561,10 @@ export default function DiscoverScreen() {
             <View style={styles.pageHeaderRow}>
               <View style={styles.pageHeaderText}>
                 <Text variant="h2" style={styles.pageTitle}>
-                  Discover
+                  {t.title}
                 </Text>
                 <Text variant="body" style={styles.pageSubtitle}>
-                  {allResorts.length} ski resorts
+                  {t.subtitle.replace("{count}", String(allResorts.length))}
                 </Text>
               </View>
 
@@ -534,7 +605,9 @@ export default function DiscoverScreen() {
                     name="grid"
                     size={15}
                     color={
-                      viewMode === "map" ? colors.brand.primary : colors.ink.muted
+                      viewMode === "map"
+                        ? colors.brand.primary
+                        : colors.ink.muted
                     }
                     strokeWidth={2}
                   />
@@ -544,7 +617,7 @@ export default function DiscoverScreen() {
                       viewMode === "map" && styles.viewToggleLabelActive,
                     ]}
                   >
-                    Chart
+                    {t.chartLabel}
                   </Text>
                 </Pressable>
               </View>
@@ -556,7 +629,10 @@ export default function DiscoverScreen() {
             <>
               {/* Search bar */}
               <View
-                style={[styles.searchContainer, { paddingHorizontal: hPadding }]}
+                style={[
+                  styles.searchContainer,
+                  { paddingHorizontal: hPadding },
+                ]}
               >
                 <View style={styles.searchBar}>
                   <Icon
@@ -568,7 +644,7 @@ export default function DiscoverScreen() {
                   <TextInput
                     ref={inputRef}
                     style={styles.searchInput}
-                    placeholder="Search by name, country or region…"
+                    placeholder={t.searchPlaceholderLong}
                     placeholderTextColor={colors.ink.faint}
                     value={query}
                     onChangeText={setQuery}
@@ -576,14 +652,14 @@ export default function DiscoverScreen() {
                     clearButtonMode="never"
                     autoCorrect={false}
                     autoCapitalize="none"
-                    accessibilityLabel="Search resorts"
+                    accessibilityLabel={t.searchPlaceholder}
                     accessibilityRole="search"
                   />
                   {query.length > 0 && (
                     <Pressable
                       onPress={handleClearQuery}
                       hitSlop={8}
-                      accessibilityLabel="Clear search"
+                      accessibilityLabel={t.clearSearch}
                       accessibilityRole="button"
                     >
                       <View style={styles.clearButton}>
@@ -602,13 +678,18 @@ export default function DiscoverScreen() {
               {/* Sort row */}
               <View style={[styles.sortRow, { paddingHorizontal: hPadding }]}>
                 <View style={styles.sortLeft}>
-                  <Text style={styles.sortLabel}>Sort:</Text>
+                  <Text style={styles.sortLabel}>
+                    {t.sortLabel.replace(":", "")}:
+                  </Text>
                   {SORT_OPTIONS.map((opt) => {
                     const active = sortKey === opt.key;
                     return (
                       <Pressable
                         key={opt.key}
-                        style={[styles.sortChip, active && styles.sortChipActive]}
+                        style={[
+                          styles.sortChip,
+                          active && styles.sortChipActive,
+                        ]}
                         onPress={() => setSortKey(opt.key)}
                         accessibilityRole="button"
                         accessibilityLabel={`Sort by ${opt.label}`}
@@ -628,7 +709,10 @@ export default function DiscoverScreen() {
                 </View>
                 <View style={styles.sortRight}>
                   <Pressable
-                    style={[styles.refineChip, showRefine && styles.refineChipActive]}
+                    style={[
+                      styles.refineChip,
+                      showRefine && styles.refineChipActive,
+                    ]}
                     onPress={() => setShowRefine((v) => !v)}
                     accessibilityRole="button"
                     accessibilityLabel="Toggle refine panel"
@@ -637,26 +721,47 @@ export default function DiscoverScreen() {
                     <Icon
                       name="sliders-horizontal"
                       size={13}
-                      color={showRefine ? colors.ink.inverse : colors.ink.normal}
+                      color={
+                        showRefine ? colors.ink.inverse : colors.ink.normal
+                      }
                       strokeWidth={2}
                     />
-                    <Text style={[styles.refineChipText, showRefine && styles.refineChipTextActive]}>
-                      Refine
+                    <Text
+                      style={[
+                        styles.refineChipText,
+                        showRefine && styles.refineChipTextActive,
+                      ]}
+                    >
+                      {t.refine}
                     </Text>
                   </Pressable>
                   <Text style={styles.resultsCount}>
-                    {results.length} resort{results.length !== 1 ? "s" : ""}
+                    {results.length === 1
+                      ? t.resultsCount.replace(
+                          "{count}",
+                          String(results.length),
+                        )
+                      : t.resultsCountPlural.replace(
+                          "{count}",
+                          String(results.length),
+                        )}
                   </Text>
                 </View>
               </View>
               {/* Inline refine controls — shown when Refine is toggled */}
               {showRefine ? (
-                <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
+                <DiscoverControls
+                  value={discoverPrefs}
+                  onChange={setDiscoverPrefs}
+                />
               ) : null}
             </>
           ) : (
             <View style={{ paddingHorizontal: hPadding }}>
-              <DiscoverControls value={discoverPrefs} onChange={setDiscoverPrefs} />
+              <DiscoverControls
+                value={discoverPrefs}
+                onChange={setDiscoverPrefs}
+              />
             </View>
           )}
 
@@ -676,20 +781,22 @@ export default function DiscoverScreen() {
                 resorts={allResorts}
                 prefs={normalizedPrefs}
                 query={query}
-                filterIds={query ? new Set(results.map((r) => r.id)) : undefined}
+                filterIds={
+                  query ? new Set(results.map((r) => r.id)) : undefined
+                }
               />
             </View>
           ) : results.length === 0 ? (
             <EmptyState
               icon="search"
-              title="No resorts found"
+              title={t.emptyTitle}
               message={
                 query
-                  ? `No resorts match "${query}". Try a different search.`
-                  : "Start typing to search for resorts."
+                  ? t.emptyMessageSearch.replace("{query}", query)
+                  : t.emptyMessageDefault
               }
               action={{
-                label: "Clear search",
+                label: t.clearSearch,
                 onPress: () => setQuery(""),
               }}
             />
@@ -847,7 +954,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    fontSize: 15,
+    ...typography.body,
     color: colors.ink.rich,
     paddingVertical: 0,
   },
@@ -895,7 +1002,7 @@ const styles = StyleSheet.create({
   },
   sortChipTextActive: {
     color: colors.brand.primary,
-    fontWeight: "600" as const,
+    fontFamily: fontFamily.semiBold,
   },
   resultsCount: {
     ...typography.caption,
@@ -927,7 +1034,7 @@ const styles = StyleSheet.create({
   },
   refineChipTextActive: {
     color: colors.ink.inverse,
-    fontWeight: "600" as const,
+    fontFamily: fontFamily.semiBold,
   },
 
   // Divider

@@ -1,17 +1,6 @@
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Platform,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, Pressable, Platform } from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
@@ -26,14 +15,11 @@ import {
 } from "@components/onboarding/AnimatedQuizContent";
 import type { BudgetLevel } from "@/types/preferences";
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 interface BudgetOption {
   level: BudgetLevel;
   title: string;
   range: string;
   description: string;
-  badge?: string;
 }
 
 /**
@@ -50,20 +36,6 @@ function OptionCard({
   onSelect: () => void;
   isTablet: boolean;
 }) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.97, { damping: 15, stiffness: 400 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 15, stiffness: 400 });
-  };
-
   const handlePress = () => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -72,33 +44,17 @@ function OptionCard({
   };
 
   return (
-    <AnimatedPressable
+    <Pressable
       style={[
         styles.option,
         active && styles.optionActive,
         isTablet && styles.optionTablet,
-        animatedStyle,
       ]}
       onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
       accessibilityRole="radio"
       accessibilityState={{ selected: active }}
       accessibilityLabel={`${opt.title}, ${opt.range}. ${opt.description}`}
     >
-      {/* Badge (e.g., "Most popular") */}
-      {opt.badge && (
-        <View style={styles.badge}>
-          <Text
-            variant="caption"
-            color={colors.ink.inverse}
-            style={styles.badgeText}
-          >
-            {opt.badge}
-          </Text>
-        </View>
-      )}
-
       {/* Header row: Title + Price */}
       <View style={styles.optionHeader}>
         <View style={styles.optionTitleRow}>
@@ -111,7 +67,7 @@ function OptionCard({
           </Text>
           {active && (
             <View style={styles.checkmark}>
-              <Text variant="caption" color={colors.brand.primary}>
+              <Text variant="caption" color={colors.ink.onBrand}>
                 ✓
               </Text>
             </View>
@@ -133,7 +89,7 @@ function OptionCard({
       >
         {opt.description}
       </Text>
-    </AnimatedPressable>
+    </Pressable>
   );
 }
 
@@ -154,7 +110,6 @@ export default function BudgetScreen() {
       title: content.onboarding.budget.options.mid.title,
       range: content.onboarding.budget.options.mid.range,
       description: content.onboarding.budget.options.mid.description,
-      badge: content.onboarding.budget.options.mid.badge,
     },
     {
       level: "premium",
@@ -177,7 +132,7 @@ export default function BudgetScreen() {
           <Button
             label={`← ${content.onboarding.budget.back}`}
             variant="ghost"
-            onPress={() => router.back()}
+            onPress={() => router.push("/(onboarding)/skill")}
             style={styles.backBtn}
           />
           <Button
@@ -205,14 +160,14 @@ export default function BudgetScreen() {
           </View>
 
           {/* Scrollable options area for mobile */}
-          <ScrollView
-            style={styles.scrollArea}
-            contentContainerStyle={[styles.grid, isTablet && styles.gridTablet]}
-            showsVerticalScrollIndicator={Platform.OS !== "web"}
-            bounces={false}
-          >
+          <View style={[styles.grid, isTablet && styles.gridTablet]}>
             {OPTIONS.map((opt, index) => (
-              <StaggeredItem key={opt.level} index={index} baseDelay={80} style={isTablet ? styles.optionTabletWrapper : undefined}>
+              <StaggeredItem
+                key={opt.level}
+                index={index}
+                baseDelay={80}
+                style={[styles.gridCell, isTablet && styles.gridCellTablet]}
+              >
                 <OptionCard
                   opt={opt}
                   active={budgetLevel === opt.level}
@@ -221,16 +176,12 @@ export default function BudgetScreen() {
                 />
               </StaggeredItem>
             ))}
+          </View>
 
-            {/* Reassurance hint - inside scroll on mobile */}
-            <Text
-              variant="caption"
-              color={colors.ink.muted}
-              style={styles.hint}
-            >
-              {content.onboarding.budget.hint}
-            </Text>
-          </ScrollView>
+          {/* Reassurance hint */}
+          <Text variant="caption" color={colors.ink.muted} style={styles.hint}>
+            {content.onboarding.budget.hint}
+          </Text>
         </View>
       </AnimatedQuizContent>
     </QuizLayout>
@@ -242,41 +193,42 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
     gap: spacing.xs,
   },
-  scrollArea: {
-    flex: 1,
-  },
   grid: {
-    gap: spacing.sm,
-    paddingBottom: spacing.sm,
+    flex: 1,
+    gap: spacing.xs,
   },
   gridTablet: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: spacing.md,
   },
+  gridCell: {
+    flexGrow: 1,
+  },
+  gridCellTablet: {
+    width: "48%",
+    minWidth: 140,
+  },
   option: {
-    backgroundColor: colors.canvas.subtle,
-    padding: spacing.md,
-    borderRadius: radius.md,
+    backgroundColor: colors.surface.primary,
+    padding: spacing.sm,
+    borderRadius: radius.lg,
     borderWidth: 2,
-    borderColor: colors.canvas.subtle,
+    borderColor: colors.border.subtle,
     gap: spacing.xxs,
     position: "relative",
     overflow: "hidden",
   },
-  optionTabletWrapper: {
-    width: "47%",
-  },
   optionTablet: {
-    padding: spacing.lg,
-    borderRadius: radius.lg,
+    flex: 1,
+    padding: spacing.md,
   },
   optionActive: {
     borderColor: colors.brand.primary,
-    backgroundColor: colors.primarySubtle,
+    backgroundColor: colors.brand.primarySubtle,
   },
   optionHeader: {
     gap: spacing.xxs,
@@ -293,24 +245,12 @@ const styles = StyleSheet.create({
     marginTop: spacing.xxs,
   },
   checkmark: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: colors.primarySubtle,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.brand.primary,
     alignItems: "center",
     justifyContent: "center",
-  },
-  badge: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    backgroundColor: colors.brand.primary,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs,
-    borderBottomLeftRadius: radius.sm,
-  },
-  badgeText: {
-    fontWeight: "600",
   },
   hint: {
     textAlign: "center",

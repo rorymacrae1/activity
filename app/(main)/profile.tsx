@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { View, StyleSheet, ScrollView, Alert, Pressable } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import ChevronRight from "lucide-react-native/dist/cjs/icons/chevron-right";
+import { showAlert } from "@lib/alert";
 import { usePreferencesStore } from "@stores/preferences";
 import { useFavoritesStore } from "@stores/favorites";
 import { useAuthStore, useIsAuthenticated, useProfile } from "@stores/auth";
@@ -13,6 +14,7 @@ import { colors, spacing, radius, typography } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { Card } from "@components/ui/Card";
+import { Icon } from "@components/ui/Icon";
 import { SectionHeader } from "@components/ui/SectionHeader";
 import { LoadingState } from "@components/ui/LoadingState";
 import { ScreenContainer } from "@components/ui/ScreenContainer";
@@ -42,13 +44,13 @@ export default function ProfileScreen() {
   const content = useContent();
 
   const handleSignOut = async () => {
-    Alert.alert(
-      "Sign Out",
-      "Are you sure you want to sign out? Your local data will be kept.",
+    showAlert(
+      content.profile.syncAlerts.signOutTitle,
+      content.profile.syncAlerts.signOutMessage,
       [
-        { text: "Cancel", style: "cancel" },
+        { text: content.profile.syncAlerts.cancel, style: "cancel" },
         {
-          text: "Sign Out",
+          text: content.profile.syncAlerts.signOutConfirm,
           style: "destructive",
           onPress: async () => {
             setIsSigningOut(true);
@@ -64,17 +66,20 @@ export default function ProfileScreen() {
     if (!isAuthenticated || !user) return;
     try {
       await Promise.all([syncToCloud(user.id), syncFavoritesToCloud(user.id)]);
-      Alert.alert(
-        "Sync Complete",
-        "Your preferences and favorites have been synced to the cloud.",
+      showAlert(
+        content.profile.syncAlerts.signOutTitle,
+        content.profile.syncAlerts.syncSuccess,
       );
     } catch {
-      Alert.alert("Sync Failed", "Could not sync your data. Please try again.");
+      showAlert(
+        content.profile.syncAlerts.signOutTitle,
+        content.profile.syncAlerts.syncError,
+      );
     }
   };
 
   const handleRetakeQuiz = () => {
-    Alert.alert(
+    showAlert(
       content.profile.alerts.retakeTitle,
       content.profile.alerts.retakeMessage,
       [
@@ -94,7 +99,7 @@ export default function ProfileScreen() {
 
   const handleClearFavorites = () => {
     if (favoriteIds.length === 0) {
-      Alert.alert(
+      showAlert(
         content.profile.alerts.noSavedTitle,
         content.profile.alerts.noSavedMessage,
       );
@@ -104,7 +109,7 @@ export default function ProfileScreen() {
     const clearMessage = content.profile.alerts.clearMessage
       .replace("{count}", String(favoriteIds.length))
       .replace("{plural}", plural);
-    Alert.alert(content.profile.alerts.clearTitle, clearMessage, [
+    showAlert(content.profile.alerts.clearTitle, clearMessage, [
       { text: content.profile.alerts.cancel, style: "cancel" },
       {
         text: content.profile.alerts.clearConfirm,
@@ -163,7 +168,7 @@ export default function ProfileScreen() {
             <View style={styles.heroAvatar}>
               <Text style={styles.heroAvatarInitial}>
                 {(isAuthenticated
-                  ? (profile?.display_name || user?.email || "U")
+                  ? profile?.display_name || user?.email || "U"
                   : "?"
                 )
                   .charAt(0)
@@ -175,32 +180,42 @@ export default function ProfileScreen() {
             {isAuthenticated ? (
               <>
                 <Text style={styles.heroName} numberOfLines={1}>
-                  {profile?.display_name || "My Profile"}
+                  {profile?.display_name || content.profile.myProfile}
                 </Text>
                 <Text style={styles.heroEmail} numberOfLines={1}>
                   {user?.email}
                 </Text>
                 <View style={styles.heroStatRow}>
                   <View style={styles.heroStatPill}>
+                    <Icon
+                      name="heart"
+                      size={14}
+                      color={colors.brand.accent}
+                      strokeWidth={2}
+                    />
                     <Text style={styles.heroStatText}>
-                      💙 {favoriteIds.length}
+                      {favoriteIds.length}
                     </Text>
                     <Text style={styles.heroStatLabel}>Saved</Text>
                   </View>
                   <View style={styles.heroStatDot} />
                   <View style={styles.heroStatPill}>
-                    <Text style={styles.heroStatText}>
-                      ✓ {visitedIds.length}
-                    </Text>
+                    <Icon
+                      name="check"
+                      size={14}
+                      color={colors.sentiment.success}
+                      strokeWidth={2}
+                    />
+                    <Text style={styles.heroStatText}>{visitedIds.length}</Text>
                     <Text style={styles.heroStatLabel}>Visited</Text>
                   </View>
                 </View>
               </>
             ) : (
               <>
-                <Text style={styles.heroName}>Welcome</Text>
+                <Text style={styles.heroName}>{content.profile.welcome}</Text>
                 <Text style={styles.heroEmail}>
-                  Sign in to sync your data across devices
+                  {content.profile.signInPrompt}
                 </Text>
                 <Button
                   label="Sign In"
@@ -220,13 +235,13 @@ export default function ProfileScreen() {
             <Card elevation="subtle" style={styles.sectionCard}>
               <View style={styles.accountActions}>
                 <Button
-                  label="Sync Now"
+                  label={content.profile.syncNow}
                   variant="secondary"
                   onPress={handleSyncNow}
                   size="compact"
                 />
                 <Button
-                  label="Sign Out"
+                  label={content.profile.signOut}
                   variant="secondary"
                   onPress={handleSignOut}
                   size="compact"
@@ -245,7 +260,7 @@ export default function ProfileScreen() {
           {!hasCompletedSetup ? (
             <View style={styles.warningBanner}>
               <Text variant="bodySmall" color={colors.sentiment.warning}>
-                ⚠️ {content.profile.incompleteWarning}
+                {content.profile.incompleteWarning}
               </Text>
             </View>
           ) : null}
@@ -266,7 +281,7 @@ export default function ProfileScreen() {
               label={content.profile.budget}
               value={
                 budgetLevel
-                  ? capitalize(budgetLevel) + " tier"
+                  ? capitalize(budgetLevel) + " " + content.profile.tier
                   : content.profile.notSet
               }
               onPress={handleRetakeQuiz}
@@ -278,7 +293,7 @@ export default function ProfileScreen() {
                 regions.length === 0
                   ? content.profile.notSet
                   : regions.length >= 30
-                    ? "All regions"
+                    ? content.profile.allRegions
                     : content.profile.regionsCount.replace(
                         "{count}",
                         String(regions.length),
@@ -288,7 +303,7 @@ export default function ProfileScreen() {
             />
             <View style={styles.divider} />
             <PrefRow
-              label="Visited Resorts"
+              label={content.profile.visitedResorts}
               value={
                 visitedIds.length === 0
                   ? content.profile.notSet

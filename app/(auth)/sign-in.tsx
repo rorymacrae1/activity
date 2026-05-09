@@ -19,6 +19,7 @@ import { ScreenContainer } from "@components/ui/ScreenContainer";
 import { useToast } from "@components/ui/Toast";
 import { useAuthStore } from "@stores/auth";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 
 /**
  * Sign in screen for existing users.
@@ -33,12 +34,14 @@ export default function SignInScreen() {
   const { signIn, signInWithGoogle, signInWithApple } = useAuthStore();
   const { hPadding, isDesktop } = useLayout();
   const { showToast } = useToast();
+  const t = useContent().auth.signIn;
+  const tAuth = useContent().auth;
 
   const handleSignIn = async () => {
     if (!email.trim() || !password.trim()) {
       showToast({
         type: "error",
-        message: "Please enter both email and password.",
+        message: t.validationEmpty,
       });
       return;
     }
@@ -53,7 +56,7 @@ export default function SignInScreen() {
       // Navigate to main app
       showToast({
         type: "success",
-        message: "Welcome back!",
+        message: t.welcomeBack,
         duration: 3000,
       });
       router.replace("/(main)");
@@ -70,7 +73,7 @@ export default function SignInScreen() {
     } else {
       showToast({
         type: "success",
-        message: "Welcome back!",
+        message: t.welcomeBack,
         duration: 3000,
       });
       router.replace("/(main)");
@@ -87,7 +90,7 @@ export default function SignInScreen() {
     } else {
       showToast({
         type: "success",
-        message: "Welcome back!",
+        message: t.welcomeBack,
         duration: 3000,
       });
       router.replace("/(main)");
@@ -111,149 +114,153 @@ export default function SignInScreen() {
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={isDesktop ? styles.desktopForm : { paddingHorizontal: hPadding }}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text variant="h1">Welcome Back</Text>
-            <Text
-              variant="body"
-              color={colors.ink.normal}
-              style={styles.subtitle}
-            >
-              Sign in to sync your preferences and favorites across devices.
-            </Text>
-          </View>
-
-          {/* Sign In Form */}
-          <Card elevation="subtle" style={styles.formCard}>
-            <View style={styles.inputGroup}>
-              <Text variant="label" style={styles.inputLabel}>
-                Email
+          <View
+            style={
+              isDesktop ? styles.desktopForm : { paddingHorizontal: hPadding }
+            }
+          >
+            {/* Header */}
+            <View style={styles.header}>
+              <Text variant="h1">{t.title}</Text>
+              <Text
+                variant="body"
+                color={colors.ink.normal}
+                style={styles.subtitle}
+              >
+                {t.subtitle}
               </Text>
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder="you@example.com"
-                placeholderTextColor={colors.ink.muted}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-                autoCorrect={false}
-                editable={!isLoading}
-              />
             </View>
 
-            <View style={styles.inputGroup}>
-              <View style={styles.passwordLabelRow}>
+            {/* Sign In Form */}
+            <Card elevation="subtle" style={styles.formCard}>
+              <View style={styles.inputGroup}>
                 <Text variant="label" style={styles.inputLabel}>
-                  Password
+                  {t.email}
                 </Text>
-                <Link href="/(auth)/forgot-password" asChild>
-                  <Pressable accessibilityRole="link">
-                    <Text variant="bodySmall" color={colors.brand.primary}>
-                      Forgot password?
-                    </Text>
-                  </Pressable>
-                </Link>
-              </View>
-              <View style={styles.passwordContainer}>
                 <TextInput
-                  style={[styles.input, styles.passwordInput]}
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="••••••••"
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="you@example.com"
                   placeholderTextColor={colors.ink.muted}
-                  secureTextEntry={!showPassword}
+                  keyboardType="email-address"
                   autoCapitalize="none"
-                  autoComplete="password"
+                  autoComplete="email"
+                  autoCorrect={false}
                   editable={!isLoading}
                 />
-                <Pressable
-                  onPress={() => setShowPassword(!showPassword)}
-                  style={styles.showPasswordBtn}
-                  accessibilityLabel={
-                    showPassword ? "Hide password" : "Show password"
-                  }
-                  accessibilityRole="button"
-                >
-                  <Text variant="bodySmall" color={colors.ink.normal}>
-                    {showPassword ? "Hide" : "Show"}
-                  </Text>
-                </Pressable>
               </View>
-            </View>
 
-            <Button
-              label={isLoading ? "Signing in..." : "Sign In"}
-              onPress={handleSignIn}
-              disabled={isLoading}
-              fullWidth
-            />
-          </Card>
+              <View style={styles.inputGroup}>
+                <View style={styles.passwordLabelRow}>
+                  <Text variant="label" style={styles.inputLabel}>
+                    {t.password}
+                  </Text>
+                  <Link href="/(auth)/forgot-password" asChild>
+                    <Pressable accessibilityRole="link">
+                      <Text variant="bodySmall" color={colors.brand.primary}>
+                        {t.forgotPassword}
+                      </Text>
+                    </Pressable>
+                  </Link>
+                </View>
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={[styles.input, styles.passwordInput]}
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholder="••••••••"
+                    placeholderTextColor={colors.ink.muted}
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    autoComplete="password"
+                    editable={!isLoading}
+                  />
+                  <Pressable
+                    onPress={() => setShowPassword(!showPassword)}
+                    style={styles.showPasswordBtn}
+                    accessibilityLabel={
+                      showPassword ? tAuth.hidePassword : tAuth.showPassword
+                    }
+                    accessibilityRole="button"
+                  >
+                    <Text variant="bodySmall" color={colors.ink.normal}>
+                      {showPassword ? tAuth.hidePassword : tAuth.showPassword}
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
 
-          {/* Divider */}
-          <View style={styles.dividerContainer}>
-            <View style={styles.dividerLine} />
-            <Text
-              variant="bodySmall"
-              color={colors.ink.muted}
-              style={styles.dividerText}
-            >
-              or continue with
-            </Text>
-            <View style={styles.dividerLine} />
-          </View>
-
-          {/* Social Login */}
-          <View style={styles.socialButtons}>
-            {Platform.OS === "ios" && (
               <Button
-                label="Continue with Apple"
-                variant="secondary"
-                onPress={handleAppleSignIn}
+                label={isLoading ? t.submitting : t.submit}
+                onPress={handleSignIn}
                 disabled={isLoading}
                 fullWidth
               />
-            )}
-            <Button
-              label="Continue with Google"
-              variant="secondary"
-              onPress={handleGoogleSignIn}
-              disabled={isLoading}
-              fullWidth
-            />
-          </View>
+            </Card>
 
-          {/* Sign Up Link */}
-          <View style={styles.footer}>
-            <Text variant="body" color={colors.ink.normal}>
-              Don't have an account?{" "}
-            </Text>
-            <Link href="/(auth)/sign-up" asChild>
-              <Pressable accessibilityRole="link">
-                <Text
-                  variant="body"
-                  color={colors.brand.primary}
-                  style={styles.linkText}
-                >
-                  Sign Up
-                </Text>
-              </Pressable>
-            </Link>
-          </View>
+            {/* Divider */}
+            <View style={styles.dividerContainer}>
+              <View style={styles.dividerLine} />
+              <Text
+                variant="bodySmall"
+                color={colors.ink.muted}
+                style={styles.dividerText}
+              >
+                {t.or}
+              </Text>
+              <View style={styles.dividerLine} />
+            </View>
 
-          {/* Skip for now */}
-          <Pressable
-            onPress={() => router.back()}
-            style={styles.skipButton}
-            accessibilityLabel="Continue without signing in"
-            accessibilityRole="button"
-          >
-            <Text variant="bodySmall" color={colors.ink.muted}>
-              Continue without an account
-            </Text>
-          </Pressable>
+            {/* Social Login */}
+            <View style={styles.socialButtons}>
+              {Platform.OS === "ios" && (
+                <Button
+                  label={t.apple}
+                  variant="secondary"
+                  onPress={handleAppleSignIn}
+                  disabled={isLoading}
+                  fullWidth
+                />
+              )}
+              <Button
+                label={t.google}
+                variant="secondary"
+                onPress={handleGoogleSignIn}
+                disabled={isLoading}
+                fullWidth
+              />
+            </View>
+
+            {/* Sign Up Link */}
+            <View style={styles.footer}>
+              <Text variant="body" color={colors.ink.normal}>
+                {t.noAccount}{" "}
+              </Text>
+              <Link href="/(auth)/sign-up" asChild>
+                <Pressable accessibilityRole="link">
+                  <Text
+                    variant="body"
+                    color={colors.brand.primary}
+                    style={styles.linkText}
+                  >
+                    {t.signUpLink}
+                  </Text>
+                </Pressable>
+              </Link>
+            </View>
+
+            {/* Skip for now */}
+            <Pressable
+              onPress={() => router.back()}
+              style={styles.skipButton}
+              accessibilityLabel="Continue without signing in"
+              accessibilityRole="button"
+            >
+              <Text variant="bodySmall" color={colors.ink.muted}>
+                {t.skip}
+              </Text>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

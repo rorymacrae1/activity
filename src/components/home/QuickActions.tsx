@@ -11,6 +11,8 @@ import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { shadows } from "@/theme/shadows";
+import { typography } from "@/theme/typography";
+import { useContent } from "@/hooks/useContent";
 
 interface QuickAction {
   id: string;
@@ -29,13 +31,14 @@ interface QuickActionsProps {
 export function QuickActions({
   showCompleteProfile = false,
 }: QuickActionsProps) {
+  const t = useContent().home.quickActions;
   const actions: QuickAction[] = [
     {
       id: "browse",
       icon: "mountain",
       iconColor: colors.brand.primary,
-      label: "Browse Resorts",
-      sublabel: "Discover your next trip",
+      label: t.browseLabel,
+      sublabel: t.browseSub,
       route: "/(onboarding)/results",
       accentColor: colors.brand.primarySubtle,
     },
@@ -43,8 +46,8 @@ export function QuickActions({
       id: "quiz",
       icon: "target",
       iconColor: colors.sentiment.warning,
-      label: "Retake Quiz",
-      sublabel: "Update your preferences",
+      label: t.retakeLabel,
+      sublabel: t.retakeSub,
       route: "/(onboarding)",
       accentColor: colors.sentiment.warningSubtle,
     },
@@ -56,8 +59,8 @@ export function QuickActions({
       id: "profile",
       icon: "sparkles",
       iconColor: colors.sentiment.success,
-      label: "Complete Profile",
-      sublabel: "Better recommendations",
+      label: t.profileLabel,
+      sublabel: t.profileSub,
       route: "/(main)/complete-profile",
       accentColor: colors.sentiment.successSubtle,
     });
@@ -70,7 +73,7 @@ export function QuickActions({
   return (
     <View style={styles.container}>
       <Text variant="h3" style={styles.heading}>
-        Quick Actions
+        {t.heading}
       </Text>
       <View style={styles.grid}>
         {actions.map((action) => (
@@ -109,10 +112,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   heading: {
+    ...typography.sectionTitle,
     marginBottom: spacing.md,
     color: colors.ink.rich,
-    fontSize: 18,
-    fontWeight: "700",
   },
   grid: {
     flexDirection: "row",
@@ -136,14 +138,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   label: {
-    fontSize: 16,
-    fontWeight: "600",
+    ...typography.bodyMedium,
     color: colors.ink.rich,
     marginBottom: spacing.xxs,
   },
   sublabel: {
-    fontSize: 13,
+    ...typography.bodySmall,
     color: colors.ink.normal,
-    lineHeight: 18,
   },
 });

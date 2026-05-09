@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import Head from "expo-router/head";
-import { View, StyleSheet, ScrollView, Pressable, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  Platform,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
@@ -148,7 +154,10 @@ export default function ResortDetailScreen() {
             const siblings = await Promise.all(
               ids.slice(0, 5).map((sibId) => getResortByIdAsync(sibId)),
             );
-            if (!cancelled) setSimilarResorts(siblings.filter((r): r is Resort => r !== null));
+            if (!cancelled)
+              setSimilarResorts(
+                siblings.filter((r): r is Resort => r !== null),
+              );
           } else {
             const similar = await getSimilarResorts(id, 5);
             if (!cancelled) setSimilarResorts(similar);
@@ -161,7 +170,9 @@ export default function ResortDetailScreen() {
       }
     }
     loadResort();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [id, siblingIdsParam, user, retryCount]);
 
   if (loading) {
@@ -279,7 +290,10 @@ export default function ResortDetailScreen() {
         >
           <ChevronLeft size={20} strokeWidth={2} color={colors.ink.rich} />
         </Pressable>
-        <Animated.Text style={[styles.navTitle, navTitleAnimatedStyle]} numberOfLines={1}>
+        <Animated.Text
+          style={[styles.navTitle, navTitleAnimatedStyle]}
+          numberOfLines={1}
+        >
           {resort.name}
         </Animated.Text>
         <View style={styles.navActions}>
@@ -355,11 +369,13 @@ export default function ResortDetailScreen() {
               <Text style={styles.heroStat}>{resort.stats.totalKm}km</Text>
               <Text style={styles.heroStatDot}> · </Text>
               <Text style={styles.heroStat}>
-                {resort.location.villageAltitude}–{resort.location.peakAltitude}m
+                {resort.location.villageAltitude}–{resort.location.peakAltitude}
+                m
               </Text>
               <Text style={styles.heroStatDot}> · </Text>
               <Text style={styles.heroStat}>
-                €{resort.attributes.averageDailyCost}/day
+                {content.currencySymbol}
+                {resort.attributes.averageDailyCost}/day
               </Text>
             </View>
           </View>
@@ -376,8 +392,19 @@ export default function ResortDetailScreen() {
                   <View style={styles.highlights}>
                     {resort.content.highlights.slice(0, 3).map((h, i) => (
                       <View key={i} style={styles.highlightChip}>
-                        <Icon name="check" size={12} color={colors.sentiment.success} strokeWidth={2.5} />
-                        <Text variant="caption" color={colors.sentiment.success} style={styles.highlightText}>{h}</Text>
+                        <Icon
+                          name="check"
+                          size={12}
+                          color={colors.sentiment.success}
+                          strokeWidth={2.5}
+                        />
+                        <Text
+                          variant="caption"
+                          color={colors.sentiment.success}
+                          style={styles.highlightText}
+                        >
+                          {h}
+                        </Text>
                       </View>
                     ))}
                   </View>
@@ -385,7 +412,11 @@ export default function ResortDetailScreen() {
                 <OverviewCarousel resort={resort} />
                 <View style={[styles.content, { paddingHorizontal: hPadding }]}>
                   {resort.content.description ? (
-                    <Text variant="body" color={colors.ink.normal} style={styles.descriptionText}>
+                    <Text
+                      variant="body"
+                      color={colors.ink.normal}
+                      style={styles.descriptionText}
+                    >
                       {resort.content.description}
                     </Text>
                   ) : null}
@@ -402,8 +433,13 @@ export default function ResortDetailScreen() {
                 </View>
               </View>
               {/* Right column: match breakdown */}
-              <View style={[styles.desktopRight, { paddingHorizontal: hPadding }]}>
-                <MatchBreakdownSection resort={resort} prefs={normalizedPrefs} />
+              <View
+                style={[styles.desktopRight, { paddingHorizontal: hPadding }]}
+              >
+                <MatchBreakdownSection
+                  resort={resort}
+                  prefs={normalizedPrefs}
+                />
               </View>
             </View>
           ) : (
@@ -413,8 +449,19 @@ export default function ResortDetailScreen() {
                 <View style={styles.highlights}>
                   {resort.content.highlights.slice(0, 3).map((h, i) => (
                     <View key={i} style={styles.highlightChip}>
-                      <Icon name="check" size={12} color={colors.sentiment.success} strokeWidth={2.5} />
-                      <Text variant="caption" color={colors.sentiment.success} style={styles.highlightText}>{h}</Text>
+                      <Icon
+                        name="check"
+                        size={12}
+                        color={colors.sentiment.success}
+                        strokeWidth={2.5}
+                      />
+                      <Text
+                        variant="caption"
+                        color={colors.sentiment.success}
+                        style={styles.highlightText}
+                      >
+                        {h}
+                      </Text>
                     </View>
                   ))}
                 </View>
@@ -422,11 +469,18 @@ export default function ResortDetailScreen() {
               <OverviewCarousel resort={resort} />
               <View style={[styles.content, { paddingHorizontal: hPadding }]}>
                 {resort.content.description ? (
-                  <Text variant="body" color={colors.ink.normal} style={styles.descriptionText}>
+                  <Text
+                    variant="body"
+                    color={colors.ink.normal}
+                    style={styles.descriptionText}
+                  >
                     {resort.content.description}
                   </Text>
                 ) : null}
-                <MatchBreakdownSection resort={resort} prefs={normalizedPrefs} />
+                <MatchBreakdownSection
+                  resort={resort}
+                  prefs={normalizedPrefs}
+                />
                 <ReviewsSection resort={resort} />
                 <AccommodationSection resort={resort} />
                 <TransportSection resort={resort} />

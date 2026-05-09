@@ -1,19 +1,25 @@
 /**
- * RunnerUpCard - Compact resort card for runner-up recommendations
- * Displays resort with match score and key details in a horizontal layout
+ * RunnerUpCard - Resort card for runner-up recommendations
+ * Displays resort image, match score, details, and top match reason
  */
 
 import React from "react";
 import { View, StyleSheet, Pressable } from "react-native";
+import type { ViewStyle, StyleProp } from "react-native";
 import { useRouter } from "expo-router";
 import { Text } from "@/components/ui";
 import { Icon } from "@/components/ui/Icon";
+import type { IconName } from "@/components/ui/Icon";
 import { ResortImage } from "@/components/ui/ResortImage";
+import { useContent } from "@/hooks/useContent";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { typography } from "@/theme/typography";
-import type { RecommendationResult } from "@/types/recommendation";
+import type {
+  RecommendationResult,
+  AttributeScores,
+} from "@/types/recommendation";
 
 interface RunnerUpCardProps {
   /** Recommendation result with resort and scores */
@@ -24,6 +30,28 @@ interface RunnerUpCardProps {
   width?: number;
   /** IDs of sibling runner-up resorts for compare section */
   siblingIds?: string[];
+  /** Optional additional styles */
+  style?: StyleProp<ViewStyle>;
+}
+
+const ATTRIBUTE_META: Record<string, { icon: IconName; label: string }> = {
+  skill: { icon: "mountain", label: "Great terrain match" },
+  budget: { icon: "wallet", label: "Fits your budget" },
+  vibe: { icon: "sparkles", label: "Perfect vibe" },
+  activity: { icon: "activity", label: "Excellent activities" },
+  snow: { icon: "snowflake", label: "Reliable snow" },
+};
+
+/**
+ * Get the highest-scoring attribute to use as a tagline
+ */
+function getTopAttribute(scores: AttributeScores): {
+  key: string;
+  score: number;
+} {
+  const entries = Object.entries(scores) as [string, number][];
+  entries.sort((a, b) => b[1] - a[1]);
+  return { key: entries[0][0], score: entries[0][1] };
 }
 
 /**
@@ -37,19 +65,10 @@ function getPriceLevel(dailyCost: number): number {
 }
 
 /**
- * Format price level to euro symbols
+ * Format price level to currency symbols
  */
-function formatPriceLevel(level: number): string {
-  return "€".repeat(Math.max(1, Math.min(level, 4)));
-}
-
-/**
- * Get rank badge color for top positions
- */
-function getRankColor(rank: number): string | null {
-  if (rank === 2) return colors.rank.silver;
-  if (rank === 3) return colors.rank.bronze;
-  return null;
+function formatPriceLevel(level: number, symbol: string): string {
+  return symbol.repeat(Math.max(1, Math.min(level, 4)));
 }
 
 /**
@@ -69,13 +88,16 @@ export function RunnerUpCard({
   rank,
   width = 200,
   siblingIds,
+  style,
 }: RunnerUpCardProps) {
   const router = useRouter();
-  const { resort, matchScore } = result;
+  const content = useContent();
+  const { resort, matchScore, attributeScores } = result;
 
-  const rankColor = getRankColor(rank);
   const scoreColor = getScoreColor(matchScore);
   const priceLevel = getPriceLevel(resort.attributes.averageDailyCost);
+  const topAttr = getTopAttribute(attributeScores);
+  const topMeta = ATTRIBUTE_META[topAttr.key];
 
   const handlePress = () => {
     router.push({
@@ -93,6 +115,7 @@ export function RunnerUpCard({
         styles.container,
         { width },
         pressed && styles.containerPressed,
+        style,
       ]}
       onPress={handlePress}
       accessibilityRole="button"
@@ -106,21 +129,14 @@ export function RunnerUpCard({
           accessibilityLabel={`${resort.name} ski resort`}
         />
 
-        {/* Rank Badge */}
-        {rankColor && (
-          <View style={[styles.rankBadge, { backgroundColor: rankColor }]}>
-            <Icon
-              name="star"
-              size={14}
-              color={colors.ink.inverse}
-              strokeWidth={2}
-            />
-          </View>
-        )}
-
         {/* Score Badge */}
         <View style={[styles.scoreBadge, { backgroundColor: scoreColor }]}>
           <Text style={styles.scoreText}>{matchScore}%</Text>
+        </View>
+
+        {/* Rank indicator */}
+        <View style={styles.rankBadge}>
+          <Text style={styles.rankText}>#{rank}</Text>
         </View>
       </View>
 
@@ -151,9 +167,29 @@ export function RunnerUpCard({
               color={colors.ink.normal}
               strokeWidth={2}
             />
-            <Text style={styles.stat}>{formatPriceLevel(priceLevel)}</Text>
+            <Text style={styles.stat}>
+              {formatPriceLevel(priceLevel, content.currencySymbol)}
+            </Text>
           </View>
         </View>
+
+        {/* Top match reason tagline */}
+        {topMeta && (
+          <View style={styles.tagline}>
+            <Icon
+              name={topMeta.icon}
+              size={12}
+              color={scoreColor}
+              strokeWidth={2}
+            />
+            <Text
+              style={[styles.taglineText, { color: scoreColor }]}
+              numberOfLines={1}
+            >
+              {topMeta.label}
+            </Text>
+          </View>
+        )}
       </View>
     </Pressable>
   );
@@ -164,12 +200,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.primary,
     borderRadius: radius.lg,
     overflow: "hidden",
-    marginRight: spacing.sm,
-    shadowColor: colors.ink.rich,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
     borderWidth: 1,
     borderColor: colors.border.subtle,
   },
@@ -178,7 +208,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.98 }],
   },
   imageContainer: {
-    height: 120,
+    height: 140,
     position: "relative",
   },
   image: {
@@ -187,23 +217,22 @@ const styles = StyleSheet.create({
   },
   rankBadge: {
     position: "absolute",
-    top: spacing.xs,
-    left: spacing.xs,
-    width: 28,
-    height: 28,
+    top: spacing.sm,
+    left: spacing.sm,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xxs,
     borderRadius: radius.full,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: colors.ink.rich,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
+  },
+  rankText: {
+    ...typography.labelSmall,
+    fontWeight: "700",
+    color: colors.onDark.text.primary,
   },
   scoreBadge: {
     position: "absolute",
-    top: spacing.xs,
-    right: spacing.xs,
+    top: spacing.sm,
+    right: spacing.sm,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xxs,
     borderRadius: radius.full,
@@ -214,7 +243,7 @@ const styles = StyleSheet.create({
     color: colors.ink.onBrand,
   },
   content: {
-    padding: spacing.sm,
+    padding: spacing.md,
   },
   name: {
     ...typography.bodyMedium,
@@ -228,8 +257,8 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: "row",
-    gap: spacing.sm,
-    marginTop: spacing.xs,
+    gap: spacing.md,
+    marginTop: spacing.sm,
   },
   statItem: {
     flexDirection: "row",
@@ -239,6 +268,19 @@ const styles = StyleSheet.create({
   stat: {
     ...typography.bodySmall,
     color: colors.ink.muted,
+  },
+  tagline: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    marginTop: spacing.sm,
+    paddingTop: spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.subtle,
+  },
+  taglineText: {
+    ...typography.labelSmall,
+    fontWeight: "600",
   },
 });
 

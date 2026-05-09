@@ -13,6 +13,8 @@ import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { shadows } from "@/theme/shadows";
+import { typography } from "@/theme/typography";
+import { useContent } from "@/hooks/useContent";
 import type { Resort } from "@/types/resort";
 
 interface FavoritesPreviewProps {
@@ -53,12 +55,14 @@ export function FavoritesPreview({
     return null;
   }
 
+  const t = useContent().home.favoritesPreview;
+
   if (resorts.length === 0) {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
           <Text variant="h3" style={styles.heading}>
-            Your Favorites
+            {t.heading}
           </Text>
         </View>
         <Pressable
@@ -68,7 +72,7 @@ export function FavoritesPreview({
           ]}
           onPress={() => router.push("/(onboarding)/results")}
           accessibilityRole="button"
-          accessibilityLabel="Browse resorts to add favorites"
+          accessibilityLabel={t.emptyButton}
         >
           <View style={styles.emptyIcon}>
             <Icon
@@ -78,12 +82,10 @@ export function FavoritesPreview({
               strokeWidth={1.5}
             />
           </View>
-          <Text style={styles.emptyTitle}>No favorites yet</Text>
-          <Text style={styles.emptyText}>
-            Tap to browse resorts and save your favorites
-          </Text>
+          <Text style={styles.emptyTitle}>{t.emptyTitle}</Text>
+          <Text style={styles.emptyText}>{t.emptyText}</Text>
           <View style={styles.emptyButton}>
-            <Text style={styles.emptyButtonText}>Browse Resorts →</Text>
+            <Text style={styles.emptyButtonText}>{t.emptyButton}</Text>
           </View>
         </Pressable>
       </View>
@@ -96,14 +98,14 @@ export function FavoritesPreview({
     <View style={styles.container}>
       <View style={styles.header}>
         <Text variant="h3" style={styles.heading}>
-          Your Favorites
+          {t.heading}
         </Text>
         <Pressable
           onPress={() => router.push("/(main)/favorites")}
           accessibilityRole="button"
-          accessibilityLabel="View all favorites"
+          accessibilityLabel={t.viewAll}
         >
-          <Text style={styles.viewAll}>View All</Text>
+          <Text style={styles.viewAll}>{t.viewAll}</Text>
         </Pressable>
       </View>
 
@@ -132,7 +134,12 @@ export function FavoritesPreview({
                 {resort.region}, {resort.country}
               </Text>
             </View>
-            <Text style={styles.chevron}>›</Text>
+            <Icon
+              name="chevron-right"
+              size={16}
+              color={colors.ink.muted}
+              strokeWidth={1.5}
+            />
           </Pressable>
         ))}
 
@@ -141,11 +148,11 @@ export function FavoritesPreview({
             style={styles.moreItem}
             onPress={() => router.push("/(main)/favorites")}
             accessibilityRole="button"
-            accessibilityLabel={`${remainingCount} more ${remainingCount === 1 ? "resort" : "resorts"}, view all favorites`}
+            accessibilityLabel={`${remainingCount} ${remainingCount === 1 ? t.moreResort : t.moreResorts}`}
           >
             <Text style={styles.moreCount}>+{remainingCount}</Text>
             <Text style={styles.moreLabel}>
-              more {remainingCount === 1 ? "resort" : "resorts"}
+              {remainingCount === 1 ? t.moreResort : t.moreResorts}
             </Text>
           </Pressable>
         )}
@@ -165,13 +172,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   heading: {
+    ...typography.sectionTitle,
     color: colors.ink.rich,
-    fontSize: 18,
-    fontWeight: "700",
   },
   viewAll: {
-    fontSize: 14,
-    fontWeight: "600",
+    ...typography.label,
     color: colors.brand.primary,
   },
   emptyState: {
@@ -190,13 +195,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   emptyTitle: {
-    fontSize: 16,
-    fontWeight: "600",
+    ...typography.bodyMedium,
     color: colors.ink.rich,
     marginBottom: spacing.xs,
   },
   emptyText: {
-    fontSize: 14,
+    ...typography.body,
     color: colors.ink.normal,
     marginBottom: spacing.md,
     textAlign: "center",
@@ -208,9 +212,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   emptyButtonText: {
+    ...typography.label,
     color: colors.ink.inverse,
-    fontSize: 14,
-    fontWeight: "600",
   },
   previewList: {
     backgroundColor: colors.surface.primary,
@@ -238,19 +241,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   resortName: {
-    fontSize: 15,
-    fontWeight: "600",
+    ...typography.bodyMedium,
     color: colors.ink.rich,
     marginBottom: spacing.xxs,
   },
   resortLocation: {
-    fontSize: 13,
+    ...typography.bodySmall,
     color: colors.ink.normal,
-  },
-  chevron: {
-    fontSize: 22,
-    color: colors.ink.muted,
-    fontWeight: "300",
   },
   moreItem: {
     flexDirection: "row",
@@ -261,12 +258,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface.secondary,
   },
   moreCount: {
-    fontSize: 14,
+    ...typography.label,
     fontWeight: "700",
     color: colors.brand.primary,
   },
   moreLabel: {
-    fontSize: 14,
+    ...typography.body,
     color: colors.ink.normal,
   },
 });

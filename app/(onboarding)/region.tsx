@@ -10,13 +10,6 @@ import {
 import { router } from "expo-router";
 import Head from "expo-router/head";
 import * as Haptics from "expo-haptics";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-  interpolate,
-} from "react-native-reanimated";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
@@ -30,8 +23,6 @@ import {
   AnimatedQuizContent,
   StaggeredItem,
 } from "@components/onboarding/AnimatedQuizContent";
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 /** Country with resort count */
 interface CountryWithCount {
@@ -85,24 +76,6 @@ function CountryCard({
   onToggle: () => void;
   isTablet: boolean;
 }) {
-  const scale = useSharedValue(1);
-  const pressed = useSharedValue(0);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    shadowOpacity: interpolate(pressed.value, [0, 1], [0.08, 0.15]),
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.97, { damping: 15, stiffness: 400 });
-    pressed.value = withTiming(1, { duration: 100 });
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1, { damping: 12, stiffness: 300 });
-    pressed.value = withTiming(0, { duration: 200 });
-  };
-
   const handlePress = () => {
     if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -111,16 +84,13 @@ function CountryCard({
   };
 
   return (
-    <AnimatedPressable
+    <Pressable
       style={[
         styles.regionCard,
         selected && styles.regionCardActive,
         isTablet && styles.regionCardTablet,
-        animatedStyle,
       ]}
       onPress={handlePress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
       accessibilityRole="checkbox"
       accessibilityState={{ checked: selected }}
       accessibilityLabel={`${country.name}, ${country.resorts} resorts`}
@@ -145,7 +115,7 @@ function CountryCard({
       <View style={[styles.checkbox, selected && styles.checkboxActive]}>
         {selected && <Text style={styles.checkIcon}>✓</Text>}
       </View>
-    </AnimatedPressable>
+    </Pressable>
   );
 }
 
@@ -245,10 +215,19 @@ export default function RegionScreen() {
     return (
       <QuizLayout scrollable>
         <View style={[styles.inner, styles.loadingContainer]}>
-          <Text variant="h3" align="center" style={{ marginBottom: spacing.sm }}>
+          <Text
+            variant="h3"
+            align="center"
+            style={{ marginBottom: spacing.sm }}
+          >
             Couldn't load regions
           </Text>
-          <Text variant="body" color={colors.ink.muted} align="center" style={{ marginBottom: spacing.lg }}>
+          <Text
+            variant="body"
+            color={colors.ink.muted}
+            align="center"
+            style={{ marginBottom: spacing.lg }}
+          >
             Check your connection and try again.
           </Text>
           <Button
@@ -273,7 +252,7 @@ export default function RegionScreen() {
             <Button
               label={`← ${content.onboarding.region.back}`}
               variant="ghost"
-              onPress={() => router.back()}
+              onPress={() => router.push("/(onboarding)/budget")}
               style={styles.backBtn}
             />
             <Button
@@ -337,10 +316,15 @@ export default function RegionScreen() {
               </Text>
             </Pressable>
 
-            {/* Country grid — 2 cols on tablet */}
+            {/* Country grid — always 2 cols */}
             <View style={[styles.grid, isTablet && styles.gridTablet]}>
               {availableCountries.map((country, index) => (
-                <StaggeredItem key={country.id} index={index} baseDelay={60} style={isTablet ? styles.regionCardTabletWrapper : undefined}>
+                <StaggeredItem
+                  key={country.id}
+                  index={index}
+                  baseDelay={60}
+                  style={[styles.gridCell, isTablet && styles.gridCellTablet]}
+                >
                   <CountryCard
                     country={country}
                     selected={regions.includes(country.id)}
@@ -424,8 +408,14 @@ const styles = StyleSheet.create({
   gridTablet: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "flex-start",
     gap: spacing.md,
+  },
+  gridCell: {
+    flexGrow: 1,
+  },
+  gridCellTablet: {
+    width: "48%",
+    minWidth: 140,
   },
 
   // Region card
@@ -439,17 +429,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.border.subtle,
     gap: spacing.sm,
-    // Multi-layer shadow (native)
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  regionCardTabletWrapper: {
-    width: "47%",
-    minWidth: 220,
-    maxWidth: 280,
   },
   regionCardTablet: {
     padding: spacing.md,
@@ -457,7 +436,6 @@ const styles = StyleSheet.create({
   regionCardActive: {
     borderColor: colors.brand.primary,
     backgroundColor: colors.brand.primarySubtle,
-    shadowOpacity: 0.15,
   },
 
   // Region info
@@ -468,9 +446,9 @@ const styles = StyleSheet.create({
 
   // Checkbox
   checkbox: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     borderWidth: 2,
     borderColor: colors.border.default,
     alignItems: "center",
@@ -480,12 +458,6 @@ const styles = StyleSheet.create({
   checkboxActive: {
     backgroundColor: colors.brand.primary,
     borderColor: colors.brand.primary,
-    // Subtle glow
-    shadowColor: colors.brand.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 2,
   },
   checkIcon: {
     color: colors.ink.onBrand,

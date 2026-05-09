@@ -4,6 +4,7 @@ import { Card } from "@components/ui/Card";
 import { Text } from "@components/ui/Text";
 import { ResortImage } from "@components/ui/ResortImage";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 import { useProfile } from "@stores/auth";
 import { useVisitedStore } from "@stores/visited";
 import { colors, spacing, radius } from "@theme";
@@ -28,6 +29,7 @@ export function ResortCard({
 }: ResortCardProps) {
   const { resort, matchScore, matchReasons } = result;
   const { cardImageHeight } = useLayout();
+  const content = useContent();
   const profile = useProfile();
   const isVisited = useVisitedStore((s) => s.isVisited(resort.id));
   const homeAirport = profile?.home_airport ?? null;
@@ -104,7 +106,8 @@ export function ResortCard({
           <View style={styles.statDivider} />
           <View style={styles.stat}>
             <Text style={styles.statValue}>
-              €{resort.attributes.averageDailyCost}
+              {content.currencySymbol}
+              {resort.attributes.averageDailyCost}
             </Text>
             <Text style={styles.statLabel}>/day</Text>
           </View>

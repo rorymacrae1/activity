@@ -118,7 +118,9 @@ export default function PersonalizedHomeScreen() {
         <WelcomeHero
           firstName={firstName}
           favoritesCount={favoriteIds.length}
-          profileComplete={completionStatus?.isComplete ?? false}
+          profileCompletionPercentage={
+            completionStatus?.completionPercentage ?? 0
+          }
         />
 
         {/* On tablet/desktop: 2-col grid for actions + completion */}
@@ -166,7 +168,12 @@ export default function PersonalizedHomeScreen() {
 
         {/* Personalized Recommendations - show if has favorites */}
         {topFavoriteId && (
-          <View style={[styles.recommendationsSection, isDesktop && styles.recommendationsSectionDesktop]}>
+          <View
+            style={[
+              styles.recommendationsSection,
+              isDesktop && styles.recommendationsSectionDesktop,
+            ]}
+          >
             <FavoritesBasedRecommendations
               baseResortId={topFavoriteId}
               heading="Resorts You'll Love"

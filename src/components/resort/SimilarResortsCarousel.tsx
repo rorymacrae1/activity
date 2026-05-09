@@ -10,6 +10,7 @@ import { useRouter } from "expo-router";
 import { Text } from "@/components/ui";
 import { Icon } from "@/components/ui/Icon";
 import { ResortImage } from "@/components/ui/ResortImage";
+import { useContent } from "@/hooks/useContent";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
@@ -26,6 +27,7 @@ const CARD_MARGIN = spacing.sm;
 interface SimilarResortCardProps {
   resort: Resort;
   width?: number;
+  currencySymbol: string;
 }
 
 /**
@@ -39,15 +41,16 @@ function getPriceLevel(dailyCost: number): number {
 }
 
 /**
- * Format price level to euro symbols
+ * Format price level to currency symbols
  */
-function formatPriceLevel(level: number): string {
-  return "£".repeat(Math.max(1, Math.min(level, 4)));
+function formatPriceLevel(level: number, symbol: string): string {
+  return symbol.repeat(Math.max(1, Math.min(level, 4)));
 }
 
 function SimilarResortCard({
   resort,
   width = CARD_WIDTH,
+  currencySymbol,
 }: SimilarResortCardProps) {
   const router = useRouter();
   const priceLevel = getPriceLevel(resort.attributes.averageDailyCost);
@@ -107,7 +110,9 @@ function SimilarResortCard({
               color={colors.ink.normal}
               strokeWidth={2}
             />
-            <Text style={styles.stat}>{formatPriceLevel(priceLevel)}</Text>
+            <Text style={styles.stat}>
+              {formatPriceLevel(priceLevel, currencySymbol)}
+            </Text>
           </View>
         </View>
       </View>
@@ -135,6 +140,7 @@ export function SimilarResortsCarousel({
 }: SimilarResortsCarouselProps) {
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const content = useContent();
 
   // Don't render if no resorts
   if (resorts.length === 0) {
@@ -171,7 +177,11 @@ export function SimilarResortsCarousel({
         accessibilityHint="Swipe left or right to see more similar resorts"
       >
         {resorts.map((resort) => (
-          <SimilarResortCard key={resort.id} resort={resort} />
+          <SimilarResortCard
+            key={resort.id}
+            resort={resort}
+            currencySymbol={content.currencySymbol}
+          />
         ))}
       </ScrollView>
 

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { User, Session} from "@supabase/supabase-js";
+import type { User, Session } from "@supabase/supabase-js";
 import { AuthError } from "@supabase/supabase-js";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { Profile } from "@/types/supabase";
@@ -11,6 +11,7 @@ interface AuthState {
   profile: Profile | null;
   isLoading: boolean;
   isInitialized: boolean;
+  connectionError: string | null;
 
   // Actions
   initialize: () => Promise<void>;
@@ -45,6 +46,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   profile: null,
   isLoading: true,
   isInitialized: false,
+  connectionError: null,
 
   /**
    * Initialize auth state and set up listener.
@@ -57,17 +59,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
 
     // Get initial session
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    if (session?.user) {
-      set({ user: session.user, session });
-      try {
-        await get().refreshProfile();
-      } catch (_e: unknown) {
-        // profile fetch failing should not block auth initialization
+      if (session?.user) {
+        set({ user: session.user, session });
+        try {
+          await get().refreshProfile();
+        } catch (_e: unknown) {
+          // profile fetch failing should not block auth initialization
+        }
       }
+    } catch (_e: unknown) {
+      set({
+        connectionError:
+          "Couldn\u2019t connect to the server. The app works offline \u2014 your data is saved locally.",
+      });
     }
 
     // Listen for auth changes

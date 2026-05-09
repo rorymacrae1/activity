@@ -105,7 +105,7 @@ describe("ResortCard", () => {
     render(<ResortCard result={makeResult()} onPress={jest.fn()} />);
     expect(screen.getByText("200")).toBeTruthy(); // totalKm
     expect(screen.getByText("4/5")).toBeTruthy(); // snowReliability
-    expect(screen.getByText("€120")).toBeTruthy(); // averageDailyCost
+    expect(screen.getByText("£120")).toBeTruthy(); // averageDailyCost
   });
 
   it("displays match score", () => {

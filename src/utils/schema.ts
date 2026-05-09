@@ -1,8 +1,11 @@
 import type { Resort } from "@/types/resort";
+import { getCurrencySymbol } from "@/content";
+import { usePreferencesStore } from "@/stores/preferences";
 
 const BASE_URL = "https://peakwise.app";
 
 export function getResortSchema(resort: Resort) {
+  const lang = usePreferencesStore.getState().language;
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -21,7 +24,7 @@ export function getResortSchema(resort: Resort) {
       addressCountry: resort.country,
       addressRegion: resort.region,
     },
-    priceRange: `€${resort.attributes.averageDailyCost}/day`,
+    priceRange: `${getCurrencySymbol(lang)}${resort.attributes.averageDailyCost}/day`,
   };
 }
 
@@ -31,8 +34,18 @@ export function getResortBreadcrumbs(resort: Resort) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: `${BASE_URL}/` },
-      { "@type": "ListItem", position: 2, name: "Discover", item: `${BASE_URL}/discover` },
-      { "@type": "ListItem", position: 3, name: resort.name, item: `${BASE_URL}/resort/${resort.id}` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Discover",
+        item: `${BASE_URL}/discover`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: resort.name,
+        item: `${BASE_URL}/resort/${resort.id}`,
+      },
     ],
   };
 }

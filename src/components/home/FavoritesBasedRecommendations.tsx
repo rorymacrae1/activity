@@ -8,6 +8,7 @@ import { View, StyleSheet } from "react-native";
 import { SimilarResortsCarousel } from "@/components/resort/SimilarResortsCarousel";
 import { getSimilarResorts, getResortByIdAsync } from "@/services/resort";
 import { spacing } from "@/theme/spacing";
+import { useContent } from "@/hooks/useContent";
 import type { Resort } from "@/types/resort";
 
 interface FavoritesBasedRecommendationsProps {
@@ -25,6 +26,7 @@ export function FavoritesBasedRecommendations({
   baseResortId,
   heading,
 }: FavoritesBasedRecommendationsProps) {
+  const t = useContent().home.recommendations;
   const [baseResort, setBaseResort] = useState<Resort | null>(null);
   const [similarResorts, setSimilarResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,14 +54,17 @@ export function FavoritesBasedRecommendations({
   }
 
   const displayHeading =
-    heading ?? `You loved ${baseResort?.name ?? "this resort"}`;
+    heading ??
+    (baseResort?.name
+      ? t.heading.replace("{name}", baseResort.name)
+      : t.fallbackHeading);
 
   return (
     <View style={styles.container}>
       <SimilarResortsCarousel
         resorts={similarResorts}
         heading={displayHeading}
-        subheading="These resorts are similar"
+        subheading={t.subheading}
       />
     </View>
   );

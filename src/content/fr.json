@@ -2,12 +2,15 @@
   "onboarding": {
     "welcome": {
       "appTitle": "PisteWise",
-      "tagline": "Trouvez votre station idéale en quelques secondes",
-      "valueProp1": "Personnalisé selon votre niveau et votre style",
-      "valueProp2": "Plus de 30 stations européennes de premier plan",
-      "valueProp3": "Fonctionne hors ligne — emportez-le sur les pistes",
-      "cta": "Trouver ma station",
-      "ctaSubtext": "Prend environ 1 minute"
+      "tagline": "Votre prochain séjour au ski, simplifié.",
+      "subtitle": "Répondez à 5 questions rapides et nous vous proposons la station idéale pour votre groupe, votre niveau et votre budget.",
+      "valueProp1": "Adapté à votre niveau, budget et style",
+      "valueProp2": "{count} stations sélectionnées",
+      "valueProp3": "Fonctionne hors ligne — emportez-le en montagne",
+      "cta": "C'est parti",
+      "ctaSubtext": "5 questions · moins d'une minute",
+      "returningCta": "Voir mes résultats",
+      "returningSubtext": "Reprendre là où vous en étiez"
     },
     "tripType": {
       "title": "Pour qui est ce voyage ?",
@@ -171,6 +174,22 @@
     "language": "Langue",
     "languageSection": "Langue",
     "resetLoading": "Réinitialisation des préférences...",
+    "myProfile": "Mon Profil",
+    "visitedResorts": "Stations visitées",
+    "allRegions": "Toutes les régions",
+    "tier": "gamme",
+    "signInPrompt": "Connectez-vous pour synchroniser vos données",
+    "welcome": "Bienvenue",
+    "syncNow": "Synchroniser",
+    "signOut": "Se déconnecter",
+    "syncAlerts": {
+      "signOutTitle": "Se déconnecter",
+      "signOutMessage": "Êtes-vous sûr de vouloir vous déconnecter ?",
+      "signOutConfirm": "Se déconnecter",
+      "cancel": "Annuler",
+      "syncSuccess": "Synchronisation réussie !",
+      "syncError": "La synchronisation a échoué. Veuillez réessayer."
+    },
     "alerts": {
       "retakeTitle": "Refaire le quiz",
       "retakeMessage": "Cela réinitialisera vos préférences. Êtes-vous sûr ?",
@@ -253,6 +272,7 @@
     "snow": "{snow}/5 neige",
     "cost": "€{cost}/jour"
   },
+  "currencySymbol": "€",
   "progress": {
     "step": "Étape {current} sur {total}"
   },
@@ -275,5 +295,124 @@
     "Spain": { "name": "Espagne", "flag": "🇪🇸" },
     "Switzerland": { "name": "Suisse", "flag": "🇨🇭" },
     "UK": { "name": "Royaume-Uni", "flag": "🇬🇧" }
+  },
+  "home": {
+    "welcome": {
+      "goodMorning": "Bonjour",
+      "goodAfternoon": "Bon après-midi",
+      "goodEvening": "Bonsoir",
+      "seasonOn": "La saison de ski est ouverte !",
+      "seasonSpring": "Ski de printemps disponible",
+      "seasonOff": "Vous planifiez ?",
+      "favorite": "Favori",
+      "favorites": "Favoris",
+      "profile": "Profil"
+    },
+    "quickActions": {
+      "heading": "Actions rapides",
+      "browseLabel": "Parcourir les stations",
+      "browseSub": "Découvrez votre prochain voyage",
+      "retakeLabel": "Refaire le quiz",
+      "retakeSub": "Mettre à jour vos préférences",
+      "profileLabel": "Compléter le profil",
+      "profileSub": "De meilleures recommandations"
+    },
+    "favoritesPreview": {
+      "heading": "Vos favoris",
+      "viewAll": "Tout voir",
+      "emptyTitle": "Aucun favori",
+      "emptyText": "Parcourez les stations et sauvegardez vos préférées",
+      "emptyButton": "Parcourir les stations",
+      "moreResort": "station de plus",
+      "moreResorts": "stations de plus"
+    },
+    "profileCompletion": {
+      "title": "Personnalisez votre expérience",
+      "subtitle": "Aidez-nous à trouver vos stations idéales",
+      "complete": "complété",
+      "addVisited": "Ajoutez les stations visitées",
+      "setAirport": "Définissez votre aéroport",
+      "saveFavorites": "Sauvegardez vos stations préférées",
+      "button": "Compléter le profil"
+    },
+    "recommendations": {
+      "heading": "Similaire à {name}",
+      "fallbackHeading": "Stations qui pourraient vous plaire",
+      "subheading": "Ces stations sont similaires"
+    }
+  },
+  "discoverScreen": {
+    "title": "Explorer",
+    "subtitle": "{count} stations de ski",
+    "searchPlaceholder": "Rechercher…",
+    "searchPlaceholderLong": "Rechercher par nom, pays ou région…",
+    "sortLabel": "Trier :",
+    "sortAZ": "A – Z",
+    "sortKm": "Plus de km",
+    "sortSnow": "Meilleure neige",
+    "refine": "Affiner",
+    "listView": "Vue liste",
+    "chartView": "Vue comparaison",
+    "chartLabel": "Comparer",
+    "resultsCount": "{count} station",
+    "resultsCountPlural": "{count} stations",
+    "emptyTitle": "Aucune station trouvée",
+    "emptyMessageSearch": "Aucune station ne correspond à « {query} ».",
+    "emptyMessageDefault": "Essayez d'ajuster votre recherche ou vos filtres.",
+    "clearSearch": "Effacer la recherche"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Connectez-vous à PisteWise",
+      "subtitle": "Vos préférences. Partout.",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "submit": "Se connecter",
+      "submitting": "Connexion en cours…",
+      "or": "Ou connectez-vous avec",
+      "apple": "Continuer avec Apple",
+      "google": "Continuer avec Google",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "signUpLink": "S'inscrire",
+      "skip": "Continuer sans compte",
+      "validationEmpty": "Veuillez entrer votre e-mail et mot de passe.",
+      "welcomeBack": "Bon retour !"
+    },
+    "signUp": {
+      "title": "Créer un compte",
+      "subtitle": "Un compte. Toutes vos stations.",
+      "displayName": "Nom d'affichage (facultatif)",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "submit": "Créer un compte",
+      "submitting": "Création en cours…",
+      "placeholder": "Au moins 6 caractères",
+      "or": "Ou inscrivez-vous avec",
+      "apple": "Continuer avec Apple",
+      "google": "Continuer avec Google",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "signInLink": "Se connecter",
+      "successMessage": "Compte créé ! Bienvenue sur PisteWise.",
+      "confirmEmail": "Consultez votre e-mail pour confirmer votre compte.",
+      "validationEmail": "Veuillez entrer votre e-mail.",
+      "validationPassword": "Veuillez entrer un mot de passe.",
+      "validationPasswordLength": "Le mot de passe doit contenir au moins 6 caractères.",
+      "validationPasswordMatch": "Les mots de passe ne correspondent pas."
+    },
+    "forgotPassword": {
+      "title": "Réinitialiser le mot de passe",
+      "sentTitle": "Consultez votre boîte de réception",
+      "subtitle": "Entrez votre e-mail et nous vous enverrons un lien.",
+      "sentSubtitle": "Nous avons envoyé un lien à {email}.",
+      "email": "E-mail",
+      "submit": "Envoyer le lien",
+      "submitting": "Envoi en cours…",
+      "validationEmpty": "Veuillez entrer votre adresse e-mail.",
+      "backToSignIn": "Retour à la connexion"
+    },
+    "showPassword": "Afficher",
+    "hidePassword": "Masquer"
   }
 }

@@ -11,4 +11,12 @@ export const locales: Record<Language, Content> = {
   de: de as Content,
 };
 
+/**
+ * Get currency symbol for a given language.
+ * en → £, fr/de → €
+ */
+export function getCurrencySymbol(lang: Language): string {
+  return locales[lang].currencySymbol;
+}
+
 export { en, fr, de };

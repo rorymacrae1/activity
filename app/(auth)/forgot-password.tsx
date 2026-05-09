@@ -17,6 +17,7 @@ import { ScreenContainer } from "@components/ui/ScreenContainer";
 import { useToast } from "@components/ui/Toast";
 import { useAuthStore } from "@stores/auth";
 import { useLayout } from "@hooks/useLayout";
+import { useContent } from "@hooks/useContent";
 
 /**
  * Forgot password screen.
@@ -30,10 +31,11 @@ export default function ForgotPasswordScreen() {
   const { resetPassword } = useAuthStore();
   const { hPadding, isDesktop } = useLayout();
   const { showToast } = useToast();
+  const t = useContent().auth.forgotPassword;
 
   const handleSubmit = async () => {
     if (!email.trim()) {
-      showToast({ type: "error", message: "Please enter your email address." });
+      showToast({ type: "error", message: t.validationEmpty });
       return;
     }
 
@@ -57,20 +59,21 @@ export default function ForgotPasswordScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <View style={[isDesktop ? styles.desktopForm : styles.scrollContent, isDesktop ? {} : { paddingHorizontal: hPadding }]}>
+        <View
+          style={[
+            isDesktop ? styles.desktopForm : styles.scrollContent,
+            isDesktop ? {} : { paddingHorizontal: hPadding },
+          ]}
+        >
           {/* Header */}
           <View style={styles.header}>
-            <Text variant="h1">
-              {sent ? "Check your inbox" : "Reset Password"}
-            </Text>
+            <Text variant="h1">{sent ? t.sentTitle : t.title}</Text>
             <Text
               variant="body"
               color={colors.ink.normal}
               style={styles.subtitle}
             >
-              {sent
-                ? `We've sent a reset link to ${email}. Follow the link to set a new password.`
-                : "Enter the email address for your account and we'll send you a reset link."}
+              {sent ? t.sentSubtitle.replace("{email}", email) : t.subtitle}
             </Text>
           </View>
 
@@ -78,7 +81,7 @@ export default function ForgotPasswordScreen() {
             <Card elevation="subtle" style={styles.formCard}>
               <View style={styles.inputGroup}>
                 <Text variant="label" style={styles.inputLabel}>
-                  Email
+                  {t.email}
                 </Text>
                 <TextInput
                   style={styles.input}
@@ -96,7 +99,7 @@ export default function ForgotPasswordScreen() {
               </View>
 
               <Button
-                label={isLoading ? "Sending…" : "Send Reset Link"}
+                label={isLoading ? t.submitting : t.submit}
                 onPress={handleSubmit}
                 disabled={isLoading}
                 fullWidth
@@ -124,7 +127,7 @@ export default function ForgotPasswordScreen() {
           {/* Back to sign in */}
           <View style={styles.footer}>
             <Text variant="body" color={colors.ink.normal}>
-              Remember your password?{" "}
+              {t.backToSignIn}
             </Text>
             <Link href="/(auth)/sign-in" asChild>
               <Text

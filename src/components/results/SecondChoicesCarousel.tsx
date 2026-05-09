@@ -1,27 +1,28 @@
 /**
  * SecondChoicesCarousel - Horizontal carousel of runner-up resort recommendations
- * Displays next N resort matches after the top pick
+ * Responsive card sizing with peek effect and animated pagination
  */
 
-import React, { useRef } from "react";
-import type {
-  NativeSyntheticEvent,
-  NativeScrollEvent} from "react-native";
-import {
-  View,
-  ScrollView,
-  StyleSheet
-} from "react-native";
+import React, { useRef, useCallback } from "react";
+import type { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 import { Text } from "@/components/ui";
 import { RunnerUpCard } from "./RunnerUpCard";
+import { useLayout } from "@/hooks/useLayout";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { typography } from "@/theme/typography";
 import type { RecommendationResult } from "@/types/recommendation";
 
-const CARD_WIDTH = 200;
-const CARD_MARGIN = spacing.sm;
+/** Right-side peek so users see there's more to scroll */
+const PEEK_WIDTH = 32;
+const CARD_GAP = spacing.md;
 
 interface SecondChoicesCarouselProps {
   /** Array of recommendation results (excluding top pick) */
@@ -33,6 +34,35 @@ interface SecondChoicesCarouselProps {
 }
 
 /**
+ * Compute card width from screen width
+ */
+function getCardWidth(screenWidth: number, isTablet: boolean): number {
+  const hPad = spacing.lg * 2;
+  if (isTablet) {
+    // Show 2.5 cards on tablet
+    return Math.round((screenWidth - hPad - CARD_GAP * 2 - PEEK_WIDTH) / 2);
+  }
+  // Show 1.15 cards on phone (generous peek)
+  return Math.round(screenWidth - hPad - PEEK_WIDTH - CARD_GAP);
+}
+
+/**
+ * Animated pagination dot
+ */
+function PaginationDot({ active }: { active: boolean }) {
+  const animatedStyle = useAnimatedStyle(() => ({
+    width: withTiming(active ? 24 : 8, { duration: 250 }),
+    backgroundColor: withTiming(
+      active ? colors.brand.primary : colors.border.default,
+      { duration: 250 },
+    ),
+    opacity: withTiming(active ? 1 : 0.5, { duration: 250 }),
+  }));
+
+  return <Animated.View style={[styles.dot, animatedStyle]} />;
+}
+
+/**
  * SecondChoicesCarousel component
  */
 export function SecondChoicesCarousel({
@@ -41,7 +71,12 @@ export function SecondChoicesCarousel({
   maxResults = 10,
 }: SecondChoicesCarouselProps) {
   const scrollViewRef = useRef<ScrollView>(null);
-  const [activeIndex, setActiveIndex] = React.useState(0);
+  const activeIndex = useSharedValue(0);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const { screenWidth, isTablet } = useLayout();
+
+  const cardWidth = getCardWidth(screenWidth, isTablet);
+  const snapInterval = cardWidth + CARD_GAP;
 
   // Limit to maxResults
   const displayResults = results.slice(0, maxResults);
@@ -56,8 +91,12 @@ export function SecondChoicesCarousel({
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / (CARD_WIDTH + CARD_MARGIN));
-    setActiveIndex(Math.max(0, Math.min(index, displayResults.length - 1)));
+    const index = Math.round(offsetX / snapInterval);
+    const clamped = Math.max(0, Math.min(index, displayResults.length - 1));
+    if (clamped !== activeIndex.value) {
+      activeIndex.value = clamped;
+      setCurrentIndex(clamped);
+    }
   };
 
   return (
@@ -79,7 +118,7 @@ export function SecondChoicesCarousel({
         horizontal
         showsHorizontalScrollIndicator={false}
         decelerationRate="fast"
-        snapToInterval={CARD_WIDTH + CARD_MARGIN}
+        snapToInterval={snapInterval}
         snapToAlignment="start"
         contentContainerStyle={styles.scrollContent}
         onScroll={handleScroll}
@@ -92,34 +131,24 @@ export function SecondChoicesCarousel({
           <RunnerUpCard
             key={result.resort.id}
             result={result}
-            rank={index + 2} // +2 because first place is the top pick
-            width={CARD_WIDTH}
+            rank={index + 2}
+            width={cardWidth}
             siblingIds={siblingIds}
+            style={
+              index < displayResults.length - 1
+                ? { marginRight: CARD_GAP }
+                : undefined
+            }
           />
         ))}
       </ScrollView>
 
-      {/* Pagination indicator - only show if more than 3 cards */}
-      {displayResults.length > 3 && (
+      {/* Animated Pagination Dots */}
+      {displayResults.length > 1 && (
         <View style={styles.pagination}>
-          <View style={styles.paginationTrack}>
-            <View
-              style={[
-                styles.paginationThumb,
-                {
-                  width: `${(100 / displayResults.length) * Math.min(3, displayResults.length)}%`,
-                  transform: [
-                    {
-                      translateX: (activeIndex / displayResults.length) * 100,
-                    },
-                  ],
-                },
-              ]}
-            />
-          </View>
-          <Text style={styles.paginationText}>
-            {activeIndex + 1} of {displayResults.length}
-          </Text>
+          {displayResults.map((_, index) => (
+            <PaginationDot key={index} active={index === currentIndex} />
+          ))}
         </View>
       )}
     </View>
@@ -128,7 +157,7 @@ export function SecondChoicesCarousel({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: spacing.md,
+    marginVertical: spacing.lg,
   },
   headingContainer: {
     paddingHorizontal: spacing.lg,
@@ -149,28 +178,14 @@ const styles = StyleSheet.create({
   },
   pagination: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     marginTop: spacing.md,
-    paddingHorizontal: spacing.lg,
-    gap: spacing.sm,
+    gap: spacing.xs,
   },
-  paginationTrack: {
-    flex: 1,
-    maxWidth: 120,
-    height: 4,
-    backgroundColor: colors.border.subtle,
+  dot: {
+    height: 8,
     borderRadius: radius.full,
-    overflow: "hidden",
-  },
-  paginationThumb: {
-    height: "100%",
-    backgroundColor: colors.brand.primary,
-    borderRadius: radius.full,
-  },
-  paginationText: {
-    ...typography.labelSmall,
-    color: colors.ink.muted,
   },
 });
 

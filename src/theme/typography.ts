@@ -241,6 +241,14 @@ export const typography = {
     lineHeight: 12,
     letterSpacing: 0.2,
   } as TextStyle,
+
+  /** Section titles in dashboards and lists */
+  sectionTitle: {
+    fontFamily: fontFamily.bold,
+    fontSize: 18,
+    lineHeight: 24,
+    letterSpacing: -0.2,
+  } as TextStyle,
 } as const;
 
 export type Typography = typeof typography;
