@@ -266,7 +266,7 @@ async function fetchCloudResorts(): Promise<Resort[] | null> {
   const fetchPromise = new Promise<FetchResult>((resolve, reject) => {
     (
       client
-        .from("resorts")
+        .from("resort")
         .select("*")
         .order("name") as unknown as PromiseLike<FetchResult>
     ).then(resolve, reject);
@@ -318,7 +318,7 @@ async function fetchCloudResortById(id: string): Promise<Resort | null> {
 
   try {
     const { data, error } = await supabase
-      .from("resorts")
+      .from("resort")
       .select("*")
       .eq("id", id)
       .single();
@@ -456,7 +456,7 @@ export async function getResortsByIds(ids: string[]): Promise<Resort[]> {
 
   try {
     const { data, error } = await supabase
-      .from("resorts")
+      .from("resort")
       .select("*")
       .in("id", ids);
 
@@ -491,7 +491,7 @@ export async function getResortCountsByCountry(): Promise<
   const fetchPromise = new Promise<CountryResult>((resolve, reject) => {
     (
       client
-        .from("resorts")
+        .from("resort")
         .select("country") as unknown as PromiseLike<CountryResult>
     ).then(resolve, reject);
   });
