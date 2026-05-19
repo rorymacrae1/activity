@@ -45,3 +45,5 @@ yarn-error.*
 /ios
 /android
 .vercel
+.vscode/mcp.json
+FigmaMCP.md
