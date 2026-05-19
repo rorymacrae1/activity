@@ -5,6 +5,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { Text } from "./Text";
+import { hapticSelection } from "@lib/haptics";
 import {
   colors,
   spacing,
@@ -69,6 +70,7 @@ export function Chip({
 
   const handlePressIn = () => {
     if (!disabled) {
+      hapticSelection();
       scale.value = withSpring(
         interaction.scale.pressed,
         animation.spring.snappy,

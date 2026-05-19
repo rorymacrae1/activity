@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: spacing.sm,
     left: spacing.sm,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: colors.onDark.backdrop,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xxs,
     borderRadius: radius.full,

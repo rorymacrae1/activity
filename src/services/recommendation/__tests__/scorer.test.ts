@@ -34,7 +34,7 @@ const makeResort = (
   },
   content: { description: "A test resort.", highlights: [] },
   assets: { heroImage: "", pisteMap: "" },
-  season: { start: "2025-12-01", end: "2026-04-20" },
+  season: { start: "2025-12-01", end: "2027-04-20" },
 });
 
 const basePrefs: NormalizedPreferences = {

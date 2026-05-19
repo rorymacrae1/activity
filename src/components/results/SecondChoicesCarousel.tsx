@@ -3,7 +3,7 @@
  * Responsive card sizing with peek effect and animated pagination
  */
 
-import React, { useRef, useCallback } from "react";
+import React, { useRef } from "react";
 import type { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
 import { View, ScrollView, StyleSheet } from "react-native";
 import Animated, {

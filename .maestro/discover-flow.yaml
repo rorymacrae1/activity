@@ -1,0 +1,40 @@
+appId: dev.expo.activity
+---
+# Discover screen flow
+# Navigates to Discover tab and verifies search + sort functionality
+
+- launchApp
+
+# Complete onboarding first
+- assertVisible: "Let's Go"
+- tapOn: "Let's Go"
+- tapOn: "Couple"
+- tapOn: "Next"
+- tapOn: "Blue Cruiser"
+- tapOn: "Next"
+- tapOn: "Sweet Spot"
+- tapOn: "Next"
+- tapOn: "France"
+- tapOn: "Next"
+- tapOn: "See Results"
+
+# Navigate to Discover tab
+- assertVisible: "Your Top Matches"
+- tapOn: "Continue to App"
+
+# Discover screen
+- assertVisible: "Discover"
+
+# Test search
+- tapOn: "Search resorts.*"
+- inputText: "Chamonix"
+- assertVisible: "Chamonix"
+
+# Clear search
+- clearInput
+- hideKeyboard
+
+# Test sort
+- tapOn: "Most km"
+- tapOn: "Best snow"
+- tapOn: "A – Z"

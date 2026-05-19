@@ -1,6 +1,8 @@
 export { colors } from "./colors";
 export type { Colors } from "./colors";
 
+export { ThemeProvider, useTheme, useColors } from "./ThemeProvider";
+
 export { fontFamily, fontAssets } from "./fonts";
 export type { FontFamilyKey } from "./fonts";
 

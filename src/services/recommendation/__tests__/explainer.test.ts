@@ -29,7 +29,7 @@ const makeResort = (attrs: Partial<Resort["attributes"]> = {}): Resort => ({
   },
   content: { description: "A test resort.", highlights: [] },
   assets: { heroImage: "", pisteMap: "" },
-  season: { start: "2025-12-01", end: "2026-04-20" },
+  season: { start: "2025-12-01", end: "2027-04-20" },
 });
 
 const basePrefs: NormalizedPreferences = {
@@ -117,5 +117,56 @@ describe("generateExplanations", () => {
     };
     const reasons = generateExplanations(resort, scores, basePrefs);
     expect(reasons.some((r) => r.includes("5/5"))).toBe(true);
+  });
+
+  it("adds seasonal warning when resort is closing soon", () => {
+    const soon = new Date();
+    soon.setDate(soon.getDate() + 5);
+    const resort = makeResort();
+    resort.season.end = soon.toISOString().slice(0, 10);
+    const scores: AttributeScores = {
+      skill: 90,
+      budget: 90,
+      vibe: 90,
+      activity: 90,
+      snow: 90,
+    };
+    const reasons = generateExplanations(resort, scores, basePrefs);
+    expect(
+      reasons.some((r) => r.includes("Closing") || r.includes("book soon")),
+    ).toBe(true);
+  });
+
+  it("adds season ended message for closed resorts", () => {
+    const resort = makeResort();
+    resort.season.end = "2025-03-01";
+    const scores: AttributeScores = {
+      skill: 90,
+      budget: 90,
+      vibe: 90,
+      activity: 90,
+      snow: 90,
+    };
+    const reasons = generateExplanations(resort, scores, basePrefs);
+    expect(reasons.some((r) => r.includes("ended"))).toBe(true);
+  });
+
+  it("does not add seasonal message when resort is fully open", () => {
+    const scores: AttributeScores = {
+      skill: 90,
+      budget: 90,
+      vibe: 90,
+      activity: 90,
+      snow: 90,
+    };
+    const reasons = generateExplanations(makeResort(), scores, basePrefs);
+    expect(
+      reasons.every(
+        (r) =>
+          !r.includes("Closing") &&
+          !r.includes("ended") &&
+          !r.includes("Season ends"),
+      ),
+    ).toBe(true);
   });
 });

@@ -6,9 +6,7 @@ import type {
   Preferences,
   NormalizedPreferences,
 } from "@/types/preferences";
-import type {
-  RecommendationResult,
-} from "@/types/recommendation";
+import type { RecommendationResult } from "@/types/recommendation";
 import {
   SKILL_LEVEL_MAP,
   BUDGET_LEVEL_MAP,
@@ -47,13 +45,18 @@ function normalizePreferences(prefs: Preferences): NormalizedPreferences {
 }
 
 /**
+ * Seasonal status label for UI display.
+ */
+export type SeasonalStatus = "open" | "caution" | "warning" | "closed";
+
+/**
  * Compute a seasonal penalty multiplier based on how close the resort is to closing.
  * - Closed (past end date): SEASONAL_PENALTY.closed
  * - Within SEASONAL_WINDOW.warning days of closing: SEASONAL_PENALTY.warning
  * - Within SEASONAL_WINDOW.caution days of closing: SEASONAL_PENALTY.caution
  * - Otherwise: SEASONAL_PENALTY.open
  */
-function seasonalMultiplier(seasonEnd: string): number {
+export function seasonalMultiplier(seasonEnd: string): number {
   const now = Date.now();
   const endMs = new Date(seasonEnd).getTime();
   const daysUntilClose = (endMs - now) / MS_PER_DAY;
@@ -62,6 +65,27 @@ function seasonalMultiplier(seasonEnd: string): number {
   if (daysUntilClose < SEASONAL_WINDOW.warning) return SEASONAL_PENALTY.warning;
   if (daysUntilClose < SEASONAL_WINDOW.caution) return SEASONAL_PENALTY.caution;
   return SEASONAL_PENALTY.open;
+}
+
+/**
+ * Get the seasonal status for a resort based on its season end date.
+ * Returns both the status label and days remaining.
+ */
+export function getSeasonalStatus(seasonEnd: string): {
+  status: SeasonalStatus;
+  daysRemaining: number;
+} {
+  const now = Date.now();
+  const endMs = new Date(seasonEnd).getTime();
+  const daysRemaining = Math.ceil((endMs - now) / MS_PER_DAY);
+
+  let status: SeasonalStatus;
+  if (daysRemaining < 0) status = "closed";
+  else if (daysRemaining < SEASONAL_WINDOW.warning) status = "warning";
+  else if (daysRemaining < SEASONAL_WINDOW.caution) status = "caution";
+  else status = "open";
+
+  return { status, daysRemaining };
 }
 
 /**

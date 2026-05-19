@@ -4,6 +4,7 @@ import type { AttributeScores } from "@/types/recommendation";
 import { SCORE_THRESHOLDS } from "@/constants/scoring";
 import { getCurrencySymbol } from "@/content";
 import { usePreferencesStore } from "@/stores/preferences";
+import { getSeasonalStatus } from "./index";
 
 interface ReasonTemplate {
   excellent: string;
@@ -93,6 +94,16 @@ export function generateExplanations(
   // Ensure at least one reason
   if (reasons.length === 0) {
     reasons.push("Matches your overall preferences");
+  }
+
+  // Add seasonal warning if resort is nearing closure
+  const { status, daysRemaining } = getSeasonalStatus(resort.season.end);
+  if (status === "warning") {
+    reasons.push(`⚠️ Closing in ${daysRemaining} days — book soon`);
+  } else if (status === "caution") {
+    reasons.push(`Season ends in ${daysRemaining} days`);
+  } else if (status === "closed") {
+    reasons.push("Season has ended — check next year's dates");
   }
 
   return reasons;

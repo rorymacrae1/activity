@@ -4,10 +4,17 @@
  */
 
 import React from "react";
-import { View, ScrollView, StyleSheet, Pressable, Platform } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  Platform,
+} from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Button } from "@/components/ui";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
@@ -25,7 +32,7 @@ const LINE_COLOR = colors.border.default;
  * Flow Node - represents a step in the decision process
  */
 interface FlowNodeProps {
-  icon: string;
+  icon: IconName;
   label: string;
   value?: string;
   score?: number;
@@ -60,7 +67,7 @@ function FlowNode({
           highlighted && { borderColor: scoreColor, borderWidth: 3 },
         ]}
       >
-        <Text style={styles.nodeIcon}>{icon}</Text>
+        <Icon name={icon} size={24} color={colors.ink.muted} />
         {score !== undefined && (
           <View style={[styles.scoreBadge, { backgroundColor: scoreColor }]}>
             <Text style={styles.scoreBadgeText}>{score}</Text>
@@ -186,7 +193,7 @@ export default function DecisionFlowScreen() {
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <Text style={styles.backIcon}>←</Text>
+          <Icon name="chevron-left" size={24} color={colors.ink.rich} />
         </Pressable>
         <Text style={styles.headerTitle}>How We Chose</Text>
         <View style={styles.headerSpacer} />
@@ -212,17 +219,17 @@ export default function DecisionFlowScreen() {
         <View style={styles.flowSection}>
           <View style={styles.nodesRow}>
             <FlowNode
-              icon="⛷️"
+              icon="gauge"
               label="Skill"
               value={getSkillDisplay(groupAbilities)}
             />
             <FlowNode
-              icon="💰"
+              icon="banknote"
               label="Budget"
               value={getBudgetDisplay(budgetLevel)}
             />
             <FlowNode
-              icon="✨"
+              icon="sparkles"
               label="Vibes"
               value={`Crowd: ${crowdPreference}`}
             />
@@ -230,12 +237,12 @@ export default function DecisionFlowScreen() {
 
           <View style={styles.nodesRow}>
             <FlowNode
-              icon="🌍"
+              icon="globe"
               label="Regions"
               value={`${regions.length} countries`}
             />
             <FlowNode
-              icon="🎉"
+              icon="party-popper"
               label="Nightlife"
               value={familyVsNightlife > 3 ? "Active" : "Relaxed"}
             />
@@ -248,7 +255,9 @@ export default function DecisionFlowScreen() {
         <SectionDivider label="Scoring Engine" />
 
         <View style={styles.engineBox}>
-          <Text style={styles.engineIcon}>⚙️</Text>
+          <View style={styles.engineIconWrap}>
+            <Icon name="cog" size={32} color={colors.ink.muted} />
+          </View>
           <Text style={styles.engineTitle}>Matching Algorithm</Text>
           <Text style={styles.engineText}>
             Each resort is scored across 5 dimensions based on how well it
@@ -264,19 +273,19 @@ export default function DecisionFlowScreen() {
         <View style={styles.flowSection}>
           <View style={styles.nodesRow}>
             <FlowNode
-              icon="⛷️"
+              icon="gauge"
               label="Skill"
               score={attributeScores.skill}
               highlighted
             />
             <FlowNode
-              icon="💰"
+              icon="banknote"
               label="Budget"
               score={attributeScores.budget}
               highlighted
             />
             <FlowNode
-              icon="✨"
+              icon="sparkles"
               label="Vibe"
               score={attributeScores.vibe}
               highlighted
@@ -285,13 +294,13 @@ export default function DecisionFlowScreen() {
 
           <View style={styles.nodesRow}>
             <FlowNode
-              icon="🎿"
+              icon="activity"
               label="Activity"
               score={attributeScores.activity}
               highlighted
             />
             <FlowNode
-              icon="❄️"
+              icon="snowflake"
               label="Snow"
               score={attributeScores.snow}
               highlighted
@@ -306,7 +315,7 @@ export default function DecisionFlowScreen() {
 
         <View style={styles.resultBox}>
           <View style={styles.resultBadge}>
-            <Text style={styles.resultBadgeText}>🏆</Text>
+            <Icon name="trophy" size={32} color={colors.brand.primary} />
           </View>
           <Text style={styles.resultTitle}>{displayResortName}</Text>
           <Text style={styles.resultScore}>
@@ -347,10 +356,6 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     justifyContent: "center",
-  },
-  backIcon: {
-    fontSize: 24,
-    color: colors.ink.rich,
   },
   headerTitle: {
     ...typography.h3,
@@ -426,9 +431,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  nodeIcon: {
-    fontSize: 24,
-  },
   scoreBadge: {
     position: "absolute",
     bottom: -4,
@@ -479,8 +481,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border.subtle,
   },
-  engineIcon: {
-    fontSize: 32,
+  engineIconWrap: {
     marginBottom: spacing.sm,
   },
   engineTitle: {
@@ -509,9 +510,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.sm,
-  },
-  resultBadgeText: {
-    fontSize: 28,
   },
   resultTitle: {
     ...typography.h3,

@@ -24,6 +24,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 import { Text } from "@/components/ui/Text";
+import { Icon } from "@/components/ui/Icon";
 import { colors, spacing, radius } from "@/theme";
 import type { Resort } from "@/types/resort";
 
@@ -175,13 +176,16 @@ export function LocationMapSection({ resort }: LocationMapSectionProps) {
           accessibilityLabel="Open full-screen map"
         >
           <View style={styles.overlayBadge}>
-            <Text
-              variant="caption"
-              color={colors.canvas.default}
-              style={styles.overlayBadgeText}
-            >
-              📍 Explore Map
-            </Text>
+            <View style={styles.overlayBadgeContent}>
+              <Icon name="map-pin" size={14} color={colors.canvas.default} />
+              <Text
+                variant="caption"
+                color={colors.canvas.default}
+                style={styles.overlayBadgeText}
+              >
+                Explore Map
+              </Text>
+            </View>
           </View>
         </Pressable>
       </View>
@@ -309,6 +313,11 @@ const styles = StyleSheet.create({
   overlayBadgeText: {
     fontWeight: "600",
     letterSpacing: 0.2,
+  },
+  overlayBadgeContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
 
   // Legend

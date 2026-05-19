@@ -1,0 +1,164 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Text renders body variant by default 1`] = `
+<Text
+  maxFontSizeMultiplier={1.4}
+  style={
+    [
+      {
+        "fontFamily": "Montserrat-Regular",
+        "fontSize": 15,
+        "letterSpacing": 0,
+        "lineHeight": 24,
+      },
+      {
+        "color": "#1A1A1A",
+      },
+      undefined,
+      undefined,
+    ]
+  }
+>
+  Hello world
+</Text>
+`;
+
+exports[`Text renders caption variant with inverse color 1`] = `
+<Text
+  maxFontSizeMultiplier={1.4}
+  style={
+    [
+      {
+        "fontFamily": "Montserrat-Regular",
+        "fontSize": 11,
+        "letterSpacing": 0.2,
+        "lineHeight": 16,
+      },
+      {
+        "color": "#F7F9FB",
+      },
+      undefined,
+      undefined,
+    ]
+  }
+>
+  Small text
+</Text>
+`;
+
+exports[`Text renders display variant 1`] = `
+<Text
+  maxFontSizeMultiplier={1.4}
+  style={
+    [
+      {
+        "fontFamily": "Montserrat-Light",
+        "fontSize": 34,
+        "letterSpacing": -1,
+        "lineHeight": 42,
+      },
+      {
+        "color": "#4A90A4",
+      },
+      undefined,
+      undefined,
+    ]
+  }
+>
+  PeakWise
+</Text>
+`;
+
+exports[`Text renders heading variants 1`] = `
+<Text
+  maxFontSizeMultiplier={1.4}
+  style={
+    [
+      {
+        "fontFamily": "Montserrat-Bold",
+        "fontSize": 26,
+        "letterSpacing": -0.5,
+        "lineHeight": 34,
+      },
+      {
+        "color": "#1A1A1A",
+      },
+      undefined,
+      undefined,
+    ]
+  }
+>
+  Heading
+</Text>
+`;
+
+exports[`Text renders with custom color string 1`] = `
+<Text
+  maxFontSizeMultiplier={1.4}
+  style={
+    [
+      {
+        "fontFamily": "Montserrat-Regular",
+        "fontSize": 15,
+        "letterSpacing": 0,
+        "lineHeight": 24,
+      },
+      {
+        "color": "#FF0000",
+      },
+      undefined,
+      undefined,
+    ]
+  }
+>
+  Custom color
+</Text>
+`;
+
+exports[`Text renders with semantic color presets 1`] = `
+<Text
+  maxFontSizeMultiplier={1.4}
+  style={
+    [
+      {
+        "fontFamily": "Montserrat-Regular",
+        "fontSize": 15,
+        "letterSpacing": 0,
+        "lineHeight": 24,
+      },
+      {
+        "color": "#6B7280",
+      },
+      undefined,
+      undefined,
+    ]
+  }
+>
+  Muted text
+</Text>
+`;
+
+exports[`Text renders with text alignment 1`] = `
+<Text
+  maxFontSizeMultiplier={1.4}
+  style={
+    [
+      {
+        "fontFamily": "Montserrat-Regular",
+        "fontSize": 15,
+        "letterSpacing": 0,
+        "lineHeight": 24,
+      },
+      {
+        "color": "#1A1A1A",
+      },
+      {
+        "textAlign": "center",
+      },
+      undefined,
+    ]
+  }
+>
+  Centered
+</Text>
+`;

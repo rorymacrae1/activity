@@ -33,19 +33,4 @@ config.transformer = {
 // ship in their packages.
 config.transformer.unstable_allowRequireContext = true;
 
-// Reduce Reanimated's web footprint: disable features we don't use on web.
-// The worklet runtime and JSI bindings are only needed on native.
-// On web, Reanimated falls back to JS with CSS transitions which is lighter.
-config.resolver.resolveRequest = (context, moduleName, platform) => {
-  // On web, redirect Reanimated's native bindings to a no-op
-  if (
-    platform === "web" &&
-    moduleName ===
-      "react-native-reanimated/src/reanimated2/NativeReanimated/NativeReanimated"
-  ) {
-    return context.resolveRequest(context, moduleName, platform);
-  }
-  return context.resolveRequest(context, moduleName, platform);
-};
-
 module.exports = config;

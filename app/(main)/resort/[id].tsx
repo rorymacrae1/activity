@@ -1,13 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import Head from "expo-router/head";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-} from "react-native";
+import { View, StyleSheet, Pressable, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
@@ -54,6 +48,7 @@ import {
 import { MatchBreakdownSection } from "@components/resort/MatchBreakdownSection";
 import { SimilarResortsCarousel } from "@components/resort/SimilarResortsCarousel";
 import { LocationMapSection } from "@components/resort/LocationMapSection";
+import { hapticMedium } from "@lib/haptics";
 import { usePreferencesStore } from "@stores/preferences";
 import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
@@ -173,7 +168,7 @@ export default function ResortDetailScreen() {
     return () => {
       cancelled = true;
     };
-  }, [id, siblingIdsParam, user, retryCount]);
+  }, [id, siblingIdsParam, user, retryCount, setVisited]);
 
   if (loading) {
     return (
@@ -218,6 +213,7 @@ export default function ResortDetailScreen() {
   const isSaved = isFavorite(resort.id);
 
   const handleToggleFavorite = () => {
+    hapticMedium();
     heartScale.value = withSequence(
       withSpring(1.4, { damping: 6, stiffness: 400 }),
       withSpring(1, { damping: 10, stiffness: 300 }),
@@ -242,6 +238,7 @@ export default function ResortDetailScreen() {
   };
 
   const handleDismiss = () => {
+    hapticMedium();
     dismiss(resort.id);
     showToast({ type: "info", message: "Removed from recommendations" });
     router.back();
@@ -425,7 +422,8 @@ export default function ResortDetailScreen() {
                   <TransportSection resort={resort} />
                   <LocationMapSection resort={resort} />
                   <Button
-                    label={`🗺️  ${content.resort.viewMap}`}
+                    label={content.resort.viewMap}
+                    icon="map"
                     onPress={() => router.push(`/(main)/map/${resort.id}`)}
                     fullWidth
                     style={styles.mapButton}
@@ -486,7 +484,8 @@ export default function ResortDetailScreen() {
                 <TransportSection resort={resort} />
                 <LocationMapSection resort={resort} />
                 <Button
-                  label={`🗺️  ${content.resort.viewMap}`}
+                  label={content.resort.viewMap}
+                  icon="map"
                   onPress={() => router.push(`/(main)/map/${resort.id}`)}
                   fullWidth
                   style={styles.mapButton}
@@ -601,8 +600,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxs,
   },
   heroLocation: {
-    fontSize: 15,
-    color: "rgba(255,255,255,0.8)",
+    ...typography.body,
+    color: colors.onDark.text.secondary,
     marginBottom: spacing.sm,
   },
   heroStats: {
@@ -610,13 +609,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   heroStat: {
-    fontSize: 14,
-    fontWeight: "600" as const,
+    ...typography.bodySmallMedium,
     color: colors.ink.inverse,
   },
   heroStatDot: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.5)",
+    ...typography.bodySmall,
+    color: colors.onDark.text.muted,
   },
   centeredContent: {
     flex: 1,

@@ -1,23 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { Stack } from "expo-router";
 import Head from "expo-router/head";
 import { StatusBar } from "expo-status-bar";
+import * as SplashScreen from "expo-splash-screen";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StyleSheet, View, Platform, Image } from "react-native";
 import { useFonts } from "expo-font";
 import * as Localization from "expo-localization";
+import { initSentry } from "@lib/sentry";
 import { ErrorBoundary } from "@components/ui/ErrorBoundary";
 import { ToastProvider } from "@components/ui/Toast";
 import { SyncErrorObserver } from "@components/ui/SyncErrorObserver";
 import { maxContentWidth } from "@theme/layout";
-import { colors, fontAssets } from "@theme";
+import { colors, fontAssets, ThemeProvider, useTheme } from "@theme";
 import { useAuthStore } from "@stores/auth";
 import { usePreferencesStore } from "@stores/preferences";
 import type { Language } from "@/content";
 
 // Yeti loading GIF
 const LOADING_YETI = require("../assets/LoadingYeti.gif");
+
+// Keep splash screen visible until fonts are loaded
+SplashScreen.preventAutoHideAsync();
+
+// Initialize crash reporting before component render
+initSentry();
 
 /**
  * Root layout component for the app.
@@ -49,6 +57,13 @@ export default function RootLayout() {
     setLanguage(matched);
   }, [hasCompletedOnboarding, setLanguage]);
 
+  // Hide splash screen once fonts are ready
+  const onLayoutRootView = useCallback(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   // Show loading state while fonts are loading
   if (!fontsLoaded) {
     return (
@@ -61,57 +76,59 @@ export default function RootLayout() {
   return (
     <Head.Provider>
       <ErrorBoundary>
-        <SafeAreaProvider>
-          <GestureHandlerRootView style={styles.container}>
-            <ToastProvider>
-              <SyncErrorObserver />
-              <Head>
-                <title>PisteWise | Find Your Perfect Ski Resort</title>
-                <meta
-                  name="description"
-                  content="Discover your ideal ski resort based on your skill level, budget, and preferences. Personalised recommendations for skiers and snowboarders."
-                />
-                <meta
-                  name="viewport"
-                  content="width=device-width, initial-scale=1"
-                />
-                <meta name="theme-color" content="#1E2A38" />
-                <meta charSet="utf-8" />
-                <meta httpEquiv="content-language" content="en" />
-                <meta property="og:site_name" content="PisteWise" />
-                <meta property="og:type" content="website" />
-                <meta name="twitter:card" content="summary_large_image" />
-              </Head>
-              <StatusBar style="light" />
-              {/* App shell with max-width on web */}
-              <View style={[styles.appShell, isWeb && styles.appShellWeb]}>
-                <Stack
-                  screenOptions={{
-                    headerShown: false,
-                    contentStyle: { backgroundColor: colors.canvas.default },
-                  }}
-                >
-                  <Stack.Screen name="index" />
-                  <Stack.Screen
-                    name="(onboarding)"
-                    options={{ gestureEnabled: false }}
+        <ThemeProvider>
+          <SafeAreaProvider>
+            <GestureHandlerRootView style={styles.container} onLayout={onLayoutRootView}>
+              <ToastProvider>
+                <SyncErrorObserver />
+                <Head>
+                  <title>PisteWise | Find Your Perfect Ski Resort</title>
+                  <meta
+                    name="description"
+                    content="Discover your ideal ski resort based on your skill level, budget, and preferences. Personalised recommendations for skiers and snowboarders."
                   />
-                  <Stack.Screen
-                    name="(main)"
-                    options={{ gestureEnabled: false }}
+                  <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
                   />
-                  <Stack.Screen
-                    name="(auth)"
-                    options={{
-                      presentation: "modal",
-                      animation: "slide_from_bottom",
+                  <meta name="theme-color" content="#1E2A38" />
+                  <meta charSet="utf-8" />
+                  <meta httpEquiv="content-language" content="en" />
+                  <meta property="og:site_name" content="PisteWise" />
+                  <meta property="og:type" content="website" />
+                  <meta name="twitter:card" content="summary_large_image" />
+                </Head>
+                <StatusBar style="auto" />
+                {/* App shell with max-width on web */}
+                <View style={[styles.appShell, isWeb && styles.appShellWeb]}>
+                  <Stack
+                    screenOptions={{
+                      headerShown: false,
+                      contentStyle: { backgroundColor: colors.canvas.default },
                     }}
-                  />
-                </Stack>
-              </View>
-            </ToastProvider>
-          </GestureHandlerRootView>
-        </SafeAreaProvider>
+                  >
+                    <Stack.Screen name="index" />
+                    <Stack.Screen
+                      name="(onboarding)"
+                      options={{ gestureEnabled: false }}
+                    />
+                    <Stack.Screen
+                      name="(main)"
+                      options={{ gestureEnabled: false }}
+                    />
+                    <Stack.Screen
+                      name="(auth)"
+                      options={{
+                        presentation: "modal",
+                        animation: "slide_from_bottom",
+                      }}
+                    />
+                  </Stack>
+                </View>
+              </ToastProvider>
+            </GestureHandlerRootView>
+          </SafeAreaProvider>
+        </ThemeProvider>
       </ErrorBoundary>
     </Head.Provider>
   );

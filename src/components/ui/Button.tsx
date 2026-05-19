@@ -14,6 +14,8 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { Text } from "./Text";
+import { Icon, type IconName } from "./Icon";
+import { hapticLight } from "@lib/haptics";
 import {
   colors,
   typography,
@@ -64,6 +66,8 @@ interface ButtonProps extends Omit<PressableProps, "style"> {
   loading?: boolean;
   /** Emoji or icon character */
   leftIcon?: string;
+  /** Lucide icon name (preferred over leftIcon) */
+  icon?: IconName;
   /** Stretch to fill container */
   fullWidth?: boolean;
   /** Additional styles */
@@ -132,6 +136,7 @@ export function Button({
   label,
   loading = false,
   leftIcon,
+  icon,
   fullWidth = false,
   disabled,
   style: styleProp,
@@ -151,6 +156,7 @@ export function Button({
 
   const handlePressIn = () => {
     if (!isDisabled) {
+      hapticLight();
       scale.value = withSpring(
         interaction.scale.pressed,
         animation.spring.snappy,
@@ -204,7 +210,9 @@ export function Button({
         <ActivityIndicator size="small" color={spinnerColor} />
       ) : (
         <View style={styles.content}>
-          {leftIcon ? (
+          {icon ? (
+            <Icon name={icon} size={sizeConfig.iconSize} color={config.text} />
+          ) : leftIcon ? (
             <Text style={[styles.icon, { fontSize: sizeConfig.iconSize }]}>
               {leftIcon}
             </Text>

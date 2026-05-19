@@ -4,6 +4,7 @@ const sharedModuleNameMapper = {
   "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/src/__mocks__/fileMock.ts",
   "^@/lib/storage(\\.native)?$": "<rootDir>/src/__mocks__/lib/storage.ts",
   "^@lib/supabase$": "<rootDir>/src/__mocks__/lib/supabase.ts",
+  "^@lib/sentry$": "<rootDir>/src/__mocks__/lib/sentry.ts",
   "^@expo-google-fonts/(.*)$": "<rootDir>/src/__mocks__/expo-google-fonts.ts",
   "^react-native-mmkv$": "<rootDir>/src/__mocks__/react-native-mmkv.ts",
   "^@theme$": "<rootDir>/src/theme/index.ts",
@@ -74,6 +75,10 @@ module.exports = {
         ...sharedModuleNameMapper,
         "^react-native-reanimated$":
           "<rootDir>/src/__mocks__/react-native-reanimated.ts",
+        "^lucide-react-native/dist/cjs/icons/(.*)$":
+          "<rootDir>/src/__mocks__/lucide-react-native.ts",
+        "^lucide-react-native$":
+          "<rootDir>/src/__mocks__/lucide-react-native.ts",
       },
       transformIgnorePatterns: sharedTransformIgnore,
       setupFiles: ["<rootDir>/node_modules/react-native/jest/setup.js"],

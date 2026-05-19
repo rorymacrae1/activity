@@ -11,13 +11,16 @@ import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import Svg, { Polygon, Circle, Line, Text as SvgText } from "react-native-svg";
 import { Text } from "@/components/ui";
-import { Icon } from "@/components/ui/Icon";
+import { Icon, type IconName } from "@/components/ui/Icon";
 import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { typography } from "@/theme/typography";
 import { generateExplanations } from "@/services/recommendation/explainer";
-import { calculateScores, computeWeightedScore } from "@/services/recommendation/scorer";
+import {
+  calculateScores,
+  computeWeightedScore,
+} from "@/services/recommendation/scorer";
 import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
 import type { AttributeScores } from "@/types/recommendation";
@@ -34,13 +37,13 @@ const RINGS = 4; // concentric rings at 25 / 50 / 75 / 100
 const DIMENSIONS: {
   key: keyof AttributeScores;
   label: string;
-  icon: string;
+  icon: IconName;
 }[] = [
-  { key: "skill", label: "Skill", icon: "⛷" },
-  { key: "snow", label: "Snow", icon: "❄️" },
-  { key: "budget", label: "Budget", icon: "💷" },
-  { key: "activity", label: "Activity", icon: "🎿" },
-  { key: "vibe", label: "Vibe", icon: "✨" },
+  { key: "skill", label: "Skill", icon: "gauge" },
+  { key: "snow", label: "Snow", icon: "snowflake" },
+  { key: "budget", label: "Budget", icon: "banknote" },
+  { key: "activity", label: "Activity", icon: "activity" },
+  { key: "vibe", label: "Vibe", icon: "sparkles" },
 ];
 
 /** Convert polar (angle, radius) to SVG cartesian coords. Angle 0 = top. */
@@ -174,7 +177,7 @@ function ScorePills({ scores }: ScorePillsProps) {
     <View style={styles.pillRow}>
       {DIMENSIONS.map(({ key, label, icon }) => (
         <View key={key} style={styles.pill}>
-          <Text style={styles.pillIcon}>{icon}</Text>
+          <Icon name={icon} size={14} color={colors.ink.muted} />
           <Text style={styles.pillLabel}>{label}</Text>
           <View
             style={[
@@ -353,9 +356,6 @@ const styles = StyleSheet.create({
     gap: 4,
     borderWidth: 1,
     borderColor: colors.border.subtle,
-  },
-  pillIcon: {
-    fontSize: 12,
   },
   pillLabel: {
     ...typography.caption,

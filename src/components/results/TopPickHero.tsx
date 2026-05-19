@@ -65,7 +65,7 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
     transform: [{ translateY: translateY.value }],
   }));
 
-  const content = (
+  const heroContent = (
     <Animated.View style={[styles.container, heroStyle]}>
       {/* Hero image with gradient overlays */}
       <View style={styles.imageContainer}>
@@ -157,12 +157,12 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
         accessibilityLabel={`View ${resort.name} details`}
         accessibilityHint="Opens the resort detail page"
       >
-        {content}
+        {heroContent}
       </Pressable>
     );
   }
 
-  return content;
+  return heroContent;
 }
 
 const styles = StyleSheet.create({
@@ -207,8 +207,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   topBadgeText: {
-    fontSize: 13,
-    fontWeight: "600",
+    ...typography.label,
     color: colors.ink.rich,
   },
   matchScoreContainer: {
@@ -232,23 +231,18 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   matchScoreValue: {
-    fontSize: 24,
-    fontWeight: "700",
+    ...typography.h1,
     color: colors.ink.inverse,
   },
   matchScorePercent: {
-    fontSize: 14,
-    fontWeight: "600",
+    ...typography.bodySmallMedium,
     color: colors.onDark.text.tertiary,
     marginTop: 2,
   },
   matchScoreLabel: {
-    fontSize: 11,
-    fontWeight: "600",
+    ...typography.overline,
     color: colors.onDark.text.secondary,
     marginTop: spacing.xs,
-    textTransform: "uppercase",
-    letterSpacing: 1,
   },
   infoOverlay: {
     position: "absolute",
@@ -263,7 +257,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   location: {
-    fontSize: 15,
+    ...typography.body,
     color: colors.onDark.text.secondary,
     marginBottom: spacing.md,
   },
@@ -275,15 +269,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statValue: {
-    fontSize: 16,
+    ...typography.bodyMedium,
     fontWeight: "700",
     color: colors.ink.inverse,
   },
   statLabel: {
-    fontSize: 11,
+    ...typography.overline,
     color: colors.onDark.text.tertiary,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
     marginTop: 2,
   },
   statDivider: {

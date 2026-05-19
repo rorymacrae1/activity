@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import type { ErrorInfo, ReactNode } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import AlertTriangle from "lucide-react-native/dist/cjs/icons/triangle-alert";
+import { Sentry } from "@lib/sentry";
 import { colors } from "@theme/colors";
 import { typography } from "@theme/typography";
 import { spacing } from "@theme/spacing";
@@ -35,8 +36,9 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log error to reporting service in production
-    // For now, we'll just call the optional onError callback
+    Sentry.captureException(error, {
+      extra: { componentStack: errorInfo.componentStack },
+    });
     this.props.onError?.(error, errorInfo);
   }
 

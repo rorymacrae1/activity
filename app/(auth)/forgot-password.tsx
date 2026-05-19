@@ -13,6 +13,7 @@ import { fontFamily } from "@theme/fonts";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { Card } from "@components/ui/Card";
+import { Icon } from "@components/ui/Icon";
 import { ScreenContainer } from "@components/ui/ScreenContainer";
 import { useToast } from "@components/ui/Toast";
 import { useAuthStore } from "@stores/auth";
@@ -107,7 +108,7 @@ export default function ForgotPasswordScreen() {
             </Card>
           ) : (
             <Card elevation="subtle" style={styles.successCard}>
-              <Text style={styles.successIcon}>✉️</Text>
+              <Icon name="mail" size={32} color={colors.brand.primary} />
               <Text
                 variant="bodySmall"
                 color={colors.ink.normal}
@@ -185,10 +186,6 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     alignItems: "center",
     gap: spacing.sm,
-  },
-  successIcon: {
-    fontSize: 40,
-    marginBottom: spacing.sm,
   },
   footer: {
     flexDirection: "row",

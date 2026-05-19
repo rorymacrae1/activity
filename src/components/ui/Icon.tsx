@@ -48,6 +48,13 @@ import Gauge from "lucide-react-native/dist/cjs/icons/gauge";
 import UsersRound from "lucide-react-native/dist/cjs/icons/users-round";
 import Activity from "lucide-react-native/dist/cjs/icons/activity";
 import SlidersHorizontal from "lucide-react-native/dist/cjs/icons/sliders-horizontal";
+import Map from "lucide-react-native/dist/cjs/icons/map";
+import Globe from "lucide-react-native/dist/cjs/icons/globe";
+import Trophy from "lucide-react-native/dist/cjs/icons/trophy";
+import PartyPopper from "lucide-react-native/dist/cjs/icons/party-popper";
+import Mail from "lucide-react-native/dist/cjs/icons/mail";
+import Banknote from "lucide-react-native/dist/cjs/icons/banknote";
+import Cog from "lucide-react-native/dist/cjs/icons/cog";
 import { colors } from "@/theme/colors";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -93,6 +100,15 @@ const ICON_MAP: Record<string, LucideIcon> = {
   "users-round": UsersRound,
   activity: Activity,
   "sliders-horizontal": SlidersHorizontal,
+
+  // Category / Decision
+  map: Map,
+  globe: Globe,
+  trophy: Trophy,
+  "party-popper": PartyPopper,
+  mail: Mail,
+  banknote: Banknote,
+  cog: Cog,
 
   // Feedback
   check: Check,

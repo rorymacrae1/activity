@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
+import { supabaseAuthStorage } from "@lib/authStorage";
 
 /**
  * Supabase client instance.
@@ -22,10 +23,9 @@ export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 export const supabase: SupabaseClient<Database> | null = isSupabaseConfigured
   ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
       auth: {
-        // Persist auth state — uses AsyncStorage on native, localStorage on web
+        storage: supabaseAuthStorage,
         persistSession: true,
-        // Disable auto-refresh to prevent retry loops when offline / project paused
-        autoRefreshToken: false,
+        autoRefreshToken: true,
         detectSessionInUrl: true,
       },
     })

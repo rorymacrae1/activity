@@ -29,6 +29,8 @@ import { usePrefetchImages } from "@hooks/usePrefetchImages";
 import { colors, spacing, radius, typography } from "@theme";
 import { fontFamily } from "@theme/fonts";
 import { useContent } from "@hooks/useContent";
+import { useProfile } from "@stores/auth";
+import { getFlightTimeMinutes } from "@services/flightTime";
 import { Text } from "@components/ui/Text";
 import { Icon } from "@components/ui/Icon";
 import { LoadingState } from "@components/ui/LoadingState";
@@ -45,7 +47,7 @@ import type { NormalizedPreferences } from "@/types/preferences";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type SortKey = "az" | "km" | "snow";
+type SortKey = "az" | "km" | "snow" | "flight";
 type ViewMode = "list" | "map";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -74,7 +76,7 @@ const NEUTRAL_PREFS: DiscoverPrefs = {
   snowImportance: 0.5,
 };
 
-const SORT_KEYS: SortKey[] = ["az", "km", "snow"];
+const _SORT_KEYS: SortKey[] = ["az", "km", "snow"];
 
 // ─── Resort Row ──────────────────────────────────────────────────────────────
 
@@ -165,10 +167,13 @@ const ITEM_HEIGHT = ROW_HEIGHT + SEPARATOR_HEIGHT;
 
 export default function DiscoverScreen() {
   const t = useContent().discoverScreen;
+  const profile = useProfile();
+  const homeAirport = profile?.home_airport ?? null;
   const SORT_OPTIONS: { key: SortKey; label: string }[] = [
     { key: "az", label: t.sortAZ },
     { key: "km", label: t.sortKm },
     { key: "snow", label: t.sortSnow },
+    ...(homeAirport ? [{ key: "flight" as const, label: t.sortFlight }] : []),
   ];
   const [allResorts, setAllResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
@@ -279,10 +284,27 @@ export default function DiscoverScreen() {
           (a, b) => b.attributes.snowReliability - a.attributes.snowReliability,
         );
         break;
+      case "flight":
+        if (homeAirport) {
+          filtered = [...filtered].sort((a, b) => {
+            const aTime =
+              getFlightTimeMinutes(
+                homeAirport,
+                a.attributes.nearestAirport ?? "",
+              ) ?? Infinity;
+            const bTime =
+              getFlightTimeMinutes(
+                homeAirport,
+                b.attributes.nearestAirport ?? "",
+              ) ?? Infinity;
+            return aTime - bTime;
+          });
+        }
+        break;
     }
 
     return filtered;
-  }, [allResorts, query, sortKey]);
+  }, [allResorts, query, sortKey, homeAirport]);
 
   const handleClearQuery = useCallback(() => {
     setQuery("");
@@ -850,7 +872,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.xl,
     paddingBottom: spacing.lg,
-    overflowY: "auto" as any,
+    overflowY: "auto" as const,
   },
   desktopSidebarHeader: {
     marginBottom: spacing.lg,

@@ -1,15 +1,15 @@
 {
   "expo": {
     "name": "PeakWise",
-    "slug": "peakwise",
+    "slug": "piste-wise",
     "version": "1.0.0",
     "description": "Find your perfect ski resort. Personalised recommendations based on your skill level, budget, and style.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "peakwise",
-    "newArchEnabled": false,
-    "jsEngine": "jsc",
+    "newArchEnabled": true,
+    "jsEngine": "hermes",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -17,7 +17,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.peakwise.app"
+      "bundleIdentifier": "com.peakwise.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.peakwise.app",
@@ -30,14 +33,34 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
-      "output": "single",
+      "output": "static",
       "backgroundColor": "#f8fafc",
       "themeColor": "#1a365d"
     },
-    "plugins": ["expo-router", "expo-font"],
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/5b0bc1c1-7aa4-41f5-afa2-ed176b24ac38"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-splash-screen",
+      "@sentry/react-native",
+      "expo-secure-store",
+      "expo-updates"
+    ],
     "experiments": {
       "typedRoutes": true,
       "bundleSplitting": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5b0bc1c1-7aa4-41f5-afa2-ed176b24ac38"
+      }
+    },
+    "owner": "piste-wise"
   }
 }

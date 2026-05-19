@@ -2,12 +2,17 @@ import { View, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Card } from "@components/ui/Card";
 import { Text } from "@components/ui/Text";
+import { Icon } from "@components/ui/Icon";
 import { ResortImage } from "@components/ui/ResortImage";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
 import { useProfile } from "@stores/auth";
 import { useVisitedStore } from "@stores/visited";
-import { colors, spacing, radius } from "@theme";
+import { colors, spacing, radius, typography } from "@theme";
+import {
+  getFlightTimeMinutes,
+  formatFlightTime,
+} from "@services/flightTime";
 import type { RecommendationResult } from "@/types/recommendation";
 
 interface ResortCardProps {
@@ -36,6 +41,10 @@ export function ResortCard({
   const nearestAirport = resort.attributes.nearestAirport;
   const transferMins = resort.attributes.transferTimeMinutes;
   const isOwnAirport = homeAirport === nearestAirport;
+  const flightMins =
+    homeAirport && nearestAirport && !isOwnAirport
+      ? getFlightTimeMinutes(homeAirport, nearestAirport)
+      : null;
 
   const isTopPick = rank === 1;
 
@@ -73,7 +82,13 @@ export function ResortCard({
         {/* Visited badge — shown when user has been to this resort */}
         {isVisited ? (
           <View style={styles.visitedBadge}>
-            <Text style={styles.visitedText}>✓ Visited</Text>
+            <Icon
+              name="check"
+              size={12}
+              color={colors.sentiment.success}
+              strokeWidth={2.5}
+            />
+            <Text style={styles.visitedText}> Visited</Text>
           </View>
         ) : null}
       </View>
@@ -116,13 +131,17 @@ export function ResortCard({
         {/* Airport row — shows nearest ski airport and transfer time */}
         {nearestAirport ? (
           <View style={styles.airportRow}>
-            <Text style={styles.airportText}>
-              {homeAirport
-                ? `✈ ${homeAirport} → ${nearestAirport}`
-                : `✈ ${nearestAirport}`}
-            </Text>
+            <View style={styles.airportLabelRow}>
+              <Icon name="plane" size={12} color={colors.ink.muted} />
+              <Text style={styles.airportText}>
+                {homeAirport
+                  ? ` ${homeAirport} → ${nearestAirport}`
+                  : ` ${nearestAirport}`}
+              </Text>
+            </View>
             <Text style={styles.airportSub}>
               {isOwnAirport ? "your airport · " : ""}
+              {flightMins ? `${formatFlightTime(flightMins)} flight · ` : ""}
               {transferMins}min transfer
             </Text>
           </View>
@@ -194,8 +213,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.brand.primary,
   },
   rankText: {
+    ...typography.label,
     color: colors.ink.inverse,
-    fontSize: 13,
     fontWeight: "700",
     letterSpacing: 0.5,
   },
@@ -220,14 +239,13 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   matchScore: {
-    fontSize: 16,
+    ...typography.bodyMedium,
     fontWeight: "700",
     color: colors.brand.primary,
     letterSpacing: -0.5,
   },
   matchPercent: {
-    fontSize: 11,
-    fontWeight: "600",
+    ...typography.captionMedium,
     color: colors.brand.primary,
     marginLeft: 1,
   },
@@ -239,10 +257,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: 3,
     borderRadius: radius.full,
+    flexDirection: "row",
+    alignItems: "center",
   },
   visitedText: {
-    fontSize: 12,
-    fontWeight: "600" as const,
+    ...typography.captionMedium,
     color: colors.sentiment.success,
   },
   content: {
@@ -264,12 +283,11 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   statValue: {
-    fontSize: 14,
-    fontWeight: "600",
+    ...typography.bodySmallMedium,
     color: colors.ink.rich,
   },
   statLabel: {
-    fontSize: 12,
+    ...typography.caption,
     color: colors.ink.muted,
   },
   statDivider: {
@@ -285,13 +303,17 @@ const styles = StyleSheet.create({
     gap: spacing.xxs,
     marginTop: spacing.xs,
   },
+  airportLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+  },
   airportText: {
-    fontSize: 12,
-    fontWeight: "600",
+    ...typography.captionMedium,
     color: colors.ink.normal,
   },
   airportSub: {
-    fontSize: 11,
+    ...typography.caption,
     color: colors.ink.muted,
   },
   reasons: {
@@ -312,8 +334,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   checkMark: {
+    ...typography.captionMedium,
     fontSize: 9,
-    fontWeight: "700",
     color: colors.brand.primary,
   },
   reasonText: {

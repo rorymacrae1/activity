@@ -28,6 +28,7 @@ export function FavoritesPreview({
 }: FavoritesPreviewProps) {
   const [resorts, setResorts] = useState<Resort[]>([]);
   const [loading, setLoading] = useState(true);
+  const t = useContent().home.favoritesPreview;
 
   useEffect(() => {
     async function loadResorts() {
@@ -54,8 +55,6 @@ export function FavoritesPreview({
   if (loading) {
     return null;
   }
-
-  const t = useContent().home.favoritesPreview;
 
   if (resorts.length === 0) {
     return (

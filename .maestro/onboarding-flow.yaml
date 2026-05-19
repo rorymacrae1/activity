@@ -1,0 +1,38 @@
+appId: dev.expo.activity
+---
+# Onboarding Quiz → Results flow
+# Verifies the full happy-path: welcome → trip type → skill → budget → region → vibes → results
+
+- launchApp
+
+# Welcome screen
+- assertVisible: "Let's Go"
+- tapOn: "Let's Go"
+
+# Trip type screen
+- assertVisible: "Who's this trip for?"
+- tapOn: "Couple"
+- tapOn: "Next"
+
+# Skill screen
+- assertVisible: "Who's hitting the slopes?"
+- tapOn: "Blue Cruiser"
+- tapOn: "Next"
+
+# Budget screen
+- assertVisible: "How do you like to ski?"
+- tapOn: "Sweet Spot"
+- tapOn: "Next"
+
+# Region screen
+- assertVisible: "Where do you want to ski?"
+- tapOn: "France"
+- tapOn: "Next"
+
+# Vibes screen
+- assertVisible: "What's your vibe?"
+- tapOn: "See Results"
+
+# Results screen
+- assertVisible: "Your Top Matches"
+- assertVisible: "% match"

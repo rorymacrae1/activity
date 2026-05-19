@@ -18,7 +18,7 @@ import { useDismissedStore } from "@stores/dismissed";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
 import { usePrefetchImages } from "@hooks/usePrefetchImages";
-import { colors, spacing, radius } from "@theme";
+import { colors, spacing, radius, typography } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { LoadingState } from "@components/ui/LoadingState";
@@ -463,8 +463,7 @@ const styles = StyleSheet.create({
     borderColor: colors.brand.primary + "40",
   },
   tweakButtonLabel: {
-    fontSize: 13,
-    fontWeight: "600",
+    ...typography.label,
     color: colors.brand.primary,
   },
   topPickSection: {
@@ -496,13 +495,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   decisionFlowTitle: {
-    fontSize: 15,
-    fontWeight: "600",
+    ...typography.h4,
     color: colors.ink.rich,
     marginBottom: 2,
   },
   decisionFlowSubtitle: {
-    fontSize: 13,
+    ...typography.bodySmall,
     color: colors.ink.normal,
   },
   decisionFlowArrow: {
@@ -555,14 +553,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   sliderLabelText: {
-    fontSize: 15,
-    fontWeight: "600",
+    ...typography.h4,
     color: colors.ink.rich,
   },
   sliderValue: {
-    fontSize: 13,
+    ...typography.label,
     color: colors.brand.primary,
-    fontWeight: "600",
   },
   sliderEndLabels: {
     flexDirection: "row",
@@ -570,7 +566,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   sliderEndLabel: {
-    fontSize: 11,
+    ...typography.caption,
     color: colors.ink.muted,
   },
   modalActions: {

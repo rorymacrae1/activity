@@ -1,0 +1,36 @@
+appId: dev.expo.activity
+---
+# Resort Detail flow
+# Navigates from results to a resort detail page and verifies key content
+
+- launchApp
+
+# Skip onboarding if we're on results already, otherwise complete it
+- assertVisible: "Let's Go"
+- tapOn: "Let's Go"
+- tapOn: "Couple"
+- tapOn: "Next"
+- tapOn: "Blue Cruiser"
+- tapOn: "Next"
+- tapOn: "Sweet Spot"
+- tapOn: "Next"
+- tapOn: "France"
+- tapOn: "Next"
+- tapOn: "See Results"
+
+# Results screen — tap first result
+- assertVisible: "Your Top Matches"
+- tapOn:
+    index: 0
+    id: "resort-card-.*"
+    optional: true
+
+# If card IDs don't match, try tapping the first match-percentage visible
+- tapOn:
+    text: "% match"
+    index: 0
+    optional: true
+
+# Resort detail assertions
+- assertVisible: "km piste"
+- assertVisible: "Snow"
