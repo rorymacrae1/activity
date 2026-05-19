@@ -1,7 +1,4 @@
-import {
-  getFlightTimeMinutes,
-  formatFlightTime,
-} from "@services/flightTime";
+import { getFlightTimeMinutes, formatFlightTime } from "@services/flightTime";
 
 describe("getFlightTimeMinutes", () => {
   it("returns a reasonable time for LHR → GVA (~750 km)", () => {

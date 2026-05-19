@@ -9,7 +9,14 @@
  */
 
 import { useEffect, useState } from "react";
-import { View, ScrollView, StyleSheet, Pressable, Modal, Platform } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  Modal,
+  Platform,
+} from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";

@@ -78,7 +78,10 @@ export default function RootLayout() {
       <ErrorBoundary>
         <ThemeProvider>
           <SafeAreaProvider>
-            <GestureHandlerRootView style={styles.container} onLayout={onLayoutRootView}>
+            <GestureHandlerRootView
+              style={styles.container}
+              onLayout={onLayoutRootView}
+            >
               <ToastProvider>
                 <SyncErrorObserver />
                 <Head>

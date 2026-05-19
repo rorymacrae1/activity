@@ -9,10 +9,7 @@ import { useContent } from "@hooks/useContent";
 import { useProfile } from "@stores/auth";
 import { useVisitedStore } from "@stores/visited";
 import { colors, spacing, radius, typography } from "@theme";
-import {
-  getFlightTimeMinutes,
-  formatFlightTime,
-} from "@services/flightTime";
+import { getFlightTimeMinutes, formatFlightTime } from "@services/flightTime";
 import type { RecommendationResult } from "@/types/recommendation";
 
 interface ResortCardProps {
