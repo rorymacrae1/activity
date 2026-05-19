@@ -5,7 +5,7 @@
       "tagline": "Votre prochain séjour au ski, simplifié.",
       "subtitle": "Répondez à 5 questions rapides et nous vous proposons la station idéale pour votre groupe, votre niveau et votre budget.",
       "valueProp1": "Adapté à votre niveau, budget et style",
-      "valueProp2": "{count} stations sélectionnées",
+      "valueProp2": "200+ stations sélectionnées",
       "valueProp3": "Fonctionne hors ligne — emportez-le en montagne",
       "cta": "C'est parti",
       "ctaSubtext": "5 questions · moins d'une minute",
@@ -48,8 +48,8 @@
           "description": "À l'aise sur les bleues, découvre les rouges"
         },
         "red": {
-          "title": "Chasseur de rouges",
-          "description": "Maîtrise les rouges, tente les noires"
+          "title": "Intermédiaire avancé",
+          "description": "À l'aise sur les rouges, commence les noires"
         },
         "advanced": {
           "title": "Pistes Noires",

@@ -10,7 +10,7 @@ import { NavBar } from "@components/ui/NavBar";
  * Hosted on Unsplash — same CDN already used for resort hero images.
  */
 const BACKGROUND_IMAGE =
-  "https://images.unsplash.com/photo-1551524559-8af4e6624178?w=800";
+  "https://images.unsplash.com/photo-1551524559-8af4e6624178?w=1920";
 
 /**
  * Fixed card height on tablet ensures all quiz screens look identical.
@@ -60,7 +60,11 @@ export function QuizLayout({
         <NavBar />
         {/* Brand accent line — gives mobile the same Alpine identity as the tablet layout */}
         <LinearGradient
-          colors={[colors.brand.primary, colors.brand.primaryMuted, colors.brand.primary + "00"]}
+          colors={[
+            colors.brand.primary,
+            colors.brand.primaryMuted,
+            colors.brand.primary + "00",
+          ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.mobileAccentLine}
@@ -131,6 +135,7 @@ const styles = StyleSheet.create({
   // ── Tablet ──────────────────────────────────────────────────────────────────
   background: {
     flex: 1,
+    backgroundColor: colors.onDark.scrim,
   },
   scrim: {
     ...StyleSheet.absoluteFillObject,

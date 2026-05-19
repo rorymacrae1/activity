@@ -10,25 +10,22 @@ import { fontFamily } from "@theme/fonts";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { Icon, type IconName } from "@components/ui/Icon";
+import { useIsAuthenticated } from "@stores/auth";
 import { QuizLayout } from "@components/onboarding/QuizLayout";
 import { AnimatedQuizContent } from "@components/onboarding/AnimatedQuizContent";
-import { getAllResorts } from "@services/resort";
 
 export default function WelcomeScreen() {
   const { isTablet, hPadding } = useLayout();
   const content = useContent();
   const t = content.onboarding.welcome;
-  const resortCount = getAllResorts().length;
   const hasCompletedOnboarding = usePreferencesStore(
     (s) => s.hasCompletedOnboarding,
   );
+  const isAuthenticated = useIsAuthenticated();
 
   const VALUE_PROPS: { icon: IconName; text: string }[] = [
     { icon: "target", text: t.valueProp1 },
-    {
-      icon: "mountain",
-      text: t.valueProp2.replace("{count}", String(resortCount)),
-    },
+    { icon: "mountain", text: t.valueProp2 },
     { icon: "snowflake", text: t.valueProp3 },
   ];
 
@@ -114,7 +111,7 @@ export default function WelcomeScreen() {
             </Text>
 
             {/* Returning user shortcut */}
-            {hasCompletedOnboarding && (
+            {hasCompletedOnboarding && isAuthenticated && (
               <Pressable
                 onPress={() => router.replace("/(onboarding)/results")}
                 style={styles.returningBtn}

@@ -5,7 +5,7 @@
       "tagline": "Your next ski trip, sorted.",
       "subtitle": "Answer 5 quick questions and we'll match you with the perfect resort for your group, ability, and budget.",
       "valueProp1": "Matched to your skill, budget and style",
-      "valueProp2": "{count} hand-picked resorts",
+      "valueProp2": "200+ hand-picked resorts",
       "valueProp3": "Works offline — take it to the mountain",
       "cta": "Let's Go",
       "ctaSubtext": "5 questions · takes under a minute",
@@ -48,8 +48,8 @@
           "description": "Confident on blues, starting to explore reds"
         },
         "red": {
-          "title": "Red Runner",
-          "description": "Owns the reds, flirting with blacks"
+          "title": "Advanced Intermediate",
+          "description": "Comfortable on reds, starting blacks"
         },
         "advanced": {
           "title": "Black Diamond",
@@ -137,8 +137,8 @@
       ],
       "title": "Your Top Matches",
       "subtitle": "Based on your preferences",
-      "emptyTitle": "No matches found",
-      "emptyMessage": "Try adjusting your preferences.",
+      "emptyTitle": "Couldn't load resorts",
+      "emptyMessage": "We weren't able to fetch enough resort data. Please check your connection and try again.",
       "retake": "Retake Quiz",
       "continue": "Continue to App"
     }

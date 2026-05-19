@@ -12,7 +12,6 @@ import { initSentry } from "@lib/sentry";
 import { ErrorBoundary } from "@components/ui/ErrorBoundary";
 import { ToastProvider } from "@components/ui/Toast";
 import { SyncErrorObserver } from "@components/ui/SyncErrorObserver";
-import { maxContentWidth } from "@theme/layout";
 import { colors, fontAssets, ThemeProvider, useTheme } from "@theme";
 import { useAuthStore } from "@stores/auth";
 import { usePreferencesStore } from "@stores/preferences";
@@ -156,13 +155,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   appShellWeb: {
-    maxWidth: maxContentWidth.app,
     width: "100%",
-    alignSelf: "center",
-    // Subtle shadow on ultra-wide screens
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.05,
-    shadowRadius: 20,
   },
 });

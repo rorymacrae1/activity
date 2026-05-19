@@ -160,8 +160,8 @@ export default function ResultsScreen() {
     );
   }
 
-  // Empty state — no matches
-  if (results.length === 0) {
+  // Empty state — no matches or too few (likely a connection issue)
+  if (results.length < 2) {
     return (
       <ScreenContainer>
         <NavBar />
@@ -178,8 +178,8 @@ export default function ResultsScreen() {
           title={content.onboarding.results.emptyTitle}
           message={content.onboarding.results.emptyMessage}
           action={{
-            label: content.onboarding.results.retake,
-            onPress: () => router.replace("/(onboarding)"),
+            label: "Try Again",
+            onPress: runRecommendations,
           }}
         />
       </ScreenContainer>
