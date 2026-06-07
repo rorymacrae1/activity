@@ -1,6 +1,6 @@
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Text } from "./Text";
-import { colors, spacing, radius, typography } from "@theme";
+import { colors } from "@theme";
 
 /**
  * Badge variants — semantic naming for luxury feel
@@ -93,56 +93,30 @@ export function Badge({
   const config = VARIANT_CONFIG[variant];
   const isSmall = size === "small";
 
-  const borderStyle = config.border
-    ? { borderWidth: 1, borderColor: config.border }
-    : undefined;
-
   return (
     <View
+      // Static layout via NativeWind; dynamic bg/border stay as style
+      className={[
+        "flex-row items-center self-start rounded-chip",
+        isSmall ? "px-sm py-2xs gap-2xs" : "px-md py-xs gap-xs",
+      ].join(" ")}
       style={[
-        styles.base,
         { backgroundColor: config.bg },
-        isSmall ? styles.small : styles.medium,
-        borderStyle,
+        config.border
+          ? { borderWidth: 1, borderColor: config.border }
+          : undefined,
       ]}
       accessibilityLabel={label}
     >
       {icon ? (
-        <Text style={[styles.icon, isSmall && styles.iconSmall]}>{icon}</Text>
+        <Text style={{ fontSize: isSmall ? 10 : 12 }}>{icon}</Text>
       ) : null}
       <Text
-        style={[
-          isSmall ? typography.captionMedium : typography.label,
-          { color: config.text },
-        ]}
+        variant={isSmall ? "captionMedium" : "label"}
+        style={{ color: config.text }}
       >
         {label}
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: radius.chip,
-    alignSelf: "flex-start",
-  },
-  small: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing["2xs"],
-    gap: spacing["2xs"],
-  },
-  medium: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    gap: spacing.xs,
-  },
-  icon: {
-    fontSize: 12,
-  },
-  iconSmall: {
-    fontSize: 10,
-  },
-});

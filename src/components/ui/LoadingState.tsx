@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image } from "react-native";
 import { Text } from "./Text";
-import { spacing } from "@theme";
 import { SLOW_LOAD_THRESHOLD_MS } from "@/constants/scoring";
 
 // Yeti loading GIF
@@ -37,45 +36,23 @@ export function LoadingState({
   }, [slowThreshold]);
 
   return (
-    <View style={styles.container}>
-      <Image source={LOADING_YETI} style={styles.yeti} />
+    <View className="flex-1 items-center justify-center gap-4 p-8">
+      <Image source={LOADING_YETI} style={{ width: 120, height: 120 }} />
       {message ? (
         <Text
           variant="body"
           color="muted"
           align="center"
-          style={styles.message}
+          className="mt-1 max-w-[240px]"
         >
           {message}
         </Text>
       ) : null}
       {isSlow ? (
-        <Text variant="bodySmall" color="muted" align="center" style={styles.slowMessage}>
+        <Text variant="bodySmall" color="muted" align="center" className="max-w-[260px] -mt-2">
           Taking longer than expected… still working on it
         </Text>
       ) : null}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.lg,
-    padding: spacing["2xl"],
-  },
-  yeti: {
-    width: 120,
-    height: 120,
-  },
-  message: {
-    marginTop: spacing.xs,
-    maxWidth: 240,
-  },
-  slowMessage: {
-    maxWidth: 260,
-    marginTop: -spacing.sm,
-  },
-});

@@ -4,7 +4,7 @@
  * Replaces the bottom tab bar on large screens.
  */
 
-import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { View, Pressable, Platform } from "react-native";
 import { useState } from "react";
 import { usePathname, router } from "expo-router";
 import { useIsAuthenticated } from "@stores/auth";
@@ -38,10 +38,24 @@ export function SideNav() {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      className="h-full py-5 flex-shrink-0"
+      style={{
+        width: 240,
+        backgroundColor: colors.surface.primary,
+        borderRightWidth: 1,
+        borderRightColor: colors.border.subtle,
+      }}
+    >
       {/* Brand */}
-      <View style={styles.brand}>
-        <View style={styles.logoMark}>
+      <View className="flex-row items-center gap-2 px-5 mb-5">
+        <View
+          className="w-9 h-9 items-center justify-center"
+          style={{
+            borderRadius: radius.sm,
+            backgroundColor: colors.brand.primarySubtle,
+          }}
+        >
           <Icon
             name="mountain"
             size={22}
@@ -49,11 +63,13 @@ export function SideNav() {
             strokeWidth={2}
           />
         </View>
-        <Text style={styles.brandName}>PeakWise</Text>
+        <Text style={{ fontSize: 17, fontWeight: "700", color: colors.ink.rich, letterSpacing: -0.3 }}>
+          PeakWise
+        </Text>
       </View>
 
       {/* Nav items */}
-      <View style={styles.nav}>
+      <View className="flex-1 px-2" style={{ gap: spacing.xxs }}>
         {NAV_ITEMS.map((item) => {
           const active = isActive(item);
           return (
@@ -64,14 +80,23 @@ export function SideNav() {
 
       {/* Bottom: Auth CTA if not signed in */}
       {!isAuthenticated && (
-        <View style={styles.bottomSection}>
+        <View
+          className="px-2 pt-4 mx-2"
+          style={{
+            borderTopWidth: 1,
+            borderTopColor: colors.border.subtle,
+          }}
+        >
           <Pressable
-            style={[styles.signInButton, webStyles.clickable]}
+            className="flex-row items-center justify-center gap-2 py-2 px-5"
+            style={[{ backgroundColor: colors.brand.primary, borderRadius: radius.md }, webStyles.clickable]}
             onPress={() => router.push("/(auth)/sign-in")}
             accessibilityRole="button"
           >
             <Icon name="log-in" size={16} color={colors.ink.inverse} />
-            <Text style={styles.signInText}>Sign In</Text>
+            <Text style={{ fontSize: 14, fontWeight: "600", color: colors.ink.inverse }}>
+              Sign In
+            </Text>
           </Pressable>
         </View>
       )}
@@ -83,10 +108,11 @@ function NavItemButton({ item, active }: { item: NavItem; active: boolean }) {
   const [isFocused, setIsFocused] = useState(false);
   return (
     <Pressable
+      className="flex-row items-center gap-3 py-2 px-3 relative"
       style={({ pressed }) => [
-        styles.navItem,
-        active && styles.navItemActive,
-        pressed && styles.navItemPressed,
+        { borderRadius: radius.md },
+        active && { backgroundColor: colors.brand.primarySubtle },
+        pressed && { opacity: 0.75 },
         webStyles.clickable,
         isFocused && Platform.OS === "web" && webStyles.focusVisible,
       ]}
@@ -104,108 +130,24 @@ function NavItemButton({ item, active }: { item: NavItem; active: boolean }) {
         strokeWidth={active ? 2 : 1.5}
       />
       <Text
-        style={[
-          styles.navLabel,
-          active ? styles.navLabelActive : styles.navLabelInactive,
-        ]}
+        className="flex-1"
+        style={{
+          fontSize: 15,
+          fontWeight: active ? "600" : "400",
+          color: active ? colors.brand.primary : colors.ink.normal,
+        }}
       >
         {item.label}
       </Text>
-      {active && <View style={styles.activeIndicator} />}
+      {active && (
+        <View
+          className="w-1 h-1"
+          style={{
+            borderRadius: radius.full,
+            backgroundColor: colors.brand.primary,
+          }}
+        />
+      )}
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: 240,
-    height: "100%",
-    backgroundColor: colors.surface.primary,
-    borderRightWidth: 1,
-    borderRightColor: colors.border.subtle,
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.xl,
-    flexShrink: 0,
-  },
-  brand: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    marginBottom: spacing.xl,
-  },
-  logoMark: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.sm,
-    backgroundColor: colors.brand.primarySubtle,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  brandName: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: colors.ink.rich,
-    letterSpacing: -0.3,
-  },
-  nav: {
-    flex: 1,
-    gap: spacing.xxs,
-    paddingHorizontal: spacing.sm,
-  },
-  navItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.md,
-    position: "relative",
-  },
-  navItemActive: {
-    backgroundColor: colors.brand.primarySubtle,
-  },
-  navItemPressed: {
-    opacity: 0.75,
-  },
-  navLabel: {
-    fontSize: 15,
-    flex: 1,
-  },
-  navLabelActive: {
-    fontWeight: "600",
-    color: colors.brand.primary,
-  },
-  navLabelInactive: {
-    fontWeight: "400",
-    color: colors.ink.normal,
-  },
-  activeIndicator: {
-    width: 4,
-    height: 4,
-    borderRadius: radius.full,
-    backgroundColor: colors.brand.primary,
-  },
-  bottomSection: {
-    paddingHorizontal: spacing.sm,
-    paddingTop: spacing.lg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border.subtle,
-    marginHorizontal: spacing.sm,
-  },
-  signInButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.md,
-    backgroundColor: colors.brand.primary,
-  },
-  signInText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.ink.inverse,
-  },
-});

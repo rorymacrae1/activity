@@ -21,7 +21,6 @@ export type DiscoverPrefs = Pick<
   | "budgetLevel"
   | "quietLively"
   | "familyNightlife"
-  | "snowImportance"
 >;
 
 interface DiscoverControlsProps {
@@ -43,12 +42,6 @@ const BUDGET_OPTS = [
   { label: "Mid", val: 0.33 },
   { label: "Premium", val: 0.67 },
   { label: "Luxury", val: 1 },
-] as const;
-
-const SNOW_OPTS = [
-  { label: "Low", val: 0 },
-  { label: "Med", val: 0.5 },
-  { label: "High", val: 1 },
 ] as const;
 
 const VIBE_OPTS = [
@@ -138,16 +131,6 @@ export function DiscoverControls({ value, onChange }: DiscoverControlsProps) {
           options={BUDGET_OPTS}
           selected={value.budgetLevel}
           onSelect={(val) => set({ budgetLevel: val })}
-        />
-
-        <View style={styles.divider} />
-
-        {/* Snow */}
-        <SegGroup
-          label="Snow"
-          options={SNOW_OPTS}
-          selected={value.snowImportance}
-          onSelect={(val) => set({ snowImportance: val })}
         />
 
         <View style={styles.divider} />

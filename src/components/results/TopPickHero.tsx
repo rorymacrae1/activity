@@ -111,7 +111,7 @@ export function TopPickHero({ result, onPress }: TopPickHeroProps) {
         <View style={styles.infoOverlay} pointerEvents="none">
           <Text style={styles.resortName}>{resort.name}</Text>
           <Text style={styles.location}>
-            {resort.region}, {resort.country}
+            {resort.region !== resort.country ? `${resort.region}, ${resort.country}` : resort.country}
           </Text>
 
           {/* Quick stats */}

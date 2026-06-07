@@ -1,5 +1,40 @@
 {
   "onboarding": {
+    "landing": {
+      "headline": "Finde Dein Perfektes",
+      "headlineAccent": "Skigebiet",
+      "tagline": "Beantworte 5 Fragen. Erhalte das ideale Skigebiet für deine Gruppe, dein Niveau und dein Budget — in Sekunden.",
+      "ctaQuiz": "Skigebiet Finden",
+      "ctaQuizSub": "Kostenlos · 5 Fragen · dauert eine Minute",
+      "ctaAccount": "Konto Erstellen",
+      "ctaAccountSub": "Ergebnisse speichern & geräteübergreifend synchronisieren",
+      "statsResorts": "130+",
+      "statsResortsLabel": "Skigebiete weltweit",
+      "statsQuestions": "5",
+      "statsQuestionsLabel": "schnelle Fragen",
+      "statsOffline": "100%",
+      "statsOfflineLabel": "funktioniert offline",
+      "howTitle": "So funktioniert's",
+      "step1Title": "Erzähl uns von deinem Trip",
+      "step1Desc": "Deine Gruppe, Fahrkönnen, Budget und wo auf der Welt du Ski fahren möchtest.",
+      "step2Title": "Wir rechnen durch",
+      "step2Desc": "Unser Algorithmus bewertet jedes Skigebiet nach deinen Präferenzen — Gelände, Kosten, Vibe, Saison und mehr.",
+      "step3Title": "Dein perfektes Match",
+      "step3Desc": "Sieh gerankte Ergebnisse mit Trefferpunktzahl und den genauen Gründen, warum jedes Skigebiet zu dir passt.",
+      "whyTitle": "Warum PisteWise?",
+      "reason1Title": "Keine Provision. Keine Vorurteile.",
+      "reason1Desc": "Wir sind kein Reisebüro. Wir haben kein finanzielles Interesse an deiner Wahl — nur das beste Match für dich.",
+      "reason2Title": "Transparente Empfehlungen",
+      "reason2Desc": "Sieh genau, warum wir jedes Skigebiet empfehlen. Jeder Score wird erklärt — Können, Budget, Vibe, Saison.",
+      "reason3Title": "Für Gruppen gebaut",
+      "reason3Desc": "Gemischte Niveaus? Kein Problem. Unser System balanciert gleichzeitig die Bedürfnisse jedes Skifahrers in deiner Gruppe.",
+      "reason4Title": "Funktioniert offline",
+      "reason4Desc": "Nimm deine Ergebnisse mit auf den Berg. Kein Signal? Kein Problem — deine Matches sind immer verfügbar.",
+      "bottomCtaTitle": "Bereit, dein Skigebiet zu finden?",
+      "bottomCtaSub": "Schließ dich tausenden Skifahrern an, die ihr perfektes Match gefunden haben.",
+      "signInPrompt": "Hast du bereits ein Konto?",
+      "signInLink": "Anmelden"
+    },
     "welcome": {
       "appTitle": "PisteWise",
       "tagline": "Dein nächster Skiurlaub, geklärt.",
@@ -114,13 +149,8 @@
         "balanced": "Ausgewogen",
         "nightlife": "Nachtleben"
       },
-      "snow": {
-        "label": "Schneesicherheit",
-        "left": "Keine Priorität",
-        "right": "Schnee ist ein Muss",
-        "flexible": "Flexibel",
-        "important": "Wichtig",
-        "critical": "Unverzichtbar"
+      "months": {
+        "label": "Wann möchtest du Ski fahren?"
       },
       "back": "Zurück",
       "next": "Ergebnisse anzeigen"
@@ -139,6 +169,26 @@
       "emptyMessage": "Versuche, deine Präferenzen anzupassen.",
       "retake": "Quiz wiederholen",
       "continue": "Zur App"
+    },
+    "review": {
+      "title": "Your Perfect Trip",
+      "subtitle": "Here's a summary before we find your resort",
+      "editLabel": "Edit",
+      "ctaLabel": "Find My Resorts",
+      "steps": {
+        "tripType": "Trip Type",
+        "skill": "Skill Level",
+        "budget": "Budget",
+        "regions": "Destinations",
+        "vibes": "Vibe & Season"
+      },
+      "notSet": "Not set",
+      "regionsCount": "{{count}} region selected",
+      "regionsCountPlural": "{{count}} regions selected",
+      "monthsCount": "{{count}} month",
+      "monthsCountPlural": "{{count}} months",
+      "crowdLabel": "Crowd",
+      "focusLabel": "Focus"
     }
   },
   "discover": {
@@ -280,19 +330,58 @@
     "de": "Deutsch"
   },
   "countries": {
-    "Andorra": { "name": "Andorra", "flag": "🇦🇩" },
-    "Austria": { "name": "Österreich", "flag": "🇦🇹" },
-    "Bulgaria": { "name": "Bulgarien", "flag": "🇧🇬" },
-    "Finland": { "name": "Finnland", "flag": "🇫🇮" },
-    "France": { "name": "Frankreich", "flag": "🇫🇷" },
-    "Italy": { "name": "Italien", "flag": "🇮🇹" },
-    "Norway": { "name": "Norwegen", "flag": "🇳🇴" },
-    "Romania": { "name": "Rumänien", "flag": "🇷🇴" },
-    "Slovakia": { "name": "Slowakei", "flag": "🇸🇰" },
-    "Slovenia": { "name": "Slowenien", "flag": "🇸🇮" },
-    "Spain": { "name": "Spanien", "flag": "🇪🇸" },
-    "Switzerland": { "name": "Schweiz", "flag": "🇨🇭" },
-    "UK": { "name": "Vereinigtes Königreich", "flag": "🇬🇧" }
+    "Andorra": {
+      "name": "Andorra",
+      "flag": "🇦🇩"
+    },
+    "Austria": {
+      "name": "Österreich",
+      "flag": "🇦🇹"
+    },
+    "Bulgaria": {
+      "name": "Bulgarien",
+      "flag": "🇧🇬"
+    },
+    "Finland": {
+      "name": "Finnland",
+      "flag": "🇫🇮"
+    },
+    "France": {
+      "name": "Frankreich",
+      "flag": "🇫🇷"
+    },
+    "Italy": {
+      "name": "Italien",
+      "flag": "🇮🇹"
+    },
+    "Norway": {
+      "name": "Norwegen",
+      "flag": "🇳🇴"
+    },
+    "Romania": {
+      "name": "Rumänien",
+      "flag": "🇷🇴"
+    },
+    "Slovakia": {
+      "name": "Slowakei",
+      "flag": "🇸🇰"
+    },
+    "Slovenia": {
+      "name": "Slowenien",
+      "flag": "🇸🇮"
+    },
+    "Spain": {
+      "name": "Spanien",
+      "flag": "🇪🇸"
+    },
+    "Switzerland": {
+      "name": "Schweiz",
+      "flag": "🇨🇭"
+    },
+    "UK": {
+      "name": "Vereinigtes Königreich",
+      "flag": "🇬🇧"
+    }
   },
   "home": {
     "welcome": {
@@ -356,7 +445,7 @@
     "resultsCount": "{count} Skigebiet",
     "resultsCountPlural": "{count} Skigebiete",
     "emptyTitle": "Keine Skigebiete gefunden",
-    "emptyMessageSearch": "Keine Skigebiete für \u201E{query}\u201C gefunden.",
+    "emptyMessageSearch": "Keine Skigebiete für „{query}“ gefunden.",
     "emptyMessageDefault": "Versuchen Sie, Ihre Suche oder Filter anzupassen.",
     "clearSearch": "Suche löschen"
   },

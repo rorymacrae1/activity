@@ -3,10 +3,10 @@
  * Shows "Sign In" for guests, "Hi {firstName}" with avatar for authenticated users.
  */
 
-import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { View, Pressable, Platform } from "react-native";
 import { router } from "expo-router";
 import { useAuthStore, useProfile, useIsAuthenticated } from "@stores/auth";
-import { colors, spacing, radius } from "@theme";
+import { colors, radius } from "@theme";
 import { webStyles } from "@theme/interaction";
 import { Text } from "./Text";
 import { Icon } from "./Icon";
@@ -28,8 +28,20 @@ export function NavBar({ transparent = false }: NavBarProps) {
     "there";
 
   return (
-    <View style={[styles.navBar, transparent && styles.transparent]}>
-      <View style={styles.logoContainer}>
+    <View
+      className="flex-row justify-between items-center py-2 px-5 border-b border-b-[#E8E8E8]"
+      style={{
+        backgroundColor: transparent ? colors.transparent : colors.surface.primary,
+        borderBottomWidth: transparent ? 0 : 1,
+      }}
+    >
+      <View
+        className="w-10 h-10 rounded-full border-2 items-center justify-center"
+        style={{
+          borderColor: colors.border.default,
+          backgroundColor: colors.surface.primary,
+        }}
+      >
         <Icon
           name="mountain"
           size={24}
@@ -38,101 +50,47 @@ export function NavBar({ transparent = false }: NavBarProps) {
         />
       </View>
 
-      <View style={styles.navRight}>
+      <View className="flex-row items-center">
         {isAuthenticated ? (
           <Pressable
-            style={[styles.userButton, Platform.OS === "web" && webStyles.clickable]}
+            className="flex-row items-center gap-2 py-1 px-2 rounded-full"
+            style={[
+              { backgroundColor: colors.surface.secondary },
+              Platform.OS === "web" && webStyles.clickable,
+            ]}
             onPress={() => router.push("/(main)/profile")}
             accessibilityRole="button"
             accessibilityLabel="Go to profile"
           >
-            <Text style={styles.userGreeting}>Hi {firstName}</Text>
-            <View style={styles.avatarCircle}>
-              <Text style={styles.avatarText}>
+            <Text style={{ fontSize: 14, fontWeight: "600", color: colors.ink.rich }}>
+              Hi {firstName}
+            </Text>
+            <View
+              className="w-8 h-8 rounded-full items-center justify-center"
+              style={{ backgroundColor: colors.brand.primary }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: "700", color: colors.ink.inverse }}>
                 {firstName.charAt(0).toUpperCase()}
               </Text>
             </View>
           </Pressable>
         ) : (
           <Pressable
-            style={[styles.signInButton, Platform.OS === "web" && webStyles.clickable]}
+            className="py-2 px-5 rounded-full"
+            style={[
+              { backgroundColor: colors.brand.primary },
+              Platform.OS === "web" && webStyles.clickable,
+            ]}
             onPress={() => router.push("/(auth)/sign-in")}
             accessibilityRole="button"
             accessibilityLabel="Sign in or sign up"
           >
-            <Text style={styles.signInText}>Sign In</Text>
+            <Text style={{ fontSize: 14, fontWeight: "600", color: colors.ink.inverse }}>
+              Sign In
+            </Text>
           </Pressable>
         )}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  navBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    backgroundColor: colors.surface.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.subtle,
-  },
-  transparent: {
-    backgroundColor: colors.transparent,
-    borderBottomWidth: 0,
-  },
-  logoContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.full,
-    borderWidth: 2,
-    borderColor: colors.border.default,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.surface.primary,
-  },
-  navRight: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  userButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: radius.full,
-    backgroundColor: colors.surface.secondary,
-  },
-  userGreeting: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.ink.rich,
-  },
-  avatarCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.full,
-    backgroundColor: colors.brand.primary,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  avatarText: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.ink.inverse,
-  },
-  signInButton: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    borderRadius: radius.full,
-    backgroundColor: colors.brand.primary,
-  },
-  signInText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.ink.inverse,
-  },
-});

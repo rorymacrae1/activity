@@ -4,7 +4,6 @@ import Head from "expo-router/head";
 import {
   View,
   Text,
-  StyleSheet,
   Pressable,
   Image,
   Dimensions,
@@ -212,102 +211,33 @@ export default function MapScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.canvas.default,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  errorText: {
-    ...typography.body,
-    color: colors.ink.normal,
-  },
+const styles = {
+  container: { flex: 1, backgroundColor: colors.canvas.default } as const,
+  errorContainer: { flex: 1, justifyContent: "center" as const, alignItems: "center" as const } as const,
+  errorText: { ...typography.body, color: colors.ink.normal } as const,
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.border.default,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  backIcon: {
-    fontSize: 24,
-    color: colors.ink.rich,
-  },
-  title: {
-    ...typography.h3,
-    color: colors.ink.rich,
-  },
-  placeholder: {
-    width: 40,
-  },
-  mapContainer: {
-    flex: 1,
-    backgroundColor: colors.canvas.subtle,
-    overflow: "hidden",
-  },
-  mapWrapper: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  mapImage: {
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT * 0.6,
-  },
-  noMapContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.md,
-  },
-  noMapText: {
-    ...typography.body,
-    color: colors.ink.normal,
-  },
-  legend: {
-    padding: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.border.default,
-  },
-  legendTitle: {
-    ...typography.h3,
-    color: colors.ink.rich,
-    marginBottom: spacing.sm,
-  },
-  legendItems: {
-    flexDirection: "row",
-    gap: spacing.lg,
-  },
-  legendItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  legendColor: {
-    width: 16,
-    height: 16,
-    borderRadius: 4,
-  },
-  legendText: {
-    ...typography.bodySmall,
-    color: colors.ink.normal,
-  },
-  instructions: {
-    ...typography.caption,
-    color: colors.ink.muted,
-    textAlign: "center",
-    paddingBottom: spacing.md,
-  },
-});
+  backButton: { width: 40, height: 40, alignItems: "center" as const, justifyContent: "center" as const } as const,
+  backIcon: { fontSize: 24, color: colors.ink.rich } as const,
+  title: { ...typography.h3, color: colors.ink.rich } as const,
+  placeholder: { width: 40 } as const,
+  mapContainer: { flex: 1, backgroundColor: colors.canvas.subtle, overflow: "hidden" as const } as const,
+  mapWrapper: { flex: 1, alignItems: "center" as const, justifyContent: "center" as const } as const,
+  mapImage: { width: SCREEN_WIDTH, height: SCREEN_HEIGHT * 0.6 } as const,
+  noMapContainer: { flex: 1, alignItems: "center" as const, justifyContent: "center" as const, gap: spacing.md } as const,
+  noMapText: { ...typography.body, color: colors.ink.normal } as const,
+  legend: { padding: spacing.md, borderTopWidth: 1, borderTopColor: colors.border.default } as const,
+  legendTitle: { ...typography.h3, color: colors.ink.rich, marginBottom: spacing.sm } as const,
+  legendItems: { flexDirection: "row" as const, gap: spacing.lg } as const,
+  legendItem: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.xs } as const,
+  legendColor: { width: 16, height: 16, borderRadius: 4 } as const,
+  legendText: { ...typography.bodySmall, color: colors.ink.normal } as const,
+  instructions: { ...typography.caption, color: colors.ink.muted, textAlign: "center" as const, paddingBottom: spacing.md } as const,
+};

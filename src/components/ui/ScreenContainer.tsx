@@ -1,4 +1,4 @@
-import { View, StyleSheet, type ViewStyle } from "react-native";
+import { View, type ViewStyle } from "react-native";
 import { SafeAreaView, type Edge } from "react-native-safe-area-context";
 import { useLayout } from "@hooks/useLayout";
 import { colors } from "@theme";
@@ -36,31 +36,20 @@ export function ScreenContainer({
 
   return (
     <SafeAreaView
-      style={[styles.safe, { backgroundColor }]}
+      className="flex-1"
+      style={{ backgroundColor }}
       edges={edges}
     >
       {isTablet && !noMaxWidth ? (
-        <View style={[styles.centerWrapper, { maxWidth: contentMaxWidth }]}>
+        <View
+          className="flex-1 w-full self-center"
+          style={{ maxWidth: contentMaxWidth }}
+        >
           {children}
         </View>
       ) : (
-        <View style={[styles.fill, style]}>{children}</View>
+        <View className="flex-1" style={style}>{children}</View>
       )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    alignItems: "stretch",
-  },
-  centerWrapper: {
-    flex: 1,
-    width: "100%",
-    alignSelf: "center",
-  },
-  fill: {
-    flex: 1,
-  },
-});

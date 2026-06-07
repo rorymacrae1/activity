@@ -10,7 +10,7 @@ const initialState = {
   regions: [] as string[],
   crowdPreference: 3,
   familyVsNightlife: 3,
-  snowImportance: 3,
+  preferredMonths: [12, 1, 2, 3],
 };
 
 beforeEach(() => {
@@ -61,9 +61,9 @@ describe("usePreferencesStore", () => {
     expect(usePreferencesStore.getState().familyVsNightlife).toBe(1);
   });
 
-  it("setSnowImportance updates snowImportance", () => {
-    act(() => usePreferencesStore.getState().setSnowImportance(5));
-    expect(usePreferencesStore.getState().snowImportance).toBe(5);
+  it("setPreferredMonths updates preferredMonths", () => {
+    act(() => usePreferencesStore.getState().setPreferredMonths([1, 2]));
+    expect(usePreferencesStore.getState().preferredMonths).toEqual([1, 2]);
   });
 
   it("setHasCompletedOnboarding marks onboarding complete", () => {

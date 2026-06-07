@@ -37,6 +37,8 @@ interface TextProps extends RNTextProps {
   color?: TextColor | string;
   /** Text alignment */
   align?: "left" | "center" | "right";
+  /** NativeWind utility classes (forwarded directly to the underlying RNText) */
+  className?: string;
 }
 
 /**

@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, ScrollView, Pressable, Alert, Platform } from "react-native";
+import { View, ScrollView, Pressable, Alert, Platform } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -125,7 +125,7 @@ export default function CompleteProfileScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView className="flex-1" style={{ backgroundColor: colors.canvas.default }}>
         <LoadingState message="Loading your profile..." />
       </SafeAreaView>
     );
@@ -134,52 +134,52 @@ export default function CompleteProfileScreen() {
   const visitedResortIds = visitedResorts.map((v) => v.resortId);
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <SafeAreaView className="flex-1" style={{ backgroundColor: colors.canvas.default }} edges={["top"]}>
       <Head>
         <title>Complete Your Profile | PisteWise</title>
       </Head>
 
       {/* Header */}
-      <View style={[styles.header, { paddingHorizontal: hPadding }]}>
+      <View
+        className="flex-row items-center justify-between border-b"
+        style={{ paddingVertical: spacing.md, paddingHorizontal: hPadding, borderBottomColor: colors.surface.divider }}
+      >
         <Pressable
-          style={styles.backButton}
+          className="w-10 h-10 rounded-full items-center justify-center"
+          style={{ backgroundColor: colors.surface.secondary }}
           onPress={() => router.back()}
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >
-          <Text style={styles.backIcon}>←</Text>
+          <Text style={{ fontSize: 18, color: colors.ink.rich }}>←</Text>
         </Pressable>
-        <Text variant="h2" style={styles.headerTitle}>
+        <Text variant="h2" className="flex-1 text-center">
           Complete Your Profile
         </Text>
-        <View style={styles.backButton} />
+        <View className="w-10 h-10" />
       </View>
 
       <ScrollView
-        style={styles.scrollView}
+        className="flex-1"
         contentContainerStyle={[
-          styles.content,
+          { paddingTop: spacing.xl, paddingBottom: spacing.xxxl },
           { paddingHorizontal: hPadding },
         ]}
         showsVerticalScrollIndicator={Platform.OS !== "web"}
         keyboardShouldPersistTaps="handled"
       >
         {/* Resort History Section */}
-        <View style={[styles.section, styles.sectionResort]}>
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionIconContainer}>
-              <Icon
-                name="mountain"
-                size={24}
-                color={colors.brand.primary}
-                strokeWidth={1.5}
-              />
+        <View style={{ marginBottom: spacing.xl, zIndex: 2 }}>
+          <View className="flex-row items-start" style={{ gap: spacing.md, marginBottom: spacing.md }}>
+            <View
+              className="items-center justify-center"
+              style={{ width: 44, height: 44, borderRadius: radius.md, backgroundColor: colors.brand.primarySubtle }}
+            >
+              <Icon name="mountain" size={24} color={colors.brand.primary} strokeWidth={1.5} />
             </View>
             <View>
               <Text variant="h3">Resort History</Text>
-              <Text variant="body" color={colors.ink.normal}>
-                Enter resorts you have visited before
-              </Text>
+              <Text variant="body" color={colors.ink.normal}>Enter resorts you have visited before</Text>
             </View>
           </View>
 
@@ -189,48 +189,54 @@ export default function CompleteProfileScreen() {
             excludeIds={visitedResortIds}
           />
 
-          {/* Visited resort chips */}
           {visitedResorts.length > 0 && (
-            <View style={styles.visitedList}>
+            <View style={{ marginTop: spacing.sm, gap: spacing.xs }}>
               {visitedResorts.map(({ resortId, resort }) => (
                 <View
                   key={resortId}
+                  className="flex-row items-center"
                   style={[
-                    styles.visitedItem,
-                    justAddedId === resortId && styles.visitedItemHighlight,
+                    {
+                      backgroundColor: colors.surface.secondary,
+                      borderWidth: 1,
+                      borderColor: colors.border.default,
+                      paddingVertical: spacing.sm,
+                      paddingLeft: spacing.sm,
+                      paddingRight: spacing.sm,
+                      borderRadius: radius.md,
+                      gap: spacing.sm,
+                    },
+                    justAddedId === resortId && {
+                      backgroundColor: colors.brand.primarySubtle,
+                      borderColor: colors.brand.primary,
+                    },
                   ]}
                 >
-                  <View style={styles.visitedIconWrap}>
-                    <Icon
-                      name="mountain"
-                      size={16}
-                      color={colors.brand.primary}
-                      strokeWidth={1.5}
-                    />
+                  <View
+                    className="items-center justify-center flex-shrink-0"
+                    style={{ width: 32, height: 32, borderRadius: radius.sm, backgroundColor: colors.surface.primary }}
+                  >
+                    <Icon name="mountain" size={16} color={colors.brand.primary} strokeWidth={1.5} />
                   </View>
-                  <View style={styles.visitedInfo}>
-                    <Text style={styles.visitedName}>
+                  <View className="flex-1">
+                    <Text style={{ fontSize: 15, fontWeight: "600", color: colors.ink.rich, lineHeight: 20 }}>
                       {resort?.name ?? resortId}
                     </Text>
                     {resort && (
-                      <Text style={styles.visitedLocation}>
+                      <Text style={{ fontSize: 12, color: colors.ink.normal, marginTop: 1 }}>
                         {resort.region} · {resort.country}
                       </Text>
                     )}
                   </View>
                   <Pressable
-                    style={styles.removeButton}
+                    className="items-center justify-center flex-shrink-0"
+                    style={{ width: 28, height: 28, borderRadius: radius.full, backgroundColor: colors.surface.tertiary }}
                     onPress={() => handleRemoveVisitedResort(resortId)}
                     accessibilityRole="button"
                     accessibilityLabel={`Remove ${resort?.name ?? resortId}`}
                     hitSlop={8}
                   >
-                    <Icon
-                      name="x"
-                      size={14}
-                      color={colors.ink.normal}
-                      strokeWidth={2}
-                    />
+                    <Icon name="x" size={14} color={colors.ink.normal} strokeWidth={2} />
                   </Pressable>
                 </View>
               ))}
@@ -239,21 +245,17 @@ export default function CompleteProfileScreen() {
         </View>
 
         {/* Home Airport Section */}
-        <View style={[styles.section, styles.sectionAirport]}>
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionIconContainer}>
-              <Icon
-                name="plane"
-                size={24}
-                color={colors.brand.primary}
-                strokeWidth={1.5}
-              />
+        <View style={{ marginBottom: spacing.xl, zIndex: 1 }}>
+          <View className="flex-row items-start" style={{ gap: spacing.md, marginBottom: spacing.md }}>
+            <View
+              className="items-center justify-center"
+              style={{ width: 44, height: 44, borderRadius: radius.md, backgroundColor: colors.brand.primarySubtle }}
+            >
+              <Icon name="plane" size={24} color={colors.brand.primary} strokeWidth={1.5} />
             </View>
             <View>
               <Text variant="h3">Home Airport</Text>
-              <Text variant="body" color={colors.ink.normal}>
-                Where do you usually fly from?
-              </Text>
+              <Text variant="body" color={colors.ink.normal}>Where do you usually fly from?</Text>
             </View>
           </View>
 
@@ -269,126 +271,9 @@ export default function CompleteProfileScreen() {
           label="Done"
           onPress={handleDone}
           fullWidth
-          style={styles.doneButton}
+          style={{ marginTop: spacing.lg }}
         />
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.canvas.default,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.surface.divider,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.full,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.surface.secondary,
-  },
-  backIcon: {
-    fontSize: 18,
-    color: colors.ink.rich,
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: "center",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.xxxl,
-  },
-  section: {
-    marginBottom: spacing.xl,
-    zIndex: 1,
-  },
-  sectionResort: {
-    zIndex: 2,
-  },
-  sectionAirport: {
-    zIndex: 1,
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: spacing.md,
-    marginBottom: spacing.md,
-  },
-  sectionIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.md,
-    backgroundColor: colors.brand.primarySubtle,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  visitedList: {
-    marginTop: spacing.sm,
-    gap: spacing.xs,
-  },
-  visitedItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.surface.secondary,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-    paddingVertical: spacing.sm,
-    paddingLeft: spacing.sm,
-    paddingRight: spacing.sm,
-    borderRadius: radius.md,
-    gap: spacing.sm,
-  },
-  visitedItemHighlight: {
-    backgroundColor: colors.brand.primarySubtle,
-    borderColor: colors.brand.primary,
-  },
-  visitedIconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: radius.sm,
-    backgroundColor: colors.surface.primary,
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
-  visitedInfo: {
-    flex: 1,
-  },
-  visitedName: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: colors.ink.rich,
-    lineHeight: 20,
-  },
-  visitedLocation: {
-    fontSize: 12,
-    color: colors.ink.normal,
-    marginTop: 1,
-  },
-  removeButton: {
-    width: 28,
-    height: 28,
-    borderRadius: radius.full,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.surface.tertiary,
-    flexShrink: 0,
-  },
-  doneButton: {
-    marginTop: spacing.lg,
-  },
-});

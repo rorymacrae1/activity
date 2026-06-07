@@ -82,7 +82,8 @@ const LOCAL_PREFS: LocalPreferences = {
   regions: ["france-alps", "austria"],
   crowdPreference: 3,
   familyVsNightlife: 4,
-  snowImportance: 4,
+  preferredMonths: [12, 1, 2, 3, 4],
+  featurePreferences: [],
   language: "en",
 };
 
@@ -96,7 +97,8 @@ const CLOUD_PREFS: UserPreferences = {
   regions: ["switzerland"],
   crowd_preference: 2,
   family_vs_nightlife: 2,
-  snow_importance: 5,
+  preferred_months: [12, 1, 2, 3, 4, 5],
+  feature_preferences: [],
   language: "de",
   created_at: "2025-01-01T00:00:00Z",
   updated_at: "2025-01-01T00:00:00Z",
@@ -160,7 +162,7 @@ describe("saveCloudPreferences", () => {
         regions: ["france-alps", "austria"],
         crowd_preference: 3,
         family_vs_nightlife: 4,
-        snow_importance: 4,
+        preferred_months: [12, 1, 2, 3, 4],
         language: "en",
       }),
       { onConflict: "user_id" },
@@ -199,7 +201,8 @@ describe("cloudToLocalPreferences", () => {
       regions: ["switzerland"],
       crowdPreference: 2,
       familyVsNightlife: 2,
-      snowImportance: 5,
+      preferredMonths: [12, 1, 2, 3, 4, 5],
+      featurePreferences: [],
       language: "de",
     });
   });
@@ -455,6 +458,6 @@ describe("mergePreferences", () => {
     expect(result).toHaveProperty("budgetLevel");
     expect(result).toHaveProperty("crowdPreference");
     expect(result).toHaveProperty("familyVsNightlife");
-    expect(result).toHaveProperty("snowImportance");
+    expect(result).toHaveProperty("preferredMonths");
   });
 });

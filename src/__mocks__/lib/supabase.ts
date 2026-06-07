@@ -1,268 +1,206 @@
 /**
  * Mock for src/lib/supabase.
  * Returns a fake Supabase client backed by a small in-memory resort dataset
- * shaped as JSONB columns to match the actual Supabase `resorts` table.
+ * shaped as flat columns to match the actual Supabase `resort` table.
  */
 
 interface MockResortRow {
   id: string;
   name: string;
   country: string;
-  region: string;
-  sub_region: string | null;
-  location: { lat: number; lng: number; villageAltitude: number; peakAltitude: number };
-  terrain: { beginner: number; intermediate: number; advanced: number };
-  stats: { totalRuns: number; totalKm: number; lifts: number; snowParks: number };
-  attributes: Record<string, unknown>;
-  content: { description: string; highlights: string[] };
-  assets: { heroImage: string; pisteMap: string };
-  season: { start: string; end: string };
+  region: string | null;
+  continent: string | null;
+  lat: number;
+  lng: number;
+  min_altitude_m: number;
+  max_altitude_m: number;
+  altitude_base_m: number | null;
+  altitude_top_m: number | null;
+  total_km_piste: number;
+  blue_runs: number;
+  red_runs: number;
+  black_runs: number;
+  beginner_area: boolean;
+  snow_park: boolean;
+  off_piste: boolean;
+  off_piste_score: number | null;
+  backcountry_access: boolean;
+  snow_sure_rating: number;
+  apres_ski_rating: number;
+  train_accessible: boolean;
+  eurostar_direct: boolean;
+  train_journey_hours: number | null;
+  drive_hours_from_london: number | null;
+  car_free_town: boolean;
+  style: string | null;
   hero_image: string | null;
   created_at: string;
-  updated_at: string;
+  last_updated: string | null;
+  location: unknown;
+  embedding: unknown;
+}
+
+const DEFAULTS: MockResortRow = {
+  id: "default",
+  name: "Default Resort",
+  country: "France",
+  region: null,
+  continent: "Europe",
+  lat: 45.0,
+  lng: 6.0,
+  min_altitude_m: 1500,
+  max_altitude_m: 2500,
+  altitude_base_m: null,
+  altitude_top_m: null,
+  total_km_piste: 150,
+  blue_runs: 20,
+  red_runs: 30,
+  black_runs: 15,
+  beginner_area: true,
+  snow_park: false,
+  off_piste: false,
+  off_piste_score: null,
+  backcountry_access: false,
+  snow_sure_rating: 3,
+  apres_ski_rating: 3,
+  train_accessible: false,
+  eurostar_direct: false,
+  train_journey_hours: null,
+  drive_hours_from_london: null,
+  car_free_town: false,
+  style: null,
+  hero_image: null,
+  created_at: "2024-01-01T00:00:00Z",
+  last_updated: "2024-01-01T00:00:00Z",
+  location: null,
+  embedding: null,
+};
+
+function createMockResort(overrides: Partial<MockResortRow>): MockResortRow {
+  return { ...DEFAULTS, ...overrides };
 }
 
 const MOCK_RESORTS: MockResortRow[] = [
-  {
+  createMockResort({
     id: "val-thorens",
     name: "Val Thorens",
-    country: "France",
     region: "Savoie",
-    sub_region: null,
-    location: { lat: 45.298, lng: 6.58, villageAltitude: 2300, peakAltitude: 3230 },
-    terrain: { beginner: 25, intermediate: 50, advanced: 25 },
-    stats: { totalRuns: 120, totalKm: 600, lifts: 156, snowParks: 2 },
-    attributes: {
-      averageDailyCost: 230,
-      liftPassDayCost: 58,
-      liftPassSixDayCost: 290,
-      crowdLevel: 4,
-      familyScore: 4,
-      nightlifeScore: 5,
-      snowReliability: 5,
-      liftModernity: 4,
-      nearestAirport: "GVA",
-      transferTimeMinutes: 150,
-      townStyle: "Purpose-built",
-      barCount: 8,
-      otherActivities: ["Glacier skiing", "Half-pipe"],
-      hasSkiInOut: true,
-      hasCatered: true,
-      trainAccessible: false,
-      eurostarDirect: false,
-      trainJourneyHours: null,
-      driveHoursFromLondon: null,
-    },
-    content: {
-      description: "Val Thorens is the highest ski resort in Europe.",
-      highlights: ["600km of pistes", "Car-free resort", "Snow park", "Glacier skiing"],
-    },
-    assets: { heroImage: "https://example.com/val-thorens.jpg", pisteMap: "" },
-    season: { start: "2025-11-22", end: "2027-05-03" },
+    lat: 45.298,
+    lng: 6.58,
+    min_altitude_m: 2300,
+    max_altitude_m: 3230,
+    total_km_piste: 600,
+    blue_runs: 30,
+    red_runs: 60,
+    black_runs: 30,
+    snow_park: true,
+    off_piste: true,
+    off_piste_score: 3,
+    backcountry_access: true,
+    snow_sure_rating: 5,
+    apres_ski_rating: 5,
+    car_free_town: true,
+    style: "Purpose-built",
     hero_image: "https://example.com/val-thorens.jpg",
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
-  {
+  }),
+  createMockResort({
     id: "chamonix",
     name: "Chamonix",
-    country: "France",
     region: "Haute-Savoie",
-    sub_region: null,
-    location: { lat: 45.924, lng: 6.869, villageAltitude: 1035, peakAltitude: 3842 },
-    terrain: { beginner: 14, intermediate: 36, advanced: 50 },
-    stats: { totalRuns: 70, totalKm: 152, lifts: 47, snowParks: 0 },
-    attributes: {
-      averageDailyCost: 170,
-      liftPassDayCost: 65,
-      liftPassSixDayCost: 310,
-      crowdLevel: 4,
-      familyScore: 2,
-      nightlifeScore: 4,
-      snowReliability: 4,
-      liftModernity: 3,
-      nearestAirport: "GVA",
-      transferTimeMinutes: 80,
-      townStyle: "Lively town",
-      barCount: 10,
-      otherActivities: ["Off-piste skiing", "Backcountry access"],
-      hasSkiInOut: false,
-      hasCatered: false,
-      trainAccessible: false,
-      eurostarDirect: false,
-      trainJourneyHours: null,
-      driveHoursFromLondon: null,
-    },
-    content: {
-      description: "Chamonix is a legendary mountain town at the foot of Mont Blanc.",
-      highlights: ["152km of pistes", "Off-piste paradise"],
-    },
-    assets: { heroImage: "https://example.com/chamonix.jpg", pisteMap: "" },
-    season: { start: "2025-12-01", end: "2027-04-30" },
+    lat: 45.924,
+    lng: 6.869,
+    min_altitude_m: 1035,
+    max_altitude_m: 3842,
+    total_km_piste: 152,
+    blue_runs: 10,
+    red_runs: 25,
+    black_runs: 35,
+    beginner_area: false,
+    off_piste: true,
+    off_piste_score: 5,
+    backcountry_access: true,
+    snow_sure_rating: 4,
+    apres_ski_rating: 4,
+    style: "Lively town",
     hero_image: "https://example.com/chamonix.jpg",
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
-  {
+  }),
+  createMockResort({
     id: "st-anton",
     name: "St Anton",
     country: "Austria",
     region: "Tyrol",
-    sub_region: null,
-    location: { lat: 47.129, lng: 10.268, villageAltitude: 1304, peakAltitude: 2811 },
-    terrain: { beginner: 17, intermediate: 48, advanced: 35 },
-    stats: { totalRuns: 85, totalKm: 301, lifts: 88, snowParks: 1 },
-    attributes: {
-      averageDailyCost: 190,
-      liftPassDayCost: 62,
-      liftPassSixDayCost: 310,
-      crowdLevel: 4,
-      familyScore: 3,
-      nightlifeScore: 5,
-      snowReliability: 4,
-      liftModernity: 4,
-      nearestAirport: "INN",
-      transferTimeMinutes: 90,
-      townStyle: "Lively town",
-      barCount: 12,
-      otherActivities: ["Off-piste skiing", "Night skiing"],
-      hasSkiInOut: false,
-      hasCatered: false,
-      trainAccessible: false,
-      eurostarDirect: false,
-      trainJourneyHours: null,
-      driveHoursFromLondon: null,
-    },
-    content: {
-      description: "St Anton am Arlberg is the birthplace of alpine skiing.",
-      highlights: ["301km of pistes", "Night skiing (4km)"],
-    },
-    assets: { heroImage: "https://example.com/st-anton.jpg", pisteMap: "" },
-    season: { start: "2025-12-01", end: "2027-04-20" },
+    lat: 47.129,
+    lng: 10.268,
+    min_altitude_m: 1304,
+    max_altitude_m: 2811,
+    total_km_piste: 301,
+    blue_runs: 15,
+    red_runs: 40,
+    black_runs: 30,
+    beginner_area: false,
+    snow_park: true,
+    off_piste: true,
+    off_piste_score: 4,
+    backcountry_access: true,
+    snow_sure_rating: 4,
+    apres_ski_rating: 5,
+    style: "Lively town",
     hero_image: "https://example.com/st-anton.jpg",
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
-  {
+  }),
+  createMockResort({
     id: "verbier",
     name: "Verbier",
     country: "Switzerland",
     region: "Valais",
-    sub_region: null,
-    location: { lat: 46.096, lng: 7.228, villageAltitude: 1500, peakAltitude: 3330 },
-    terrain: { beginner: 36, intermediate: 43, advanced: 21 },
-    stats: { totalRuns: 280, totalKm: 412, lifts: 92, snowParks: 1 },
-    attributes: {
-      averageDailyCost: 280,
-      liftPassDayCost: 75,
-      liftPassSixDayCost: 380,
-      crowdLevel: 3,
-      familyScore: 3,
-      nightlifeScore: 5,
-      snowReliability: 4,
-      liftModernity: 4,
-      nearestAirport: "GVA",
-      transferTimeMinutes: 150,
-      townStyle: "Modern resort",
-      barCount: 8,
-      otherActivities: ["Off-piste skiing", "Heli-skiing", "Freeride World Tour stop"],
-      hasSkiInOut: false,
-      hasCatered: false,
-      trainAccessible: false,
-      eurostarDirect: false,
-      trainJourneyHours: null,
-      driveHoursFromLondon: null,
-    },
-    content: {
-      description: "Verbier is a world-class freeride destination in the Swiss Alps.",
-      highlights: ["412km of pistes", "Snow park", "Heli-skiing"],
-    },
-    assets: { heroImage: "https://example.com/verbier.jpg", pisteMap: "" },
-    season: { start: "2025-11-30", end: "2027-04-20" },
+    lat: 46.096,
+    lng: 7.228,
+    min_altitude_m: 1500,
+    max_altitude_m: 3330,
+    total_km_piste: 412,
+    blue_runs: 100,
+    red_runs: 120,
+    black_runs: 60,
+    snow_park: true,
+    off_piste: true,
+    off_piste_score: 5,
+    backcountry_access: true,
+    snow_sure_rating: 4,
+    apres_ski_rating: 5,
+    style: "Modern resort",
     hero_image: "https://example.com/verbier.jpg",
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
-  {
+  }),
+  createMockResort({
     id: "grandvalira",
     name: "Grandvalira",
     country: "Andorra",
     region: "Encamp",
-    sub_region: null,
-    location: { lat: 42.551, lng: 1.736, villageAltitude: 1710, peakAltitude: 2640 },
-    terrain: { beginner: 30, intermediate: 50, advanced: 20 },
-    stats: { totalRuns: 110, totalKm: 215, lifts: 67, snowParks: 1 },
-    attributes: {
-      averageDailyCost: 120,
-      liftPassDayCost: 45,
-      liftPassSixDayCost: 230,
-      crowdLevel: 3,
-      familyScore: 5,
-      nightlifeScore: 3,
-      snowReliability: 3,
-      liftModernity: 4,
-      nearestAirport: "TLS",
-      transferTimeMinutes: 180,
-      townStyle: "Modern resort",
-      barCount: 5,
-      otherActivities: ["Snow park"],
-      hasSkiInOut: false,
-      hasCatered: false,
-      trainAccessible: false,
-      eurostarDirect: false,
-      trainJourneyHours: null,
-      driveHoursFromLondon: null,
-    },
-    content: {
-      description: "Grandvalira is Andorra's largest ski area.",
-      highlights: ["215km of pistes", "Great value", "Family-friendly"],
-    },
-    assets: { heroImage: "", pisteMap: "" },
-    season: { start: "2025-12-01", end: "2027-04-15" },
-    hero_image: null,
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
-  {
+    lat: 42.551,
+    lng: 1.736,
+    min_altitude_m: 1710,
+    max_altitude_m: 2640,
+    total_km_piste: 215,
+    blue_runs: 33,
+    red_runs: 55,
+    black_runs: 22,
+    snow_park: true,
+  }),
+  createMockResort({
     id: "cortina",
     name: "Cortina d'Ampezzo",
     country: "Italy",
     region: "Veneto",
-    sub_region: null,
-    location: { lat: 46.537, lng: 12.139, villageAltitude: 1224, peakAltitude: 2828 },
-    terrain: { beginner: 25, intermediate: 48, advanced: 27 },
-    stats: { totalRuns: 52, totalKm: 120, lifts: 36, snowParks: 0 },
-    attributes: {
-      averageDailyCost: 200,
-      liftPassDayCost: 60,
-      liftPassSixDayCost: 300,
-      crowdLevel: 3,
-      familyScore: 4,
-      nightlifeScore: 3,
-      snowReliability: 3,
-      liftModernity: 3,
-      nearestAirport: "VCE",
-      transferTimeMinutes: 150,
-      townStyle: "Traditional village",
-      barCount: 5,
-      otherActivities: [],
-      hasSkiInOut: false,
-      hasCatered: false,
-      trainAccessible: true,
-      eurostarDirect: false,
-      trainJourneyHours: 5,
-      driveHoursFromLondon: null,
-    },
-    content: {
-      description: "Cortina d'Ampezzo is an elegant resort in the Italian Dolomites.",
-      highlights: ["120km of pistes", "Train accessible (5h)"],
-    },
-    assets: { heroImage: "", pisteMap: "" },
-    season: { start: "2025-12-01", end: "2027-04-15" },
-    hero_image: null,
-    created_at: "2024-01-01T00:00:00Z",
-    updated_at: "2024-01-01T00:00:00Z",
-  },
+    lat: 46.537,
+    lng: 12.139,
+    min_altitude_m: 1224,
+    max_altitude_m: 2828,
+    total_km_piste: 120,
+    blue_runs: 13,
+    red_runs: 25,
+    black_runs: 14,
+    train_accessible: true,
+    train_journey_hours: 5,
+    style: "Traditional village",
+  }),
 ];
 
 // ─── Fake chainable Supabase query builder ───────────────────────────────────
@@ -303,7 +241,8 @@ export const isSupabaseConfigured = true;
 
 export const supabase = {
   from: (table: string) => {
-    if (table === "resorts") return makeBuilder([...MOCK_RESORTS]);
+    if (table === "resort") return makeBuilder([...MOCK_RESORTS]);
+    // All supplementary tables return empty results in tests
     return makeBuilder([]);
   },
 };

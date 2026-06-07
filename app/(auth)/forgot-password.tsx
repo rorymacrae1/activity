@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   View,
-  StyleSheet,
   TextInput,
   KeyboardAvoidingView,
   Platform,
@@ -10,6 +9,18 @@ import Head from "expo-router/head";
 import { Link } from "expo-router";
 import { colors, spacing, radius, typography as typo } from "@theme";
 import { fontFamily } from "@theme/fonts";
+
+const inputStyle = {
+  backgroundColor: colors.surface.elevated,
+  borderRadius: radius.md,
+  borderWidth: 1,
+  borderColor: colors.border.default,
+  paddingHorizontal: spacing.md,
+  paddingVertical: spacing.sm,
+  fontSize: typo.body.fontSize,
+  fontFamily: fontFamily.regular,
+  color: colors.ink.rich,
+} as const;
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { Card } from "@components/ui/Card";
@@ -58,34 +69,29 @@ export default function ForgotPasswordScreen() {
       </Head>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardView}
+        className="flex-1"
       >
         <View
-          style={[
-            isDesktop ? styles.desktopForm : styles.scrollContent,
-            isDesktop ? {} : { paddingHorizontal: hPadding },
-          ]}
+          style={
+            isDesktop
+              ? { maxWidth: 480, alignSelf: "center" as const, width: "100%", paddingHorizontal: spacing.xl, paddingTop: spacing.xxl, paddingBottom: spacing.xxl }
+              : { flexGrow: 1, paddingTop: spacing.xxl, paddingBottom: spacing.xxl, paddingHorizontal: hPadding }
+          }
         >
           {/* Header */}
-          <View style={styles.header}>
+          <View className="mb-6">
             <Text variant="h1">{sent ? t.sentTitle : t.title}</Text>
-            <Text
-              variant="body"
-              color={colors.ink.normal}
-              style={styles.subtitle}
-            >
+            <Text variant="body" color={colors.ink.normal} className="mt-2">
               {sent ? t.sentSubtitle.replace("{email}", email) : t.subtitle}
             </Text>
           </View>
 
           {!sent ? (
-            <Card elevation="subtle" style={styles.formCard}>
-              <View style={styles.inputGroup}>
-                <Text variant="label" style={styles.inputLabel}>
-                  {t.email}
-                </Text>
+            <Card elevation="subtle" style={{ padding: spacing.lg, gap: spacing.md }}>
+              <View className="gap-1">
+                <Text variant="label" className="ml-1">{t.email}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={inputStyle}
                   value={email}
                   onChangeText={setEmail}
                   placeholder="you@example.com"
@@ -107,13 +113,9 @@ export default function ForgotPasswordScreen() {
               />
             </Card>
           ) : (
-            <Card elevation="subtle" style={styles.successCard}>
+            <Card elevation="subtle" style={{ padding: spacing.xl, alignItems: "center", gap: spacing.sm }}>
               <Icon name="mail" size={32} color={colors.brand.primary} />
-              <Text
-                variant="bodySmall"
-                color={colors.ink.normal}
-                align="center"
-              >
+              <Text variant="bodySmall" color={colors.ink.normal} align="center">
                 Didn't receive it? Check your spam folder, or{" "}
               </Text>
               <Button
@@ -126,7 +128,7 @@ export default function ForgotPasswordScreen() {
           )}
 
           {/* Back to sign in */}
-          <View style={styles.footer}>
+          <View className="flex-row justify-center flex-wrap mt-6">
             <Text variant="body" color={colors.ink.normal}>
               {t.backToSignIn}
             </Text>
@@ -134,7 +136,7 @@ export default function ForgotPasswordScreen() {
               <Text
                 variant="body"
                 color={colors.brand.primary}
-                style={styles.linkText}
+                style={{ fontFamily: fontFamily.medium }}
               >
                 Sign In
               </Text>
@@ -145,63 +147,3 @@ export default function ForgotPasswordScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingTop: spacing.xxl,
-    paddingBottom: spacing.xxl,
-  },
-  header: {
-    marginBottom: spacing.xl,
-  },
-  subtitle: {
-    marginTop: spacing.sm,
-  },
-  formCard: {
-    padding: spacing.lg,
-    gap: spacing.md,
-  },
-  inputGroup: {
-    gap: spacing.xs,
-  },
-  inputLabel: {
-    marginLeft: spacing.xs,
-  },
-  input: {
-    backgroundColor: colors.surface.elevated,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    fontSize: typo.body.fontSize,
-    fontFamily: fontFamily.regular,
-    color: colors.ink.rich,
-  },
-  successCard: {
-    padding: spacing.xl,
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: spacing.xl,
-    flexWrap: "wrap",
-  },
-  linkText: {
-    fontFamily: fontFamily.medium,
-  },
-  desktopForm: {
-    maxWidth: 480,
-    alignSelf: "center",
-    width: "100%",
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xxl,
-    paddingBottom: spacing.xxl,
-  },
-});

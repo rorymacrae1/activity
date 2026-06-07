@@ -1,4 +1,4 @@
-import { View, StyleSheet, Pressable, Image } from "react-native";
+import { View, Pressable, Image } from "react-native";
 import { useState } from "react";
 import Animated, {
   useAnimatedStyle,
@@ -31,19 +31,12 @@ function Logo() {
   return (
     <Image
       source={logoImage}
-      style={logoStyles.image}
+      style={{ width: 140, height: 40 }}
       resizeMode="contain"
       accessibilityLabel="PisteWise logo"
     />
   );
 }
-
-const logoStyles = StyleSheet.create({
-  image: {
-    width: 140,
-    height: 40,
-  },
-});
 
 /**
  * Coming Soon dropdown button
@@ -73,112 +66,84 @@ function ComingSoonButton() {
   }));
 
   return (
-    <View style={comingSoonStyles.wrapper}>
+    <View style={{ position: "relative" }}>
       <Pressable
-        style={comingSoonStyles.button}
+        className="flex-row items-center gap-1 py-1 px-2 rounded-lg"
+        style={{ backgroundColor: colors.brand.accentSubtle }}
         onPress={toggleDropdown}
         accessibilityRole="button"
         accessibilityLabel="Coming soon features"
         accessibilityState={{ expanded: open }}
       >
-        <View style={comingSoonStyles.badge}>
-          <Text style={comingSoonStyles.badgeText}>Soon</Text>
+        <View
+          className="px-1 py-0.5 rounded"
+          style={{ backgroundColor: colors.brand.accent }}
+        >
+          <Text style={{ fontSize: 10, fontWeight: "700", color: colors.ink.rich, textTransform: "uppercase", letterSpacing: 0.5 }}>
+            Soon
+          </Text>
         </View>
-        <Text style={comingSoonStyles.label}>Coming</Text>
-        <Animated.Text style={[comingSoonStyles.chevron, chevronStyle]}>
+        <Text style={{ fontSize: 13, fontWeight: "600", color: colors.ink.normal }}>
+          Coming
+        </Text>
+        <Animated.Text style={[{ fontSize: 8, color: colors.ink.muted }, chevronStyle]}>
           ▼
         </Animated.Text>
       </Pressable>
 
       {/* Dropdown */}
-      <Animated.View style={[comingSoonStyles.dropdown, dropdownStyle]}>
+      <Animated.View
+        style={[
+          {
+            position: "absolute",
+            top: "100%",
+            right: 0,
+            marginTop: spacing.xs,
+            backgroundColor: colors.surface.primary,
+            borderRadius: radius.lg,
+            padding: spacing.sm,
+            minWidth: 180,
+            ...shadows.floating,
+            borderWidth: 1,
+            borderColor: colors.border.subtle,
+            zIndex: 100,
+          },
+          dropdownStyle,
+        ]}
+      >
         {COMING_SOON.map((feature) => (
-          <View key={feature.id} style={comingSoonStyles.feature}>
+          <View
+            key={feature.id}
+            className="flex-row items-center gap-2 py-1 px-1"
+          >
             <Icon
               name={feature.icon}
               size={16}
               color={colors.ink.muted}
               strokeWidth={1.5}
             />
-            <Text style={comingSoonStyles.featureLabel}>{feature.label}</Text>
+            <Text style={{ fontSize: 14, color: colors.ink.normal }}>
+              {feature.label}
+            </Text>
           </View>
         ))}
-        <Text style={comingSoonStyles.hint}>Stay tuned!</Text>
+        <Text
+          style={{
+            fontSize: 11,
+            color: colors.ink.muted,
+            textAlign: "center",
+            marginTop: spacing.xs,
+            paddingTop: spacing.xs,
+            borderTopWidth: 1,
+            borderTopColor: colors.border.subtle,
+          }}
+        >
+          Stay tuned!
+        </Text>
       </Animated.View>
     </View>
   );
 }
-
-const comingSoonStyles = StyleSheet.create({
-  wrapper: {
-    position: "relative",
-  },
-  button: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: radius.lg,
-    backgroundColor: colors.brand.accentSubtle,
-  },
-  badge: {
-    backgroundColor: colors.brand.accent,
-    paddingHorizontal: spacing.xs,
-    paddingVertical: 2,
-    borderRadius: radius.sm,
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: "700",
-    color: colors.ink.rich,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: colors.ink.normal,
-  },
-  chevron: {
-    fontSize: 8,
-    color: colors.ink.muted,
-  },
-  dropdown: {
-    position: "absolute",
-    top: "100%",
-    right: 0,
-    marginTop: spacing.xs,
-    backgroundColor: colors.surface.primary,
-    borderRadius: radius.lg,
-    padding: spacing.sm,
-    minWidth: 180,
-    ...shadows.floating,
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-    zIndex: 100,
-  },
-  feature: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.xs,
-  },
-  featureLabel: {
-    fontSize: 14,
-    color: colors.ink.normal,
-  },
-  hint: {
-    fontSize: 11,
-    color: colors.ink.muted,
-    textAlign: "center",
-    marginTop: spacing.xs,
-    paddingTop: spacing.xs,
-    borderTopWidth: 1,
-    borderTopColor: colors.border.subtle,
-  },
-});
 
 interface NavHeaderProps {
   /** Show the coming soon indicator */
@@ -201,37 +166,19 @@ export function NavHeader({
 
   return (
     <View
-      style={[
-        styles.header,
-        { paddingHorizontal: hPadding },
-        isWeb && styles.headerWeb,
-      ]}
+      className="flex-row items-center justify-between border-b"
+      style={{
+        paddingHorizontal: hPadding,
+        paddingVertical: isWeb ? spacing.lg : spacing.md,
+        backgroundColor: colors.canvas.default,
+        borderBottomColor: colors.border.subtle,
+      }}
     >
       <Logo />
-      <View style={styles.right}>
+      <View className="flex-row items-center gap-3">
         {showComingSoon && <ComingSoonButton />}
         {rightContent}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: spacing.md,
-    backgroundColor: colors.canvas.default,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border.subtle,
-  },
-  headerWeb: {
-    paddingVertical: spacing.lg,
-  },
-  right: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
-  },
-});

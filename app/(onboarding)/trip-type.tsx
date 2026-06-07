@@ -1,4 +1,4 @@
-import { View, StyleSheet, Platform, Pressable } from "react-native";
+import { View, Platform, Pressable } from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { usePreferencesStore } from "@stores/preferences";
@@ -84,16 +84,16 @@ function GroupVisual({ type, active }: { type: TripType; active: boolean }) {
   );
 }
 
-const groupStyles = StyleSheet.create({
+const groupStyles = {
   container: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    justifyContent: "center",
+    flexDirection: "row" as const,
+    alignItems: "flex-end" as const,
+    justifyContent: "center" as const,
     gap: 4,
     height: 30,
     marginBottom: spacing.xs,
   },
-});
+};
 
 /**
  * Animated option card with press feedback.
@@ -122,11 +122,11 @@ function OptionCard({
 
   return (
     <Pressable
-      style={[
-        styles.option,
-        active && styles.optionActive,
-        isTablet && styles.optionTablet,
-      ]}
+      className={[
+        "bg-surface-primary rounded-lg border-2 items-center justify-center relative py-sm px-sm",
+        active ? "border-brand-primary bg-brand-primary-subtle" : "border-border-subtle",
+        isTablet ? "flex-1 py-md" : "",
+      ].join(" ")}
       onPress={handlePress}
       accessibilityRole="radio"
       accessibilityState={{ selected: active }}
@@ -155,7 +155,7 @@ function OptionCard({
 
       {/* Selection indicator */}
       {active && (
-        <View style={styles.checkmark}>
+        <View className="absolute top-xs right-xs w-6 h-6 rounded-full bg-brand-primary items-center justify-center">
           <Text style={styles.checkmarkText}>✓</Text>
         </View>
       )}
@@ -186,11 +186,12 @@ export default function TripTypeScreen() {
     >
       <AnimatedQuizContent animation="parallax">
         <View
-          style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
+          className="flex-1"
+          style={!isTablet ? { paddingHorizontal: hPadding } : undefined}
         >
           <ProgressIndicator current={1} total={5} showLabel />
 
-          <View style={styles.header}>
+          <View className="mb-md gap-xs">
             <Text variant="h2">{content.onboarding.tripType.title}</Text>
             <Text variant="body" color={colors.ink.normal}>
               {content.onboarding.tripType.subtitle}
@@ -198,7 +199,7 @@ export default function TripTypeScreen() {
           </View>
 
           <View
-            style={[styles.optionsGrid, isTablet && styles.optionsGridTablet]}
+            className={isTablet ? "flex-1 flex-row flex-wrap gap-md justify-center" : "flex-1 gap-xs"}
           >
             {OPTIONS.map((value, index) => {
               const optContent = content.onboarding.tripType.options[value];
@@ -227,26 +228,21 @@ export default function TripTypeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  inner: { flex: 1 },
-  header: { marginBottom: spacing.md, gap: spacing.xs },
+const styles = {
+  inner: { flex: 1 } as const,
+  header: { marginBottom: spacing.md, gap: spacing.xs } as const,
   optionsGrid: {
     flex: 1,
     gap: spacing.xs,
-  },
+  } as const,
   optionsGridTablet: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
     gap: spacing.md,
-    justifyContent: "center",
+    justifyContent: "center" as const,
   },
-  gridCell: {
-    flexGrow: 1,
-  },
-  gridCellTablet: {
-    width: "48%",
-    minWidth: 140,
-  },
+  gridCell: { flexGrow: 1 } as const,
+  gridCellTablet: { width: "48%", minWidth: 140 } as const,
   option: {
     backgroundColor: colors.surface.primary,
     paddingVertical: spacing.sm,
@@ -254,41 +250,28 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     borderWidth: 2,
     borderColor: colors.border.subtle,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    position: "relative" as const,
   },
-  optionTablet: {
-    flex: 1,
-    paddingVertical: spacing.md,
-  },
+  optionTablet: { flex: 1, paddingVertical: spacing.md } as const,
   optionActive: {
     borderColor: colors.brand.primary,
     backgroundColor: colors.brand.primarySubtle,
-  },
-  optionTitle: {
-    textAlign: "center",
-    marginBottom: spacing.xxs,
-  },
-  optionDesc: {
-    textAlign: "center",
-    lineHeight: 18,
-  },
+  } as const,
+  optionTitle: { textAlign: "center" as const, marginBottom: spacing.xxs } as const,
+  optionDesc: { textAlign: "center" as const, lineHeight: 18 } as const,
   checkmark: {
-    position: "absolute",
+    position: "absolute" as const,
     top: spacing.xs,
     right: spacing.xs,
     width: 24,
     height: 24,
     borderRadius: 12,
     backgroundColor: colors.brand.primary,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
-  checkmarkText: {
-    color: colors.ink.onBrand,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  footer: {},
-});
+  checkmarkText: { color: colors.ink.onBrand, fontSize: 14, fontWeight: "700" as const } as const,
+  footer: {} as const,
+};

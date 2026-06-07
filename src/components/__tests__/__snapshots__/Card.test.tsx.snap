@@ -22,6 +22,7 @@ exports[`Card renders as interactive when onPress is provided 1`] = `
     }
   }
   accessible={true}
+  className="overflow-hidden"
   collapsable={false}
   focusable={true}
   onBlur={[Function]}
@@ -35,9 +36,6 @@ exports[`Card renders as interactive when onPress is provided 1`] = `
   onStartShouldSetResponder={[Function]}
   style={
     [
-      {
-        "overflow": "hidden",
-      },
       {
         "backgroundColor": "#FFFFFF",
         "borderRadius": 16,
@@ -53,6 +51,7 @@ exports[`Card renders as interactive when onPress is provided 1`] = `
         "shadowOpacity": 0.1,
         "shadowRadius": 3,
       },
+      false,
       false,
       false,
       {
@@ -74,11 +73,9 @@ exports[`Card renders as interactive when onPress is provided 1`] = `
 
 exports[`Card renders compact padding 1`] = `
 <View
+  className="overflow-hidden"
   style={
     [
-      {
-        "overflow": "hidden",
-      },
       {
         "backgroundColor": "#FFFFFF",
         "borderRadius": 16,
@@ -106,11 +103,9 @@ exports[`Card renders compact padding 1`] = `
 
 exports[`Card renders elevated variant 1`] = `
 <View
+  className="overflow-hidden"
   style={
     [
-      {
-        "overflow": "hidden",
-      },
       {
         "backgroundColor": "#FFFFFF",
         "borderRadius": 16,
@@ -138,11 +133,9 @@ exports[`Card renders elevated variant 1`] = `
 
 exports[`Card renders flat elevation 1`] = `
 <View
+  className="overflow-hidden"
   style={
     [
-      {
-        "overflow": "hidden",
-      },
       {
         "backgroundColor": "#FFFFFF",
         "borderRadius": 16,
@@ -161,11 +154,9 @@ exports[`Card renders flat elevation 1`] = `
 
 exports[`Card renders standard elevation by default 1`] = `
 <View
+  className="overflow-hidden"
   style={
     [
-      {
-        "overflow": "hidden",
-      },
       {
         "backgroundColor": "#FFFFFF",
         "borderRadius": 16,
@@ -193,11 +184,9 @@ exports[`Card renders standard elevation by default 1`] = `
 
 exports[`Card renders with border 1`] = `
 <View
+  className="overflow-hidden"
   style={
     [
-      {
-        "overflow": "hidden",
-      },
       {
         "backgroundColor": "#FFFFFF",
         "borderColor": "#E5E7EB",
@@ -227,11 +216,9 @@ exports[`Card renders with border 1`] = `
 
 exports[`Card renders with no padding 1`] = `
 <View
+  className="overflow-hidden"
   style={
     [
-      {
-        "overflow": "hidden",
-      },
       {
         "backgroundColor": "#FFFFFF",
         "borderRadius": 16,

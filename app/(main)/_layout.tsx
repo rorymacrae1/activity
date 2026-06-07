@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { SideNav } from "@/components/ui/SideNav";
 import { useLayout } from "@hooks/useLayout";
@@ -27,17 +27,7 @@ function TabIcon({ icon, label, focused }: TabIconProps) {
   );
 }
 
-const _styles = StyleSheet.create({});
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    flexDirection: "row",
-  },
-  content: {
-    flex: 1,
-  },
-});
+const _styles = {};
 
 /**
  * Main app layout with bottom tab navigation.
@@ -46,9 +36,9 @@ export default function MainLayout() {
   const { showSideNav } = useLayout();
 
   return (
-    <View style={styles.root}>
+    <View className="flex-1 flex-row">
       {showSideNav && <SideNav />}
-      <View style={styles.content}>
+      <View className="flex-1">
         <Tabs
           screenOptions={{
             headerShown: false,

@@ -5,6 +5,7 @@ import type {
   BudgetLevel,
   Preferences,
   TripType,
+  FeatureKey,
 } from "@/types/preferences";
 import type { Language } from "@/content";
 import { zustandStorage } from "@lib/storage";
@@ -26,7 +27,8 @@ interface PreferencesState {
   regions: string[];
   crowdPreference: number; // 1-5
   familyVsNightlife: number; // 1-5
-  snowImportance: number; // 1-5
+  preferredMonths: number[]; // 1-12
+  featurePreferences: FeatureKey[]; // optional must-have feature boosts
   language: Language;
 
   // Sync state
@@ -42,7 +44,8 @@ interface PreferencesState {
   setRegions: (regions: string[]) => void;
   setCrowdPreference: (value: number) => void;
   setFamilyVsNightlife: (value: number) => void;
-  setSnowImportance: (value: number) => void;
+  setPreferredMonths: (months: number[]) => void;
+  setFeaturePreferences: (features: FeatureKey[]) => void;
   setLanguage: (lang: Language) => void;
   reset: () => void;
   getPreferencesInput: () => Preferences;
@@ -83,7 +86,8 @@ const initialState = {
   regions: [] as string[],
   crowdPreference: 3,
   familyVsNightlife: 3,
-  snowImportance: 3,
+  preferredMonths: [12, 1, 2, 3] as number[],
+  featurePreferences: [] as FeatureKey[],
   language: "en" as Language,
   isSyncing: false,
   syncError: null as string | null,
@@ -114,7 +118,9 @@ export const usePreferencesStore = create<PreferencesState>()(
 
       setFamilyVsNightlife: (value) => set({ familyVsNightlife: value }),
 
-      setSnowImportance: (value) => set({ snowImportance: value }),
+      setPreferredMonths: (months) => set({ preferredMonths: months }),
+
+      setFeaturePreferences: (features) => set({ featurePreferences: features }),
 
       setLanguage: (lang) => set({ language: lang }),
 
@@ -135,7 +141,8 @@ export const usePreferencesStore = create<PreferencesState>()(
               : ["France", "Austria", "Switzerland"], // Default to major ski countries
           crowdPreference: state.crowdPreference,
           familyVsNightlife: state.familyVsNightlife,
-          snowImportance: state.snowImportance,
+          preferredMonths: state.preferredMonths,
+          featurePreferences: state.featurePreferences,
         };
       },
 
@@ -153,7 +160,8 @@ export const usePreferencesStore = create<PreferencesState>()(
           regions: state.regions,
           crowdPreference: state.crowdPreference,
           familyVsNightlife: state.familyVsNightlife,
-          snowImportance: state.snowImportance,
+          preferredMonths: state.preferredMonths,
+          featurePreferences: state.featurePreferences,
           language: state.language,
         };
       },
@@ -167,7 +175,8 @@ export const usePreferencesStore = create<PreferencesState>()(
           regions: prefs.regions,
           crowdPreference: prefs.crowdPreference,
           familyVsNightlife: prefs.familyVsNightlife,
-          snowImportance: prefs.snowImportance,
+          preferredMonths: prefs.preferredMonths,
+          featurePreferences: (prefs.featurePreferences ?? []) as FeatureKey[],
           language: prefs.language as Language,
         });
       },
@@ -249,7 +258,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         regions: state.regions,
         crowdPreference: state.crowdPreference,
         familyVsNightlife: state.familyVsNightlife,
-        snowImportance: state.snowImportance,
+        preferredMonths: state.preferredMonths,
         language: state.language,
       }),
     },

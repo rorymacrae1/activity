@@ -9,7 +9,8 @@ describe("getRecommendations", () => {
       regions: ["france-alps", "austria", "switzerland"],
       crowdPreference: 3,
       familyVsNightlife: 3,
-      snowImportance: 3,
+      preferredMonths: [12, 1, 2, 3],
+      featurePreferences: [],
     });
     expect(results.length).toBeLessThanOrEqual(5);
     expect(results.length).toBeGreaterThan(0);
@@ -24,7 +25,8 @@ describe("getRecommendations", () => {
         regions: ["france-alps", "austria", "switzerland", "italy", "andorra-spain"],
         crowdPreference: 3,
         familyVsNightlife: 3,
-        snowImportance: 3,
+        preferredMonths: [12, 1, 2, 3],
+      featurePreferences: [],
       },
       3,
     );
@@ -39,7 +41,8 @@ describe("getRecommendations", () => {
       regions: ["france-alps", "austria", "switzerland"],
       crowdPreference: 5,
       familyVsNightlife: 5,
-      snowImportance: 5,
+      preferredMonths: [12, 1, 2, 3],
+      featurePreferences: [],
     });
     for (let i = 1; i < results.length; i++) {
       expect(results[i - 1].matchScore).toBeGreaterThanOrEqual(results[i].matchScore);
@@ -54,7 +57,8 @@ describe("getRecommendations", () => {
       regions: ["france-alps"],
       crowdPreference: 1,
       familyVsNightlife: 1,
-      snowImportance: 1,
+      preferredMonths: [12, 1, 2, 3],
+      featurePreferences: [],
     });
     results.forEach((r) => {
       expect(r.matchScore).toBeGreaterThanOrEqual(0);
@@ -70,7 +74,8 @@ describe("getRecommendations", () => {
       regions: ["france-alps"],
       crowdPreference: 3,
       familyVsNightlife: 3,
-      snowImportance: 3,
+      preferredMonths: [12, 1, 2, 3],
+      featurePreferences: [],
     });
     results.forEach((r) => {
       expect(r.matchReasons.length).toBeGreaterThanOrEqual(1);
@@ -86,7 +91,8 @@ describe("getRecommendations", () => {
         regions: ["italy"],
         crowdPreference: 3,
         familyVsNightlife: 3,
-        snowImportance: 3,
+        preferredMonths: [12, 1, 2, 3],
+      featurePreferences: [],
       },
       10,
     );
@@ -103,7 +109,8 @@ describe("getRecommendations", () => {
       regions: ["north-pole"],
       crowdPreference: 3,
       familyVsNightlife: 3,
-      snowImportance: 3,
+      preferredMonths: [12, 1, 2, 3],
+      featurePreferences: [],
     });
     expect(results).toHaveLength(0);
   });

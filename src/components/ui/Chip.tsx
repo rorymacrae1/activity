@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Platform } from "react-native";
+import { Pressable, Platform } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -91,15 +91,24 @@ export function Chip({
       accessibilityRole="checkbox"
       accessibilityState={{ checked: selected, disabled }}
       accessibilityLabel={label}
+      className="flex-row items-center self-start"
       style={[
-        styles.base,
-        selected ? styles.selected : styles.unselected,
-        disabled && styles.disabled,
-        Platform.OS === "web" && styles.webInteractive,
+        {
+          gap: spacing.sm,
+          paddingHorizontal: spacing.lg,
+          paddingVertical: spacing.sm + 2,
+          borderRadius: radius.chip,
+          borderWidth: 1.5,
+          backgroundColor: selected ? colors.brand.primarySubtle : colors.surface.primary,
+          borderColor: selected ? colors.brand.primary : colors.border.default,
+        },
+        disabled && { opacity: interaction.opacity.disabled },
+        Platform.OS === "web" && webStyles.clickable,
+        Platform.OS === "web" && webStyles.interactive,
         animatedStyle,
       ]}
     >
-      {leftIcon ? <Text style={styles.icon}>{leftIcon}</Text> : null}
+      {leftIcon ? <Text style={{ fontSize: 14 }}>{leftIcon}</Text> : null}
       <Text
         style={[
           typography.label,
@@ -111,34 +120,3 @@ export function Chip({
     </AnimatedPressable>
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm + 2,
-    borderRadius: radius.chip,
-    borderWidth: 1.5,
-    alignSelf: "flex-start",
-  },
-  selected: {
-    backgroundColor: colors.brand.primarySubtle,
-    borderColor: colors.brand.primary,
-  },
-  unselected: {
-    backgroundColor: colors.surface.primary,
-    borderColor: colors.border.default,
-  },
-  disabled: {
-    opacity: interaction.opacity.disabled,
-  },
-  icon: {
-    fontSize: 14,
-  },
-  webInteractive: {
-    ...webStyles.clickable,
-    ...webStyles.interactive,
-  },
-});

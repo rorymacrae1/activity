@@ -62,7 +62,7 @@ export interface PlotPoint {
     budget: number;
     vibe: number;
     activity: number;
-    snow: number;
+    season: number;
   };
 }
 
@@ -82,7 +82,7 @@ export function computePlotPoints(
   // 1. Build raw score vectors
   const rawVectors: number[][] = resorts.map((r) => {
     const s = calculateScores(r, prefs);
-    return [s.skill, s.budget, s.vibe, s.activity, s.snow];
+    return [s.skill, s.budget, s.vibe, s.activity, s.season];
   });
 
   // 2. Centre each dimension (subtract column mean)
@@ -125,7 +125,7 @@ export function computePlotPoints(
         budget: scores.budget,
         vibe: scores.vibe,
         activity: scores.activity,
-        snow: scores.snow,
+        season: scores.season,
       },
     };
   });

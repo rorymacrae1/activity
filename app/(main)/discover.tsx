@@ -11,7 +11,6 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import {
   View,
-  StyleSheet,
   FlatList,
   TextInput,
   Pressable,
@@ -73,7 +72,6 @@ const NEUTRAL_PREFS: DiscoverPrefs = {
   budgetLevel: 0.33,
   quietLively: 0.5,
   familyNightlife: 0.5,
-  snowImportance: 0.5,
 };
 
 const _SORT_KEYS: SortKey[] = ["az", "km", "snow"];
@@ -192,7 +190,7 @@ export default function DiscoverScreen() {
   const storedBudget = usePreferencesStore((s) => s.budgetLevel);
   const storedCrowd = usePreferencesStore((s) => s.crowdPreference);
   const storedFamily = usePreferencesStore((s) => s.familyVsNightlife);
-  const storedSnow = usePreferencesStore((s) => s.snowImportance);
+  const storedMonths = usePreferencesStore((s) => s.preferredMonths);
   const hasOnboarded = usePreferencesStore((s) => s.hasCompletedOnboarding);
 
   // Derive initial scatter plot prefs from stored quiz answers (or neutral)
@@ -208,7 +206,6 @@ export default function DiscoverScreen() {
       budgetLevel: BUDGET_MAP[storedBudget ?? "mid"] ?? 0.33,
       quietLively: (storedCrowd - 1) / 4,
       familyNightlife: (storedFamily - 1) / 4,
-      snowImportance: (storedSnow - 1) / 4,
     };
   }, [
     hasOnboarded,
@@ -216,7 +213,6 @@ export default function DiscoverScreen() {
     storedBudget,
     storedCrowd,
     storedFamily,
-    storedSnow,
   ]);
 
   const [discoverPrefs, setDiscoverPrefs] =
@@ -233,9 +229,11 @@ export default function DiscoverScreen() {
     () => ({
       ...discoverPrefs,
       tripType: null,
+      preferredMonths: storedMonths,
       regions: [],
+      featurePreferences: [],
     }),
-    [discoverPrefs],
+    [discoverPrefs, storedMonths],
   );
 
   // Load all resorts on mount
@@ -850,20 +848,10 @@ export default function DiscoverScreen() {
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.canvas.default,
-  },
-  flex: {
-    flex: 1,
-  },
-
-  // Desktop two-panel layout
-  desktopLayout: {
-    flex: 1,
-    flexDirection: "row",
-  },
+const styles = {
+  container: { flex: 1, backgroundColor: colors.canvas.default } as const,
+  flex: { flex: 1 } as const,
+  desktopLayout: { flex: 1, flexDirection: "row" as const } as const,
   desktopSidebar: {
     width: 300,
     borderRightWidth: 1,
@@ -874,75 +862,36 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
     overflowY: "auto" as const,
   },
-  desktopSidebarHeader: {
-    marginBottom: spacing.lg,
-    gap: spacing.xs,
-  },
-  sidebarSearch: {
-    marginBottom: spacing.md,
-  },
-  sidebarSort: {
-    marginBottom: spacing.md,
-    gap: spacing.sm,
-  },
-  sidebarSortChips: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.xs,
-  },
-  sidebarControls: {
-    flex: 1,
-  },
-  desktopContent: {
-    flex: 1,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xl,
-  },
+  desktopSidebarHeader: { marginBottom: spacing.lg, gap: spacing.xs } as const,
+  sidebarSearch: { marginBottom: spacing.md } as const,
+  sidebarSort: { marginBottom: spacing.md, gap: spacing.sm } as const,
+  sidebarSortChips: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: spacing.xs } as const,
+  sidebarControls: { flex: 1 } as const,
+  desktopContent: { flex: 1, paddingHorizontal: spacing.xl, paddingTop: spacing.xl } as const,
   desktopContentHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     marginBottom: spacing.md,
   },
-
-  // Page header
-  pageHeader: {
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.sm,
-  },
+  pageHeader: { paddingTop: spacing.lg, paddingBottom: spacing.sm } as const,
   pageHeaderRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     gap: spacing.sm,
   },
-  pageHeaderText: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  pageTitle: {
-    color: colors.ink.rich,
-  },
-  pageSubtitle: {
-    ...typography.bodySmall,
-    color: colors.ink.muted,
-  },
-
-  // View toggle (List | Map)
+  pageHeaderText: { flex: 1, gap: spacing.xs } as const,
+  pageTitle: { color: colors.ink.rich } as const,
+  pageSubtitle: { ...typography.bodySmall, color: colors.ink.muted } as const,
   viewToggle: {
-    flexDirection: "row",
+    flexDirection: "row" as const,
     backgroundColor: colors.canvas.muted,
     borderRadius: radius.sm,
     padding: 2,
     gap: 1,
   },
-  viewToggleBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    padding: spacing.xs + 2,
-    borderRadius: radius.xs,
-  },
+  viewToggleBtn: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.xs, padding: spacing.xs + 2, borderRadius: radius.xs } as const,
   viewToggleBtnActive: {
     backgroundColor: colors.surface.primary,
     shadowColor: colors.shadow,
@@ -950,22 +899,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 2,
     elevation: 1,
-  },
-  viewToggleLabel: {
-    ...typography.caption,
-    color: colors.ink.muted,
-  },
-  viewToggleLabelActive: {
-    color: colors.brand.primary,
-  },
-
-  // Search
-  searchContainer: {
-    paddingBottom: spacing.sm,
-  },
+  } as const,
+  viewToggleLabel: { ...typography.caption, color: colors.ink.muted } as const,
+  viewToggleLabelActive: { color: colors.brand.primary } as const,
+  searchContainer: { paddingBottom: spacing.sm } as const,
   searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     backgroundColor: colors.surface.secondary,
     borderRadius: radius.md,
     borderWidth: 1,
@@ -974,38 +914,23 @@ const styles = StyleSheet.create({
     height: 46,
     gap: spacing.sm,
   },
-  searchInput: {
-    flex: 1,
-    ...typography.body,
-    color: colors.ink.rich,
-    paddingVertical: 0,
-  },
+  searchInput: { flex: 1, ...typography.body, color: colors.ink.rich, paddingVertical: 0 } as const,
   clearButton: {
     width: 22,
     height: 22,
     borderRadius: 11,
     backgroundColor: colors.border.subtle,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
-
-  // Sort
   sortRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     paddingBottom: spacing.sm,
   },
-  sortLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  sortLabel: {
-    ...typography.labelSmall,
-    color: colors.ink.muted,
-    marginRight: spacing.xs,
-  },
+  sortLeft: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.xs } as const,
+  sortLabel: { ...typography.labelSmall, color: colors.ink.muted, marginRight: spacing.xs } as const,
   sortChip: {
     paddingHorizontal: spacing.sm,
     paddingVertical: 4,
@@ -1013,31 +938,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.transparent,
     borderWidth: 1,
     borderColor: colors.transparent,
-  },
-  sortChipActive: {
-    backgroundColor: colors.surface.primary,
-    borderColor: colors.brand.primary,
-  },
-  sortChipText: {
-    ...typography.labelSmall,
-    color: colors.ink.muted,
-  },
-  sortChipTextActive: {
-    color: colors.brand.primary,
-    fontFamily: fontFamily.semiBold,
-  },
-  resultsCount: {
-    ...typography.caption,
-    color: colors.ink.faint,
-  },
-  sortRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
+  } as const,
+  sortChipActive: { backgroundColor: colors.surface.primary, borderColor: colors.brand.primary } as const,
+  sortChipText: { ...typography.labelSmall, color: colors.ink.muted } as const,
+  sortChipTextActive: { color: colors.brand.primary, fontFamily: fontFamily.semiBold } as const,
+  resultsCount: { ...typography.caption, color: colors.ink.faint } as const,
+  sortRight: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.sm } as const,
   refineChip: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     gap: 4,
     paddingHorizontal: spacing.sm,
     paddingVertical: 4,
@@ -1046,102 +955,36 @@ const styles = StyleSheet.create({
     borderColor: colors.border.default,
     backgroundColor: colors.transparent,
   },
-  refineChipActive: {
-    backgroundColor: colors.brand.primary,
-    borderColor: colors.brand.primary,
-  },
-  refineChipText: {
-    ...typography.labelSmall,
-    color: colors.ink.normal,
-  },
-  refineChipTextActive: {
-    color: colors.ink.inverse,
-    fontFamily: fontFamily.semiBold,
-  },
-
-  // Divider
-  divider: {
-    height: 1,
-    backgroundColor: colors.border.subtle,
-    marginBottom: spacing.xs,
-  },
-
-  // List
-  listContent: {
-    paddingTop: spacing.xs,
-    paddingBottom: spacing["3xl"],
-  },
-  separator: {
-    height: 1,
-    backgroundColor: colors.border.subtle,
-  },
-
-  // Scatter plot
-  scatterWrapper: {
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.lg,
-  },
-
-  // Resort row
+  refineChipActive: { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary } as const,
+  refineChipText: { ...typography.labelSmall, color: colors.ink.normal } as const,
+  refineChipTextActive: { color: colors.ink.inverse, fontFamily: fontFamily.semiBold } as const,
+  divider: { height: 1, backgroundColor: colors.border.subtle, marginBottom: spacing.xs } as const,
+  listContent: { paddingTop: spacing.xs, paddingBottom: spacing["3xl"] } as const,
+  separator: { height: 1, backgroundColor: colors.border.subtle } as const,
+  scatterWrapper: { paddingTop: spacing.sm, paddingBottom: spacing.lg } as const,
   row: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     paddingVertical: spacing.md,
     gap: spacing.md,
     backgroundColor: colors.surface.primary,
   },
-  rowPressed: {
-    backgroundColor: colors.canvas.subtle,
-  },
-  rowThumb: {
-    width: 52,
-    height: 52,
-    borderRadius: radius.md,
-    flexShrink: 0,
-  },
-  rowBody: {
-    flex: 1,
-    gap: 3,
-  },
-  rowNameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  rowName: {
-    ...typography.bodyMedium,
-    color: colors.ink.rich,
-    flex: 1,
-  },
-  savedDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: colors.brand.accent,
-    flexShrink: 0,
-  },
-  rowLocation: {
-    ...typography.bodySmall,
-    color: colors.ink.muted,
-  },
-  rowStats: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.xs,
-    marginTop: 2,
-  },
+  rowPressed: { backgroundColor: colors.canvas.subtle } as const,
+  rowThumb: { width: 52, height: 52, borderRadius: radius.md, flexShrink: 0 } as const,
+  rowBody: { flex: 1, gap: 3 } as const,
+  rowNameRow: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.xs } as const,
+  rowName: { ...typography.bodyMedium, color: colors.ink.rich, flex: 1 } as const,
+  savedDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.brand.accent, flexShrink: 0 } as const,
+  rowLocation: { ...typography.bodySmall, color: colors.ink.muted } as const,
+  rowStats: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: spacing.xs, marginTop: 2 } as const,
   statChip: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     gap: 3,
     backgroundColor: colors.canvas.subtle,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: radius.xs,
   },
-  statChipText: {
-    ...typography.caption,
-    color: colors.ink.muted,
-    fontWeight: "500" as const,
-  },
-});
+  statChipText: { ...typography.caption, color: colors.ink.muted, fontWeight: "500" as const } as const,
+};

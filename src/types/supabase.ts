@@ -133,7 +133,8 @@ export interface Database {
           regions: string[];
           crowd_preference: number;
           family_vs_nightlife: number;
-          snow_importance: number;
+          preferred_months: number[];
+          feature_preferences: string[];
           language: string;
           created_at: string;
           updated_at: string;
@@ -148,7 +149,8 @@ export interface Database {
           regions?: string[];
           crowd_preference?: number;
           family_vs_nightlife?: number;
-          snow_importance?: number;
+          preferred_months?: number[];
+          feature_preferences?: string[];
           language?: string;
           created_at?: string;
           updated_at?: string;
@@ -163,7 +165,8 @@ export interface Database {
           regions?: string[];
           crowd_preference?: number;
           family_vs_nightlife?: number;
-          snow_importance?: number;
+          preferred_months?: number[];
+          feature_preferences?: string[];
           language?: string;
           created_at?: string;
           updated_at?: string;

@@ -18,6 +18,7 @@ import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { radius } from "@/theme/radius";
 import { typography } from "@/theme/typography";
+import { maxContentWidth } from "@/theme/layout";
 import type { RecommendationResult } from "@/types/recommendation";
 
 /** Right-side peek so users see there's more to scroll */
@@ -34,16 +35,18 @@ interface SecondChoicesCarouselProps {
 }
 
 /**
- * Compute card width from screen width
+ * Compute card width from screen width — capped at content max to prevent
+ * oversized cards on wide desktop viewports.
  */
 function getCardWidth(screenWidth: number, isTablet: boolean): number {
+  const effectiveWidth = Math.min(screenWidth, maxContentWidth.content);
   const hPad = spacing.lg * 2;
   if (isTablet) {
     // Show 2.5 cards on tablet
-    return Math.round((screenWidth - hPad - CARD_GAP * 2 - PEEK_WIDTH) / 2);
+    return Math.round((effectiveWidth - hPad - CARD_GAP * 2 - PEEK_WIDTH) / 2);
   }
   // Show 1.15 cards on phone (generous peek)
-  return Math.round(screenWidth - hPad - PEEK_WIDTH - CARD_GAP);
+  return Math.round(effectiveWidth - hPad - PEEK_WIDTH - CARD_GAP);
 }
 
 /**

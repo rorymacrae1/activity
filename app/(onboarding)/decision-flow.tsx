@@ -7,7 +7,6 @@ import React from "react";
 import {
   View,
   ScrollView,
-  StyleSheet,
   Pressable,
   Platform,
 } from "react-native";
@@ -164,7 +163,7 @@ export default function DecisionFlowScreen() {
 
   const attributeScores: AttributeScores = scores
     ? (JSON.parse(scores) as AttributeScores)
-    : { skill: 0, budget: 0, vibe: 0, activity: 0, snow: 0 };
+    : { skill: 0, budget: 0, vibe: 0, activity: 0, season: 0 };
 
   const finalMatchScore = matchScore
     ? Math.round(Number(matchScore))
@@ -173,7 +172,7 @@ export default function DecisionFlowScreen() {
           attributeScores.budget +
           attributeScores.vibe +
           attributeScores.activity +
-          attributeScores.snow) /
+          attributeScores.season) /
           5,
       );
 
@@ -301,8 +300,8 @@ export default function DecisionFlowScreen() {
             />
             <FlowNode
               icon="snowflake"
-              label="Snow"
-              score={attributeScores.snow}
+              label="Season"
+              score={attributeScores.season}
               highlighted
             />
           </View>
@@ -337,92 +336,36 @@ export default function DecisionFlowScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.canvas.default,
-  },
+const styles = {
+  container: { flex: 1, backgroundColor: colors.canvas.default } as const,
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderBottomWidth: 1,
     borderBottomColor: colors.border.subtle,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    ...typography.h3,
-    color: colors.ink.rich,
-  },
-  headerSpacer: {
-    width: 40,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: spacing.xxl,
-  },
-  introSection: {
-    padding: spacing.lg,
-    alignItems: "center",
-  },
-  introTitle: {
-    ...typography.h2,
-    color: colors.ink.rich,
-    textAlign: "center",
-    marginBottom: spacing.sm,
-  },
-  introText: {
-    ...typography.body,
-    color: colors.ink.normal,
-    textAlign: "center",
-    maxWidth: 300,
-  },
-  sectionDivider: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: spacing.lg,
-    marginVertical: spacing.md,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.border.subtle,
-  },
-  dividerLabel: {
-    ...typography.label,
-    color: colors.ink.muted,
-    paddingHorizontal: spacing.sm,
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  },
-  flowSection: {
-    paddingHorizontal: spacing.lg,
-    gap: spacing.md,
-  },
-  nodesRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: spacing.xl,
-    flexWrap: "wrap",
-  },
-  nodeContainer: {
-    alignItems: "center",
-    width: 80,
-  },
+  backButton: { width: 40, height: 40, alignItems: "center" as const, justifyContent: "center" as const } as const,
+  headerTitle: { ...typography.h3, color: colors.ink.rich } as const,
+  headerSpacer: { width: 40 } as const,
+  scrollView: { flex: 1 } as const,
+  scrollContent: { paddingBottom: spacing.xxl } as const,
+  introSection: { padding: spacing.lg, alignItems: "center" as const } as const,
+  introTitle: { ...typography.h2, color: colors.ink.rich, textAlign: "center" as const, marginBottom: spacing.sm } as const,
+  introText: { ...typography.body, color: colors.ink.normal, textAlign: "center" as const, maxWidth: 300 } as const,
+  sectionDivider: { flexDirection: "row" as const, alignItems: "center" as const, paddingHorizontal: spacing.lg, marginVertical: spacing.md } as const,
+  dividerLine: { flex: 1, height: 1, backgroundColor: colors.border.subtle } as const,
+  dividerLabel: { ...typography.label, color: colors.ink.muted, paddingHorizontal: spacing.sm, textTransform: "uppercase" as const, letterSpacing: 1 } as const,
+  flowSection: { paddingHorizontal: spacing.lg, gap: spacing.md } as const,
+  nodesRow: { flexDirection: "row" as const, justifyContent: "center" as const, gap: spacing.xl, flexWrap: "wrap" as const } as const,
+  nodeContainer: { alignItems: "center" as const, width: 80 } as const,
   node: {
     backgroundColor: colors.surface.primary,
     borderRadius: radius.full,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     borderWidth: 2,
     borderColor: colors.border.default,
     shadowColor: colors.ink.rich,
@@ -432,100 +375,52 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   scoreBadge: {
-    position: "absolute",
+    position: "absolute" as const,
     bottom: -4,
     right: -4,
     width: 24,
     height: 24,
     borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     borderWidth: 2,
     borderColor: colors.surface.primary,
   },
-  scoreBadgeText: {
-    ...typography.labelSmall,
-    fontSize: 10,
-    fontWeight: "700",
-    color: colors.ink.onBrand,
-  },
-  nodeLabel: {
-    ...typography.labelSmall,
-    color: colors.ink.rich,
-    marginTop: spacing.xs,
-    textAlign: "center",
-  },
-  nodeValue: {
-    ...typography.bodySmall,
-    color: colors.ink.muted,
-    textAlign: "center",
-  },
-  connectorVertical: {
-    width: 2,
-    height: 40,
-    backgroundColor: LINE_COLOR,
-    alignSelf: "center",
-    marginVertical: spacing.sm,
-  },
-  connectorHorizontal: {
-    width: 40,
-    height: 2,
-    backgroundColor: LINE_COLOR,
-  },
+  scoreBadgeText: { ...typography.labelSmall, fontSize: 10, fontWeight: "700" as const, color: colors.ink.onBrand } as const,
+  nodeLabel: { ...typography.labelSmall, color: colors.ink.rich, marginTop: spacing.xs, textAlign: "center" as const } as const,
+  nodeValue: { ...typography.bodySmall, color: colors.ink.muted, textAlign: "center" as const } as const,
+  connectorVertical: { width: 2, height: 40, backgroundColor: LINE_COLOR, alignSelf: "center" as const, marginVertical: spacing.sm } as const,
+  connectorHorizontal: { width: 40, height: 2, backgroundColor: LINE_COLOR } as const,
   engineBox: {
     marginHorizontal: spacing.lg,
     padding: spacing.lg,
     backgroundColor: colors.surface.secondary,
     borderRadius: radius.lg,
-    alignItems: "center",
+    alignItems: "center" as const,
     borderWidth: 1,
     borderColor: colors.border.subtle,
   },
-  engineIconWrap: {
-    marginBottom: spacing.sm,
-  },
-  engineTitle: {
-    ...typography.bodyMedium,
-    fontWeight: "600",
-    color: colors.ink.rich,
-    marginBottom: spacing.xs,
-  },
-  engineText: {
-    ...typography.bodySmall,
-    color: colors.ink.normal,
-    textAlign: "center",
-  },
+  engineIconWrap: { marginBottom: spacing.sm } as const,
+  engineTitle: { ...typography.bodyMedium, fontWeight: "600" as const, color: colors.ink.rich, marginBottom: spacing.xs } as const,
+  engineText: { ...typography.bodySmall, color: colors.ink.normal, textAlign: "center" as const } as const,
   resultBox: {
     marginHorizontal: spacing.lg,
     padding: spacing.xl,
     backgroundColor: colors.brand.primary,
     borderRadius: radius.lg,
-    alignItems: "center",
+    alignItems: "center" as const,
   },
   resultBadge: {
     width: 56,
     height: 56,
     borderRadius: 28,
     backgroundColor: colors.onDark.surface.light,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     marginBottom: spacing.sm,
   },
-  resultTitle: {
-    ...typography.h3,
-    color: colors.ink.onBrand,
-    marginBottom: spacing.xs,
-  },
-  resultScore: {
-    ...typography.body,
-    color: colors.onDark.text.secondary,
-  },
-  resultScoreValue: {
-    fontWeight: "700",
-    color: colors.ink.onBrand,
-  },
-  footer: {
-    padding: spacing.lg,
-    marginTop: spacing.md,
-  },
-});
+  resultTitle: { ...typography.h3, color: colors.ink.onBrand, marginBottom: spacing.xs } as const,
+  resultScore: { ...typography.body, color: colors.onDark.text.secondary } as const,
+  resultScoreValue: { fontWeight: "700" as const, color: colors.ink.onBrand } as const,
+  footer: { padding: spacing.lg, marginTop: spacing.md } as const,
+};

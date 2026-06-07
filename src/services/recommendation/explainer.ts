@@ -68,9 +68,9 @@ export function generateExplanations(
           : `Decent nightlife scene (${r.attributes.nightlifeScore}/5)`,
       };
     },
-    snow: (r) => ({
-      excellent: `Excellent snow reliability (${r.attributes.snowReliability}/5) — pistes up to ${r.location.peakAltitude}m`,
-      good: `Reliable snow (${r.attributes.snowReliability}/5) at ${r.location.peakAltitude}m peak`,
+    season: (r) => ({
+      excellent: `Open ${r.season.start.slice(5, 7)}–${r.season.end.slice(5, 7)} — perfect for when you want to go`,
+      good: `Season overlaps well with your preferred months`,
     }),
   };
 

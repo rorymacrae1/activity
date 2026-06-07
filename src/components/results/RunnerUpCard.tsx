@@ -146,7 +146,7 @@ export function RunnerUpCard({
           {resort.name}
         </Text>
         <Text style={styles.location} numberOfLines={1}>
-          {resort.region}, {resort.country}
+          {resort.region !== resort.country ? `${resort.region}, ${resort.country}` : resort.country}
         </Text>
 
         {/* Quick Stats */}

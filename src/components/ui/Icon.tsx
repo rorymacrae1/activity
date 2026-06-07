@@ -55,6 +55,11 @@ import PartyPopper from "lucide-react-native/dist/cjs/icons/party-popper";
 import Mail from "lucide-react-native/dist/cjs/icons/mail";
 import Banknote from "lucide-react-native/dist/cjs/icons/banknote";
 import Cog from "lucide-react-native/dist/cjs/icons/cog";
+import MountainSnow from "lucide-react-native/dist/cjs/icons/mountain-snow";
+import Cpu from "lucide-react-native/dist/cjs/icons/cpu";
+import ShieldCheck from "lucide-react-native/dist/cjs/icons/shield-check";
+import WifiOff from "lucide-react-native/dist/cjs/icons/wifi-off";
+import ArrowRight from "lucide-react-native/dist/cjs/icons/arrow-right";
 import { colors } from "@/theme/colors";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -109,6 +114,11 @@ const ICON_MAP: Record<string, LucideIcon> = {
   mail: Mail,
   banknote: Banknote,
   cog: Cog,
+  "mountain-snow": MountainSnow,
+  cpu: Cpu,
+  "shield-check": ShieldCheck,
+  "wifi-off": WifiOff,
+  "arrow-right": ArrowRight,
 
   // Feedback
   check: Check,

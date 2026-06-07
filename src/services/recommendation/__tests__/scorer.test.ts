@@ -3,7 +3,7 @@ import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
 
 const makeResort = (
-  overrides: Partial<Resort["attributes"] & Resort["terrain"]> = {},
+  overrides: Partial<Resort["attributes"] & Resort["terrain"] & { season: Resort["season"] }> = {},
 ): Resort => ({
   id: "test-resort",
   name: "Test Resort",
@@ -34,7 +34,7 @@ const makeResort = (
   },
   content: { description: "A test resort.", highlights: [] },
   assets: { heroImage: "", pisteMap: "" },
-  season: { start: "2025-12-01", end: "2027-04-20" },
+  season: overrides.season ?? { start: "2025-12-01", end: "2027-04-20" },
 });
 
 const basePrefs: NormalizedPreferences = {
@@ -44,8 +44,9 @@ const basePrefs: NormalizedPreferences = {
   budgetLevel: 0.33,
   quietLively: 0.5,
   familyNightlife: 0.5,
-  snowImportance: 0.5,
+  preferredMonths: [12, 1, 2, 3],
   regions: ["france-alps"],
+  featurePreferences: [],
 };
 
 describe("calculateScores", () => {
@@ -208,19 +209,21 @@ describe("calculateScores", () => {
     });
   });
 
-  describe("snow score", () => {
-    it("scores 100 for max snow reliability", () => {
-      const resort = makeResort({ snowReliability: 5 });
-      const scores = calculateScores(resort, basePrefs);
-      expect(scores.snow).toBe(100);
+  describe("season score", () => {
+    it("scores 100 when resort is open all preferred months", () => {
+      const resort = makeResort({ season: { start: "2024-11-01", end: "2025-04-30" } });
+      const prefs = { ...basePrefs, preferredMonths: [12, 1, 2, 3] };
+      const scores = calculateScores(resort, prefs);
+      expect(scores.season).toBe(100);
     });
 
-    it("scales linearly with snow reliability", () => {
-      const resort1 = makeResort({ snowReliability: 2 });
-      const resort5 = makeResort({ snowReliability: 4 });
-      const scores1 = calculateScores(resort1, basePrefs);
-      const scores5 = calculateScores(resort5, basePrefs);
-      expect(scores5.snow).toBeGreaterThan(scores1.snow);
+    it("scores higher with more overlap months", () => {
+      const resort = makeResort({ season: { start: "2024-12-15", end: "2025-03-15" } });
+      const prefs1 = { ...basePrefs, preferredMonths: [12, 1, 2, 3, 4, 5] };
+      const prefs2 = { ...basePrefs, preferredMonths: [12, 1, 2, 3] };
+      const scores1 = calculateScores(resort, prefs1);
+      const scores2 = calculateScores(resort, prefs2);
+      expect(scores2.season).toBeGreaterThanOrEqual(scores1.season);
     });
   });
 });

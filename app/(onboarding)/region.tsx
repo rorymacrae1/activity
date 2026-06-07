@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   View,
   ScrollView,
-  StyleSheet,
   Pressable,
   Platform,
   ActivityIndicator,
@@ -13,6 +12,7 @@ import * as Haptics from "expo-haptics";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
+import { useQuizGuard } from "@hooks/useQuizGuard";
 import { getResortCountsByCountry } from "@services/resort";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
@@ -45,22 +45,20 @@ function FlagBadge({ flag, selected }: { flag: string; selected: boolean }) {
   );
 }
 
-const flagStyles = StyleSheet.create({
+const flagStyles = {
   container: {
     width: 44,
     height: 44,
     borderRadius: radius.md,
     backgroundColor: colors.canvas.subtle,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
   containerActive: {
     backgroundColor: colors.brand.primarySubtle,
-  },
-  flag: {
-    fontSize: 24,
-  },
-});
+  } as const,
+  flag: { fontSize: 24 } as const,
+};
 
 /**
  * Animated country card with press feedback and luxury styling.
@@ -120,9 +118,12 @@ function CountryCard({
 }
 
 export default function RegionScreen() {
+  const isRedirecting = useQuizGuard();
   const { regions, setRegions } = usePreferencesStore();
   const { isTablet, hPadding, layoutMode: _layoutMode } = useLayout();
   const content = useContent();
+
+  if (isRedirecting) return null;
 
   const [availableCountries, setAvailableCountries] = useState<
     CountryWithCount[]
@@ -341,26 +342,14 @@ export default function RegionScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  inner: {
-    flex: 1,
-  },
-  innerContent: {
-    paddingBottom: spacing.sm,
-  },
-  loadingContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  header: {
-    marginBottom: spacing.md,
-    gap: spacing.xs,
-  },
-
-  // Select all
+const styles = {
+  inner: { flex: 1 } as const,
+  innerContent: { paddingBottom: spacing.sm } as const,
+  loadingContainer: { justifyContent: "center" as const, alignItems: "center" as const } as const,
+  header: { marginBottom: spacing.md, gap: spacing.xs } as const,
   selectAll: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     padding: spacing.sm,
     paddingHorizontal: spacing.md,
     borderRadius: radius.lg,
@@ -369,59 +358,33 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
     backgroundColor: colors.surface.primary,
     gap: spacing.sm,
-    alignSelf: "flex-start",
-    // Shadow for consistency
+    alignSelf: "flex-start" as const,
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 6,
     elevation: 1,
   },
-  selectAllActive: {
-    borderColor: colors.brand.primary,
-    backgroundColor: colors.brand.primarySubtle,
-  },
+  selectAllActive: { borderColor: colors.brand.primary, backgroundColor: colors.brand.primarySubtle } as const,
   selectAllCheck: {
     width: 20,
     height: 20,
     borderRadius: 6,
     borderWidth: 2,
     borderColor: colors.border.default,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     backgroundColor: colors.surface.primary,
   },
-  selectAllCheckActive: {
-    backgroundColor: colors.brand.primary,
-    borderColor: colors.brand.primary,
-  },
-  selectAllCheckIcon: {
-    color: colors.ink.onBrand,
-    fontSize: 11,
-    fontWeight: "700",
-  },
-
-  // Grid
-  grid: {
-    gap: spacing.sm,
-  },
-  gridTablet: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.md,
-  },
-  gridCell: {
-    flexGrow: 1,
-  },
-  gridCellTablet: {
-    width: "48%",
-    minWidth: 140,
-  },
-
-  // Region card
+  selectAllCheckActive: { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary } as const,
+  selectAllCheckIcon: { color: colors.ink.onBrand, fontSize: 11, fontWeight: "700" as const } as const,
+  grid: { gap: spacing.sm } as const,
+  gridTablet: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: spacing.md } as const,
+  gridCell: { flexGrow: 1 } as const,
+  gridCellTablet: { width: "48%", minWidth: 140 } as const,
   regionCard: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     backgroundColor: colors.surface.primary,
     padding: spacing.sm,
     paddingRight: spacing.md,
@@ -430,50 +393,22 @@ const styles = StyleSheet.create({
     borderColor: colors.border.subtle,
     gap: spacing.sm,
   },
-  regionCardTablet: {
-    padding: spacing.md,
-  },
-  regionCardActive: {
-    borderColor: colors.brand.primary,
-    backgroundColor: colors.brand.primarySubtle,
-  },
-
-  // Region info
-  regionInfo: {
-    flex: 1,
-    gap: 2,
-  },
-
-  // Checkbox
+  regionCardTablet: { padding: spacing.md } as const,
+  regionCardActive: { borderColor: colors.brand.primary, backgroundColor: colors.brand.primarySubtle } as const,
+  regionInfo: { flex: 1, gap: 2 } as const,
   checkbox: {
     width: 24,
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: colors.border.default,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     backgroundColor: colors.surface.primary,
   },
-  checkboxActive: {
-    backgroundColor: colors.brand.primary,
-    borderColor: colors.brand.primary,
-  },
-  checkIcon: {
-    color: colors.ink.onBrand,
-    fontSize: 13,
-    fontWeight: "700",
-  },
-
-  // Footer
-  footer: {
-    flexDirection: "row",
-    gap: spacing.sm,
-  },
-  backBtn: {
-    flex: 1,
-  },
-  nextBtn: {
-    flex: 2,
-  },
-});
+  checkboxActive: { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary } as const,
+  checkIcon: { color: colors.ink.onBrand, fontSize: 13, fontWeight: "700" as const } as const,
+  footer: { flexDirection: "row" as const, gap: spacing.sm } as const,
+  backBtn: { flex: 1 } as const,
+  nextBtn: { flex: 2 } as const,
+};

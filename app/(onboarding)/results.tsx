@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import {
   View,
   ScrollView,
-  StyleSheet,
   Pressable,
   Modal,
   Platform,
@@ -53,20 +52,17 @@ export default function ResultsScreen() {
   const [timedOut, setTimedOut] = useState(false);
   const [loadingPhase, setLoadingPhase] = useState(0);
   const [tweakVisible, setTweakVisible] = useState(false);
-  const { hPadding } = useLayout();
+  const { hPadding, isTablet, isLargeTablet } = useLayout();
   const content = useContent();
 
   const {
     crowdPreference,
-    snowImportance,
     familyVsNightlife,
     setCrowdPreference,
-    setSnowImportance,
     setFamilyVsNightlife,
   } = usePreferencesStore();
 
   const [draftCrowd, setDraftCrowd] = useState(crowdPreference);
-  const [draftSnow, setDraftSnow] = useState(snowImportance);
   const [draftFamily, setDraftFamily] = useState(familyVsNightlife);
 
   const LOADING_PHASES = content.onboarding.results.loadingPhases;
@@ -104,7 +100,6 @@ export default function ResultsScreen() {
   /** Apply tweaked preferences and re-run. */
   const handleApplyTweak = () => {
     setCrowdPreference(draftCrowd);
-    setSnowImportance(draftSnow);
     setFamilyVsNightlife(draftFamily);
     setTweakVisible(false);
     runRecommendations();
@@ -112,7 +107,6 @@ export default function ResultsScreen() {
 
   const handleOpenTweak = () => {
     setDraftCrowd(crowdPreference);
-    setDraftSnow(snowImportance);
     setDraftFamily(familyVsNightlife);
     setTweakVisible(true);
   };
@@ -205,7 +199,7 @@ export default function ResultsScreen() {
   };
 
   return (
-    <ScreenContainer noMaxWidth>
+    <ScreenContainer>
       <Head>
         <title>Your Top Ski Matches | PisteWise</title>
         <meta
@@ -253,7 +247,7 @@ export default function ResultsScreen() {
         </View>
 
         {/* Top Pick Hero */}
-        <View style={styles.topPickSection}>
+        <View style={[styles.topPickSection, { paddingHorizontal: hPadding }]}>
           <TopPickHero result={topPick} onPress={handleTopPickPress} />
         </View>
 
@@ -274,7 +268,7 @@ export default function ResultsScreen() {
 
         {/* Decision Flow CTA */}
         <Pressable
-          style={styles.decisionFlowCta}
+          style={[styles.decisionFlowCta, { marginHorizontal: hPadding }]}
           onPress={() =>
             router.push({
               pathname: "/(onboarding)/decision-flow",
@@ -367,31 +361,6 @@ export default function ResultsScreen() {
 
           <View style={styles.sliderGroup}>
             <View style={styles.sliderLabel}>
-              <Text style={styles.sliderLabelText}>Snow importance</Text>
-              <Text style={styles.sliderValue}>
-                {draftSnow === 1
-                  ? "Low"
-                  : draftSnow === 5
-                    ? "Critical"
-                    : draftSnow}
-              </Text>
-            </View>
-            <Slider
-              value={draftSnow}
-              minimumValue={1}
-              maximumValue={5}
-              step={1}
-              onValueChange={setDraftSnow}
-              accessibilityLabel="Snow importance slider"
-            />
-            <View style={styles.sliderEndLabels}>
-              <Text style={styles.sliderEndLabel}>Not fussed</Text>
-              <Text style={styles.sliderEndLabel}>Snow guaranteed</Text>
-            </View>
-          </View>
-
-          <View style={styles.sliderGroup}>
-            <View style={styles.sliderLabel}>
               <Text style={styles.sliderLabelText}>Atmosphere</Text>
               <Text style={styles.sliderValue}>
                 {draftFamily <= 2
@@ -434,33 +403,22 @@ export default function ResultsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: spacing.xxl,
-  },
+const styles = {
+  scrollView: { flex: 1 } as const,
+  scrollContent: { paddingBottom: spacing.xxl } as const,
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "flex-start" as const,
     paddingTop: spacing.xl,
     paddingBottom: spacing.lg,
     gap: spacing.md,
   },
-  headerContent: {
-    flex: 1,
-    gap: spacing.xxs,
-  },
-  headerActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
+  headerContent: { flex: 1, gap: spacing.xxs } as const,
+  headerActions: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.xs } as const,
   tweakButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     gap: spacing.xxs,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
@@ -469,18 +427,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.brand.primary + "40",
   },
-  tweakButtonLabel: {
-    ...typography.label,
-    color: colors.brand.primary,
-  },
-  topPickSection: {
-    paddingHorizontal: spacing.lg,
-    marginBottom: spacing.md,
-  },
+  tweakButtonLabel: { ...typography.label, color: colors.brand.primary } as const,
+  topPickSection: { marginBottom: spacing.md } as const,
   decisionFlowCta: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: spacing.lg,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     marginTop: spacing.lg,
     marginBottom: spacing.lg,
     padding: spacing.md,
@@ -494,27 +445,14 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: radius.md,
     backgroundColor: colors.brand.primary + "20",
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
     marginRight: spacing.md,
   },
-  decisionFlowContent: {
-    flex: 1,
-  },
-  decisionFlowTitle: {
-    ...typography.h4,
-    color: colors.ink.rich,
-    marginBottom: 2,
-  },
-  decisionFlowSubtitle: {
-    ...typography.bodySmall,
-    color: colors.ink.normal,
-  },
-  decisionFlowArrow: {
-    fontSize: 20,
-    color: colors.brand.primary,
-    marginLeft: spacing.sm,
-  },
+  decisionFlowContent: { flex: 1 } as const,
+  decisionFlowTitle: { ...typography.h4, color: colors.ink.rich, marginBottom: 2 } as const,
+  decisionFlowSubtitle: { ...typography.bodySmall, color: colors.ink.normal } as const,
+  decisionFlowArrow: { fontSize: 20, color: colors.brand.primary, marginLeft: spacing.sm } as const,
   stickyFooter: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
@@ -522,12 +460,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.canvas.default,
     borderTopWidth: 1,
     borderTopColor: colors.border.subtle,
-  },
-  // ── Tweak modal ────────────────────────────────────────────────────────────
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: colors.onDark.backdrop,
-  },
+  } as const,
+  modalOverlay: { flex: 1, backgroundColor: colors.onDark.backdrop } as const,
   modalSheet: {
     backgroundColor: colors.canvas.default,
     borderTopLeftRadius: radius.xl,
@@ -535,56 +469,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
     paddingBottom: spacing.xxxl,
-  },
+  } as const,
   modalHandle: {
-    alignSelf: "center",
+    alignSelf: "center" as const,
     width: 40,
     height: 4,
     borderRadius: radius.full,
     backgroundColor: colors.border.default,
     marginBottom: spacing.lg,
   },
-  modalTitle: {
-    marginBottom: spacing.xxs,
-  },
-  modalSubtitle: {
-    marginBottom: spacing.xl,
-  },
-  sliderGroup: {
-    marginBottom: spacing.xl,
-  },
+  modalTitle: { marginBottom: spacing.xxs } as const,
+  modalSubtitle: { marginBottom: spacing.xl } as const,
+  sliderGroup: { marginBottom: spacing.xl } as const,
   sliderLabel: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
     marginBottom: spacing.sm,
   },
-  sliderLabelText: {
-    ...typography.h4,
-    color: colors.ink.rich,
-  },
-  sliderValue: {
-    ...typography.label,
-    color: colors.brand.primary,
-  },
-  sliderEndLabels: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: spacing.xs,
-  },
-  sliderEndLabel: {
-    ...typography.caption,
-    color: colors.ink.muted,
-  },
-  modalActions: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    marginTop: spacing.md,
-  },
-  modalCancel: {
-    flex: 1,
-  },
-  modalApply: {
-    flex: 2,
-  },
-});
+  sliderLabelText: { ...typography.h4, color: colors.ink.rich } as const,
+  sliderValue: { ...typography.label, color: colors.brand.primary } as const,
+  sliderEndLabels: { flexDirection: "row" as const, justifyContent: "space-between" as const, marginTop: spacing.xs } as const,
+  sliderEndLabel: { ...typography.caption, color: colors.ink.muted } as const,
+  modalActions: { flexDirection: "row" as const, gap: spacing.sm, marginTop: spacing.md } as const,
+  modalCancel: { flex: 1 } as const,
+  modalApply: { flex: 2 } as const,
+};

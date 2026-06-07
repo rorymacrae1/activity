@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   View,
-  StyleSheet,
   ScrollView,
   TextInput,
   KeyboardAvoidingView,
@@ -12,6 +11,18 @@ import Head from "expo-router/head";
 import { router, Link } from "expo-router";
 import { colors, spacing, radius, typography as typo } from "@theme";
 import { fontFamily } from "@theme/fonts";
+
+const inputStyle = {
+  backgroundColor: colors.surface.elevated,
+  borderRadius: radius.md,
+  borderWidth: 1,
+  borderColor: colors.border.default,
+  paddingHorizontal: spacing.md,
+  paddingVertical: spacing.sm,
+  fontSize: typo.body.fontSize,
+  fontFamily: fontFamily.regular,
+  color: colors.ink.rich,
+} as const;
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
 import { Card } from "@components/ui/Card";
@@ -71,7 +82,7 @@ export default function SignUpScreen() {
         message: t.successMessage,
         duration: 4000,
       });
-      router.replace("/(main)");
+      router.replace("/(onboarding)/trip-type");
     } else {
       // Email confirmation required
       showToast({
@@ -96,7 +107,7 @@ export default function SignUpScreen() {
         message: t.successMessage,
         duration: 4000,
       });
-      router.replace("/(main)");
+      router.replace("/(onboarding)/trip-type");
     }
   };
 
@@ -113,7 +124,7 @@ export default function SignUpScreen() {
         message: t.successMessage,
         duration: 4000,
       });
-      router.replace("/(main)");
+      router.replace("/(onboarding)/trip-type");
     }
   };
 
@@ -128,37 +139,33 @@ export default function SignUpScreen() {
       </Head>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.keyboardView}
+        className="flex-1"
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={{ flexGrow: 1, paddingTop: spacing.xxl, paddingBottom: spacing.xxl }}
           keyboardShouldPersistTaps="handled"
         >
           <View
             style={
-              isDesktop ? styles.desktopForm : { paddingHorizontal: hPadding }
+              isDesktop
+                ? { maxWidth: 480, alignSelf: "center" as const, width: "100%", paddingHorizontal: spacing.xl }
+                : { paddingHorizontal: hPadding }
             }
           >
             {/* Header */}
-            <View style={styles.header}>
+            <View className="mb-6">
               <Text variant="h1">{t.title}</Text>
-              <Text
-                variant="body"
-                color={colors.ink.normal}
-                style={styles.subtitle}
-              >
+              <Text variant="body" color={colors.ink.normal} className="mt-2">
                 {t.subtitle}
               </Text>
             </View>
 
             {/* Sign Up Form */}
-            <Card elevation="subtle" style={styles.formCard}>
-              <View style={styles.inputGroup}>
-                <Text variant="label" style={styles.inputLabel}>
-                  {t.displayName}
-                </Text>
+            <Card elevation="subtle" style={{ padding: spacing.lg, gap: spacing.md }}>
+              <View className="gap-1">
+                <Text variant="label" className="ml-1">{t.displayName}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={inputStyle}
                   value={displayName}
                   onChangeText={setDisplayName}
                   placeholder="Your name"
@@ -169,12 +176,10 @@ export default function SignUpScreen() {
                 />
               </View>
 
-              <View style={styles.inputGroup}>
-                <Text variant="label" style={styles.inputLabel}>
-                  {t.email}
-                </Text>
+              <View className="gap-1">
+                <Text variant="label" className="ml-1">{t.email}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={inputStyle}
                   value={email}
                   onChangeText={setEmail}
                   placeholder="you@example.com"
@@ -187,13 +192,11 @@ export default function SignUpScreen() {
                 />
               </View>
 
-              <View style={styles.inputGroup}>
-                <Text variant="label" style={styles.inputLabel}>
-                  {t.password}
-                </Text>
-                <View style={styles.passwordContainer}>
+              <View className="gap-1">
+                <Text variant="label" className="ml-1">{t.password}</Text>
+                <View className="relative">
                   <TextInput
-                    style={[styles.input, styles.passwordInput]}
+                    style={[inputStyle, { paddingRight: spacing.xxl + spacing.md }]}
                     value={password}
                     onChangeText={setPassword}
                     placeholder={t.placeholder}
@@ -205,7 +208,7 @@ export default function SignUpScreen() {
                   />
                   <Pressable
                     onPress={() => setShowPassword(!showPassword)}
-                    style={styles.showPasswordBtn}
+                    className="absolute right-4 top-0 bottom-0 justify-center"
                     accessibilityLabel={
                       showPassword ? tAuth.hidePassword : tAuth.showPassword
                     }
@@ -218,12 +221,10 @@ export default function SignUpScreen() {
                 </View>
               </View>
 
-              <View style={styles.inputGroup}>
-                <Text variant="label" style={styles.inputLabel}>
-                  {t.confirmPassword}
-                </Text>
+              <View className="gap-1">
+                <Text variant="label" className="ml-1">{t.confirmPassword}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={inputStyle}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
                   placeholder="Re-enter your password"
@@ -244,20 +245,16 @@ export default function SignUpScreen() {
             </Card>
 
             {/* Divider */}
-            <View style={styles.dividerContainer}>
-              <View style={styles.dividerLine} />
-              <Text
-                variant="bodySmall"
-                color={colors.ink.muted}
-                style={styles.dividerText}
-              >
+            <View className="flex-row items-center my-6">
+              <View className="flex-1" style={{ height: 1, backgroundColor: colors.border.default }} />
+              <Text variant="bodySmall" color={colors.ink.muted} className="mx-4">
                 {t.or}
               </Text>
-              <View style={styles.dividerLine} />
+              <View className="flex-1" style={{ height: 1, backgroundColor: colors.border.default }} />
             </View>
 
             {/* Social Login */}
-            <View style={styles.socialButtons}>
+            <View className="gap-2">
               {Platform.OS === "ios" && (
                 <Button
                   label={t.apple}
@@ -277,7 +274,7 @@ export default function SignUpScreen() {
             </View>
 
             {/* Sign In Link */}
-            <View style={styles.footer}>
+            <View className="flex-row justify-center mt-6">
               <Text variant="body" color={colors.ink.normal}>
                 {t.hasAccount}{" "}
               </Text>
@@ -286,7 +283,7 @@ export default function SignUpScreen() {
                   <Text
                     variant="body"
                     color={colors.brand.primary}
-                    style={styles.linkText}
+                    style={{ fontFamily: fontFamily.medium }}
                   >
                     {t.signInLink}
                   </Text>
@@ -297,7 +294,7 @@ export default function SignUpScreen() {
             {/* Skip for now */}
             <Pressable
               onPress={() => router.back()}
-              style={styles.skipButton}
+              className="items-center mt-5 py-2"
               accessibilityLabel="Continue without signing up"
               accessibilityRole="button"
             >
@@ -311,89 +308,3 @@ export default function SignUpScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingTop: spacing.xxl,
-    paddingBottom: spacing.xxl,
-  },
-  header: {
-    marginBottom: spacing.xl,
-  },
-  subtitle: {
-    marginTop: spacing.sm,
-  },
-  formCard: {
-    padding: spacing.lg,
-    gap: spacing.md,
-  },
-  inputGroup: {
-    gap: spacing.xs,
-  },
-  inputLabel: {
-    marginLeft: spacing.xs,
-  },
-  input: {
-    backgroundColor: colors.surface.elevated,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    fontSize: typo.body.fontSize,
-    fontFamily: fontFamily.regular,
-    color: colors.ink.rich,
-  },
-  passwordContainer: {
-    position: "relative",
-  },
-  passwordInput: {
-    paddingRight: spacing.xxl + spacing.md,
-  },
-  showPasswordBtn: {
-    position: "absolute",
-    right: spacing.md,
-    top: 0,
-    bottom: 0,
-    justifyContent: "center",
-  },
-  dividerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: spacing.xl,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.border.default,
-  },
-  dividerText: {
-    marginHorizontal: spacing.md,
-  },
-  socialButtons: {
-    gap: spacing.sm,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: spacing.xl,
-  },
-  linkText: {
-    fontFamily: fontFamily.medium,
-  },
-  skipButton: {
-    alignItems: "center",
-    marginTop: spacing.lg,
-    paddingVertical: spacing.sm,
-  },
-  desktopForm: {
-    maxWidth: 480,
-    alignSelf: "center",
-    width: "100%",
-    paddingHorizontal: spacing.xl,
-  },
-});

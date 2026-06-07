@@ -18,6 +18,7 @@ import { colors } from "@/theme/colors";
 import { spacing } from "@/theme/spacing";
 import { typography } from "@/theme/typography";
 import { radius } from "@/theme/radius";
+import { maxContentWidth } from "@/theme/layout";
 import type { AttributeScores } from "@/types/recommendation";
 
 /** Right-side peek so users see there's more to scroll */
@@ -32,16 +33,18 @@ interface ReasonCarouselProps {
 }
 
 /**
- * Compute card width from screen width to fill with peek
+ * Compute card width from screen width — capped at content max to prevent
+ * oversized cards on wide desktop viewports.
  */
 function getCardWidth(screenWidth: number, isTablet: boolean): number {
+  const effectiveWidth = Math.min(screenWidth, maxContentWidth.content);
   const hPad = spacing.lg * 2;
   if (isTablet) {
     // Show 2.3 cards on tablet
-    return Math.round((screenWidth - hPad - CARD_GAP * 2 - PEEK_WIDTH) / 2);
+    return Math.round((effectiveWidth - hPad - CARD_GAP * 2 - PEEK_WIDTH) / 2);
   }
   // Show 1 card + peek on phone
-  return screenWidth - hPad - PEEK_WIDTH;
+  return effectiveWidth - hPad - PEEK_WIDTH;
 }
 
 /**
@@ -55,7 +58,7 @@ function getOrderedAttributes(
     { key: "budget", score: scores.budget },
     { key: "vibe", score: scores.vibe },
     { key: "activity", score: scores.activity },
-    { key: "snow", score: scores.snow },
+    { key: "season", score: scores.season },
   ];
 
   return attributes.sort((a, b) => b.score - a.score);
@@ -87,7 +90,7 @@ export function ReasonCarousel({
   const scrollViewRef = useRef<ScrollView>(null);
   const activeIndex = useSharedValue(0);
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const { screenWidth, isTablet } = useLayout();
+  const { screenWidth, isTablet, isLargeTablet } = useLayout();
 
   const cardWidth = getCardWidth(screenWidth, isTablet);
   const snapInterval = cardWidth + CARD_GAP;
@@ -109,6 +112,30 @@ export function ReasonCarousel({
     [snapInterval, orderedAttributes.length, activeIndex],
   );
 
+  // ── Desktop / large-tablet: flex-wrap grid (no carousel) ──────────────────
+  if (isLargeTablet) {
+    return (
+      <View style={styles.container}>
+        {heading && (
+          <View style={styles.headingContainer}>
+            <Text style={styles.heading}>{heading}</Text>
+          </View>
+        )}
+        <View style={gridStyles.grid}>
+          {orderedAttributes.map(({ key, score }) => (
+            <ReasonCard
+              key={key}
+              attribute={key}
+              score={score}
+              style={gridStyles.gridCard}
+            />
+          ))}
+        </View>
+      </View>
+    );
+  }
+
+  // ── Phone / small-tablet: horizontal carousel ──────────────────────────────
   return (
     <View style={styles.container}>
       {/* Section Heading */}
@@ -184,6 +211,19 @@ const styles = StyleSheet.create({
   dot: {
     height: 8,
     borderRadius: radius.full,
+  },
+});
+
+const gridStyles = StyleSheet.create({
+  grid: {
+    paddingHorizontal: spacing.lg,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.md,
+  },
+  gridCard: {
+    flex: 1,
+    minWidth: 200,
   },
 });
 

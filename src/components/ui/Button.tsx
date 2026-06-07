@@ -1,13 +1,11 @@
 import {
   ActivityIndicator,
   Pressable,
-  StyleSheet,
   Platform,
   View,
   type PressableProps,
   type ViewStyle,
-} from "react-native";
-import { useState } from "react";
+} from "react-native";import { useState } from "react";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -37,6 +35,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
  * - accent: Premium gold accent for special actions
  * - muted: De-emphasized actions (cancel, dismiss)
  * - danger: Destructive actions
+ * - inverse: White outline for dark/photo backgrounds
  */
 type ButtonVariant =
   | "primary"
@@ -44,7 +43,8 @@ type ButtonVariant =
   | "ghost"
   | "accent"
   | "muted"
-  | "danger";
+  | "danger"
+  | "inverse";
 
 /**
  * Button sizes — named for intent
@@ -120,6 +120,12 @@ const VARIANT_CONFIG: Record<
     bgPressed: colors.sentiment.error,
     text: colors.ink.onBrand,
   },
+  inverse: {
+    bg: "transparent",
+    bgPressed: "rgba(255,255,255,0.15)",
+    text: "#FFFFFF",
+    border: "rgba(255,255,255,0.8)",
+  },
 };
 
 /**
@@ -169,7 +175,7 @@ export function Button({
   };
 
   const spinnerColor =
-    variant === "primary" || variant === "danger" || variant === "accent"
+    variant === "primary" || variant === "danger" || variant === "accent" || variant === "inverse"
       ? colors.ink.onBrand
       : colors.brand.primary;
 
@@ -189,18 +195,25 @@ export function Button({
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ disabled: isDisabled, busy: loading }}
+      // Static layout via NativeWind; dynamic bg/size/focus stay as style
+      className={[
+        fullWidth ? "self-stretch" : "self-start",
+        Platform.OS === "web" ? "cursor-pointer select-none" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       style={[
-        styles.base,
         {
           backgroundColor: config.bg,
           height: sizeConfig.height,
           paddingHorizontal: sizeConfig.paddingH,
           borderRadius: radius.button,
+          alignItems: "center" as const,
+          justifyContent: "center" as const,
+          flexDirection: "row" as const,
         },
         borderStyle,
-        fullWidth && styles.fullWidth,
-        isDisabled && styles.disabled,
-        Platform.OS === "web" && styles.webInteractive,
+        isDisabled && { opacity: interaction.opacity.disabled },
         isFocused && Platform.OS === "web" && webStyles.focusVisible,
         animatedStyle,
         styleProp,
@@ -209,18 +222,18 @@ export function Button({
       {loading ? (
         <ActivityIndicator size="small" color={spinnerColor} />
       ) : (
-        <View style={styles.content}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
           {icon ? (
             <Icon name={icon} size={sizeConfig.iconSize} color={config.text} />
           ) : leftIcon ? (
-            <Text style={[styles.icon, { fontSize: sizeConfig.iconSize }]}>
+            <Text style={[{ fontSize: sizeConfig.iconSize, lineHeight: 20 }]}>
               {leftIcon}
             </Text>
           ) : null}
           <Text
             style={[
               size === "compact" ? typography.buttonSmall : typography.button,
-              { color: config.text },
+              { color: config.text, textAlign: "center" },
             ]}
           >
             {label}
@@ -230,29 +243,3 @@ export function Button({
     </AnimatedPressable>
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "flex-start",
-  },
-  fullWidth: {
-    alignSelf: "stretch",
-  },
-  content: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-  icon: {
-    lineHeight: 20,
-  },
-  disabled: {
-    opacity: interaction.opacity.disabled,
-  },
-  webInteractive: {
-    ...webStyles.clickable,
-    ...webStyles.interactive,
-  },
-});

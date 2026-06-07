@@ -1,7 +1,6 @@
 import {
   Pressable,
   View,
-  StyleSheet,
   Platform,
   type PressableProps,
   type StyleProp,
@@ -157,11 +156,12 @@ export function Card({
         onBlur={() => setIsFocused(false)}
         accessibilityLabel={accessibilityLabel}
         accessibilityRole="button"
+        className="overflow-hidden"
         style={[
-          styles.base,
           baseStyle,
           shadowStyle,
-          Platform.OS === "web" && styles.webInteractive,
+          Platform.OS === "web" && webStyles.clickable,
+          Platform.OS === "web" && webStyles.hoverLift,
           isFocused && Platform.OS === "web" && webStyles.focusVisible,
           animatedStyle,
           style,
@@ -173,16 +173,6 @@ export function Card({
   }
 
   return (
-    <View style={[styles.base, baseStyle, shadowStyle, style]}>{children}</View>
+    <View className="overflow-hidden" style={[baseStyle, shadowStyle, style]}>{children}</View>
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    overflow: "hidden",
-  },
-  webInteractive: {
-    ...webStyles.clickable,
-    ...webStyles.hoverLift,
-  },
-});

@@ -1,8 +1,7 @@
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Text } from "./Text";
 import { Button } from "./Button";
 import { Icon } from "./Icon";
-import { spacing } from "@theme";
 import { colors } from "@theme/colors";
 
 interface ErrorStateProps {
@@ -30,8 +29,8 @@ export function ErrorState({
   onRetry,
 }: ErrorStateProps) {
   return (
-    <View style={styles.container}>
-      <View style={styles.iconWrap}>
+    <View className="flex-1 items-center justify-center p-12 gap-3">
+      <View className="mb-5">
         <Icon
           name="alert-triangle"
           size={48}
@@ -39,11 +38,11 @@ export function ErrorState({
           strokeWidth={1.5}
         />
       </View>
-      <Text variant="h3" align="center" style={styles.message}>
+      <Text variant="h3" align="center" className="mb-1">
         {message}
       </Text>
       {detail ? (
-        <Text variant="bodySmall" align="center" color="muted" style={styles.detail}>
+        <Text variant="bodySmall" align="center" color="muted" className="max-w-[280px]">
           {detail}
         </Text>
       ) : null}
@@ -53,32 +52,9 @@ export function ErrorState({
           onPress={onRetry}
           variant="secondary"
           size="standard"
-          style={styles.button}
+          className="mt-6 self-center"
         />
       ) : null}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: spacing["3xl"],
-    gap: spacing.md,
-  },
-  iconWrap: {
-    marginBottom: spacing.lg,
-  },
-  message: {
-    marginBottom: spacing.xs,
-  },
-  detail: {
-    maxWidth: 280,
-  },
-  button: {
-    marginTop: spacing.xl,
-    alignSelf: "center",
-  },
-});

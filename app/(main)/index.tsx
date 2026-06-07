@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView, Platform } from "react-native";
+import { View, ScrollView, Platform } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -80,7 +80,7 @@ export default function PersonalizedHomeScreen() {
 
   if (authLoading || loading) {
     return (
-      <SafeAreaView style={styles.container} edges={["top"]}>
+      <SafeAreaView className="flex-1" style={{ backgroundColor: colors.canvas.default }} edges={["top"]}>
         <LoadingState message="Loading your dashboard..." />
       </SafeAreaView>
     );
@@ -95,7 +95,7 @@ export default function PersonalizedHomeScreen() {
   const topFavoriteId = favoriteIds[0];
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <SafeAreaView className="flex-1" style={{ backgroundColor: colors.canvas.default }} edges={["top"]}>
       <Head>
         <title>Home | PisteWise</title>
         <meta
@@ -107,9 +107,9 @@ export default function PersonalizedHomeScreen() {
       <NavBar />
 
       <ScrollView
-        style={styles.scrollView}
+        className="flex-1"
         contentContainerStyle={[
-          styles.content,
+          { paddingTop: spacing.lg, paddingBottom: spacing.xxxl },
           { paddingHorizontal: hPadding },
         ]}
         showsVerticalScrollIndicator={Platform.OS !== "web"}
@@ -125,12 +125,12 @@ export default function PersonalizedHomeScreen() {
 
         {/* On tablet/desktop: 2-col grid for actions + completion */}
         {isTablet ? (
-          <View style={styles.tabletRow}>
-            <View style={styles.tabletCol}>
+          <View className="flex-row" style={{ gap: spacing.lg, marginTop: spacing.md }}>
+            <View className="flex-1">
               <QuickActions showCompleteProfile={false} />
             </View>
             {showCompletionCard && completionStatus ? (
-              <View style={styles.tabletCol}>
+              <View className="flex-1">
                 <ProfileCompletionCard
                   completionPercentage={completionStatus.completionPercentage}
                   missing={{
@@ -141,7 +141,7 @@ export default function PersonalizedHomeScreen() {
                 />
               </View>
             ) : (
-              <View style={styles.tabletCol} />
+              <View className="flex-1" />
             )}
           </View>
         ) : (
@@ -169,10 +169,7 @@ export default function PersonalizedHomeScreen() {
         {/* Personalized Recommendations - show if has favorites */}
         {topFavoriteId && (
           <View
-            style={[
-              styles.recommendationsSection,
-              isDesktop && styles.recommendationsSectionDesktop,
-            ]}
+            style={{ marginTop: isDesktop ? spacing.xl : spacing.md }}
           >
             <FavoritesBasedRecommendations
               baseResortId={topFavoriteId}
@@ -184,31 +181,3 @@ export default function PersonalizedHomeScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.canvas.default,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xxxl,
-  },
-  tabletRow: {
-    flexDirection: "row",
-    gap: spacing.lg,
-    marginTop: spacing.md,
-  },
-  tabletCol: {
-    flex: 1,
-  },
-  recommendationsSection: {
-    marginTop: spacing.md,
-  },
-  recommendationsSectionDesktop: {
-    marginTop: spacing.xl,
-  },
-});

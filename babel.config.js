@@ -1,7 +1,13 @@
 module.exports = function (api) {
   api.cache(true);
+  const isTest = process.env.NODE_ENV === "test";
   return {
-    presets: ["babel-preset-expo"],
+    // nativewind/babel is a preset (returns { plugins: [...] }) — not a plugin.
+    // Excluded in test env: Jest provides its own transform without NativeWind.
+    presets: [
+      "babel-preset-expo",
+      ...(!isTest ? ["nativewind/babel"] : []),
+    ],
     plugins: [
       [
         "module-resolver",

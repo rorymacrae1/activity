@@ -3,7 +3,7 @@ import type { Resort } from "@/types/resort";
 import type { NormalizedPreferences } from "@/types/preferences";
 import type { AttributeScores } from "@/types/recommendation";
 
-const makeResort = (attrs: Partial<Resort["attributes"]> = {}): Resort => ({
+const makeResort = (attrs: Partial<Resort["attributes"]> & { season?: Resort["season"] } = {}): Resort => ({
   id: "test-resort",
   name: "Test Resort",
   country: "France",
@@ -29,7 +29,7 @@ const makeResort = (attrs: Partial<Resort["attributes"]> = {}): Resort => ({
   },
   content: { description: "A test resort.", highlights: [] },
   assets: { heroImage: "", pisteMap: "" },
-  season: { start: "2025-12-01", end: "2027-04-20" },
+  season: attrs.season ?? { start: "2025-12-01", end: "2027-04-20" },
 });
 
 const basePrefs: NormalizedPreferences = {
@@ -39,8 +39,9 @@ const basePrefs: NormalizedPreferences = {
   budgetLevel: 0.33,
   quietLively: 0.5,
   familyNightlife: 0.5,
-  snowImportance: 0.5,
+  preferredMonths: [12, 1, 2, 3],
   regions: [],
+  featurePreferences: [],
 };
 
 describe("generateExplanations", () => {
@@ -50,7 +51,7 @@ describe("generateExplanations", () => {
       budget: 30,
       vibe: 30,
       activity: 30,
-      snow: 30,
+      season: 30,
     };
     const reasons = generateExplanations(makeResort(), scores, basePrefs);
     expect(reasons.length).toBeGreaterThanOrEqual(1);
@@ -62,7 +63,7 @@ describe("generateExplanations", () => {
       budget: 90,
       vibe: 88,
       activity: 85,
-      snow: 82,
+      season: 82,
     };
     const reasons = generateExplanations(makeResort(), scores, basePrefs);
     expect(reasons.length).toBeLessThanOrEqual(3);
@@ -75,7 +76,7 @@ describe("generateExplanations", () => {
       budget: 95,
       vibe: 50,
       activity: 50,
-      snow: 50,
+      season: 50,
     };
     const reasons = generateExplanations(resort, scores, basePrefs);
     expect(reasons.some((r) => r.includes("£140"))).toBe(true);
@@ -87,7 +88,7 @@ describe("generateExplanations", () => {
       budget: 10,
       vibe: 10,
       activity: 10,
-      snow: 10,
+      season: 10,
     };
     const reasons = generateExplanations(makeResort(), scores, basePrefs);
     expect(reasons).toContain("Matches your overall preferences");
@@ -100,23 +101,23 @@ describe("generateExplanations", () => {
       budget: 50,
       vibe: 100,
       activity: 50,
-      snow: 50,
+      season: 50,
     };
     const reasons = generateExplanations(resort, scores, basePrefs);
     expect(reasons.some((r) => r.toLowerCase().includes("quiet"))).toBe(true);
   });
 
-  it("mentions snow reliability when snow score is high", () => {
-    const resort = makeResort({ snowReliability: 5 });
+  it("mentions season when season score is high", () => {
+    const resort = makeResort({ season: { start: "2024-11-01", end: "2025-04-30" } });
     const scores: AttributeScores = {
       skill: 50,
       budget: 50,
       vibe: 50,
       activity: 50,
-      snow: 100,
+      season: 100,
     };
     const reasons = generateExplanations(resort, scores, basePrefs);
-    expect(reasons.some((r) => r.includes("5/5"))).toBe(true);
+    expect(reasons.some((r) => r.toLowerCase().includes("open") || r.toLowerCase().includes("season"))).toBe(true);
   });
 
   it("adds seasonal warning when resort is closing soon", () => {
@@ -129,7 +130,7 @@ describe("generateExplanations", () => {
       budget: 90,
       vibe: 90,
       activity: 90,
-      snow: 90,
+      season: 90,
     };
     const reasons = generateExplanations(resort, scores, basePrefs);
     expect(
@@ -145,7 +146,7 @@ describe("generateExplanations", () => {
       budget: 90,
       vibe: 90,
       activity: 90,
-      snow: 90,
+      season: 90,
     };
     const reasons = generateExplanations(resort, scores, basePrefs);
     expect(reasons.some((r) => r.includes("ended"))).toBe(true);
@@ -157,7 +158,7 @@ describe("generateExplanations", () => {
       budget: 90,
       vibe: 90,
       activity: 90,
-      snow: 90,
+      season: 90,
     };
     const reasons = generateExplanations(makeResort(), scores, basePrefs);
     expect(

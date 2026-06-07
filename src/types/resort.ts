@@ -56,6 +56,8 @@ export interface ResortAttributes {
   hasSkiInOut?: boolean;
   /** Whether catered chalet accommodation exists */
   hasCatered?: boolean;
+  /** Whether the resort has a kids club */
+  hasKidsClub?: boolean;
   /** Whether the resort is accessible by train */
   trainAccessible?: boolean;
   /** Whether the resort has a direct Eurostar connection */
@@ -72,6 +74,31 @@ export interface ResortAttributes {
 export interface ResortContent {
   description: string;
   highlights: string[];
+  /** AI-generated après-ski summary */
+  apresSummary?: string;
+  /** What to do on bad weather days */
+  whiteoutSummary?: string;
+  /** Train/drive route from UK without flying */
+  noFlySummary?: string;
+  /** Snow reliability narrative */
+  snowmakingSummary?: string;
+  /** Off-piste skiing summary */
+  offPisteSummary?: string;
+  /** Live webcam URL */
+  webcamUrl?: string;
+  /** Snow report URL */
+  snowReportUrl?: string;
+}
+
+/**
+ * Monthly weather data for a resort.
+ */
+export interface ResortMonthWeather {
+  month: number; // 1-12
+  avgTempC: number;
+  avgSnowfallCm: number;
+  avgBluebirdDays: number;
+  avgWindKph: number;
 }
 
 /**
@@ -91,6 +118,31 @@ export interface ResortSeason {
 }
 
 /**
+ * Individual accommodation option at a resort.
+ */
+export interface AccommodationOption {
+  type: "hotel" | "chalet" | "apartment" | "hostel";
+  name: string;
+  stars: number | null;
+  skiInOut: boolean;
+  kidsClub: boolean;
+  pricePerNightGbp: number | null;
+  catered: boolean;
+}
+
+/**
+ * Individual facility at a resort.
+ */
+export interface FacilityOption {
+  type: "bar" | "restaurant" | "ski_school" | "ski_rental" | "spa" | "pool" | "supermarket" | "hotel";
+  name: string;
+  rating: number | null;
+  avgPriceGbp: number | null;
+  whiteoutActivity: boolean;
+  apresSki: boolean;
+}
+
+/**
  * Complete resort data.
  */
 export interface Resort {
@@ -107,4 +159,10 @@ export interface Resort {
   content: ResortContent;
   assets: ResortAssets;
   season: ResortSeason;
+  /** Monthly weather data when available */
+  weather?: ResortMonthWeather[];
+  /** Detailed accommodation options from Supabase */
+  accommodationOptions?: AccommodationOption[];
+  /** Detailed facility listings from Supabase */
+  facilityOptions?: FacilityOption[];
 }

@@ -1,8 +1,7 @@
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Text } from "./Text";
 import { Button } from "./Button";
 import { Icon, type IconName } from "./Icon";
-import { spacing } from "@theme";
 import { colors } from "@theme/colors";
 
 interface EmptyStateProps {
@@ -34,8 +33,8 @@ interface EmptyStateProps {
  */
 export function EmptyState({ icon, title, message, action }: EmptyStateProps) {
   return (
-    <View style={styles.container}>
-      <View style={styles.iconContainer}>
+    <View className="flex-1 items-center justify-center p-12 gap-3">
+      <View className="mb-5">
         <Icon
           name={icon}
           size={48}
@@ -43,10 +42,10 @@ export function EmptyState({ icon, title, message, action }: EmptyStateProps) {
           strokeWidth={1.25}
         />
       </View>
-      <Text variant="h2" align="center" color="rich" style={styles.title}>
+      <Text variant="h2" align="center" color="rich" className="mb-1">
         {title}
       </Text>
-      <Text variant="body" align="center" color="muted" style={styles.message}>
+      <Text variant="body" align="center" color="muted" className="max-w-[280px]">
         {message}
       </Text>
       {action ? (
@@ -55,32 +54,9 @@ export function EmptyState({ icon, title, message, action }: EmptyStateProps) {
           onPress={action.onPress}
           variant="primary"
           size="standard"
-          style={styles.action}
+          className="mt-6 self-center"
         />
       ) : null}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: spacing["3xl"],
-    gap: spacing.md,
-  },
-  iconContainer: {
-    marginBottom: spacing.lg,
-  },
-  title: {
-    marginBottom: spacing.xs,
-  },
-  message: {
-    maxWidth: 280,
-  },
-  action: {
-    marginTop: spacing.xl,
-    alignSelf: "center",
-  },
-});

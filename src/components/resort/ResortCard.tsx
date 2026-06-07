@@ -99,7 +99,7 @@ export function ResortCard({
 
         {/* Location with refined separator */}
         <Text variant="caption" color={colors.ink.muted}>
-          {resort.country} · {resort.region}
+          {resort.region !== resort.country ? `${resort.country} · ${resort.region}` : resort.country}
         </Text>
 
         {/* Stats row - refined presentation */}

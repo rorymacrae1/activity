@@ -114,11 +114,11 @@ export function ResortSearchInput({
                 ]}
                 onPress={() => handleSelect(item)}
                 accessibilityRole="button"
-                accessibilityLabel={`${item.name}, ${item.region}, ${item.country}`}
+                accessibilityLabel={`${item.name}, ${item.region !== item.country ? `${item.region}, ` : ''}${item.country}`}
               >
                 <Text style={styles.resultName}>{item.name}</Text>
                 <Text style={styles.resultLocation}>
-                  {item.region}, {item.country}
+                  {item.region !== item.country ? `${item.region}, ${item.country}` : item.country}
                 </Text>
               </Pressable>
             )}

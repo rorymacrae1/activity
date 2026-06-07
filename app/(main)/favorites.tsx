@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, Platform } from "react-native";
+import { View, FlatList, Platform } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import { useFavoritesStore } from "@stores/favorites";
@@ -21,7 +21,7 @@ const EMPTY_ATTRIBUTE_SCORES: AttributeScores = {
   budget: 0,
   vibe: 0,
   activity: 0,
-  snow: 0,
+  season: 0,
 };
 
 export default function FavoritesScreen() {
@@ -95,9 +95,9 @@ export default function FavoritesScreen() {
           keyExtractor={(item) => item.id}
           numColumns={numColumns}
           key={numColumns}
-          columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
+          columnWrapperStyle={numColumns > 1 ? { gap: spacing.md } : undefined}
           ListHeaderComponent={
-            <View style={[styles.header, { paddingHorizontal: hPadding }]}>
+            <View className="pt-4" style={{ paddingHorizontal: hPadding }}>
               <SectionHeader
                 title={content.favorites.sectionTitle}
                 action={{
@@ -108,9 +108,7 @@ export default function FavoritesScreen() {
             </View>
           }
           renderItem={({ item }) => (
-            <View
-              style={numColumns > 1 ? styles.columnItem : styles.singleItem}
-            >
+            <View className={numColumns > 1 ? "flex-1" : "flex-1"}>
               <ResortCard
                 result={{
                   resort: item,
@@ -124,7 +122,7 @@ export default function FavoritesScreen() {
             </View>
           )}
           contentContainerStyle={[
-            styles.listContent,
+            { paddingBottom: spacing.lg, gap: spacing.md },
             { paddingHorizontal: hPadding },
           ]}
           showsVerticalScrollIndicator={Platform.OS !== "web"}
@@ -133,22 +131,3 @@ export default function FavoritesScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    paddingTop: spacing.lg,
-  },
-  listContent: {
-    paddingBottom: spacing.lg,
-    gap: spacing.md,
-  },
-  columnWrapper: {
-    gap: spacing.md,
-  },
-  columnItem: {
-    flex: 1,
-  },
-  singleItem: {
-    flex: 1,
-  },
-});

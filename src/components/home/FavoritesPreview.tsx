@@ -130,7 +130,7 @@ export function FavoritesPreview({
                 {resort.name}
               </Text>
               <Text style={styles.resortLocation} numberOfLines={1}>
-                {resort.region}, {resort.country}
+                {resort.region !== resort.country ? `${resort.region}, ${resort.country}` : resort.country}
               </Text>
             </View>
             <Icon

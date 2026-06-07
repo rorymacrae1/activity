@@ -1,0 +1,26 @@
+appId: dev.expo.activity
+---
+# Auth — Sign In flow
+# Verifies: landing → sign-in link → form fields visible → forgot password link
+
+- launchApp
+
+# Landing screen — use "Sign in" link at the bottom
+- assertVisible: "Find My Resort"
+- assertVisible: "Sign in"
+- tapOn: "Sign in"
+
+# Sign-in screen
+- assertVisible: "Sign in to PisteWise"
+- assertVisible: "Your preferences. Every device."
+- assertVisible: "Email"
+- assertVisible: "Password"
+- assertVisible: "Forgot password?"
+- assertVisible: "Sign In"
+
+# Verify sign-up link present
+- assertVisible: "Don't have an account?"
+- assertVisible: "Sign Up"
+
+# Verify skip option
+- assertVisible: "Continue without an account"

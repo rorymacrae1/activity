@@ -5,9 +5,9 @@ appId: dev.expo.activity
 
 - launchApp
 
-# Skip onboarding if we're on results already, otherwise complete it
-- assertVisible: "Let's Go"
-- tapOn: "Let's Go"
+# Complete onboarding — tap "Find My Resort" on the landing screen
+- assertVisible: "Find My Resort"
+- tapOn: "Find My Resort"
 - tapOn: "Couple"
 - tapOn: "Next"
 - tapOn: "Blue Cruiser"

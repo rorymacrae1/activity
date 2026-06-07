@@ -21,7 +21,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { View, Pressable, Platform } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -30,7 +30,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, spacing, radius, shadows } from "@theme";
+import { colors, spacing, shadows } from "@theme";
 import { Text } from "./Text";
 import { Icon, type IconName } from "./Icon";
 
@@ -159,30 +159,30 @@ function Toast({ config, onHide }: ToastProps) {
 
   return (
     <Animated.View
+      className="absolute left-md right-md z-[9999] items-center"
       style={[
-        styles.toastContainer,
         { top: insets.top + spacing.sm },
+        Platform.OS === "web" ? ({ position: "fixed" } as object) : undefined,
         animatedStyle,
       ]}
       pointerEvents="box-none"
     >
       <Pressable
-        style={[
-          styles.toast,
-          {
-            backgroundColor: colorScheme.bg,
-            borderLeftColor: colorScheme.border,
-          },
-        ]}
+        className="flex-row items-center rounded-lg border-l-4 w-full max-w-[400px]"
+        style={{
+          paddingVertical: spacing.sm,
+          paddingHorizontal: spacing.md,
+          backgroundColor: colorScheme.bg,
+          borderLeftColor: colorScheme.border,
+          ...shadows.lg,
+        }}
         onPress={hideWithAnimation}
         accessibilityRole="alert"
         accessibilityLiveRegion="polite"
       >
         <View
-          style={[
-            styles.iconContainer,
-            { backgroundColor: colorScheme.border },
-          ]}
+          className="w-6 h-6 rounded-full items-center justify-center mr-sm"
+          style={{ backgroundColor: colorScheme.border }}
         >
           <Icon
             name={TOAST_ICONS[config.type]}
@@ -191,19 +191,23 @@ function Toast({ config, onHide }: ToastProps) {
             strokeWidth={2.5}
           />
         </View>
-        <Text style={styles.message} numberOfLines={2}>
+        <Text
+          className="flex-1"
+          style={{ fontSize: 14, fontWeight: "500", color: colors.ink.rich }}
+          numberOfLines={2}
+        >
           {config.message}
         </Text>
         {config.action && (
           <Pressable
-            style={styles.actionButton}
+            className="ml-sm py-xs px-sm"
             onPress={() => {
               config.action?.onPress();
               hideWithAnimation();
             }}
             accessibilityRole="button"
           >
-            <Text style={[styles.actionText, { color: colorScheme.border }]}>
+            <Text style={{ fontSize: 14, fontWeight: "600", color: colorScheme.border }}>
               {config.action.label}
             </Text>
           </Pressable>
@@ -239,57 +243,3 @@ export function ToastProvider({ children }: ToastProviderProps) {
     </ToastContext.Provider>
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Styles
-// ─────────────────────────────────────────────────────────────────────────────
-
-const styles = StyleSheet.create({
-  toastContainer: {
-    position: "absolute",
-    left: spacing.md,
-    right: spacing.md,
-    zIndex: 9999,
-    alignItems: "center",
-    ...Platform.select({
-      web: {
-        position: "fixed" as unknown as "absolute",
-      },
-    }),
-  },
-  toast: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.lg,
-    borderLeftWidth: 4,
-    backgroundColor: colors.surface.primary,
-    maxWidth: 400,
-    width: "100%",
-    ...shadows.lg,
-  },
-  iconContainer: {
-    width: 24,
-    height: 24,
-    borderRadius: radius.full,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: spacing.sm,
-  },
-  message: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: "500",
-    color: colors.ink.rich,
-  },
-  actionButton: {
-    marginLeft: spacing.sm,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-  },
-  actionText: {
-    fontSize: 14,
-    fontWeight: "600",
-  },
-});

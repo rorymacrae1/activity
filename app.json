@@ -2,7 +2,7 @@
   "expo": {
     "name": "PeakWise",
     "slug": "piste-wise",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Find your perfect ski resort. Personalised recommendations based on your skill level, budget, and style.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

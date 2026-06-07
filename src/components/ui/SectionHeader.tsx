@@ -1,6 +1,6 @@
-import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { View, Pressable, Platform } from "react-native";
 import { Text } from "./Text";
-import { spacing, webStyles } from "@theme";
+import { webStyles } from "@theme";
 
 interface SectionHeaderProps {
   /** Section title */
@@ -35,10 +35,10 @@ export function SectionHeader({
   action,
 }: SectionHeaderProps) {
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
+    <View className="flex-row justify-between items-start py-3">
+      <View className="flex-1 gap-0.5">
         {eyebrow ? (
-          <Text variant="overline" color="muted" style={styles.eyebrow}>
+          <Text variant="overline" color="muted" className="mb-0.5">
             {eyebrow}
           </Text>
         ) : null}
@@ -46,7 +46,7 @@ export function SectionHeader({
           {title}
         </Text>
         {subtitle ? (
-          <Text variant="bodySmall" color="muted" style={styles.subtitle}>
+          <Text variant="bodySmall" color="muted" className="mt-1">
             {subtitle}
           </Text>
         ) : null}
@@ -57,10 +57,10 @@ export function SectionHeader({
           accessibilityRole="button"
           accessibilityLabel={action.label}
           style={({ pressed }) => [
-            styles.action,
-            pressed && styles.actionPressed,
+            pressed && { opacity: 0.7 },
             Platform.OS === "web" && webStyles.clickable,
           ]}
+          className="py-1 px-2 ml-3"
         >
           <Text variant="label" color="brand">
             {action.label}
@@ -70,30 +70,3 @@ export function SectionHeader({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    paddingVertical: spacing.md,
-  },
-  content: {
-    flex: 1,
-    gap: spacing["2xs"],
-  },
-  eyebrow: {
-    marginBottom: spacing["2xs"],
-  },
-  subtitle: {
-    marginTop: spacing.xs,
-  },
-  action: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    marginLeft: spacing.md,
-  },
-  actionPressed: {
-    opacity: 0.7,
-  },
-});

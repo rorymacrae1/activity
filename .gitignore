@@ -46,4 +46,8 @@ yarn-error.*
 /android
 .vercel
 .vscode/mcp.json
+.playwright-mcp/
 FigmaMCP.md
+
+# LLM wiki — separate project, not part of the app
+llm-wiki/

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, ScrollView, Pressable } from "react-native";
 import Head from "expo-router/head";
 import { router } from "expo-router";
 import ChevronRight from "lucide-react-native/dist/cjs/icons/chevron-right";
@@ -158,15 +158,21 @@ export default function ProfileScreen() {
       </Head>
       <ScrollView
         contentContainerStyle={[
-          styles.scrollContent,
+          { paddingBottom: spacing.xxxl },
           { paddingHorizontal: hPadding },
         ]}
       >
         {/* ── Profile Hero ── */}
-        <View style={styles.profileHero}>
-          <View style={styles.heroAvatarWrap}>
-            <View style={styles.heroAvatar}>
-              <Text style={styles.heroAvatarInitial}>
+        <View
+          className="flex-row items-center border-b"
+          style={{ gap: spacing.lg, paddingVertical: spacing.xl, borderBottomColor: colors.surface.divider }}
+        >
+          <View>
+            <View
+              className="items-center justify-center"
+              style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: colors.brand.primary }}
+            >
+              <Text style={{ ...typography.h1, color: colors.ink.inverse }}>
                 {(isAuthenticated
                   ? profile?.display_name || user?.email || "U"
                   : "?"
@@ -176,52 +182,42 @@ export default function ProfileScreen() {
               </Text>
             </View>
           </View>
-          <View style={styles.heroIdentity}>
+          <View className="flex-1" style={{ gap: spacing.xs }}>
             {isAuthenticated ? (
               <>
-                <Text style={styles.heroName} numberOfLines={1}>
+                <Text style={{ ...typography.h2, color: colors.ink.rich }} numberOfLines={1}>
                   {profile?.display_name || content.profile.myProfile}
                 </Text>
-                <Text style={styles.heroEmail} numberOfLines={1}>
+                <Text style={{ ...typography.bodySmall, color: colors.ink.muted }} numberOfLines={1}>
                   {user?.email}
                 </Text>
-                <View style={styles.heroStatRow}>
-                  <View style={styles.heroStatPill}>
-                    <Icon
-                      name="heart"
-                      size={14}
-                      color={colors.brand.accent}
-                      strokeWidth={2}
-                    />
-                    <Text style={styles.heroStatText}>
+                <View className="flex-row items-center" style={{ gap: spacing.sm, marginTop: spacing.xs }}>
+                  <View className="flex-row items-center" style={{ gap: 4 }}>
+                    <Icon name="heart" size={14} color={colors.brand.accent} strokeWidth={2} />
+                    <Text style={{ ...typography.bodySmall, color: colors.ink.rich, fontWeight: "600" as const }}>
                       {favoriteIds.length}
                     </Text>
-                    <Text style={styles.heroStatLabel}>Saved</Text>
+                    <Text style={{ ...typography.bodySmall, color: colors.ink.muted }}>Saved</Text>
                   </View>
-                  <View style={styles.heroStatDot} />
-                  <View style={styles.heroStatPill}>
-                    <Icon
-                      name="check"
-                      size={14}
-                      color={colors.sentiment.success}
-                      strokeWidth={2}
-                    />
-                    <Text style={styles.heroStatText}>{visitedIds.length}</Text>
-                    <Text style={styles.heroStatLabel}>Visited</Text>
+                  <View style={{ width: 3, height: 3, borderRadius: 2, backgroundColor: colors.ink.muted }} />
+                  <View className="flex-row items-center" style={{ gap: 4 }}>
+                    <Icon name="check" size={14} color={colors.sentiment.success} strokeWidth={2} />
+                    <Text style={{ ...typography.bodySmall, color: colors.ink.rich, fontWeight: "600" as const }}>
+                      {visitedIds.length}
+                    </Text>
+                    <Text style={{ ...typography.bodySmall, color: colors.ink.muted }}>Visited</Text>
                   </View>
                 </View>
               </>
             ) : (
               <>
-                <Text style={styles.heroName}>{content.profile.welcome}</Text>
-                <Text style={styles.heroEmail}>
-                  {content.profile.signInPrompt}
-                </Text>
+                <Text style={{ ...typography.h2, color: colors.ink.rich }}>{content.profile.welcome}</Text>
+                <Text style={{ ...typography.bodySmall, color: colors.ink.muted }}>{content.profile.signInPrompt}</Text>
                 <Button
                   label="Sign In"
                   onPress={() => router.push("/(auth)/sign-in")}
                   size="compact"
-                  style={styles.heroSignIn}
+                  style={{ marginTop: spacing.sm, alignSelf: "flex-start" as const }}
                 />
               </>
             )}
@@ -230,106 +226,66 @@ export default function ProfileScreen() {
 
         {/* ── Account (authenticated only) ── */}
         {isAuthenticated && (
-          <View style={styles.section}>
+          <View
+            className="border-b"
+            style={{ paddingVertical: spacing.md, borderBottomColor: colors.surface.divider }}
+          >
             <SectionHeader title="Account" />
-            <Card elevation="subtle" style={styles.sectionCard}>
-              <View style={styles.accountActions}>
-                <Button
-                  label={content.profile.syncNow}
-                  variant="secondary"
-                  onPress={handleSyncNow}
-                  size="compact"
-                />
-                <Button
-                  label={content.profile.signOut}
-                  variant="secondary"
-                  onPress={handleSignOut}
-                  size="compact"
-                />
+            <Card elevation="subtle" style={{ marginTop: spacing.xs }}>
+              <View className="flex-row justify-end" style={{ gap: spacing.sm, paddingVertical: spacing.xs }}>
+                <Button label={content.profile.syncNow} variant="secondary" onPress={handleSyncNow} size="compact" />
+                <Button label={content.profile.signOut} variant="secondary" onPress={handleSignOut} size="compact" />
               </View>
             </Card>
           </View>
         )}
 
         {/* ── Preferences ── */}
-        <View style={styles.section}>
+        <View
+          className="border-b"
+          style={{ paddingVertical: spacing.md, borderBottomColor: colors.surface.divider }}
+        >
           <SectionHeader
             title={content.profile.preferencesSection}
             action={{ label: "Edit", onPress: handleRetakeQuiz }}
           />
           {!hasCompletedSetup ? (
-            <View style={styles.warningBanner}>
+            <View
+              style={{
+                backgroundColor: colors.sentiment.warningSubtle,
+                padding: spacing.md,
+                borderRadius: radius.sm,
+                marginBottom: spacing.md,
+              }}
+            >
               <Text variant="bodySmall" color={colors.sentiment.warning}>
                 {content.profile.incompleteWarning}
               </Text>
             </View>
           ) : null}
-          <Card elevation="subtle" style={styles.sectionCard}>
-            <PrefRow
-              label={content.profile.skillLevel}
-              value={
-                validAbilities.length > 0
-                  ? validAbilities
-                      .map((s) => SKILL_LABELS[s] ?? capitalize(s))
-                      .join(", ")
-                  : content.profile.notSet
-              }
-              onPress={handleRetakeQuiz}
-            />
-            <View style={styles.divider} />
-            <PrefRow
-              label={content.profile.budget}
-              value={
-                budgetLevel
-                  ? capitalize(budgetLevel) + " " + content.profile.tier
-                  : content.profile.notSet
-              }
-              onPress={handleRetakeQuiz}
-            />
-            <View style={styles.divider} />
-            <PrefRow
-              label={content.profile.regions}
-              value={
-                regions.length === 0
-                  ? content.profile.notSet
-                  : regions.length >= 30
-                    ? content.profile.allRegions
-                    : content.profile.regionsCount.replace(
-                        "{count}",
-                        String(regions.length),
-                      )
-              }
-              onPress={handleRetakeQuiz}
-            />
-            <View style={styles.divider} />
-            <PrefRow
-              label={content.profile.visitedResorts}
-              value={
-                visitedIds.length === 0
-                  ? content.profile.notSet
-                  : `${visitedIds.length} resort${visitedIds.length === 1 ? "" : "s"}`
-              }
-            />
+          <Card elevation="subtle" style={{ marginTop: spacing.xs }}>
+            <PrefRow label={content.profile.skillLevel} value={validAbilities.length > 0 ? validAbilities.map((s) => SKILL_LABELS[s] ?? capitalize(s)).join(", ") : content.profile.notSet} onPress={handleRetakeQuiz} />
+            <View style={{ height: 1, backgroundColor: colors.surface.divider, marginVertical: spacing.xs }} />
+            <PrefRow label={content.profile.budget} value={budgetLevel ? capitalize(budgetLevel) + " " + content.profile.tier : content.profile.notSet} onPress={handleRetakeQuiz} />
+            <View style={{ height: 1, backgroundColor: colors.surface.divider, marginVertical: spacing.xs }} />
+            <PrefRow label={content.profile.regions} value={regions.length === 0 ? content.profile.notSet : regions.length >= 30 ? content.profile.allRegions : content.profile.regionsCount.replace("{count}", String(regions.length))} onPress={handleRetakeQuiz} />
+            <View style={{ height: 1, backgroundColor: colors.surface.divider, marginVertical: spacing.xs }} />
+            <PrefRow label={content.profile.visitedResorts} value={visitedIds.length === 0 ? content.profile.notSet : `${visitedIds.length} resort${visitedIds.length === 1 ? "" : "s"}`} />
           </Card>
         </View>
 
         {/* ── Actions ── */}
-        <View style={styles.section}>
+        <View
+          className="border-b"
+          style={{ paddingVertical: spacing.md, borderBottomColor: colors.surface.divider }}
+        >
           <SectionHeader title={content.profile.actionsSection} />
-          <Card elevation="subtle" padding="compact" style={styles.sectionCard}>
-            <View style={styles.actions}>
-              <Button
-                label={content.profile.retakeQuiz}
-                variant="secondary"
-                onPress={handleRetakeQuiz}
-                fullWidth
-              />
+          <Card elevation="subtle" padding="compact" style={{ marginTop: spacing.xs }}>
+            <View style={{ gap: spacing.sm }}>
+              <Button label={content.profile.retakeQuiz} variant="secondary" onPress={handleRetakeQuiz} fullWidth />
               {favoriteIds.length > 0 && (
                 <Button
-                  label={content.profile.clearSaved.replace(
-                    "{count}",
-                    String(favoriteIds.length),
-                  )}
+                  label={content.profile.clearSaved.replace("{count}", String(favoriteIds.length))}
                   variant="danger"
                   onPress={handleClearFavorites}
                   fullWidth
@@ -340,34 +296,37 @@ export default function ProfileScreen() {
         </View>
 
         {/* ── Language ── */}
-        <View style={styles.section}>
+        <View
+          className="border-b"
+          style={{ paddingVertical: spacing.md, borderBottomColor: colors.surface.divider }}
+        >
           <SectionHeader title={content.profile.languageSection} />
-          <View style={styles.langRow}>
+          <View className="flex-row" style={{ gap: spacing.sm }}>
             {(["en", "fr", "de"] as const).map((lang) => {
               const langLabel =
-                lang === "en"
-                  ? content.languages.en
-                  : lang === "fr"
-                    ? content.languages.fr
-                    : content.languages.de;
+                lang === "en" ? content.languages.en : lang === "fr" ? content.languages.fr : content.languages.de;
+              const isActive = language === lang;
               return (
                 <Pressable
                   key={lang}
                   style={[
-                    styles.langBtn,
-                    language === lang && styles.langBtnActive,
+                    {
+                      flex: 1,
+                      paddingVertical: spacing.sm,
+                      paddingHorizontal: spacing.md,
+                      borderRadius: radius.md,
+                      borderWidth: 1,
+                      borderColor: isActive ? colors.brand.primary : colors.border.default,
+                      alignItems: "center" as const,
+                      backgroundColor: isActive ? colors.brand.primary : undefined,
+                    },
                   ]}
                   onPress={() => setLanguage(lang)}
                   accessibilityRole="button"
                   accessibilityLabel={langLabel}
-                  accessibilityState={{ selected: language === lang }}
+                  accessibilityState={{ selected: isActive }}
                 >
-                  <Text
-                    variant="bodySmall"
-                    style={
-                      language === lang ? styles.langTextActive : undefined
-                    }
-                  >
+                  <Text variant="bodySmall" style={isActive ? { color: colors.ink.onBrand } : undefined}>
                     {langLabel}
                   </Text>
                 </Pressable>
@@ -377,7 +336,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* ── About ── */}
-        <View style={styles.section}>
+        <View style={{ paddingVertical: spacing.md }}>
           <SectionHeader title={content.profile.aboutSection} />
           <Text variant="bodySmall" color={colors.ink.normal}>
             {content.profile.aboutText}
@@ -399,14 +358,15 @@ function PrefRow({
 }) {
   return (
     <Pressable
-      style={styles.prefRow}
+      className="flex-row justify-between items-center"
+      style={{ paddingVertical: spacing.sm }}
       onPress={onPress}
       disabled={!onPress}
       accessibilityRole={onPress ? "button" : "text"}
       accessibilityLabel={`${label}: ${value}`}
     >
       <Text variant="body">{label}</Text>
-      <View style={styles.prefRowRight}>
+      <View className="flex-row items-center" style={{ gap: spacing.xs }}>
         <Text variant="body" color={colors.ink.normal}>
           {value}
         </Text>
@@ -417,132 +377,3 @@ function PrefRow({
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollContent: { paddingBottom: spacing.xxxl },
-
-  // ── Profile Hero ──
-  profileHero: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.lg,
-    paddingVertical: spacing.xl,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.surface.divider,
-  },
-  heroAvatarWrap: {},
-  heroAvatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.brand.primary,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  heroAvatarInitial: {
-    ...typography.h1,
-    color: colors.ink.inverse,
-  },
-  heroIdentity: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  heroName: {
-    ...typography.h2,
-    color: colors.ink.rich,
-  },
-  heroEmail: {
-    ...typography.bodySmall,
-    color: colors.ink.muted,
-  },
-  heroStatRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  heroStatPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  heroStatText: {
-    ...typography.bodySmall,
-    color: colors.ink.rich,
-    fontWeight: "600" as const,
-  },
-  heroStatLabel: {
-    ...typography.bodySmall,
-    color: colors.ink.muted,
-  },
-  heroStatDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: colors.ink.muted,
-  },
-  heroSignIn: {
-    marginTop: spacing.sm,
-    alignSelf: "flex-start" as const,
-  },
-
-  // ── Sections ──
-  section: {
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.surface.divider,
-  },
-  sectionCard: { marginTop: spacing.xs },
-  warningBanner: {
-    backgroundColor: colors.sentiment.warningSubtle,
-    padding: spacing.md,
-    borderRadius: radius.sm,
-    marginBottom: spacing.md,
-  },
-
-  // ── Pref rows ──
-  prefRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: spacing.sm,
-  },
-  prefRowRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.surface.divider,
-    marginVertical: spacing.xs,
-  },
-
-  // ── Account actions ──
-  accountActions: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    justifyContent: "flex-end",
-    paddingVertical: spacing.xs,
-  },
-
-  // ── Actions ──
-  actions: { gap: spacing.sm },
-
-  // ── Language ──
-  langRow: { flexDirection: "row", gap: spacing.sm },
-  langBtn: {
-    flex: 1,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-    alignItems: "center",
-  },
-  langBtnActive: {
-    backgroundColor: colors.brand.primary,
-    borderColor: colors.brand.primary,
-  },
-  langTextActive: { color: colors.ink.onBrand },
-});

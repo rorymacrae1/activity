@@ -1,0 +1,22 @@
+appId: dev.expo.activity
+---
+# Auth — Create Account flow
+# Verifies: landing → Create Account screen → form fields visible
+
+- launchApp
+
+# Landing screen — tap "Create Account"
+- assertVisible: "Find My Resort"
+- assertVisible: "Create Account"
+- tapOn: "Create Account"
+
+# Sign-up screen
+- assertVisible: "One account. All your resorts."
+- assertVisible: "Email"
+- assertVisible: "Password"
+- assertVisible: "Confirm Password"
+- assertVisible: "Create Account"
+
+# Verify sign-in link present at bottom
+- assertVisible: "Already have an account?"
+- assertVisible: "Sign In"

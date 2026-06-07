@@ -40,7 +40,7 @@ const DIMENSIONS: {
   icon: IconName;
 }[] = [
   { key: "skill", label: "Skill", icon: "gauge" },
-  { key: "snow", label: "Snow", icon: "snowflake" },
+  { key: "season", label: "Season", icon: "snowflake" },
   { key: "budget", label: "Budget", icon: "banknote" },
   { key: "activity", label: "Activity", icon: "activity" },
   { key: "vibe", label: "Vibe", icon: "sparkles" },

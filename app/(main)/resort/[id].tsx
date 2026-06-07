@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import Head from "expo-router/head";
-import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { View, Pressable, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, {
   useSharedValue,
@@ -44,6 +44,8 @@ import {
   ReviewsSection,
   AccommodationSection,
   TransportSection,
+  LiveConditionsSection,
+  ResortGuidesSection,
 } from "@components/resort/PlaceholderSections";
 import { MatchBreakdownSection } from "@components/resort/MatchBreakdownSection";
 import { SimilarResortsCarousel } from "@components/resort/SimilarResortsCarousel";
@@ -85,7 +87,7 @@ export default function ResortDetailScreen() {
   const tripType = usePreferencesStore((s) => s.tripType);
   const crowdPreference = usePreferencesStore((s) => s.crowdPreference);
   const familyVsNightlife = usePreferencesStore((s) => s.familyVsNightlife);
-  const snowImportance = usePreferencesStore((s) => s.snowImportance);
+  const preferredMonths = usePreferencesStore((s) => s.preferredMonths);
 
   const abilities =
     groupAbilities.length > 0 ? groupAbilities : ([DEFAULT_ABILITY] as const);
@@ -97,8 +99,9 @@ export default function ResortDetailScreen() {
     budgetLevel: BUDGET_LEVEL_MAP[budgetLevel ?? "mid"] ?? 0.33,
     quietLively: (crowdPreference - 1) / 4,
     familyNightlife: (familyVsNightlife - 1) / 4,
-    snowImportance: (snowImportance - 1) / 4,
+    preferredMonths,
     regions,
+    featurePreferences: [],
   };
 
   // Animation hooks — must be unconditional (Rules of Hooks)
@@ -279,6 +282,7 @@ export default function ResortDetailScreen() {
 
       {/* Fixed Navigation Bar */}
       <View style={styles.navBar}>
+        <View style={[styles.navInner, isDesktop && styles.navInnerDesktop]}>
         <Pressable
           style={styles.navButton}
           onPress={() => router.back()}
@@ -335,6 +339,7 @@ export default function ResortDetailScreen() {
             </Animated.View>
           </Pressable>
         </View>
+        </View>
       </View>
 
       <Animated.ScrollView
@@ -379,7 +384,7 @@ export default function ResortDetailScreen() {
         </View>
 
         {/* Content */}
-        <View style={[styles.centeredContent, isTablet && styles.tabletCenter]}>
+        <View style={[styles.centeredContent, isTablet && !isDesktop && styles.tabletCenter, isDesktop && styles.desktopCenter]}>
           {isDesktop ? (
             /* Desktop 2-col: left info, right match breakdown */
             <View style={styles.desktopRow}>
@@ -418,6 +423,8 @@ export default function ResortDetailScreen() {
                     </Text>
                   ) : null}
                   <ReviewsSection resort={resort} />
+                  <ResortGuidesSection resort={resort} />
+                  <LiveConditionsSection resort={resort} />
                   <AccommodationSection resort={resort} />
                   <TransportSection resort={resort} />
                   <LocationMapSection resort={resort} />
@@ -480,6 +487,8 @@ export default function ResortDetailScreen() {
                   prefs={normalizedPrefs}
                 />
                 <ReviewsSection resort={resort} />
+                <ResortGuidesSection resort={resort} />
+                <LiveConditionsSection resort={resort} />
                 <AccommodationSection resort={resort} />
                 <TransportSection resort={resort} />
                 <LocationMapSection resort={resort} />
@@ -513,15 +522,12 @@ export default function ResortDetailScreen() {
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.canvas.default,
-  },
+const styles = {
+  container: { flex: 1, backgroundColor: colors.canvas.default } as const,
   navBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "space-between" as const,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     backgroundColor: colors.canvas.default,
@@ -533,121 +539,42 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: radius.full,
     backgroundColor: colors.surface.secondary,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
-  navActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  navTitle: {
-    flex: 1,
-    textAlign: "center",
-    ...typography.h4,
-    color: colors.ink.rich,
-    marginHorizontal: spacing.sm,
-  },
-  tabletCenter: {
-    maxWidth: 680,
-    alignSelf: "center" as const,
-    width: "100%",
-  },
-  desktopRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-  },
-  desktopLeft: {
-    flex: 3,
-    minWidth: 0,
-  },
-  desktopRight: {
-    flex: 2,
-    paddingTop: spacing.lg,
-    borderLeftWidth: 1,
-    borderLeftColor: colors.border.subtle,
-    minWidth: 0,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  heroContainer: {
-    position: "relative",
-  },
-  heroImage: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: colors.canvas.subtle,
-  },
-  heroGradient: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 220,
-  },
-  heroOverlay: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: spacing.lg,
-    paddingBottom: spacing.xl,
-  },
-  heroName: {
-    ...typography.h1,
-    color: colors.ink.inverse,
-    marginBottom: spacing.xxs,
-  },
-  heroLocation: {
-    ...typography.body,
-    color: colors.onDark.text.secondary,
-    marginBottom: spacing.sm,
-  },
-  heroStats: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  heroStat: {
-    ...typography.bodySmallMedium,
-    color: colors.ink.inverse,
-  },
-  heroStatDot: {
-    ...typography.bodySmall,
-    color: colors.onDark.text.muted,
-  },
-  centeredContent: {
-    flex: 1,
-  },
-  content: {
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.lg,
-  },
-  highlights: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.xs,
-    marginBottom: spacing.lg,
-  },
+  navActions: { flexDirection: "row" as const, alignItems: "center" as const, gap: spacing.xs } as const,
+  navTitle: { flex: 1, textAlign: "center" as const, ...typography.h4, color: colors.ink.rich, marginHorizontal: spacing.sm } as const,
+  navInner: { flex: 1, flexDirection: "row" as const, alignItems: "center" as const, justifyContent: "space-between" as const } as const,
+  navInnerDesktop: { maxWidth: 1200, alignSelf: "center" as const, width: "100%" } as const,
+  tabletCenter: { maxWidth: 720, alignSelf: "center" as const, width: "100%" } as const,
+  desktopCenter: { maxWidth: 1200, alignSelf: "center" as const, width: "100%" } as const,
+  desktopRow: { flexDirection: "row" as const, alignItems: "flex-start" as const } as const,
+  desktopLeft: { flex: 3, minWidth: 0 } as const,
+  desktopRight: { flex: 2, paddingTop: spacing.lg, borderLeftWidth: 1, borderLeftColor: colors.border.subtle, minWidth: 0 } as const,
+  scrollView: { flex: 1 } as const,
+  heroContainer: { position: "relative" as const } as const,
+  heroImage: { width: "100%", height: "100%", backgroundColor: colors.canvas.subtle } as const,
+  heroGradient: { position: "absolute" as const, bottom: 0, left: 0, right: 0, height: 220 } as const,
+  heroOverlay: { position: "absolute" as const, bottom: 0, left: 0, right: 0, padding: spacing.lg, paddingBottom: spacing.xl } as const,
+  heroName: { ...typography.h1, color: colors.ink.inverse, marginBottom: spacing.xxs } as const,
+  heroLocation: { ...typography.body, color: colors.onDark.text.secondary, marginBottom: spacing.sm } as const,
+  heroStats: { flexDirection: "row" as const, alignItems: "center" as const } as const,
+  heroStat: { ...typography.bodySmallMedium, color: colors.ink.inverse } as const,
+  heroStatDot: { ...typography.bodySmall, color: colors.onDark.text.muted } as const,
+  centeredContent: { flex: 1 } as const,
+  content: { paddingTop: spacing.lg, paddingBottom: spacing.lg } as const,
+  highlights: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: spacing.xs, marginBottom: spacing.lg } as const,
   highlightChip: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
     gap: spacing.xs,
     backgroundColor: colors.sentiment.successSubtle,
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
     borderRadius: radius.sm,
   },
-  highlightText: {
-    fontWeight: "600" as const,
-  },
-  descriptionText: {
-    marginBottom: spacing.lg,
-  },
-  mapButton: {
-    marginTop: spacing.md,
-  },
-  bottomSpacer: {
-    height: spacing.xxxl,
-  },
-});
+  highlightText: { fontWeight: "600" as const } as const,
+  descriptionText: { marginBottom: spacing.lg } as const,
+  mapButton: { marginTop: spacing.md } as const,
+  bottomSpacer: { height: spacing.xxxl } as const,
+};

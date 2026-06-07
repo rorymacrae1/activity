@@ -8,7 +8,7 @@ export interface AttributeScores {
   budget: number;
   vibe: number;
   activity: number;
-  snow: number;
+  season: number;
 }
 
 /**

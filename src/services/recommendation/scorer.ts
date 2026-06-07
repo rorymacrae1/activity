@@ -1,5 +1,5 @@
 import type { Resort } from "@/types/resort";
-import type { NormalizedPreferences } from "@/types/preferences";
+import type { NormalizedPreferences, FeatureKey } from "@/types/preferences";
 import type { AttributeScores } from "@/types/recommendation";
 
 /**
@@ -121,11 +121,74 @@ function calculateActivityScore(
 }
 
 /**
- * Calculate snow reliability score (0-100).
+ * Calculate season overlap score (0-100).
+ * Scores how many of the user's preferred months fall within the resort's open season.
  */
-function calculateSnowScore(resort: Resort): number {
-  // snowReliability is 1-5, scale to 0-100
-  return resort.attributes.snowReliability * 20;
+function calculateSeasonScore(
+  resort: Resort,
+  preferredMonths: number[],
+): number {
+  if (preferredMonths.length === 0) return 100; // No preference = everything matches
+
+  const startDate = new Date(resort.season.start);
+  const endDate = new Date(resort.season.end);
+
+  // Build a set of months the resort is open (handles cross-year seasons e.g. Nov-Apr)
+  const openMonths = new Set<number>();
+  const cursor = new Date(startDate);
+  while (cursor <= endDate) {
+    openMonths.add(cursor.getMonth() + 1); // 1-12
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+
+  const overlap = preferredMonths.filter((m) => openMonths.has(m)).length;
+  return Math.round((overlap / preferredMonths.length) * 100);
+}
+
+/**
+ * Check whether a resort satisfies a single feature preference key.
+ */
+function resortHasFeature(resort: Resort, feature: FeatureKey): boolean {
+  switch (feature) {
+    case "ski_in_out":
+      return resort.attributes.hasSkiInOut === true;
+    case "catered":
+      return resort.attributes.hasCatered === true;
+    case "snow_park":
+      return resort.stats.snowParks > 0;
+    case "train_accessible":
+      return resort.attributes.trainAccessible === true;
+    case "high_altitude":
+      return resort.location.peakAltitude >= 2500;
+    case "off_piste":
+      return Boolean(resort.content.offPisteSummary);
+    case "family_friendly":
+      return resort.attributes.familyScore >= 4;
+    case "lively_apres":
+      return (
+        resort.attributes.nightlifeScore >= 4 || resort.attributes.barCount >= 15
+      );
+    case "quiet_resort":
+      return resort.attributes.crowdLevel <= 2;
+    case "glacier":
+      return resort.location.peakAltitude >= 3000;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Calculate a soft bonus score based on how many selected must-have features the resort satisfies.
+ * Returns 0 when no features are selected.
+ * Maximum bonus is 15 points (added on top of the 0–100 weighted score).
+ */
+export function calculateFeatureBonus(
+  resort: Resort,
+  features: FeatureKey[],
+): number {
+  if (!features.length) return 0;
+  const matchCount = features.filter((f) => resortHasFeature(resort, f)).length;
+  return Math.round((matchCount / features.length) * 15);
 }
 
 /**
@@ -140,40 +203,39 @@ export function calculateScores(
     budget: calculateBudgetScore(resort, prefs.budgetLevel),
     vibe: calculateVibeScore(resort, prefs.quietLively),
     activity: calculateActivityScore(resort, prefs.familyNightlife),
-    snow: calculateSnowScore(resort),
+    season: calculateSeasonScore(resort, prefs.preferredMonths),
   };
 }
 
 /**
- * Compute weighted final match score from attribute scores.
- * Snow weight scales with user's stated snow importance (0–1).
- * All weights are renormalized to sum to 1.
+ * Compute weighted final match score from attribute scores + optional feature bonus.
+ * Base weights sum to 1 (0–100). Feature bonus adds up to +15 for exact matches.
  */
 export function computeWeightedScore(
   scores: AttributeScores,
   prefs: NormalizedPreferences,
+  resort?: Resort,
 ): number {
   const weights = {
     skill: 0.3,
     budget: 0.25,
     vibe: 0.15,
     activity: 0.15,
-    snow: 0.15,
+    season: 0.15,
   };
 
-  // Scale snow weight by user preference importance
-  weights.snow *= 0.5 + prefs.snowImportance * 0.5;
-
-  const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
-  (Object.keys(weights) as (keyof typeof weights)[]).forEach((k) => {
-    weights[k] /= totalWeight;
-  });
-
-  return Math.round(
+  const base = Math.round(
     scores.skill * weights.skill +
       scores.budget * weights.budget +
       scores.vibe * weights.vibe +
       scores.activity * weights.activity +
-      scores.snow * weights.snow,
+      scores.season * weights.season,
   );
+
+  const bonus =
+    resort && prefs.featurePreferences?.length
+      ? calculateFeatureBonus(resort, prefs.featurePreferences)
+      : 0;
+
+  return Math.min(100, base + bonus);
 }

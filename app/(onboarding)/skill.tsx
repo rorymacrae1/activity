@@ -1,9 +1,10 @@
-import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { View, Platform, Pressable } from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
+import { useQuizGuard } from "@hooks/useQuizGuard";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -74,11 +75,11 @@ function OptionCard({
 
   return (
     <Pressable
-      style={[
-        styles.option,
-        isTablet && styles.optionTablet,
-        active && styles.optionActive,
-      ]}
+      className={[
+        "bg-surface-primary rounded-lg border-2 p-sm items-center justify-center relative",
+        active ? "border-brand-primary bg-brand-primary-subtle" : "border-border-subtle",
+        isTablet ? "flex-1 p-md" : "",
+      ].join(" ")}
       onPress={handlePress}
       accessibilityRole="checkbox"
       accessibilityState={{ checked: active }}
@@ -100,7 +101,7 @@ function OptionCard({
         {description}
       </Text>
       {active && (
-        <View style={styles.checkmark}>
+        <View className="absolute top-xs right-xs w-6 h-6 rounded-full bg-brand-primary items-center justify-center">
           <Text style={styles.checkmarkText}>✓</Text>
         </View>
       )}
@@ -109,9 +110,12 @@ function OptionCard({
 }
 
 export default function SkillScreen() {
+  const isRedirecting = useQuizGuard();
   const { groupAbilities, setGroupAbilities } = usePreferencesStore();
   const { isTablet, hPadding } = useLayout();
   const content = useContent();
+
+  if (isRedirecting) return null;
 
   const OPTIONS = SKILL_LEVELS;
 
@@ -148,11 +152,12 @@ export default function SkillScreen() {
     >
       <AnimatedQuizContent animation="parallax">
         <View
-          style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
+          className="flex-1"
+          style={!isTablet ? { paddingHorizontal: hPadding } : undefined}
         >
           <ProgressIndicator current={2} total={5} showLabel />
 
-          <View style={styles.header}>
+          <View className="mb-md gap-xs">
             <Text variant="h2">{content.onboarding.skill.title}</Text>
             <Text variant="body" color={colors.ink.normal}>
               {content.onboarding.skill.subtitle}
@@ -160,7 +165,7 @@ export default function SkillScreen() {
           </View>
 
           <View
-            style={[styles.optionsGrid, isTablet && styles.optionsGridTablet]}
+            className={isTablet ? "flex-1 flex-row flex-wrap gap-md justify-center" : "flex-1 gap-xs"}
           >
             {OPTIONS.map((level, index) => {
               const optContent = content.onboarding.skill.options[level];
@@ -190,72 +195,41 @@ export default function SkillScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  inner: { flex: 1 },
-  header: { marginBottom: spacing.md, gap: spacing.xs },
-  optionsGrid: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  optionsGridTablet: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.md,
-    justifyContent: "center",
-  },
-  gridCell: {
-    flexGrow: 1,
-  },
-  gridCellTablet: {
-    width: "48%",
-    minWidth: 140,
-  },
+const styles = {
+  inner: { flex: 1 } as const,
+  header: { marginBottom: spacing.md, gap: spacing.xs } as const,
+  optionsGrid: { flex: 1, gap: spacing.xs } as const,
+  optionsGridTablet: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: spacing.md, justifyContent: "center" as const } as const,
+  gridCell: { flexGrow: 1 } as const,
+  gridCellTablet: { width: "48%", minWidth: 140 } as const,
   option: {
     backgroundColor: colors.surface.primary,
     padding: spacing.sm,
     borderRadius: radius.lg,
     borderWidth: 2,
     borderColor: colors.border.subtle,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    position: "relative" as const,
   },
-  optionTablet: {
-    flex: 1,
-    padding: spacing.md,
-  },
-  optionActive: {
-    borderColor: colors.brand.primary,
-    backgroundColor: colors.brand.primarySubtle,
-  },
-  pisteMarker: {
-    marginBottom: spacing.xs,
-  },
-  optionTitle: {
-    textAlign: "center",
-    marginBottom: spacing.xxs,
-  },
-  optionDesc: {
-    textAlign: "center",
-    lineHeight: 18,
-  },
+  optionTablet: { flex: 1, padding: spacing.md } as const,
+  optionActive: { borderColor: colors.brand.primary, backgroundColor: colors.brand.primarySubtle } as const,
+  pisteMarker: { marginBottom: spacing.xs } as const,
+  optionTitle: { textAlign: "center" as const, marginBottom: spacing.xxs } as const,
+  optionDesc: { textAlign: "center" as const, lineHeight: 18 } as const,
   checkmark: {
-    position: "absolute",
+    position: "absolute" as const,
     top: spacing.xs,
     right: spacing.xs,
     width: 24,
     height: 24,
     borderRadius: 12,
     backgroundColor: colors.brand.primary,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
-  checkmarkText: {
-    color: colors.ink.onBrand,
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  footer: { flexDirection: "row", gap: spacing.sm },
-  backBtn: { flex: 1 },
-  nextBtn: { flex: 2 },
-});
+  checkmarkText: { color: colors.ink.onBrand, fontSize: 14, fontWeight: "700" as const } as const,
+  footer: { flexDirection: "row" as const, gap: spacing.sm } as const,
+  backBtn: { flex: 1 } as const,
+  nextBtn: { flex: 2 } as const,
+};

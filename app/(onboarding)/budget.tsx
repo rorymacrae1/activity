@@ -1,9 +1,10 @@
-import { View, StyleSheet, Pressable, Platform } from "react-native";
+import { View, Platform, Pressable } from "react-native";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
+import { useQuizGuard } from "@hooks/useQuizGuard";
 import { colors, spacing, radius } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -45,19 +46,19 @@ function OptionCard({
 
   return (
     <Pressable
-      style={[
-        styles.option,
-        active && styles.optionActive,
-        isTablet && styles.optionTablet,
-      ]}
+      className={[
+        "bg-surface-primary rounded-lg border-2 gap-2xs relative overflow-hidden p-sm",
+        active ? "border-brand-primary bg-brand-primary-subtle" : "border-border-subtle",
+        isTablet ? "flex-1 p-md" : "",
+      ].join(" ")}
       onPress={handlePress}
       accessibilityRole="radio"
       accessibilityState={{ selected: active }}
       accessibilityLabel={`${opt.title}, ${opt.range}. ${opt.description}`}
     >
       {/* Header row: Title + Price */}
-      <View style={styles.optionHeader}>
-        <View style={styles.optionTitleRow}>
+      <View className="gap-2xs">
+        <View className="flex-row items-center justify-between">
           <Text
             variant="bodyMedium"
             color={active ? colors.brand.primary : colors.ink.rich}
@@ -66,7 +67,7 @@ function OptionCard({
             {opt.title}
           </Text>
           {active && (
-            <View style={styles.checkmark}>
+            <View className="w-6 h-6 rounded-full bg-brand-primary items-center justify-center">
               <Text variant="caption" color={colors.ink.onBrand}>
                 ✓
               </Text>
@@ -94,9 +95,12 @@ function OptionCard({
 }
 
 export default function BudgetScreen() {
+  const isRedirecting = useQuizGuard();
   const { budgetLevel, setBudgetLevel } = usePreferencesStore();
   const { isTablet, hPadding } = useLayout();
   const content = useContent();
+
+  if (isRedirecting) return null;
 
   const OPTIONS: BudgetOption[] = [
     {
@@ -147,20 +151,23 @@ export default function BudgetScreen() {
     >
       <AnimatedQuizContent animation="parallax">
         <View
-          style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
+          className="flex-1"
+          style={!isTablet ? { paddingHorizontal: hPadding } : undefined}
         >
           <ProgressIndicator current={3} total={5} showLabel />
 
           {/* Header */}
-          <View style={styles.header}>
+          <View className="mb-md gap-xs">
             <Text variant="h2">{content.onboarding.budget.title}</Text>
             <Text variant="bodySmall" color={colors.ink.normal}>
               {content.onboarding.budget.subtitle}
             </Text>
           </View>
 
-          {/* Scrollable options area for mobile */}
-          <View style={[styles.grid, isTablet && styles.gridTablet]}>
+          {/* Options grid */}
+          <View
+            className={isTablet ? "flex-1 flex-row flex-wrap gap-md" : "flex-1 gap-xs"}
+          >
             {OPTIONS.map((opt, index) => (
               <StaggeredItem
                 key={opt.level}
@@ -188,30 +195,13 @@ export default function BudgetScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  inner: {
-    flex: 1,
-  },
-  header: {
-    marginBottom: spacing.md,
-    gap: spacing.xs,
-  },
-  grid: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  gridTablet: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.md,
-  },
-  gridCell: {
-    flexGrow: 1,
-  },
-  gridCellTablet: {
-    width: "48%",
-    minWidth: 140,
-  },
+const styles = {
+  inner: { flex: 1 } as const,
+  header: { marginBottom: spacing.md, gap: spacing.xs } as const,
+  grid: { flex: 1, gap: spacing.xs } as const,
+  gridTablet: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: spacing.md } as const,
+  gridCell: { flexGrow: 1 } as const,
+  gridCellTablet: { width: "48%", minWidth: 140 } as const,
   option: {
     backgroundColor: colors.surface.primary,
     padding: spacing.sm,
@@ -219,52 +209,25 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.border.subtle,
     gap: spacing.xxs,
-    position: "relative",
-    overflow: "hidden",
+    position: "relative" as const,
+    overflow: "hidden" as const,
   },
-  optionTablet: {
-    flex: 1,
-    padding: spacing.md,
-  },
-  optionActive: {
-    borderColor: colors.brand.primary,
-    backgroundColor: colors.brand.primarySubtle,
-  },
-  optionHeader: {
-    gap: spacing.xxs,
-  },
-  optionTitleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  optionTitle: {
-    flex: 1,
-  },
-  optionDesc: {
-    marginTop: spacing.xxs,
-  },
+  optionTablet: { flex: 1, padding: spacing.md } as const,
+  optionActive: { borderColor: colors.brand.primary, backgroundColor: colors.brand.primarySubtle } as const,
+  optionHeader: { gap: spacing.xxs } as const,
+  optionTitleRow: { flexDirection: "row" as const, alignItems: "center" as const, justifyContent: "space-between" as const } as const,
+  optionTitle: { flex: 1 } as const,
+  optionDesc: { marginTop: spacing.xxs } as const,
   checkmark: {
     width: 24,
     height: 24,
     borderRadius: 12,
     backgroundColor: colors.brand.primary,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
   },
-  hint: {
-    textAlign: "center",
-    marginTop: spacing.md,
-    paddingBottom: spacing.xs,
-  },
-  footer: {
-    flexDirection: "row",
-    gap: spacing.sm,
-  },
-  backBtn: {
-    flex: 1,
-  },
-  nextBtn: {
-    flex: 2,
-  },
-});
+  hint: { textAlign: "center" as const, marginTop: spacing.md, paddingBottom: spacing.xs } as const,
+  footer: { flexDirection: "row" as const, gap: spacing.sm } as const,
+  backBtn: { flex: 1 } as const,
+  nextBtn: { flex: 2 } as const,
+};

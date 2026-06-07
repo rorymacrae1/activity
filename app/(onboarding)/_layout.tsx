@@ -25,6 +25,7 @@ export default function OnboardingLayout() {
       <Stack.Screen name="budget" />
       <Stack.Screen name="region" />
       <Stack.Screen name="vibes" />
+      <Stack.Screen name="review" />
       <Stack.Screen name="results" />
     </Stack>
   );

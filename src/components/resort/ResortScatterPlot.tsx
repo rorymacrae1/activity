@@ -135,7 +135,7 @@ function SelectedPanel({ point, onClose }: PanelProps) {
             { label: "Budget", val: point.scores.budget },
             { label: "Vibe", val: point.scores.vibe },
             { label: "Activity", val: point.scores.activity },
-            { label: "Snow", val: point.scores.snow },
+            { label: "Season", val: point.scores.season },
           ] as const
         ).map(({ label, val }) => (
           <View key={label} style={panel.chip}>

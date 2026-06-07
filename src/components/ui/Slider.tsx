@@ -81,7 +81,8 @@ export function Slider({
   return (
     <GestureDetector gesture={panGesture}>
       <View
-        style={styles.container}
+        // Static layout via NativeWind; animated fill/thumb stay as Reanimated style
+        className="h-10 w-full justify-center"
         onLayout={handleLayout}
         accessible
         accessibilityRole="adjustable"
@@ -103,11 +104,7 @@ export function Slider({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: 40,
-    width: "100%",
-    justifyContent: "center",
-  },
+  // track/fill/thumb keep StyleSheet since they use Reanimated animated styles
   track: {
     height: 6,
     backgroundColor: colors.border.default,

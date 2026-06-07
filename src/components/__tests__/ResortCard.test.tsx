@@ -83,7 +83,7 @@ const makeResult = (
     budget: 90,
     vibe: 75,
     activity: 85,
-    snow: 88,
+    season: 88,
   },
   ...overrides,
 });

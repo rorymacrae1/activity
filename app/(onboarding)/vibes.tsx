@@ -1,8 +1,9 @@
-import { View, StyleSheet } from "react-native";
+import { View, Pressable } from "react-native";
 import { router } from "expo-router";
 import { usePreferencesStore } from "@stores/preferences";
 import { useLayout } from "@hooks/useLayout";
 import { useContent } from "@hooks/useContent";
+import { useQuizGuard } from "@hooks/useQuizGuard";
 import { colors, spacing } from "@theme";
 import { Text } from "@components/ui/Text";
 import { Button } from "@components/ui/Button";
@@ -14,17 +15,29 @@ import {
   StaggeredItem,
 } from "@components/onboarding/AnimatedQuizContent";
 
+const MONTHS = [
+  { value: 12, label: "Dec" },
+  { value: 1, label: "Jan" },
+  { value: 2, label: "Feb" },
+  { value: 3, label: "Mar" },
+  { value: 4, label: "Apr" },
+  { value: 5, label: "May" },
+];
+
 export default function VibesScreen() {
+  const isRedirecting = useQuizGuard();
   const {
     crowdPreference,
     familyVsNightlife,
-    snowImportance,
+    preferredMonths,
     setCrowdPreference,
     setFamilyVsNightlife,
-    setSnowImportance,
+    setPreferredMonths,
   } = usePreferencesStore();
   const { isTablet, hPadding } = useLayout();
   const content = useContent();
+
+  if (isRedirecting) return null;
 
   const crowdLabel =
     crowdPreference <= 2
@@ -38,12 +51,13 @@ export default function VibesScreen() {
       : familyVsNightlife >= 4
         ? content.onboarding.vibes.focus.nightlife
         : content.onboarding.vibes.focus.balanced;
-  const snowLabel =
-    snowImportance <= 2
-      ? content.onboarding.vibes.snow.flexible
-      : snowImportance >= 4
-        ? content.onboarding.vibes.snow.critical
-        : content.onboarding.vibes.snow.important;
+
+  const toggleMonth = (month: number) => {
+    const next = preferredMonths.includes(month)
+      ? preferredMonths.filter((m) => m !== month)
+      : [...preferredMonths, month];
+    setPreferredMonths(next);
+  };
 
   return (
     <QuizLayout
@@ -57,7 +71,7 @@ export default function VibesScreen() {
           />
           <Button
             label={`${content.onboarding.vibes.next} →`}
-            onPress={() => router.push("/(onboarding)/results")}
+            onPress={() => router.push("/(onboarding)/review")}
             style={styles.nextBtn}
             size="prominent"
           />
@@ -66,18 +80,19 @@ export default function VibesScreen() {
     >
       <AnimatedQuizContent animation="parallax">
         <View
-          style={[styles.inner, !isTablet && { paddingHorizontal: hPadding }]}
+          className="flex-1"
+          style={!isTablet ? { paddingHorizontal: hPadding } : undefined}
         >
           <ProgressIndicator current={5} total={5} showLabel />
 
-          <View style={styles.header}>
+          <View className="mb-lg gap-xs">
             <Text variant="h2">{content.onboarding.vibes.title}</Text>
             <Text variant="body" color={colors.ink.normal}>
               {content.onboarding.vibes.subtitle}
             </Text>
           </View>
 
-          <View style={styles.sliders}>
+          <View className="flex-1 gap-xl justify-center">
             <StaggeredItem index={0} baseDelay={100}>
               <SliderRow
                 label={content.onboarding.vibes.crowd.label}
@@ -103,16 +118,39 @@ export default function VibesScreen() {
               />
             </StaggeredItem>
             <StaggeredItem index={2} baseDelay={100}>
-              <SliderRow
-                label={content.onboarding.vibes.snow.label}
-                value={snowImportance}
-                valueLabel={snowLabel}
-                onChange={setSnowImportance}
-                left={content.onboarding.vibes.snow.left}
-                right={content.onboarding.vibes.snow.right}
-                accessLabel="Snow importance"
-                accessHint="Slide right if snow is critical"
-              />
+              <View className="gap-xs">
+                <Text variant="h4">
+                  {content.onboarding.vibes.months.label}
+                </Text>
+                <View className="flex-row flex-wrap gap-sm mt-xs">
+                  {MONTHS.map(({ value, label }) => {
+                    const selected = preferredMonths.includes(value);
+                    return (
+                      <Pressable
+                        key={value}
+                        onPress={() => toggleMonth(value)}
+                        className={[
+                          "px-md py-sm rounded-full border",
+                          selected
+                            ? "bg-brand-primary border-brand-primary"
+                            : "bg-surface-secondary border-border-subtle",
+                        ].join(" ")}
+                        accessibilityLabel={`${label} ${selected ? "selected" : "not selected"}`}
+                        accessibilityRole="button"
+                      >
+                        <Text
+                          variant="bodySmall"
+                          color={
+                            selected ? colors.ink.onBrand : colors.ink.normal
+                          }
+                        >
+                          {label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
             </StaggeredItem>
           </View>
         </View>
@@ -142,8 +180,8 @@ function SliderRow({
   accessHint,
 }: SliderRowProps) {
   return (
-    <View style={rowStyles.wrap}>
-      <View style={rowStyles.header}>
+    <View className="gap-xs">
+      <View className="flex-row justify-between items-center">
         <Text variant="h4">{label}</Text>
         <Text variant="bodySmall" color={colors.ink.normal}>
           {valueLabel}
@@ -158,7 +196,7 @@ function SliderRow({
         accessibilityLabel={accessLabel}
         accessibilityHint={accessHint}
       />
-      <View style={rowStyles.ends}>
+      <View className="flex-row justify-between">
         <Text variant="caption" color={colors.ink.muted}>
           {left}
         </Text>
@@ -170,20 +208,38 @@ function SliderRow({
   );
 }
 
-const styles = StyleSheet.create({
-  inner: { flex: 1 },
-  header: { marginBottom: spacing.lg, gap: spacing.xs },
-  sliders: { flex: 1, gap: spacing.xl, justifyContent: "center" },
-  footer: { flexDirection: "row", gap: spacing.sm },
-  backBtn: { flex: 1 },
-  nextBtn: { flex: 2 },
-});
-const rowStyles = StyleSheet.create({
-  wrap: { gap: spacing.xs },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+const styles = {
+  inner: { flex: 1 } as const,
+  header: { marginBottom: spacing.lg, gap: spacing.xs } as const,
+  sliders: { flex: 1, gap: spacing.xl, justifyContent: "center" as const } as const,
+  footer: { flexDirection: "row" as const, gap: spacing.sm } as const,
+  backBtn: { flex: 1 } as const,
+  nextBtn: { flex: 2 } as const,
+  monthGrid: {
+    flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
+    gap: spacing.sm,
+    marginTop: spacing.xs,
   },
-  ends: { flexDirection: "row", justifyContent: "space-between" },
-});
+  monthChip: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    backgroundColor: colors.surface.secondary,
+  } as const,
+  monthChipSelected: {
+    backgroundColor: colors.brand.primary,
+    borderColor: colors.brand.primary,
+  } as const,
+};
+const rowStyles = {
+  wrap: { gap: spacing.xs } as const,
+  header: {
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    alignItems: "center" as const,
+  },
+  ends: { flexDirection: "row" as const, justifyContent: "space-between" as const } as const,
+};

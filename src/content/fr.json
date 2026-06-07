@@ -1,5 +1,40 @@
 {
   "onboarding": {
+    "landing": {
+      "headline": "Trouvez Votre Station de Ski",
+      "headlineAccent": "Idéale",
+      "tagline": "Répondez à 5 questions. Obtenez la station idéale pour votre groupe, votre niveau et votre budget — en quelques secondes.",
+      "ctaQuiz": "Trouver Ma Station",
+      "ctaQuizSub": "Gratuit · 5 questions · moins d'une minute",
+      "ctaAccount": "Créer un Compte",
+      "ctaAccountSub": "Sauvegarder les résultats et synchroniser",
+      "statsResorts": "130+",
+      "statsResortsLabel": "stations dans le monde",
+      "statsQuestions": "5",
+      "statsQuestionsLabel": "questions rapides",
+      "statsOffline": "100%",
+      "statsOfflineLabel": "fonctionne hors ligne",
+      "howTitle": "Comment ça marche",
+      "step1Title": "Parlez-nous de votre séjour",
+      "step1Desc": "Votre groupe, vos niveaux, votre budget et où vous souhaitez skier dans le monde.",
+      "step2Title": "Nous calculons tout",
+      "step2Desc": "Notre algorithme évalue chaque station selon vos préférences — terrain, coût, ambiance, saison et plus.",
+      "step3Title": "Obtenez votre correspondance parfaite",
+      "step3Desc": "Consultez les résultats classés avec un score de correspondance et les raisons exactes pour lesquelles chaque station vous convient.",
+      "whyTitle": "Pourquoi PisteWise ?",
+      "reason1Title": "Aucune commission. Aucun biais.",
+      "reason1Desc": "Nous ne sommes pas une agence de voyage. Nous n'avons aucun intérêt financier dans votre choix — juste la meilleure correspondance pour vous.",
+      "reason2Title": "Recommandations transparentes",
+      "reason2Desc": "Voyez exactement pourquoi nous recommandons chaque station. Chaque score est expliqué — niveau, budget, ambiance, saison.",
+      "reason3Title": "Conçu pour les groupes",
+      "reason3Desc": "Niveaux mixtes ? Pas de problème. Notre moteur équilibre les besoins de chaque skieur de votre groupe simultanément.",
+      "reason4Title": "Fonctionne hors ligne",
+      "reason4Desc": "Emportez vos résultats à la montagne. Pas de signal ? Pas de problème — vos correspondances sont toujours disponibles.",
+      "bottomCtaTitle": "Prêt à trouver votre station ?",
+      "bottomCtaSub": "Rejoignez des milliers de skieurs qui ont trouvé leur correspondance parfaite.",
+      "signInPrompt": "Vous avez déjà un compte ?",
+      "signInLink": "Se connecter"
+    },
     "welcome": {
       "appTitle": "PisteWise",
       "tagline": "Votre prochain séjour au ski, simplifié.",
@@ -116,13 +151,8 @@
         "balanced": "Équilibré",
         "nightlife": "Vie nocturne"
       },
-      "snow": {
-        "label": "Fiabilité de l'enneigement",
-        "left": "Pas une priorité",
-        "right": "La neige est indispensable",
-        "flexible": "Flexible",
-        "important": "Important",
-        "critical": "Essentiel"
+      "months": {
+        "label": "Quand voulez-vous skier ?"
       },
       "back": "Retour",
       "next": "Voir les résultats"
@@ -141,6 +171,26 @@
       "emptyMessage": "Essayez d'ajuster vos préférences.",
       "retake": "Refaire le quiz",
       "continue": "Accéder à l'application"
+    },
+    "review": {
+      "title": "Your Perfect Trip",
+      "subtitle": "Here's a summary before we find your resort",
+      "editLabel": "Edit",
+      "ctaLabel": "Find My Resorts",
+      "steps": {
+        "tripType": "Trip Type",
+        "skill": "Skill Level",
+        "budget": "Budget",
+        "regions": "Destinations",
+        "vibes": "Vibe & Season"
+      },
+      "notSet": "Not set",
+      "regionsCount": "{{count}} region selected",
+      "regionsCountPlural": "{{count}} regions selected",
+      "monthsCount": "{{count}} month",
+      "monthsCountPlural": "{{count}} months",
+      "crowdLabel": "Crowd",
+      "focusLabel": "Focus"
     }
   },
   "discover": {
@@ -282,19 +332,58 @@
     "de": "Deutsch"
   },
   "countries": {
-    "Andorra": { "name": "Andorre", "flag": "🇦🇩" },
-    "Austria": { "name": "Autriche", "flag": "🇦🇹" },
-    "Bulgaria": { "name": "Bulgarie", "flag": "🇧🇬" },
-    "Finland": { "name": "Finlande", "flag": "🇫🇮" },
-    "France": { "name": "France", "flag": "🇫🇷" },
-    "Italy": { "name": "Italie", "flag": "🇮🇹" },
-    "Norway": { "name": "Norvège", "flag": "🇳🇴" },
-    "Romania": { "name": "Roumanie", "flag": "🇷🇴" },
-    "Slovakia": { "name": "Slovaquie", "flag": "🇸🇰" },
-    "Slovenia": { "name": "Slovénie", "flag": "🇸🇮" },
-    "Spain": { "name": "Espagne", "flag": "🇪🇸" },
-    "Switzerland": { "name": "Suisse", "flag": "🇨🇭" },
-    "UK": { "name": "Royaume-Uni", "flag": "🇬🇧" }
+    "Andorra": {
+      "name": "Andorre",
+      "flag": "🇦🇩"
+    },
+    "Austria": {
+      "name": "Autriche",
+      "flag": "🇦🇹"
+    },
+    "Bulgaria": {
+      "name": "Bulgarie",
+      "flag": "🇧🇬"
+    },
+    "Finland": {
+      "name": "Finlande",
+      "flag": "🇫🇮"
+    },
+    "France": {
+      "name": "France",
+      "flag": "🇫🇷"
+    },
+    "Italy": {
+      "name": "Italie",
+      "flag": "🇮🇹"
+    },
+    "Norway": {
+      "name": "Norvège",
+      "flag": "🇳🇴"
+    },
+    "Romania": {
+      "name": "Roumanie",
+      "flag": "🇷🇴"
+    },
+    "Slovakia": {
+      "name": "Slovaquie",
+      "flag": "🇸🇰"
+    },
+    "Slovenia": {
+      "name": "Slovénie",
+      "flag": "🇸🇮"
+    },
+    "Spain": {
+      "name": "Espagne",
+      "flag": "🇪🇸"
+    },
+    "Switzerland": {
+      "name": "Suisse",
+      "flag": "🇨🇭"
+    },
+    "UK": {
+      "name": "Royaume-Uni",
+      "flag": "🇬🇧"
+    }
   },
   "home": {
     "welcome": {

@@ -1,6 +1,6 @@
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { UserPreferences } from "@/types/supabase";
-import type { SkillLevel, BudgetLevel, TripType } from "@/types/preferences";
+import type { SkillLevel, BudgetLevel, TripType, FeatureKey } from "@/types/preferences";
 import type { Database } from "@/types/supabase";
 
 type PreferencesInsert =
@@ -19,7 +19,8 @@ export interface LocalPreferences {
   regions: string[];
   crowdPreference: number;
   familyVsNightlife: number;
-  snowImportance: number;
+  preferredMonths: number[];
+  featurePreferences: FeatureKey[];
   language: string;
 }
 
@@ -66,7 +67,8 @@ export async function saveCloudPreferences(
     regions: prefs.regions,
     crowd_preference: prefs.crowdPreference,
     family_vs_nightlife: prefs.familyVsNightlife,
-    snow_importance: prefs.snowImportance,
+    preferred_months: prefs.preferredMonths,
+    feature_preferences: prefs.featurePreferences,
     language: prefs.language,
   };
 
@@ -91,7 +93,8 @@ export function cloudToLocalPreferences(
     regions: cloud.regions,
     crowdPreference: cloud.crowd_preference,
     familyVsNightlife: cloud.family_vs_nightlife,
-    snowImportance: cloud.snow_importance,
+    preferredMonths: cloud.preferred_months,
+    featurePreferences: (cloud.feature_preferences ?? []) as FeatureKey[],
     language: cloud.language,
   };
 }
